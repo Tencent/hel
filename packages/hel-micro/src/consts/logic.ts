@@ -13,3 +13,5 @@ export const apiSrvConst = {
   GET_APP_FULL_VER: 'getSubAppFullVersion',
   API_PATH_PREFIX: '/openapi/v1/app/info',
 } as const;
+
+export const PLAT_UNPKG = 'unpkg';

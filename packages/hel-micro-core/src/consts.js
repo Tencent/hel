@@ -1,13 +1,11 @@
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 
-
-const oriMaterial = 'https://foo-tpr-int.q-q.com/hel';
-export const HEL_ORIGIN = oriMaterial.replace(/-/g, '');
+export const HEL_ORIGIN = 'https://unpkg.com';
 
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
-export const DEFAULT_PLAT = 'hel';
+export const DEFAULT_PLAT = 'unpkg';
 
 export const HEL_EVENTS = {
   // renderApp 发射的是 SUB_APP_LOADED

@@ -13,25 +13,37 @@ const os = require('os');
 /**
  * 
  * @param {Record<string, any>} pkg - 用户模块的 package.json 文件
- * @param {string} [fileFullPath] - 文件不带后缀的全路径名字
- * 不传递 fileFullPath 的话，会按照下面的路径去猜测：
+ * @param {string | {fileFullPath?:string, checkEnv?:boolean}} [fileFullPathOrOptions] - 文件不带后缀的全路径名字
+ * 不传递 fileFullPath 的话，因执行的代码位于：
  * <projectDir>/node_modules/hel-dev-utils/lib/index.js
+ * 会按照下面的路径去猜测：
+ * path.join(__dirname, '../../../src/configs/subApp')
  * 因通常 check 都是在 <projectDir>/scripts/check.js 里执行，如要传递可写为
  * ```js
  *  const fileFullPath = path.join(__dirname, '../src/configs/subApp');
  * ```
+ * 
+ * checkEnv（ default: true ）, 是否检查 process.env.HEL_APP_GROUP_NAME 和 代码里的定义是否对应
+ * 在采取发布模块到 npm 的策略时，可关闭此项检查
  */
-export default function (pkg, fileFullPath) {
+export default function check(pkg, fileFullPathOrOptions) {
+  let fileFullPath = path.join(__dirname, '../../../src/configs/subApp');
+  let checkEnv = true;
+  if (fileFullPathOrOptions) {
+    if (typeof fileFullPathOrOptions === 'string') {
+      fileFullPath = fileFullPathOrOptions;
+    } else {
+      fileFullPath = fileFullPathOrOptions.fileFullPath;
+      checkEnv = fileFullPathOrOptions.checkEnv;
+    }
+  }
+
+
   /** 子应用组名 */
   let srcAppGroupName = '';
   let content = '';
-  let fileFullPathVar = fileFullPath;
-  if (!fileFullPathVar) {
-    fileFullPathVar = path.join(__dirname, '../../../../../src/configs/subApp');
-  }
-
-  const fileFullPathJs = `${fileFullPathVar}.js`;
-  const fileFullPathTs = `${fileFullPathVar}.ts`;
+  const fileFullPathJs = `${fileFullPath}.js`;
+  const fileFullPathTs = `${fileFullPath}.ts`;
   console.log(`guess js subApp file: ${fileFullPathJs}`);
   console.log(`guess ts subApp file: ${fileFullPathTs}`);
   const isJsExist = fs.existsSync(fileFullPathJs);
@@ -78,12 +90,14 @@ export default function (pkg, fileFullPath) {
     throw new Error(`package.json name [${pgkAppGroupName}] should be equal to src/configs/subApp LIB_NAME(or HEL_APP_GROUP_NAME) [${srcAppGroupName}]`);
   }
 
-  // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
-  const {
-    HEL_APP_GROUP_NAME,
-  } = process.env;
+  if (checkEnv) {
+    // 以下常量由ci&cd系统注入（通常由流水线变量或bash脚本注入）
+    const {
+      HEL_APP_GROUP_NAME,
+    } = process.env;
 
-  if (pgkAppGroupName !== HEL_APP_GROUP_NAME) {
-    throw new Error(`package.json name [${pgkAppGroupName}] should be equal to pipeline var HEL_APP_GROUP_NAME [${HEL_APP_GROUP_NAME}]`);
+    if (pgkAppGroupName !== HEL_APP_GROUP_NAME) {
+      throw new Error(`package.json name [${pgkAppGroupName}] should be equal to pipeline var HEL_APP_GROUP_NAME [${HEL_APP_GROUP_NAME}]`);
+    }
   }
 }

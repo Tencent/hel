@@ -52,7 +52,7 @@ export function makeFileDescList(fileFullPathList, appHomePage, splitStrForFileP
 
 
 export function verbose(...args) {
-  console.log(`[CMS-verbose:] `, ...args);
+  console.log(`[Hel verbose:] `, ...args);
 }
 
 /**

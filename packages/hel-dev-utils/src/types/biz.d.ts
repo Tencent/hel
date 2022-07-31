@@ -34,6 +34,7 @@ export interface FileDesc {
 }
 
 export interface IExtractOptions {
+  appName: string;
   appHomePage: string;
   buildDirFullPath: string;
   extractMode: string;

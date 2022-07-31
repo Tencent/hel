@@ -8,6 +8,7 @@ import { safeParse, getLocalStorage } from '../util';
 import { getPlatformConfig, getPlatform } from '../shared/platform';
 import storageKeys from '../consts/storageKeys';
 import defaults from '../consts/defaults';
+import { PLAT_UNPKG } from '../consts/logic';
 
 
 /**
@@ -17,13 +18,13 @@ import defaults from '../consts/defaults';
  * 此逻辑为了兼容 tnews 平台而存在，是为了保证所有 tnews 上星辰老应用本地调试不报错，不会影响属于 hel 的应用
  */
 function computeApiMode(platform?: Platform, specifiedApiMode?: ApiMode) {
-  const { apiPathOfApp, apiMode } = getPlatformConfig(platform);
+  const { apiMode, platform: targetPlat } = getPlatformConfig(platform);
+  // unpkg 平台一定发起 get 请求
+  if (targetPlat === PLAT_UNPKG) {
+    return 'get';
+  }
   if (specifiedApiMode) {
     return specifiedApiMode;
-  }
-  // TODO：del
-  if (platform === 'tnews' && apiPathOfApp === '/api/subApp') {
-    return 'get';
   }
   return apiMode;
 }

@@ -12,15 +12,18 @@ import { makeHelMetaJson } from './utils';
  */
 export default async function extractHelMetaJson(userExtractOptions) {
   const {
-    appHomePage, buildDirFullPath, writeMetaJsonToDist = true,
+    appHomePage, buildDirFullPath, writeMetaJsonToDist = true, appName,
     packageJson, npmCdnType = 'unpkg', extractMode = 'build', distDir,
   } = userExtractOptions;
 
   const targetHomePage = appHomePage || getNpmCdnHomePage(packageJson, npmCdnType, distDir);
-  const extractOptions = { appHomePage: targetHomePage, buildDirFullPath, extractMode };
+  const innerExtractOptions = {
+    appName: appName || packageJson.appGroupName || packageJson.name,
+    appHomePage: targetHomePage, buildDirFullPath, extractMode
+  };
   verbose(`start extractHelMetaJson, appHomePage is ${targetHomePage}`);
 
-  const parsedRet = await parseIndexHtml(extractOptions);
+  const parsedRet = await parseIndexHtml(innerExtractOptions);
 
   // 有替换内容生成，则将 index.html 内容重写，让后续上传 cdn 步骤上传的是替换后的文件内容
   if (parsedRet.replaceContentListOfHead.length > 0) {
