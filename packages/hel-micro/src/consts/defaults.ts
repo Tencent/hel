@@ -1,7 +1,7 @@
 
 
 export default {
-  VER: '3.5.16',
+  VER: '3.6.2',
   SHADOW: true,
   SET_STYLE_AS_STRING: true,
   ENABLE_DISK_CACHE: false,
