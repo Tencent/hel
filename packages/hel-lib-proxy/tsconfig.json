@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "declaration": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "sourceMap": false,
+    "strict": true,
+    "removeComments": false,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "lib"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules"
+  ]
+}

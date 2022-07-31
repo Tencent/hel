@@ -1,0 +1,50 @@
+{
+  "name": "hel-micro-core",
+  "version": "3.6.0",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "bundleDependencies": false,
+  "dependencies": {
+    "hel-types": "^3.5.1"
+  },
+  "peerDependencies": {
+    "hel-types": "^3.5.1"
+  },
+  "deprecated": false,
+  "description": "hel micro core",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-cli": "^6.26.0",
+    "cross-env": "^7.0.2",
+    "rollup": "^2.23.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.4"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src",
+    "index.d.ts",
+    "README.md",
+    ".babelrc.js",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "rollup -c --environment BUILD_ENV:commonjs",
+    "build:es": "rollup -c --environment BUILD_ENV:es",
+    "build:umd": "rollup -c --environment BUILD_ENV:development",
+    "build:umd:min": "rollup -c --environment BUILD_ENV:production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

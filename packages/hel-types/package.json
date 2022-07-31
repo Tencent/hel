@@ -1,0 +1,13 @@
+{
+  "name": "@hel/hel-types",
+  "version": "3.5.1",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "deprecated": false,
+  "description": "hel types file",
+  "license": "MIT",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "scripts": {}
+}

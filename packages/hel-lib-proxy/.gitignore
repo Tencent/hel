@@ -1,0 +1,14 @@
+.DS_Store
+**/.DS_Store
+.vscode
+.coveralls.yml
+
+debug
+coverage
+node_modules
+lib
+dist
+es/*
+
+TIPME.md
+

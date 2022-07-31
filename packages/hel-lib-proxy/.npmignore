@@ -1,0 +1,11 @@
+**/.DS_Store
+.coveralls.yml
+.vscode
+
+coverage
+benchmark
+node_modules
+
+TIPME.md
+
+
