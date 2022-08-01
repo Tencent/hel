@@ -1,5 +1,5 @@
 <p align="center">
-<img width="820px" src="https://tnfe.gtimg.com/image/nesdj6xn5b_1659182715485.png" alt="image.png" />
+<img width="820px" src="https://user-images.githubusercontent.com/7334950/182146369-15b512e0-a47a-4cf6-9c0c-c2fa0549e6aa.png" />
 </p>
 
 
