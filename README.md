@@ -3,7 +3,7 @@
 </p>
 
 
-模块联邦sdk化，构建工具无关的微模块方案
+**hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
 
 ## why hel-micro
 ![image](https://user-images.githubusercontent.com/7334950/182147067-1cae93f9-3874-4446-886b-8fd448eb4fe7.png)
