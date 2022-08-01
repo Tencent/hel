@@ -222,7 +222,7 @@ export function getVerStyleStrStatus(appName: string, options?: IGetVerOptions):
 
 export function tryGetVersion(appGroupName: string, platform?: Platform): string;
 
-export function tryGetAppName(versionId: string): string;
+export function tryGetAppName(versionId: string, appGroupName?: string): string;
 
 export function log(...args: any[]): void;
 

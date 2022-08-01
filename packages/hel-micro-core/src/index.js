@@ -1,4 +1,6 @@
 /** @typedef {import('../index').IPlatformConfig} IPlatformConfig */
+/** @typedef {import('../index').IPlatformConfigFull} IPlatformConfigFull */
+/** @typedef {import('../index').SharedCache} SharedCache */
 import * as isSubMod from './isSubApp';
 import { ensureHelMicroShared, getHelMicroShared } from './microShared';
 import * as debugMod from './microDebug';
@@ -96,10 +98,19 @@ export function tryGetVersion(appGroupName, platform) {
     const strList = restStr.split('/');
 
     // 优先判断可能包含的版本特征
-    if (callerSpecifiedVer && strList.includes(callerSpecifiedVer)) {
-      return callerSpecifiedVer;
+    if (callerSpecifiedVer) {
+      if (platform === 'unpkg' && strList.some(item => item.includes(callerSpecifiedVer))) {
+        return callerSpecifiedVer;
+      }
+      if (strList.includes(callerSpecifiedVer)) {
+        return callerSpecifiedVer;
+      }
     }
 
+    // [ 'unpkg.com' , 'hel-lodash@1.1.0' , ... ]
+    if (platform === 'unpkg') {
+      return strList[1].split('@')[1] || callerSpecifiedVer;
+    }
     // 走默认的规则： {cdn_host_name}/{platform}/{appname_prefixed_version}，取下标2对应元素作为版本号
     return strList[2] || callerSpecifiedVer;
   }
@@ -109,19 +120,25 @@ export function tryGetVersion(appGroupName, platform) {
 }
 
 
-export function tryGetAppName(/** @type string */version) {
-  // version: lib-test_20220621165953
-  const [] = version.split('_');
-  // get: lib-test
-  const appName = version.substring(0, version.length - 15);
-  return appName;
+export function tryGetAppName(/** @type string */version, appGroupName) {
+  // 来自 hel 管理台的版本号规则
+  if (version.includes('_')) {
+    // version: lib-test_20220621165953
+    const [] = version.split('_');
+    // get: lib-test
+    const appName = version.substring(0, version.length - 15);
+    return appName;
+  }
+
+  // 来自 unpkg
+  return appGroupName || '';
 }
 
 
 export function libReady(appGroupName, appProperties, options = {}) {
   const platform = options.platform || getAppPlatform(appGroupName);
   const versionId = tryGetVersion(appGroupName, platform);
-  const appName = tryGetAppName(versionId);
+  const appName = tryGetAppName(versionId, appGroupName);
   const emitApp = {
     platform,
     appName,
@@ -168,17 +185,19 @@ export function getPlatformHost(iPlatform, useApiPrefixFirstIfExist = true) {
 
 /**
  * 提取无其他杂项的配置对象
- * @param {IPlatformConfig} data
- * @returns
+ * @param {SharedCache} cache
+ * @returns {IPlatformConfigFull}
  */
-function getPureConfig(data) {
+function getPureConfig(cache) {
   const {
     apiMode, apiPrefix, apiSuffix, apiPathOfApp, apiPathOfAppVersion,
-    getSubAppAndItsVersionFn, getSubAppVersionFn,
-  } = data;
+    getSubAppAndItsVersionFn, getSubAppVersionFn, strictMatchVer, getUserName,
+    userLsKey, platform,
+  } = cache;
   return {
     apiMode, apiPrefix, apiSuffix, apiPathOfApp, apiPathOfAppVersion,
-    getSubAppAndItsVersionFn, getSubAppVersionFn,
+    getSubAppAndItsVersionFn, getSubAppVersionFn, strictMatchVer, getUserName,
+    userLsKey, platform,
   };
 }
 

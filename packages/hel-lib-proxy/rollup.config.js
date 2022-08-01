@@ -9,7 +9,7 @@ const plugins = [
 ];
 const umdOutput = {
   format: 'umd',
-  name: 'limu',
+  name: 'hel-lib-proxy',
   file: 'dist/hel-lib-proxy.js',
 };
 

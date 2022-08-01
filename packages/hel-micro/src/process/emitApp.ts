@@ -19,7 +19,7 @@ export default function emitApp(options: IEmitAppOptions) {
   const { Comp, appGroupName, lifecycle } = options;
   const platform = options.platform || getAppPlatform(appGroupName);
   const versionId = tryGetVersion(appGroupName, platform);
-  const appName = tryGetAppName(versionId);
+  const appName = tryGetAppName(versionId, appGroupName);
   const emitApp: IEmitAppInfo = { Comp, appName, appGroupName, lifecycle, platform, versionId, isLib: false };
   setEmitApp(appName, emitApp);
   eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);

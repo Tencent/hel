@@ -34,7 +34,7 @@ interface IJudgeOptions {
 }
 export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions) {
   log('[[ judgeAppReady ]] receive emitApp', appInfo);
-  const { versionId: inputVer = '', appName, platform, next, strictMatchVer } = options;
+  const { versionId: inputVer = '', appName, platform, next, strictMatchVer = false } = options;
   const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);

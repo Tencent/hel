@@ -1,3 +1,4 @@
+/** @typedef {import('../index').SharedCache} SharedCache */
 import { getHelMicroShared, makeCacheNode } from './microShared';
 
 /**
@@ -14,6 +15,7 @@ export function getPlatform() {
 /**
  * 
  * @param {'hel'|'tnews'} platform 
+ * @returns {SharedCache}
  */
 export function getPlatformSharedCache(platform) {
   /** @type {'hel'|'tnews'} */

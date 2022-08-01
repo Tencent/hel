@@ -2,8 +2,7 @@ import type { IEmitAppInfo } from 'hel-types';
 import type { IGetOptions } from 'hel-micro-core';
 import type { IInnerPreFetchOptions, IPreFetchLibOptions, IPreFetchAppOptions, AnyRecord } from '../types';
 import {
-  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus,
-  log, getPlatform,
+  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig,
 } from 'hel-micro-core';
 import { loadApp } from '../services/app';
 import * as logicSrv from '../services/logic';
@@ -51,8 +50,11 @@ async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) 
   let emitApp: null | IEmitAppInfo = null;
   try {
     const options = iOptions || {};
-    const { isLib = false, versionId, strictMatchVer } = options;
-    const platform = options.platform || getPlatform();
+    const { isLib = false, versionId } = options;
+    const conf = getPlatformConfig(options.platform);
+    const platform = conf.platform;
+    // 用户未传的话走平台默认值 true
+    const strictMatchVer = options.strictMatchVer ?? conf.strictMatchVer;
     const waitOptions = { platform, isLib, versionId, strictMatchVer };
     const getOptions: IGetOptions = { platform, versionId, strictMatchVer };
 

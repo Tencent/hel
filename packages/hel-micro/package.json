@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.6.3",
+  "version": "3.6.6",
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/hel-micro.min.js",
@@ -9,13 +9,12 @@
   "author": {
     "name": "fantasticsoul"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "dependencies": {
-    "hel-micro-core": "^3.6.2",
+    "hel-micro-core": "^3.6.4",
     "hel-types": "^3.6.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^3.6.2",
     "hel-types": "^3.6.0"
   },
   "deprecated": false,
