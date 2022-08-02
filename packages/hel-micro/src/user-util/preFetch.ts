@@ -1,6 +1,6 @@
 import type { IEmitAppInfo } from 'hel-types';
 import type { IGetOptions } from 'hel-micro-core';
-import type { IInnerPreFetchOptions, IPreFetchLibOptions, IPreFetchAppOptions, AnyRecord } from '../types';
+import type { IInnerPreFetchOptions, IPreFetchLibOptions, IPreFetchAppOptions, AnyRecord, Version } from '../types';
 import {
   helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig,
 } from 'hel-micro-core';
@@ -105,9 +105,10 @@ async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) 
  * ```
  */
 export async function preFetchLib<T extends AnyRecord = AnyRecord>(
-  appName: string, options?: IPreFetchLibOptions,
+  appName: string, options?: IPreFetchLibOptions | Version,
 ): Promise<T> {
-  const optionsCopy = { ...(options || {}), isLib: true };
+  let targetOpts: IPreFetchLibOptions = typeof options === 'string' ? { versionId: options } : options;
+  const optionsCopy = { ...(targetOpts || {}), isLib: true };
   const appInfo = await innerPreFetch(appName, optionsCopy);
   if (!appInfo) {
     throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!`);
@@ -120,8 +121,9 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(
  * 等待 helEvents.SUB_APP_LOADED 信号发射的应用根组件
  * 由中间层ui适配库自己实现，如 hel-micro-react 的 renderApp
  */
-export async function preFetchApp(appName: string, options?: IPreFetchAppOptions) {
-  const optionsCopy = { ...(options || {}), isLib: false };
+export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | Version) {
+  let targetOpts: IPreFetchLibOptions = typeof options === 'string' ? { versionId: options } : options;
+  const optionsCopy = { ...(targetOpts || {}), isLib: false };
   const appInfo = await innerPreFetch(appName, optionsCopy);
   return appInfo;
 };

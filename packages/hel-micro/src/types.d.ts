@@ -69,6 +69,8 @@ export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {
   controlLoadAssets?: boolean,
 }
 
+export type Version = string;
+
 export interface IPreFetchLibOptions extends IPreFetchOptionsBase {
   /** 占位，方便将来扩展，避免 @typescript-eslint/no-empty-interface 规则报错 */
   __seat__?: any;
