@@ -89,17 +89,17 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
     } else if (enableDiskCache) {
       mayCachedApp = getDiskCachedApp(appName);
       if (!mayCachedApp) {
-        mayCachedApp = await getAndCacheApp(appName, platform, apiMode);
+        mayCachedApp = await getAndCacheApp(appName, platform, apiMode, versionId);
       } else {
         // 将硬盘缓存数据写回到内存
         cacheApp(mayCachedApp.appInfo, mayCachedApp.appVersion, platform, false);
         // 异步缓存一份最新的数据
-        getAndCacheApp(appName, platform, apiMode).catch(err => err);
+        getAndCacheApp(appName, platform, apiMode, versionId).catch(err => err);
       }
 
       // 从远端获取
     } else {
-      mayCachedApp = await getAndCacheApp(appName, platform, apiMode);
+      mayCachedApp = await getAndCacheApp(appName, platform, apiMode, versionId);
     }
 
     // 此处记录【应用组名】对应【平台】，仅为了让模块暴露方在使用 exposeLib 接口或 libReady 接口如未显式的指定平台值，
@@ -151,8 +151,8 @@ export function cacheApp(appInfo: ISubApp, appVersion: ISubAppVersion, platform:
 }
 
 
-export async function getAndCacheApp(appName: string, platform: Platform, apiMode: ApiMode) {
-  const ret = await getAppAndVersion(appName, { platform, apiMode });
+export async function getAndCacheApp(appName: string, platform: Platform, apiMode: ApiMode, versionId: string) {
+  const ret = await getAppAndVersion(appName, { platform, apiMode, versionId });
   const { appInfo, appVersion } = ret;
   cacheApp(appInfo, appVersion, platform);
   return ret;
