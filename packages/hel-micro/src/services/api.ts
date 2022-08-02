@@ -66,7 +66,7 @@ function ensureVersion(version: ISubAppVersion) {
 function getUnpkgUrl(apiHost: string, appName: string, versionId: string,) {
   const ver = versionId || 'latest';
   // 直接这样简写 https://unpkg.com/hel-lodash 会产生两次额外的 302 重定向，为了更高效的请求，此处提供完整的请求链接
-  return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json`;
+  return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json?_t=${Date.now()}`;
 }
 
 
