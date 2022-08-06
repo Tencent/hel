@@ -5,11 +5,14 @@
 
 **hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
 
-## why hel-micro
+## Demo
+[hel-load](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+
+## Why hel-micro
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
 ### 如何使用远程模块
-仅需要一句npm命令即可载入远程模块，查看下面例子的[线上示例](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+仅需要一句npm命令即可载入远程模块，查看下面例子[线上示例](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
 
 - 1 安装`hel-micro`
 
