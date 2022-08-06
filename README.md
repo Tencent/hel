@@ -6,7 +6,8 @@
 **hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
 
 ## Demo
-[hel-load](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+[hel-loadash codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+[hel-loadash git](https://github.com/hel-eco/hel-lodash)
 
 ## Why hel-micro
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
