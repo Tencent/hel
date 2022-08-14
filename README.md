@@ -1,7 +1,6 @@
 <p align="center">
-<img width="620px" src="https://user-images.githubusercontent.com/7334950/182146369-15b512e0-a47a-4cf6-9c0c-c2fa0549e6aa.png" />
+<img width="762px" src="https://user-images.githubusercontent.com/7334950/184542356-509c13f6-cd4b-4147-acc2-d04d34cc91c1.png" />
 </p>
-
 
 **hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
 
