@@ -2,7 +2,7 @@
 <img width="762px" src="https://user-images.githubusercontent.com/7334950/184542356-509c13f6-cd4b-4147-acc2-d04d34cc91c1.png" />
 </p>
 
-**hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
+**hel-micro** 模块联邦sdk化，免构建、热更新、工具链无关的微模块方案
 
 ## Demo
 [hel-loadash codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
