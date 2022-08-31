@@ -1,15 +1,24 @@
 <p align="center">
-<img width="620px" src="https://user-images.githubusercontent.com/7334950/182146369-15b512e0-a47a-4cf6-9c0c-c2fa0549e6aa.png" />
+<img width="620px" alt="hel-logo"  src="https://user-images.githubusercontent.com/7334950/186912479-463a6788-41fd-474d-83ed-08314909d70d.png" />
 </p>
 
 
-**hel-micro** 模块联邦sdk化，免构建、热更新的微模块方案
 
-## why hel-micro
-![image](https://user-images.githubusercontent.com/7334950/182147067-1cae93f9-3874-4446-886b-8fd448eb4fe7.png)
+## [Doc](https://tnfe.github.io/hel)
+**hel-micro**, 模块联邦sdk化，免构建、热更新、工具链无关的微模块方案
+
+see doc： https://tnfe.github.io/hel
+
+## Demo
+[hel-loadash codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+
+[hel-loadash git](https://github.com/hel-eco/hel-lodash)
+
+## Why hel-micro
+![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
 ### 如何使用远程模块
-仅需要一句npm命令即可载入远程模块，查看下面例子的[线上示例](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
+仅需要一句npm命令即可载入远程模块，查看下面例子[线上示例](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
 
 - 1 安装`hel-micro`
 
