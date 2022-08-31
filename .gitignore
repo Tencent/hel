@@ -1,6 +1,7 @@
 .DS_Store
 .vscode
 .idea
+.docusaurus
 
 node_modules
 build

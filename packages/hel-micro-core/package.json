@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-core",
-  "version": "3.6.4",
+  "version": "3.7.4",
   "author": {
     "name": "fantasticsoul"
   },
@@ -35,7 +35,6 @@
     "es",
     "src",
     "index.d.ts",
-    "README.md",
     ".babelrc.js",
     "README.md"
   ],

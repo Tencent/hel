@@ -4,6 +4,7 @@ import util from 'util';
 import { verbose } from '../inner-utils/index';
 import { purify, isNull } from '../inner-utils/obj';
 import { noDupPush } from '../inner-utils/arr';
+import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
 
@@ -72,7 +73,7 @@ async function writeInnerHtml(childDom, fileType, parseOptions) {
  * @param {object} parseOptions
  * @param {string} parseOptions.buildDirFullPath
  * @param {boolean} parseOptions.isHead
- * @param {string} parseOptions.appHomePage
+ * @param {string} parseOptions.appHomePage  - http://s.inews.gtimg.com/om_20200408203828
  */
 export async function fillAssetList(doms, fillTargets, parseOptions) {
   const { headAssetList, bodyAssetList, chunkCssSrcList, privCssSrcList } = fillTargets;
@@ -156,4 +157,29 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
   }
 
   return replaceContentList;
+}
+
+/**
+ * @param {import('types/biz').IUserExtractOptions} extractOptions
+ */
+export async function fillAssetListByDist(parsedRet, extractOptions) {
+  const { buildDirFullPath, appHomePage } = extractOptions;
+  const { srcMap } = parsedRet;
+  const fileFullPathList = getAllFilePath(buildDirFullPath);
+  verbose('filePathList', fileFullPathList);
+
+  fileFullPathList.forEach(fileAbsolutePath => {
+    //  获取文件处于build目录下的相对路径，形如：
+    //  /static/js/runtime-main.66c45929.js 
+    //  /asset-manifest.json
+    const filePathUnderBuild = fileAbsolutePath.split(buildDirFullPath)[1];
+
+    // 拼出 web 路径
+    const fileWebPath = `${appHomePage}/${filePathUnderBuild}`;
+
+    // 补上剩余的 css 文件路径
+    if (fileWebPath.endsWith('.css')) {
+      noDupPush(srcMap.chunkCssSrcList, fileWebPath);
+    }
+  });
 }

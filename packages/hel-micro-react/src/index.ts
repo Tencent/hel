@@ -12,7 +12,7 @@ import * as hooks from './hooks';
 import { useForceUpdate, useExecuteCallbackOnce } from './hooks/share';
 
 const {
-  useRemoteComp, useRemoteCompAndSubVal, useRemote2Comps, useRemoteLibComp, useRemoteLegacyComp
+  useRemoteComp, useRemoteCompAndSubVal, useRemotePureComp, useRemote2Comps, useRemoteLibComp, useRemotePureLibComp, useRemoteLegacyComp
 } = hooks;
 
 // 支持语法 import * as helMicroReact from 'hel-micro-react';
@@ -28,9 +28,11 @@ export {
   useExecuteCallbackOnce,
   useForceUpdate,
   useRemoteComp,
+  useRemotePureComp,
   useRemoteCompAndSubVal,
   useRemote2Comps,
   useRemoteLibComp,
+  useRemotePureLibComp,
   useRemoteLegacyComp,
 };
 
@@ -47,8 +49,10 @@ export default {
   useExecuteCallbackOnce,
   useForceUpdate,
   useRemoteComp,
+  useRemotePureComp,
   useRemoteCompAndSubVal,
   useRemote2Comps,
   useRemoteLibComp,
+  useRemotePureLibComp,
   useRemoteLegacyComp,
 };

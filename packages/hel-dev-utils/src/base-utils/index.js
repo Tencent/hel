@@ -37,8 +37,8 @@ export function getHelOriginalEnvParams() {
  */
 export function getHelEnvParams(pkg, options = {}) {
   /** 子应用组名 */
-  let defaultAppGroupName = pkg.appGroupName;
-  const defaultHomePage = options.defaultHomePage ?? pkg.homepage ?? '/';
+  const defaultAppGroupName = pkg.appGroupName;
+  const defaultHomePage = options.defaultHomePage || pkg.homepage || '/';
 
   const {
     appHomePage = defaultHomePage,
@@ -78,11 +78,11 @@ export function getPublicPathOrUrl(homePage, needsSlash = true) {
  * 16.14.0
  * https://tnfe.gtimg.com/hel-runtime/level1/16.14.0-react.js
  * https://tnfe.gtimg.com/hel-runtime/level1/16.14.0-react.dev.js
- * @returns 
+ * @returns
  */
 export function getReactExternals() {
   return {
-    'react': 'LEAH_React',
+    react: 'LEAH_React',
     'react-dom': 'LEAH_ReactDOM',
     'react-reconciler': 'LEAH_ReactReconciler',
     'react-is': 'LEAH_ReactIs',

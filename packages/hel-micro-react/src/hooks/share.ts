@@ -1,5 +1,10 @@
 import React from 'react';
 
+export async function delay(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+
 /**
  * 浅比较两个参数是否一样
  * true: 不一样

@@ -29,15 +29,21 @@ export type HelLoadStatusEnum = HelLoadStatus[keyof HelLoadStatus];
 export function getHelEventBus(): EventBus;
 
 export interface IHelMicroDebug {
-  allowLog: boolean;
+  /** 0: 不打印，1: log, 2: trace */
+  logMode: number;
+  logFilter: '';
+  isInit: boolean;
 }
 
 export interface SharedCache {
+  isConfigOverwrite: boolean;
+  initPack: 'inner' | 'out';
   platform: Platform;
   /** 是否严格匹配版本 */
   strictMatchVer: boolean;
+  apiMode: ApiMode;
   /**
-   * 请求的域名前缀，默认 https://footprint.qq.com/hel
+   * 请求的域名前缀，默认 src/diff/index.getDefaultApiPrefix
    */
   apiPrefix: string,
   apiSuffix: string,
@@ -45,8 +51,24 @@ export interface SharedCache {
   apiPathOfAppVersion: string,
   getSubAppAndItsVersionFn: null,
   getSubAppVersionFn: null,
+  onFetchMetaFailed: null,
+  userLsKey: string,
+  getUserName: null,
+  /**
+   * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
+   */
   appName2Lib: Record<string, Record<string, any>>;
+  /**
+   * 记录在线版本 Comp
+   */
   appName2Comp: Record<string, any>;
+  /**
+   * 记录 lib 是否已分配到 appName2Lib 的 libMap 里
+   */
+  appName2isLibAssigned: Record<string, boolean>,
+  /**
+   * 记录在线版本 emitApp
+   */
   appName2EmitApp: Record<string, IEmitAppInfo>;
   /** 应用各个版本对应的lib */
   appName2verEmitLib: Record<string, Record<string, Record<string, any>>>;
@@ -62,16 +84,30 @@ export interface SharedCache {
    * 应用各个版本对应的样式字符串是否已获取过
    */
   appName2verStyleFetched: Record<string, Record<string, HelLoadStatusEnum>>;
+  /**
+   * 应用各个版本对应的额外样式列表（由sdk注入）
+   */
+  appName2verExtraCssList: Record<string, Record<string, HelLoadStatusEnum>>;
+  /**
+   * 应用各个版本对应的版本数据
+   */
   appName2verAppVersion: Record<string, Record<string, ISubAppVersion>>;
+  /**
+   * 兜底对应的app数据
+   */
   appName2app: Record<string, ISubApp>;
+  /**
+   * 兜底对应的线上版本appVersion数据
+   */
   appName2appVersion: Record<string, ISubAppVersion>;
+  /**
+   * 兜底对应的样式字符串
+   */
   appName2styleStr: Record<string, string>;
-  /** 已废弃 */
-  appName2isJsEvaluated: Record<string, boolean>;
-  /** 已废弃 */
-  appName2styleFetchStatus: Record<string, number>;
-  /** 已废弃，仅为了暂时支持某些老版本hel-micro正常工作 */
-  appName2loadStatus: {},
+  /**
+   * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
+   */
+  appGroupName2firstVer: Record<string, string>;
 }
 
 /**
@@ -96,9 +132,8 @@ export function getPlatform(): Platform;
 /**
  * 
  * @param platform 
- * @param useApiPrefixFirstIfExist - default: true, 如过 apiPrefix 存在，则优先返回 apiPrefix
  */
-export function getPlatformHost(platform?: Platform, useApiPrefixFirstIfExist?: boolean): string;
+export function getPlatformHost(platform?: Platform): string;
 
 export interface IPlatformConfigFull {
   /**
@@ -153,6 +188,10 @@ export interface IPlatformConfigFull {
   userLsKey: string;
   /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
   getUserName: (passCtx: { platform: string, appName: string }) => string;
+  /** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据 */
+  onFetchMetaFailed?: (
+    params: { appName: string },
+  ) => Promise<{ app: ISubApp, version: ISubAppVersion }> | { app: ISubApp, version: ISubAppVersion } | void;
 }
 
 export type IPlatformConfig = Partial<IPlatformConfigFull>;
@@ -187,7 +226,7 @@ export interface IGetOptions {
 
 export function getVerLib(appName: string, options?: IGetOptions): IEmitAppInfo['appProperties'] | null;
 
-export function setEmitLib(appName: string, emitApp: IEmitAppInfo): void;
+export function setEmitLib(appName: string, emitApp: IEmitAppInfo, options?: { appGroupName?: string, platform?: Platform }): void;
 
 export interface IGetVerOptions {
   versionId?: string;
@@ -219,6 +258,10 @@ export function getVerLoadStatus(appName: string, options?: IGetVerOptions): Hel
 export function setVerStyleStrStatus(appName: string, loadStatus: HelLoadStatusEnum, options?: IGetVerOptions): void;
 
 export function getVerStyleStrStatus(appName: string, options?: IGetVerOptions): HelLoadStatusEnum;
+
+export function setVerExtraCssList(appName: string, cssList: string[], options?: IGetVerOptions): void;
+
+export function getVerExtraCssList(appName: string, options?: IGetVerOptions): string[];
 
 export function tryGetVersion(appGroupName: string, platform?: Platform): string;
 
@@ -280,6 +323,9 @@ declare type DefaultExport = {
   // 样式字符串获取状态 get set
   getVerStyleStrStatus: typeof getVerStyleStrStatus,
   setVerStyleStrStatus: typeof setVerStyleStrStatus,
+  // sdk注入的额外样式列表 get set
+  getVerExtraCssList: typeof getVerExtraCssList,
+  setVerExtraCssList: typeof setVerExtraCssList,
 
   getAppPlatform: typeof getAppPlatform,
   setAppPlatform: typeof setAppPlatform,

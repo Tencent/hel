@@ -37,14 +37,26 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
   /** 如果指定了 Component，则 name 无效 */
   Component?: AnyCompOrNull;
   /**
-   * 替换默认解析出来的字符串
+   * 处理默认解析出来的字符串，返回的新字符串会替代掉默认字符串
    * 如果设置了此函数，应用自定自带的解析出来的样式字符串无效
    * 通常用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
    * 如 ()=>{ let styleStr = ''; document.querySelectorAll('style').forEach(item=>{styleStr+=item.innerText;}); return styleStr }
    * 如  document.querySelectorAll('style')[0].innerText
    * 或者组件使用方处于某种目的，想强制重新设置样式字符串
    */
-  getStyleStr?: (mayFetchedStr: string) => string;
+  handleStyleStr?: (mayFetchedStr: string) => string;
+  /**
+   * default: false
+   * 当显示配置 shadow 为 false，appendCss 为 false 时，
+   * 需要上层能够同步的拿到样式字符串，则可配置此项为 true
+   */
+  needStyleStr?: boolean;
+  /**
+   * default: true
+   * 远程组件默认是 memo 起来的，设置为 false 关闭 memo 功能
+   */
+  needMemo?: boolean;
+  onStyleFetched?: (params: { mayHandledStyleStr: string, oriStyleStr: string, styleUrlList: string[] }) => void;
   /**
    * 异步加载组件过程的过度组件
    */
@@ -60,6 +72,11 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * default: true
    */
   shadow?: boolean;
+  shadowMode?: 'v1' | 'v2';
+  /** 改参数只对 v2 生效 */
+  shadowWrapStyle?: React.CSSProperties;
+  /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */
+  shadowDelay?: number;
   /**
    * default: false [when shadow is true], true [when shadow is false]
    * 未显式设置 appendCss 时，它的默认受设置 shadow 影响，
@@ -188,6 +205,15 @@ export interface ILocalCompProps {
   /** 目标组件的孩子节点  */
   children?: any;
   reactRef?: React.Ref<any>;
+  /**
+ * default: true
+ */
+  shadow?: boolean;
+  shadowMode?: 'v1' | 'v2';
+  /** 改参数只对 v2 生效 */
+  shadowWrapStyle?: React.CSSProperties;
+  /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */
+  shadowDelay?: number;
 }
 
 
@@ -201,6 +227,10 @@ export interface IUseRemoteLibCompOptions extends IPreFetchOptionsBase {
    * 渲染出现错误时的 Error 组件
    */
   Error?: (props: { errMsg: string }) => React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
+  onStyleFetched?: (params: { mayHandledStyleStr: string, oriStyleStr: string, styleUrlList: string[] }) => void;
+  handleStyleStr?: (mayFetchedStr: string) => string;
+  /** 组件获取到后，延迟返回的时间，单位：ms */
+  delay?: number;
 }
 
 

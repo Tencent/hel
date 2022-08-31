@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.6.3",
+  "version": "3.7.3",
   "main": "dist/hel-lib-proxy.min.js",
   "unpkg": "dist/hel-lib-proxy.min.js",
   "types": "lib/index.d.ts",
@@ -36,11 +36,11 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "hel-micro-core": "^3.6.4",
+    "hel-micro-core": "3.7.3",
     "hel-types": "^3.6.0"
   },
   "dependencies": {
-    "hel-micro-core": "^3.6.4",
+    "hel-micro-core": "3.7.3",
     "hel-types": "^3.6.0"
   },
   "scripts": {

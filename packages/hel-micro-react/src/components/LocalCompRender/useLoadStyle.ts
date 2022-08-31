@@ -1,13 +1,14 @@
 import type { ILocalCompProps } from '../../types';
 import React from 'react';
 import { helLoadStatus } from 'hel-micro-core';
-import BuildInSkeleton from '../BuildInSkeleton';
 import * as baseShareHooks from '../../hooks/share';
+import defaults from '../../consts/defaults';
+import BuildInSkeleton from '../BuildInSkeleton';
 import * as share from '../share';
 
 
 function judgeFetchStyleStr(props: ILocalCompProps, fetchStyleStatusRef: React.RefObject<any>) {
-  const { setStyleAsString = true, styleUrlList = [] } = props;
+  const { setStyleAsString = defaults.SET_STYLE_AS_STRING, styleUrlList = [] } = props;
   if (fetchStyleStatusRef.current === helLoadStatus.LOADED) {
     return false;
   }
@@ -41,7 +42,7 @@ export default function useLoadStyle(props: ILocalCompProps) {
       const finalStyleStr = `${styleStr}${props.styleStr || ''}`;
       // 设置了需要将css列表转为字符串，则返回空样式列表给上层，因逻辑走这里其实已将传入的样式列表转为了字符串
       const finalStyleUrlList = props.setStyleAsString ? [] : (props.styleUrlList || []);
-      return { styleStr: finalStyleStr, styleUrlList: finalStyleUrlList };
+      return { styleStr: finalStyleStr, styleUrlList: finalStyleUrlList, moduleReady: true };
     },
     errMsg,
   };

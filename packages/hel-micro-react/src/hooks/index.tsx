@@ -31,13 +31,44 @@ export function useRemoteComp<T extends any = React.ForwardRefExoticComponent<an
  *    ret.Comp.TabPanel = ret.getSubVal<Lib['Tabs']['TabPanel']>('TabPanel');
  *  }
  * ```
- * 具体示例见：TODO add hel-eco/example
+ * 具体示例见：to-be-added
  */
 export function useRemoteCompAndSubVal<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
   name: string, compName: string, options?: IUseRemoteCompOptions
 ) {
   const CompAndSubVal = useRemoteCompLogic(name, compName, options || {});
   return CompAndSubVal as { Comp: T, getSubVal: GetSubVal };
+}
+
+
+/**
+ * 使用不携带任何样式的原始组件，用户可透传 onStyleFetched 自己做 shadow 实现
+ * 区别于 useRemoteLibComp，该函数会保证样式不追加到文档上
+ */
+export function useRemotePureComp<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
+  name: string, compName: string, options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow' | 'needStyleStr'>
+) {
+  const targetOptions: IUseRemoteCompOptions = {
+    ...(options || {}), needStyleStr: true, shadow: false, appendCss: false,
+  };
+
+  const { Comp } = useRemoteCompLogic(name, compName, targetOptions);
+  return Comp as T;
+}
+
+
+/**
+ * 使用不携带任何样式的原始组件，用户可透传 onStyleFetched 自己做 shadow 实现
+ * 区别于 useRemoteLibComp ，该函数会保证样式不追加到文档上
+ * 区别于 useRemotePureComp ，该函数直接基于 preFetchLib 实现，调用性能开销会少于 useRemotePureComp
+ */
+export function useRemotePureLibComp<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
+  name: string, compName: string, options?: Omit<IUseRemoteLibCompOptions, 'appendCss'>
+) {
+  const targetOptions: IUseRemoteLibCompOptions = { ...(options || {}), appendCss: false };
+
+  const Comp = useRemoteLibCompLogic(name, compName, targetOptions);
+  return Comp as T;
 }
 
 

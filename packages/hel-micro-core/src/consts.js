@@ -1,11 +1,16 @@
+import * as diffBase from './diff/base';
+
+export const VER = diffBase.VER;
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 
-export const HEL_ORIGIN = 'https://unpkg.com';
-
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
-export const DEFAULT_PLAT = 'unpkg';
+export const UNPKG_PREFIX = 'https://unpkg.com';
+
+export const PLAT_UNPKG = 'unpkg';
+
+export const PLAT_HEL = 'hel';
 
 export const HEL_EVENTS = {
   // renderApp 发射的是 SUB_APP_LOADED

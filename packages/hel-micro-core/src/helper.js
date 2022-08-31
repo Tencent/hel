@@ -1,4 +1,3 @@
-/** @typedef {import('../index').SharedCache} SharedCache */
 import { getHelMicroShared, makeCacheNode } from './microShared';
 
 /**
@@ -7,18 +6,15 @@ import { getHelMicroShared, makeCacheNode } from './microShared';
  */
 export function getPlatform() {
   return getHelMicroShared().cacheRoot.platform;
-  // 后续彻底不再支持重置平台默认值时，此处可固定返回 DEFAULT_PLAT
+  // 后续可能彻底不再支持重置平台默认值时，此处可固定返回 DEFAULT_PLAT
   // return DEFAULT_PLAT;
 }
 
 
 /**
- * 
- * @param {'hel'|'tnews'} platform 
- * @returns {SharedCache}
+ * @param {string} platform
  */
 export function getPlatformSharedCache(platform) {
-  /** @type {'hel'|'tnews'} */
   const p = platform || getPlatform();
   const cacheRoot = getCacheRoot();
   const cacheNode = cacheRoot.caches[p];
@@ -34,7 +30,7 @@ export function getCacheRoot() {
 }
 
 
-export function isVerMatchOnline(/** @type {import('hel-types').ISubApp}*/appMeta, inputVer) {
+export function isVerMatchOnline(/** @type {import('@tencent/hel-types').ISubApp}*/appMeta, inputVer) {
   // 如果不传版本号，就表示匹配线上版本
   if (!inputVer) {
     return true;

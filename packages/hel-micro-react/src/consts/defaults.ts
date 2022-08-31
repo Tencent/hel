@@ -1,4 +1,6 @@
+import * as diff from '../_diff/index';
 
+export const VER = diff.VER;
 
 export default {
   SHADOW: true,

@@ -14,4 +14,6 @@ export const apiSrvConst = {
   API_PATH_PREFIX: '/openapi/v1/app/info',
 } as const;
 
+export const PLAT_HEL = 'hel';
+
 export const PLAT_UNPKG = 'unpkg';

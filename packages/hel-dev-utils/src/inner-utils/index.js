@@ -52,7 +52,7 @@ export function makeFileDescList(fileFullPathList, appHomePage, splitStrForFileP
 
 
 export function verbose(...args) {
-  console.log(`[Hel verbose:] `, ...args);
+  console.log(`[Hel-verbose:] `, ...args);
 }
 
 /**
@@ -110,10 +110,11 @@ export function getZoneNameFromHomePage(homePage) {
 }
 
 const cdnType2host = {
-  'unpkg': 'https://unpkg.com',
+  unpkg: 'https://unpkg.com',
 };
 
 export function getNpmCdnHomePage(packageJson, npmCdnType = 'unpkg', distDir = 'hel_dist') {
   const { name, version } = packageJson;
+  // TDDO，未来考虑更多类型的 cdn，如：jsdelivr
   return `${cdnType2host[npmCdnType]}/${name}@${version}/${distDir}`;
 }

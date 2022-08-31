@@ -1,7 +1,7 @@
 /** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
 import jsdom from 'jsdom';
-import fs from 'fs';
-import util from 'util';
+import * as  fs from 'fs';
+import * as  util from 'util';
 import { verbose } from '../inner-utils/index';
 import { makeAppVersionSrcMap } from './utils';
 import { fillAssetList } from './fillAssetList';
@@ -10,7 +10,7 @@ const readFile = util.promisify(fs.readFile);
 const { JSDOM } = jsdom;
 
 /**
- * @param {import('../types/biz').IExtractOptions} extractOptions
+ * @param {import('types/biz').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
   const { appHomePage, appName, extractMode, buildDirFullPath } = extractOptions;

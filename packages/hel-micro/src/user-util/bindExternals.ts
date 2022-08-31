@@ -16,9 +16,9 @@ interface IReactRuntimeObj {
   /** 对应 react-dom 库 */
   ReactDOM: any;
   /** 对应 react-is 库 */
-  ReactIs: any;
-  /** 对应 react-reconciler 库 */
-  ReactReconciler: any;
+  ReactIs?: any;
+  /** 对应 react-reconciler 库, react-dom 的内部依赖 */
+  ReactReconciler?: any;
 }
 
 /**
@@ -30,9 +30,11 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   const externalObj = {
     LEAH_React: reactRuntimeObj.React,
     LEAH_ReactDOM: reactRuntimeObj.ReactDOM,
-    LEAH_ReactIs: reactRuntimeObj.ReactIs,
-    LEAH_ReactReconciler: reactRuntimeObj.ReactReconciler,
+    LEAH_ReactIs: null,
+    LEAH_ReactReconciler: null,
   };
+  if (reactRuntimeObj.ReactIs) externalObj.LEAH_ReactIs = reactRuntimeObj.ReactIs;
+  if (reactRuntimeObj.ReactReconciler) externalObj.LEAH_ReactReconciler = reactRuntimeObj.ReactReconciler;
   bindExternals(externalObj);
 }
 

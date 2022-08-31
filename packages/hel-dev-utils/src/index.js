@@ -7,8 +7,6 @@ import createVue2SubAppMod from './sub-app/createVue2SubApp';
 import createLibSubAppMod from './sub-app/createLibSubApp';
 import extractHelMetaJsonMod from './meta-extractor/index';
 
-
-
 export const check = checkMod;
 export const cst = cstMod;
 export const baseUtils = baseUtilsMod;
@@ -17,7 +15,6 @@ export const createVue3SubApp = createVue3SubAppMod;
 export const createVue2SubApp = createVue2SubAppMod;
 export const createLibSubApp = createLibSubAppMod;
 export const extractHelMetaJson = extractHelMetaJsonMod;
-
 
 export default {
   cst,
@@ -28,4 +25,4 @@ export default {
   createVue2SubApp,
   createLibSubApp,
   extractHelMetaJson,
-}
+};

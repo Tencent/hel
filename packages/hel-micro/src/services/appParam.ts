@@ -3,6 +3,7 @@
  */
 import type { IGetOptionsLoose, IPlatAndVer, IGroupedStyleList } from '../types';
 import * as core from 'hel-micro-core';
+import { getDefaultPlatform } from '../_diff/index';
 
 /**
  * 推导当前应用的平台与版本
@@ -16,8 +17,9 @@ export function getPlatAndVer(appName: string, options?: IGetOptionsLoose): IPla
     ver = appMeta?.online_version || appMeta?.build_version || '';
   }
 
+
   return {
-    platform: platform || core.getPlatform(),
+    platform: getDefaultPlatform(platform),
     versionId: ver,
   };
 }

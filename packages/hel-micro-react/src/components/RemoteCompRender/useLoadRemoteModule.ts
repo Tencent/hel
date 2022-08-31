@@ -13,7 +13,7 @@ function judgeFetchStyleStr(appName: string, fetchOptions: IFetchOptions) {
   const isStyleFetched = appStyleSrv.isStyleFetched(appName, fetchOptions);
   // 设置了需要设置样式为字符串格式 且 无样式字符串 且 样式字符串还未异步抓取到
   // 则需要异步获取样式字符串串
-  const shouldFetchStyle = fetchOptions.setStyleAsString && !styleStr && !isStyleFetched;
+  const shouldFetchStyle = (fetchOptions.setStyleAsString || fetchOptions.needStyleStr) && !styleStr && !isStyleFetched;
   return shouldFetchStyle;
 }
 
@@ -21,7 +21,7 @@ function judgeFetchStyleStr(appName: string, fetchOptions: IFetchOptions) {
 function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
   return {
     RemoteModule: props.Component,
-    styleStr: props.getStyleStr?.('') || '',
+    styleStr: props.handleStyleStr?.('') || '',
     styleUrlList: [],
     moduleReady: false,
   };
@@ -81,14 +81,14 @@ export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
         return share.fetchRemoteModule(props, passCtx);
       }
 
-      // 组件已获取完毕，需要获取样式字符串，则继续执行 fetchRemoteAppStyle
+      // 组件已获取完毕，如需获取样式字符串，则继续执行 fetchRemoteAppStyle
       const shouldFetchStyleStr = judgeFetchStyleStr(appName, fetchOptions);
       if (shouldFetchStyleStr) {
         return share.fetchRemoteModuleStyle(props, passCtx);
       }
 
       // 设置了需要附加 css 列表，则返回对象里包含具体的 styleUrlList
-      const styleUrlList = fetchOptions.appendCss ? appStyleSrv.getStyleUrlList(appName, fetchOptions) : [];
+      const styleUrlList = appStyleSrv.getStyleUrlList(appName, fetchOptions);
       const styleStr = appStyleSrv.getStyleStr(appName, fetchOptions);
       return { RemoteModule, styleStr, styleUrlList, moduleReady: true };
     },

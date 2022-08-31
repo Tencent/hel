@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.6.9",
+  "version": "3.7.7",
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/hel-micro.min.js",
@@ -11,26 +11,27 @@
   },
   "bundleDependencies": [],
   "dependencies": {
-    "hel-micro-core": "^3.6.4",
+    "hel-micro-core": "^3.7.4",
     "hel-types": "^3.6.0"
+  
   },
   "peerDependencies": {
+    "hel-micro-core": "^3.7.4",
     "hel-types": "^3.6.0"
   },
   "deprecated": false,
-  "description": "a solution of using micro module for frontend development",
+  "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@types/jest": "^27.5.0",
-    "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
+    "tslib": "^1.13.0",
     "babel-cli": "^6.26.0",
     "cross-env": "^7.0.2",
     "jest": "^28.1.0",
-    "qs": "^6.10.3",
     "rollup": "^2.23.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -47,6 +48,7 @@
     "lib",
     "es",
     "src",
+    "README.md",
     "tsconfig.json"
   ],
   "scripts": {

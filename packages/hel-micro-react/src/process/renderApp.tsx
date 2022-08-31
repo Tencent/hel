@@ -1,7 +1,8 @@
 import type { IRenderAppOptions } from '../types';
-import { emitApp, core } from 'hel-micro';
 import React from 'react';
 import ReactDom from 'react-dom';
+import { emitApp, core } from 'hel-micro';
+import { getDefaultPlatform } from '../_diff/index';
 
 
 function getHostNode(hostNodeId?: string) {
@@ -21,7 +22,8 @@ function getHostNode(hostNodeId?: string) {
  * @returns 
  */
 export default function renderApp(options: IRenderAppOptions) {
-  const { App, renderSelf, appGroupName, lifecycle, platform, hostNodeId, renderSelfFn, createRoot } = options;
+  const { App, renderSelf, appGroupName, lifecycle, hostNodeId, renderSelfFn, createRoot } = options;
+  const platform = getDefaultPlatform(options.platform);
   // 如用户未自定义自渲染值 renderSelf， 则走非子应用(即是主应用)时才执行自渲染的逻辑
   const needRenderSelf = !core.isSubApp();
   const finalRenderSelf = renderSelf ?? needRenderSelf;

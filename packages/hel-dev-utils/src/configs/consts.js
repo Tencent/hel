@@ -1,2 +1,3 @@
+import * as diff from '../_diff/index';
 
-export const PLUGIN_VER = '1.0.0';
+export const PLUGIN_VER = diff.PLUGIN_VER;

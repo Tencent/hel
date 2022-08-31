@@ -1,7 +1,7 @@
 import type { ISubApp, ISubAppVersion, IAssetItem, ILinkAttrs, IScriptAttrs, ItemTag, IAssetItemAttrs } from 'hel-types';
 import type { IInnerPreFetchOptions, CssAppendType } from '../types';
 import { getGlobalThis } from 'hel-micro-core';
-import { helScriptId, helLinkId } from '../util';
+import { helScriptId, helLinkId, noop, getAllExtraCssList, merge2List } from '../util';
 
 /**
  * 做一下净化处理
@@ -48,18 +48,29 @@ function isDomSrcEqualSrc(dom: HTMLScriptElement, src: string) {
 
 
 function isScriptExisted(scriptId: string, src: string) {
-  const doms = getGlobalThis().document.querySelectorAll(`#${scriptId}`);
-  const len = doms.length;
+  // avoid error: '#helScript_@xxx/yyy' is not a valid selector.
+  const doc = getGlobalThis()?.document;
   let result = false;
-  for (let i = 0; i < len; i++) {
-    const dom = doms[i];
-    if (dom.nodeName === 'SCRIPT' && isDomSrcEqualSrc(dom as HTMLScriptElement, src)) {
-      result = true;
-      break;
-    }
+  if (!doc) {
+    return result;
   }
 
-  return result;
+  try {
+    // 为跳过其他错误干扰正常运行，此处不适合单独 try querySelectorAll
+    const doms = doc.querySelectorAll(`#${scriptId}`);
+    const len = doms.length;
+    for (let i = 0; i < len; i++) {
+      const dom = doms[i];
+      if (dom.nodeName === 'SCRIPT' && isDomSrcEqualSrc(dom as HTMLScriptElement, src)) {
+        result = true;
+        break;
+      }
+    }
+
+    return result;
+  } catch (err: any) {
+    return result;
+  }
 }
 
 
@@ -117,11 +128,13 @@ const getCssType = (webDirPath: string, cssUrl: string): CssAppendType => {
 
 // 相比 as 写法，谓词可直接将 attrs 类型缩小并适用于整个 if block 块里
 function isLinkAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is ILinkAttrs {
+  noop(attrs);
   return tag === 'link';
 }
 
 
 function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAttrs {
+  noop(attrs);
   return tag === 'script';
 }
 
@@ -165,18 +178,19 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   const {
     name, additional_scripts: additionalScripts = [], additional_body_scripts: additionalBodyScripts = [],
   } = app;
-  const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList } = version.src_map;
+  const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList = [] } = version.src_map;
   const {
-    useAdditionalScript = false, appendCss = true, cssAppendTypes = ['static', 'build'],
-    getExcludeCssList,
+    useAdditionalScript = false, appendCss = true, cssAppendTypes = ['static', 'build'], getExcludeCssList,
   } = loadOptions;
-  const excludeCssList = getExcludeCssList?.(chunkCssSrcList, { version }) || [];
+  const allExtraCssList = getAllExtraCssList(loadOptions);
+  const allCssList = merge2List(allExtraCssList, chunkCssSrcList);
+  const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
 
   const createAdditionalScripts = (scripts?: string[], appendToBody?: boolean) => {
     if (!scripts) return;
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
-      if (scriptUrl.endsWith('.css')) {
+      if (scriptUrl.endsWith('.css') && appendCss && !excludeCssList.includes(scriptUrl)) {
         createLinkElement(name, appendToBody, { href: scriptUrl, rel: 'stylesheet' });
       } else {
         createScriptElement(name, scriptUrl, appendToBody);
@@ -188,6 +202,8 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     createAdditionalScripts(additionalScripts, false);
     createAdditionalScripts(additionalBodyScripts, true);
   }
+
+  createAdditionalScripts(allExtraCssList, false);
 
   const optionsCommon = { excludeCssList, webDirPath, appendCss, cssAppendTypes };
   createDomByAssetList(name, headAssetList, { appendToBody: false, ...optionsCommon });

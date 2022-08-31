@@ -11,6 +11,7 @@ export interface IFetchOptions {
   platform: string,
   appendCss?: boolean,
   setStyleAsString?: boolean,
+  needStyleStr?: boolean,
   versionId?: string,
   enableDiskCache?: boolean,
   onAppVersionFetched?: (appVersion: ISubAppVersion) => any,
@@ -25,14 +26,18 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   ensuredProps.isLib = props.isLib ?? false;
   ensuredProps.shadow = props.shadow ?? defaults.SHADOW;
   ensuredProps.setStyleAsString = props.setStyleAsString ?? defaults.SET_STYLE_AS_STRING;
+  // 显示配置了 onStyleFetched，needStyleStr 一定是 true
+  ensuredProps.needStyleStr = props.needStyleStr || props.onStyleFetched !== undefined;
   // 是否需要样式字符串（仅针对shadow配置有效）
-  const needStyleStr = ensuredProps.shadow && ensuredProps.setStyleAsString;
-  // 如果未显式设置是否 appendCss 值，appendCss 默认值受是否需要样式字符串 needStyleStr 值影响，需要样式字符串则不附加，反正则附加
+  const needStyleStrForShadow = ensuredProps.shadow && ensuredProps.setStyleAsString;
+  // 如果未显式设置是否 appendCss 值，appendCss 默认值受是否需要样式字符串 needStyleStrForShadow 值影响，需要样式字符串则不附加，反正则附加
   // 点击 props.appendCss 可进一步查看详细的默认值生成规则说明
-  ensuredProps.appendCss = props.appendCss ?? (!needStyleStr);
+  ensuredProps.appendCss = props.appendCss ?? (!needStyleStrForShadow);
   ensuredProps.compProps = props.compProps || {};
   ensuredProps.children = ensuredProps.compProps.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
+  ensuredProps.shadowMode = props.shadowMode || 'v1';
+  ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
 
   return ensuredProps;
 }
@@ -57,6 +62,16 @@ export function getFetchingResult(SkeletonView: any) {
     styleUrlList: [],
     moduleReady: false,
   };
+}
+
+
+export function tryTriggerOnStyleFetched(props: IInnerRemoteModuleProps) {
+  if (props.onStyleFetched) {
+    const oriStyleStr = appStyleSrv.getStyleStr(props.name, props);
+    const styleUrlList = appStyleSrv.getStyleUrlList(props.name, props);
+    const mayHandledStyleStr = props.handleStyleStr?.(oriStyleStr) || oriStyleStr;
+    props.onStyleFetched({ mayHandledStyleStr, oriStyleStr, styleUrlList });
+  }
 }
 
 
@@ -102,6 +117,7 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
   // 异步拉取样式函数 
   appStyleSrv.fetchStyleStr(props.name, fetchOptions).then(() => {
     isLoadAppStyleExecutingRef.current = false;
+    tryTriggerOnStyleFetched(props);
     forceUpdate();
   }).catch(err => {
     isLoadAppStyleExecutingRef.current = false;
@@ -160,6 +176,7 @@ export function extractOptionsFromProps(props: IInnerRemoteModuleProps): IFetchO
     setStyleAsString: props.setStyleAsString,
     enableDiskCache: props.enableDiskCache,
     onAppVersionFetched: props.onAppVersionFetched,
+    needStyleStr: props.needStyleStr,
     extraCssUrlList,
   };
 }

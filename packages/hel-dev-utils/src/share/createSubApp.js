@@ -15,26 +15,26 @@ const presetExternals = {
  * 
  * @param {Record<string, any>} pkg
  * @param {IInnerSubAppOptions} innerOptions
- * @param {ICreateSubAppOptions} userOptions
+ * @param {ICreateSubAppOptions} [userOptions]
  * @returns
  */
 export default function createSubApp(pkg, innerOptions, userOptions) {
   const { frameworkType } = innerOptions;
   const optionsVar = userOptions || {};
-  // 设置 defaultHomePage，让下面的 getPublicPathOrUrl 第一位参数生效 
+  // 设置 defaultHomePage 为 ''，是为了让下面的 getPublicPathOrUrl 第一位参数生效 
   const envParams = base.getHelEnvParams(pkg, { defaultHomePage: '' });
   const externals = optionsVar.externals || presetExternals[frameworkType];
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 
-  if (userOptions.npmCdnType) {
-    envParams.appHomePage = getNpmCdnHomePage(pkg, userOptions.npmCdnType);
+  if (optionsVar.npmCdnType) {
+    envParams.appHomePage = getNpmCdnHomePage(pkg, optionsVar.npmCdnType);
   }
 
   return {
     /**
      * 资源的网络根目录
      * 形如：
-     * 1 /web-app/sub-apps/om
+     * 1 /web-app/sub-apps/ticket
      * 2 http://www.cdn.com/xxx/yyy
      */
     homePage: envParams.appHomePage,

@@ -1,4 +1,9 @@
+import type { IInnerPreFetchOptions } from './types';
 import { allowLog, getGlobalThis } from 'hel-micro-core';
+
+export function noop(...args: any) {
+  return args;
+}
 
 export function perfStart(label: string) {
   if (allowLog()) {
@@ -31,6 +36,14 @@ export function noDupPush(list: any[], item: any) {
   if (!list.includes(item)) {
     list.push(item);
   }
+}
+
+
+export function merge2List(list1: string[], list2: string[]) {
+  const mergedList: string[] = [];
+  list1.forEach(v => noDupPush(mergedList, v));
+  list2.forEach(v => noDupPush(mergedList, v));
+  return mergedList;
 }
 
 
@@ -107,13 +120,92 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
 }
 
 
+export async function getUnpkgLatestVer(appName: string) {
+  // https://unpkg.com/hel-lodash@1.2.21/1659925934381
+  const { url } = await requestGet(`https://unpkg.com/${appName}@latest/${Date.now()}_${appName}`);
+  const [, includeVer] = url.split('@');
+  const [ver] = includeVer.split('/');
+  return ver;
+}
+
+
 export async function requestGet(url: string, asJson = true) {
   const res = await getGlobalThis().fetch(url);
+  const { status, url: resUrl } = res;
+  if (status === 404) {
+    return { url: resUrl, data: null };
+  }
+
   if (asJson) {
     const json = await res.json();
-    return json;
+    return { url: resUrl, data: json };
   }
 
   const text = await res.text();
-  return text;
+  return { url: resUrl, data: text };
+}
+
+
+export async function getCustomMeta(appName: string, customHost: string) {
+  const t = Date.now();
+  const { data } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
+  if (data) {
+    data.app.__fromCust = true;
+    return data;
+  }
+
+  const reply = await requestGet(`${customHost}/index.html?_t=${t}`, false);
+  const htmlText = reply.data;
+  const reg = /(?<=(src="))[^"]*?(?=")/ig;
+  const srcList: string[] = htmlText.match(reg) || [];
+  const bodyAssetList: any[] = [];
+  srcList.map((v: string) => {
+    if (v.startsWith(customHost)) {
+      bodyAssetList.push({
+        tag: 'script',
+        attrs: {
+          src: v,
+        },
+      });
+    }
+  });
+
+  return {
+    app: {
+      // @ts-ignore，标记来自 cust 配置
+      __fromCust: true,
+      name: appName,
+      app_group_name: appName,
+      online_version: '',
+      build_version: '',
+    },
+    version: {
+      sub_app_name: appName,
+      sub_app_version: '',
+      src_map: {
+        headAssetList: [],
+        bodyAssetList,
+      },
+    }
+  };
+}
+
+
+export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
+  const { extraCssList = [], custom } = loadOptions;
+  if (custom) {
+    const { extraCssList: custCssList, cssStrategy = 'only_cust', enable = true } = custom;
+    if (!enable) {
+      return extraCssList;
+    }
+    if (cssStrategy === 'only_cust') {
+      return custCssList;
+    }
+    if (cssStrategy === 'only_out') {
+      return extraCssList;
+    }
+    const mergedList: string[] = merge2List(extraCssList, custCssList);
+    return mergedList;
+  }
+  return extraCssList;
 }

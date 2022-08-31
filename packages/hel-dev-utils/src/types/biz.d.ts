@@ -33,20 +33,14 @@ export interface FileDesc {
   fileWebPathWithoutHost: string;
 }
 
-export interface IExtractOptions {
-  appName: string;
-  appHomePage: string;
-  buildDirFullPath: string;
-  extractMode: string;
-}
-
 export interface IUserExtractOptions {
   buildDirFullPath: string;
   packageJson: Record<string, any>;
-  extractMode?: string;
+  /** default: 'build'，插件的资源清单元数据提取方式，build：只提取构建产物，bu_st：构建产物和静态产生都提取 */
+  extractMode?: 'build' | 'bu_st';
   /** default: hel_dist */
-  distDir: ?string;
-  /** default: packageJson.name */
+  distDir?: string;
+  /** default: process.env.HEL_APP_NAME || pkg.appGroupName */
   appName?: string;
   /** default: true */
   writeMetaJsonToDist?: boolean;

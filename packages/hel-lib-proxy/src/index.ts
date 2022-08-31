@@ -10,6 +10,7 @@ import core from 'hel-micro-core';
 import * as share from './share';
 export * from './typings';
 
+core.log(' hel-micro-core ver 3.7.3');
 
 /** 
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
@@ -66,6 +67,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
  */
 export function libReady(appGroupName: string, libProperties: LibProperties, options?: IOptions) {
   const mergedOptions = share.getMergedOptions(options);
+  core.log('[[ libReady ]] mergedOptions: ', mergedOptions);
   // 将注册结果交给 preFetch 函数返回给调用方
   core.libReady(appGroupName, libProperties, mergedOptions);
 }

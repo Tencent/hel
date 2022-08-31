@@ -5,14 +5,14 @@ import type { IGetOptionsLoose, IPlatAndVer, IInnerPreFetchOptions } from '../ty
 import type { HelLoadStatusEnum } from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
 import * as core from 'hel-micro-core';
-import { requestGet } from '../util';
+import { requestGet, merge2List } from '../util';
 import { getPlatAndVer } from './appParam';
 import { isEmitVerMatchInputVer } from '../shared/util';
 
 const { LOADED, LOADING } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
-/** 缓存拉去过的字符串 */
+/** 缓存拉去过的字符串, TODO: 下沉到 core */
 const cssUrlMap: Record<string, string> = {};
 interface IFetchStyleOptions extends IGetOptionsLoose {
   /** 支持透传额外的样式地址列表 */
@@ -33,11 +33,15 @@ const inner = {
   getStyleUrlList(appName: string, options: IGetOptionsLoose): string[] {
     const platAndVer = getPlatAndVer(appName, options);
     const appVersion = core.getVersion(appName, platAndVer);
+    const extraCssList = core.getVerExtraCssList(appName, platAndVer);
+
+    let buildCssList: string[] = [];
     if (appVersion) {
-      const allCssList = appVersion.src_map?.chunkCssSrcList || [];
-      return allCssList;
+      buildCssList = appVersion.src_map?.chunkCssSrcList || [];
     }
-    return [];
+
+    const allCssList = merge2List(extraCssList, buildCssList);
+    return allCssList;
   },
 
   async fetchStyleStr(cssList: string[]) {
@@ -47,7 +51,14 @@ const inner = {
       const cssUrl = cssList[i];
       let cachedCssStr = cssUrlMap[cssUrl];
       if (!cachedCssStr) {
-        cachedCssStr = await requestGet(cssUrl, false);
+        // 此处在 for 循环里 try catch，是为了保证 css 获取失败时，不影响组件加载
+        // 例如 net::ERR_NAME_NOT_RESOLVED
+        try {
+          const reply = await requestGet(cssUrl, false);
+          cachedCssStr = reply.data;
+        } catch (err: any) {
+          console.error(err);
+        }
       }
       str += cachedCssStr;
     }

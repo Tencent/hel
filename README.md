@@ -47,6 +47,8 @@ async function main() {
   await preFetchLib("hel-lodash");
   await import("./loadApp"); // 入口文件后移
 }
+
+main().catch(console.error);
 ```
 
 在入口文件里关联的任意文件处静态导入`hel-micro`并调用模块方法

@@ -1,6 +1,7 @@
 
 import type { IEmitAppInfo, Platform } from 'hel-types';
 import type { IGetOptions } from 'hel-micro-core';
+import type { IInnerPreFetchOptions } from '../types';
 import { getPlatform, log, getVerLib, getVerApp, getPlatformConfig, getAppMeta } from 'hel-micro-core';
 import { isEmitVerMatchInputVer } from '../shared/util';
 
@@ -32,9 +33,9 @@ interface IJudgeOptions {
   platform?: Platform;
   versionId?: string;
 }
-export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions) {
+export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, preFetchOptions: IInnerPreFetchOptions) {
   log('[[ judgeAppReady ]] receive emitApp', appInfo);
-  const { versionId: inputVer = '', appName, platform, next, strictMatchVer = false } = options;
+  const { versionId: inputVer = '', appName, platform, next, strictMatchVer } = options;
   const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);
@@ -44,6 +45,14 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions) {
   if (strictMatchVer === false && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
     log('[[ judgeAppReady ]] treat emitApp as wanted under strictMatchVer === false', appInfo);
     next();
+  }
+
+  const { custom } = preFetchOptions;
+  if (custom) {
+    const { enable = true, host, appGroupName: customAppGroupName } = custom;
+    if (enable && host && (appGroupName === appName || appGroupName === customAppGroupName)) {
+      next();
+    }
   }
 
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来

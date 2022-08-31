@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-react",
-  "version": "3.6.1",
+  "version": "3.7.0",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "src/index.ts",
@@ -12,12 +12,12 @@
   "description": "react implementation of hel-micro",
   "bundleDependencies": false,
   "dependencies": {
-    "hel-micro": "^3.6.0",
+    "hel-micro": "^3.7.7",
     "hel-types": "^3.6.0",
     "shadow-view": "^4.0.1"
   },
   "peerDependencies": {
-    "hel-micro": "^3.6.0",
+    "hel-micro": "^3.7.7",
     "hel-types": "^3.6.0",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2"
@@ -43,6 +43,7 @@
     "lib",
     "es",
     "src",
+    "README.md",
     "tsconfig.json"
   ],
   "scripts": {

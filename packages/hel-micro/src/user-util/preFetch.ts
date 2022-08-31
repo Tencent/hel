@@ -1,11 +1,12 @@
 import type { IEmitAppInfo } from 'hel-types';
 import type { IGetOptions } from 'hel-micro-core';
-import type { IInnerPreFetchOptions, IPreFetchLibOptions, IPreFetchAppOptions, AnyRecord, Version } from '../types';
+import type { IInnerPreFetchOptions, IPreFetchLibOptions, IPreFetchAppOptions, AnyRecord, VersionId } from '../types';
 import {
-  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig,
+  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig, getSharedCache,
 } from 'hel-micro-core';
 import { loadApp } from '../services/app';
 import * as logicSrv from '../services/logic';
+import { getDefaultPlatform } from '../_diff/index';
 
 const eventBus = getHelEventBus();
 
@@ -14,15 +15,22 @@ interface IWaitOptions extends IGetOptions {
   loadAssetsStarter?: (() => void) | null;
 }
 
+function makePreFetchOptions(isLib: boolean, options?: IPreFetchAppOptions | VersionId) {
+  let targetOpts: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
+  targetOpts.platform = getDefaultPlatform(targetOpts.platform);
+  targetOpts.isLib = isLib;
+  return targetOpts;
+}
 
-async function waitAppEmit(appName: string, waitOptions: IWaitOptions) {
+
+async function waitAppEmit(appName: string, waitOptions: IWaitOptions, preFetchOptions: IInnerPreFetchOptions) {
   const { platform, isLib, loadAssetsStarter, versionId, strictMatchVer } = waitOptions;
   const eventName = isLib ? helEvents.SUB_LIB_LOADED : helEvents.SUB_APP_LOADED;
 
   let handleAppLoaded: any = null;
   await new Promise((resolve) => {
     handleAppLoaded = (appInfo: IEmitAppInfo) => {
-      logicSrv.judgeAppReady(appInfo, { appName, platform, versionId, isLib, next: resolve, strictMatchVer });
+      logicSrv.judgeAppReady(appInfo, { appName, platform, versionId, isLib, next: resolve, strictMatchVer }, preFetchOptions);
     };
 
     // 先监听，再触发资源加载，确保监听不会有遗漏
@@ -46,13 +54,12 @@ async function waitAppEmit(appName: string, waitOptions: IWaitOptions) {
  * @param iOptions
  * @returns
  */
-async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) {
+async function innerPreFetch(appName: string, iOptions: IInnerPreFetchOptions) {
   let emitApp: null | IEmitAppInfo = null;
   try {
-    const options = iOptions || {};
-    const { isLib = false, versionId } = options;
-    const conf = getPlatformConfig(options.platform);
-    const platform = conf.platform;
+    const options = iOptions;
+    const { isLib = false, versionId, platform } = options;
+    const conf = getPlatformConfig(platform);
     // 用户未传的话走平台默认值 true
     const strictMatchVer = options.strictMatchVer ?? conf.strictMatchVer;
     const waitOptions = { platform, isLib, versionId, strictMatchVer };
@@ -74,7 +81,7 @@ async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) 
     const currentLoadStatus = getVerLoadStatus(appName, getOptions);
     // 已加载完毕，（子应用js已开始执行）, 未拿到数据说明应用有异步依赖，继续等一下，直到拿到数据
     if (currentLoadStatus === helLoadStatus.LOADED) {
-      emitApp = await waitAppEmit(appName, waitOptions);
+      emitApp = await waitAppEmit(appName, waitOptions, iOptions);
       log('[[ preFetch ]] return emit app', appName, iOptions);
       return emitApp;
     }
@@ -85,7 +92,7 @@ async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) 
       loadAssetsStarter = await loadApp(appName, { ...options, controlLoadAssets: true });
     }
 
-    emitApp = await waitAppEmit(appName, { ...waitOptions, loadAssetsStarter });
+    emitApp = await waitAppEmit(appName, { ...waitOptions, loadAssetsStarter }, iOptions);
     log('[[ preFetch ]] return fetch&emit app', appName, iOptions);
     return emitApp;
   } catch (err) {
@@ -101,15 +108,23 @@ async function innerPreFetch(appName: string, iOptions?: IInnerPreFetchOptions) 
  * 这里采取相信用户传递的是正确的模块名原则，故返回类型不写为 Promise<T | null>，
  * 如用户需要有空值返回断言处理，可以写为
  * ```js
- *  const lib = await preFetchLib(Lib | null)('remote-lib-tpl');
+ *  const lib = await preFetchLib<Lib | null>('remote-lib-tpl');
  * ```
  */
 export async function preFetchLib<T extends AnyRecord = AnyRecord>(
-  appName: string, options?: IPreFetchLibOptions | Version,
+  appName: string, options?: IPreFetchLibOptions | VersionId,
 ): Promise<T> {
-  let targetOpts: IPreFetchLibOptions = typeof options === 'string' ? { versionId: options } : options;
-  const optionsCopy = { ...(targetOpts || {}), isLib: true };
-  const appInfo = await innerPreFetch(appName, optionsCopy);
+  const targetOpts = makePreFetchOptions(true, options);
+  const appInfo = await innerPreFetch(appName, targetOpts);
+  
+  // xc 定制逻辑
+  if (!appInfo) {
+    const cache = getSharedCache(targetOpts.platform);
+    const appProperties: any = cache.appName2Lib[appName];
+    if (appProperties) {
+      return appProperties;
+    }
+  }
   if (!appInfo) {
     throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!`);
   }
@@ -121,9 +136,8 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(
  * 等待 helEvents.SUB_APP_LOADED 信号发射的应用根组件
  * 由中间层ui适配库自己实现，如 hel-micro-react 的 renderApp
  */
-export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | Version) {
-  let targetOpts: IPreFetchLibOptions = typeof options === 'string' ? { versionId: options } : options;
-  const optionsCopy = { ...(targetOpts || {}), isLib: false };
-  const appInfo = await innerPreFetch(appName, optionsCopy);
+export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | VersionId) {
+  const targetOpts = makePreFetchOptions(false, options);
+  const appInfo = await innerPreFetch(appName, targetOpts);
   return appInfo;
 };
