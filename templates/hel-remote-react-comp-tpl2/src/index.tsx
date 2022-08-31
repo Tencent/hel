@@ -6,7 +6,7 @@
 | entrance/libProperties 和 loadApp 模块下有其他远程模块依赖且想在整个项目使用静态导入时，
 | 可在此文件main 函数里使用 helMicro.preFetchLib 来提前加载别的远程依赖，
 |
-| @author: fancyzhong
+| @author: fantasticsoul
 | @date: 2022-06-05
 |--------------------------------------------------------------------------
 */

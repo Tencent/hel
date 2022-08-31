@@ -25,7 +25,7 @@ const App = React.forwardRef(function App(props: IProps, ref: any) {
         </p>
         <a
           className="App-link"
-          href="https://hel.pages.woa.com"
+          href="https://www.baidu.com"
           target="_blank"
           rel="noopener noreferrer"
         >
