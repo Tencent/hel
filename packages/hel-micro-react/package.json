@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-react",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "src/index.ts",

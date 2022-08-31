@@ -9,6 +9,7 @@ import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
 import { tryTriggerOnStyleFetched } from '../components/share';
 import defaults from '../consts/defaults';
+import { getDefaultPlatform } from '../_diff/index';
 import { useForceUpdate, delay } from './share';
 
 const { H1_STYLE } = defaults;
@@ -19,6 +20,8 @@ const { H1_STYLE } = defaults;
  */
 export function useRemoteCompLogic(name: string, compName: string, options: IInnerUseRemoteCompOptions) {
   const passProps: IInnerRemoteModuleProps = { ...(options || {}), name, compName, isLib: true };
+  passProps.platform = getDefaultPlatform(passProps.platform);
+
   const { needMemo = true } = passProps;
   const factory = () => {
     return forwardRef((compProps: React.PropsWithoutRef<any>, reactRef: React.Ref<any>) => {
@@ -48,6 +51,7 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
  */
 export function useRemoteLibCompLogic(name: string, compName: string, options: IUseRemoteLibCompOptions) {
   const { Skeleton, Error, ...restOptions } = options;
+  restOptions.platform = getDefaultPlatform(restOptions.platform);
   const forceUpdate = useForceUpdate();
   const isFetchExecuteRef = React.useRef(false);
   const compRef = React.useRef((Skeleton || BuildInSkeleton) as any);

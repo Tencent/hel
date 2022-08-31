@@ -2,14 +2,6 @@
 
 STATUS.md
 
-# dwt files
-dwt-cases.yml
-dwt-junit.xml
-dwt-reporter.html
-dwt-result.json
-dwt-tmp-result
-
-
 # dependencies
 /node_modules
 /.pnp
