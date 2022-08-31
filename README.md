@@ -2,7 +2,12 @@
 <img width="620px" alt="hel-logo"  src="https://user-images.githubusercontent.com/7334950/186912479-463a6788-41fd-474d-83ed-08314909d70d.png" />
 </p>
 
+
+
+## [Doc](https://tnfe.github.io/hel)
 **hel-micro**, 模块联邦sdk化，免构建、热更新、工具链无关的微模块方案
+
+see doc： https://tnfe.github.io/hel
 
 ## Demo
 [hel-loadash codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
