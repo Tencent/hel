@@ -148,10 +148,14 @@ export async function requestGet(url: string, asJson = true) {
 
 export async function getCustomMeta(appName: string, customHost: string) {
   const t = Date.now();
-  const { data } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
-  if (data) {
-    data.app.__fromCust = true;
-    return data;
+  try {
+    const { data } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
+    if (data) {
+      data.app.__fromCust = true;
+      return data;
+    }
+  } catch (err: any) {
+    noop('json parse fail or other error');
   }
 
   const reply = await requestGet(`${customHost}/index.html?_t=${t}`, false);
@@ -194,7 +198,7 @@ export async function getCustomMeta(appName: string, customHost: string) {
 export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
   const { extraCssList = [], custom } = loadOptions;
   if (custom) {
-    const { extraCssList: custCssList, cssStrategy = 'only_cust', enable = true } = custom;
+    const { extraCssList: custCssList = [], cssStrategy = 'only_cust', enable = true } = custom;
     if (!enable) {
       return extraCssList;
     }

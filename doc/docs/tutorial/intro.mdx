@@ -17,15 +17,15 @@ sidebar_position: 1
 npm install hel-micro
 ```
 
-以下内容将使用[hel-remote-lib-tpl](https://www.to-be-added.com/coming-soon)作为示例
+以下内容将使用[hel-tpl-remote-lib](https://www.to-be-added.com/coming-soon)作为示例
 ### 懒加载远程模块
-在你的任意文件里使用`preFetchLib`接口导入`hel-remote-lib-tpl`模块
+在你的任意文件里使用`preFetchLib`接口导入`hel-tpl-remote-lib`模块
 
 ```jsx title="src/some-dir/some-file.js"
 import helMicro from '/hel-micro';
 
 export async function callRemoteMethod() {
-  const lib = await helMicro.preFetchLib('hel-remote-lib-tpl');
+  const lib = await helMicro.preFetchLib('hel-tpl-remote-lib');
   return lib.num.random(22);
 }
 ```
@@ -35,7 +35,7 @@ export async function callRemoteMethod() {
 
 <button onClick={async function(){
   const helMicro = await import('hel-micro');
-  const lib = await helMicro.preFetchLib('hel-remote-lib-tpl');
+  const lib = await helMicro.preFetchLib('hel-tpl-remote-lib');
   alert(lib.num.random(22));
 }}>Click me to call remote method!</button>
 ```
@@ -44,20 +44,20 @@ export async function callRemoteMethod() {
 <button 
   style={{backgroundColor:'var(--ifm-color-primary)', color:'white', fontSize:'22px', border:'none'}}       onClick={async function(){
     const helMicro = await import('hel-micro');
-    const lib = await helMicro.preFetchLib('hel-remote-lib-tpl');
+    const lib = await helMicro.preFetchLib('hel-tpl-remote-lib');
     alert(lib.num.random(22));
 }}>点我获取返回结果</button>
 
 <p></p>
 
-`preFetchLib`默认返回`hel-remote-lib-tpl`模块的最新版本，也支持透传`versionId`指定具体的版本号来获取，以下示例将导入两个有问题的版本号模块并调用其`random`方法
+`preFetchLib`默认返回`hel-tpl-remote-lib`模块的最新版本，也支持透传`versionId`指定具体的版本号来获取，以下示例将导入两个有问题的版本号模块并调用其`random`方法
 
 
 ```js
 <button onClick={async function(){
   const helMicro = await import('hel-micro');
   const lib = await helMicro.preFetchLib(
-    'hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220522003658' },
+    'hel-tpl-remote-lib', { versionId:'2.0.0' },
   );
   alert(lib.num.random(22));
 }}>固定返回10000</button>
@@ -68,7 +68,7 @@ export async function callRemoteMethod() {
   onClick={async function(){
     const helMicro = await import('hel-micro');
     const lib = await helMicro.preFetchLib(
-      'hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220522003658' },
+      'hel-tpl-remote-lib', { versionId:'2.0.0' },
   );
   alert(lib.num.random(22));
 }}>固定返回10000</button>
@@ -79,7 +79,7 @@ export async function callRemoteMethod() {
 <button onClick={async function(){
   const helMicro = await import('hel-micro');
   const lib = await helMicro.preFetchLib(
-    'hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220522003853' },
+    'hel-tpl-remote-lib', { versionId:'2.0.1' },
   );
   alert(lib.num.random(22));
 }}>固定返回888</button>
@@ -90,7 +90,7 @@ export async function callRemoteMethod() {
   onClick={async function(){
     const helMicro = await import('hel-micro');
     const lib = await helMicro.preFetchLib(
-      'hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220522003853' },
+      'hel-tpl-remote-lib', { versionId:'2.0.1' },
   );
   alert(lib.num.random(22));
 }}>固定返回888</button>
@@ -112,16 +112,16 @@ ReactDOM.render(<App/>, document.getElementById('root'));
 ```jsx title="src/index.js"
 (async function(){
     const helMicro = await import('hel-micro');
-    await helMicro.preFetchLib('hel-remote-lib-tpl');
+    await helMicro.preFetchLib('hel-tpl-remote-lib');
     import('./loadApp')
 })()
 ```
 
-之后你只需要使用npm安装`hel-remote-lib-tpl`包，就可以项目任意文件头部静态导入该模块了
+之后你只需要使用npm安装`hel-tpl-remote-lib`包，就可以项目任意文件头部静态导入该模块了
 > 如果是懒加载模式，且不关心模块源码与类型，可以不用安装此npm包
 
 ```jsx title="src/whatever.js"
-import remoteLib from 'hel-remote-lib-tpl';
+import remoteLib from 'hel-tpl-remote-lib';
 
 function callRemoteMethod(){
   return remoteLib.num.random(19);

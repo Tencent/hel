@@ -1,20 +1,25 @@
 import type { ISubApp, ISubAppVersion, ApiMode, Platform } from 'hel-types';
+import type { IInnerPreFetchOptions } from '../types';
 import { safeParse, requestGet, perfStart, perfEnd, getLocalStorage, getUnpkgLatestVer } from '../util';
 import { getPlatformHost, getPlatformConfig } from '../shared/platform';
 import { getJSON } from '../dom/jsonp';
 import { apiSrvConst, PLAT_UNPKG } from '../consts/logic';
 
-export interface IGetUnpkgOptions {
+export interface IUnpkgGetOptions {
   versionId?: string;
   platform?: Platform;
 }
 
-export interface IGetOptions {
+export interface IHelSimpleGetOptions {
   versionId?: string;
   platform?: Platform;
   apiMode?: ApiMode;
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
+}
+
+export interface IHelGetOptions extends IHelSimpleGetOptions {
+  loadOptions?: IInnerPreFetchOptions;
 }
 
 async function executeGet(
@@ -50,7 +55,7 @@ async function executeGet(
     if (!isFullVersion) {
       delete version?.html_content;
     }
-    return { data: ret, code: '0' };
+    return { data: ret, code: '0', msg: '' };
   }
 
   return ret;
@@ -82,8 +87,8 @@ async function getUnpkgUrl(apiHost: string, appName: string, versionId: string) 
 }
 
 
-export function prepareOtherPlatRequestInfo(appName: string, getOptions: IGetOptions = {}) {
-  const { versionId, platform, apiMode, isFullVersion } = getOptions;
+export function prepareOtherPlatRequestInfo(appName: string, getOptions: Omit<IHelGetOptions, 'loadOptions'>) {
+  const { versionId, platform, apiMode, isFullVersion = false } = getOptions;
   const apiHost = getPlatformHost(platform);
   const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey } = getPlatformConfig(platform);
   const userName = getUserName?.({ platform: targetPlatform, appName })
@@ -112,7 +117,7 @@ export function prepareOtherPlatRequestInfo(appName: string, getOptions: IGetOpt
 }
 
 
-export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IGetUnpkgOptions = {}) {
+export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IUnpkgGetOptions = {}) {
   const { versionId, platform } = getOptions;
   const apiHost = getPlatformHost(platform);
   const url = await getUnpkgUrl(apiHost, appName, versionId || '');
@@ -120,7 +125,7 @@ export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: I
 }
 
 
-export async function prepareRequestInfo(appName: string, getOptions: IGetOptions = {}) {
+export async function prepareRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { platform } = getOptions;
   const { platform: targetPlatform } = getPlatformConfig(platform);
   let userName = '';
@@ -156,6 +161,9 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
 
     const finalApiPath = apiPathOfAppVersion || apiPathOfApp || apiSrvConst.API_PATH_PREFIX;
     url = `${apiHost}${finalApiPath}/${finalInterfaceName}?ver=${versionId}`;
+    if (appName) {
+      url += `&name=${appName}`;
+    }
     if (apiSuffix) {
       url += apiSuffix;
     }
@@ -168,10 +176,12 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
 /**
  * 获取子应用和它的最新在线版本
  */
-export async function getSubAppAndItsVersion(appName: string, getOptions: IGetOptions = {}) {
-  const { versionId, platform, apiMode } = getOptions;
+export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
+  const { versionId, platform, apiMode, loadOptions } = getOptions;
   const { getSubAppAndItsVersionFn, platform: targetPlatform } = getPlatformConfig(platform);
   const { url, userName } = await prepareRequestInfo(appName, getOptions);
+  // 如用户在 preFetchLib 或 init 时定义了 getSubAppAndItsVersionFn 函数，则走用户的自定义函数
+  const getFn = loadOptions?.getSubAppAndItsVersionFn || getSubAppAndItsVersionFn;
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
@@ -185,10 +195,9 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IGetOp
     return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version) };
   };
 
-  // 如用户在 init 时定义了 getSubAppAndItsVersionFn 函数，则走用户的自定义函数
-  if (getSubAppAndItsVersionFn) {
+  if (getFn) {
     const data = await Promise.resolve(
-      getSubAppAndItsVersionFn({ platform: targetPlatform, appName, userName, versionId, url, innerRequest })
+      getFn({ platform: targetPlatform, appName, userName, versionId, url, innerRequest })
     ) as { app: ISubApp, version: ISubAppVersion };
     return { app: ensureApp(data.app), version: ensureVersion(data.version) };
   }
@@ -206,33 +215,20 @@ export interface IGetVerOptions {
   isFullVersion?: boolean;
 }
 
+
 /**
  * 获取子应用版本详情 { platform, apiMode, appName: appVersion.sub_app_name }
  */
 export async function getSubAppVersion(versionId: string, options: IGetVerOptions) {
-  const { platform, apiMode, appName, isFullVersion = false } = options;
-  const { getSubAppVersionFn, platform: targetPlatform } = getPlatformConfig(platform);
+  const { platform, apiMode, isFullVersion = false } = options;
+  const { platform: targetPlatform } = getPlatformConfig(platform);
   const url = await prepareRequestVersionUrl(versionId, options);
 
-  // 内部的请求句柄
-  const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
-    const reply = await executeGet(
-      custUrl || url,
-      { apiMode: custApiMode || apiMode, isFullVersion, platform: targetPlatform },
-    );
-    if (0 !== parseInt(reply.code)) {
-      throw new Error(reply.msg || 'ver not found');
-    }
-    return ensureVersion(reply.data);
-  };
-
-  if (getSubAppVersionFn) {
-    const data = await Promise.resolve(
-      getSubAppVersionFn({ platform: targetPlatform, appName, versionId, url, innerRequest })
-    ) as ISubAppVersion;
-    return ensureVersion(data);
+  const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, platform: targetPlatform, onlyVersion: true });
+  if (0 !== parseInt(code)) {
+    throw new Error(msg || 'ver not found');
   }
 
-  const data = await innerRequest();
-  return data;
+  const versionData = ensureVersion(data);
+  return versionData;
 }

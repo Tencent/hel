@@ -22,7 +22,6 @@ export function makeCacheNode(platform) {
     apiPathOfApp: DEFAULT_API_URL,
     apiPathOfAppVersion: '',
     getSubAppAndItsVersionFn: null,
-    getSubAppVersionFn: null,
     onFetchMetaFailed: null,
     userLsKey: '',
     getUserName: null,

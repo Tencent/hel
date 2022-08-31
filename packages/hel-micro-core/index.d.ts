@@ -50,7 +50,6 @@ export interface SharedCache {
   apiPathOfApp: string,
   apiPathOfAppVersion: string,
   getSubAppAndItsVersionFn: null,
-  getSubAppVersionFn: null,
   onFetchMetaFailed: null,
   userLsKey: string,
   getUserName: null,
@@ -135,6 +134,32 @@ export function getPlatform(): Platform;
  */
 export function getPlatformHost(platform?: Platform): string;
 
+export interface IAppAndVer {
+  app: ISubApp;
+  version: ISubAppVersion;
+}
+
+/**
+ * 定义获取 app 和 version 数据的函数
+ * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
+ */
+export interface IGetSubAppAndItsVersionFn {
+  (passCtx: {
+    platform: string,
+    appName: string,
+    userName: string,
+    versionId: string | undefined,
+    url: string,
+    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer>,
+  }): Promise<IAppAndVer> | IAppAndVer
+}
+
+
+/** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据 */
+export interface IOnFetchMetaFailed {
+  (params: { appName: string }): Promise<IAppAndVer> | IAppAndVer | void;
+}
+
 export interface IPlatformConfigFull {
   /**
    * 是否严格匹配版本，默认 true
@@ -161,37 +186,12 @@ export interface IPlatformConfigFull {
    */
   apiPathOfAppVersion: string,
   platform: Platform,
-  /**
-   * 定义获取 app 和 version 数据的函数
-   * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
-   */
-  getSubAppAndItsVersionFn: (passCtx: {
-    platform: string,
-    appName: string,
-    userName: string,
-    versionId: string | undefined,
-    url: string,
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<{ app: ISubApp, version: ISubAppVersion }>,
-  }) => Promise<{ app: ISubApp, version: ISubAppVersion }> | { app: ISubApp, version: ISubAppVersion };
-  /**
-   * 定义获取 version 数据的函数
-   * 如定义了 getSubAppVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfAppVersion 设定均无效
-   */
-  getSubAppVersionFn: (passCtx: {
-    platform: string,
-    appName: string,
-    versionId: string,
-    url: string,
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<ISubAppVersion>,
-  }) => Promise<ISubAppVersion> | ISubAppVersion;
+  getSubAppAndItsVersionFn: IGetSubAppAndItsVersionFn
   /** 默认 'HelUserRtxName'，hel请求时，尝试重 localStorage 的 {userLsKey} 下获取用户名，以便命中灰度版本 */
   userLsKey: string;
   /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
   getUserName: (passCtx: { platform: string, appName: string }) => string;
-  /** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据 */
-  onFetchMetaFailed?: (
-    params: { appName: string },
-  ) => Promise<{ app: ISubApp, version: ISubAppVersion }> | { app: ISubApp, version: ISubAppVersion } | void;
+  onFetchMetaFailed?: IOnFetchMetaFailed;
 }
 
 export type IPlatformConfig = Partial<IPlatformConfigFull>;

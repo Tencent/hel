@@ -185,12 +185,12 @@ export function getPlatformHost(iPlatform) {
 function getPureConfig(mayCache) {
   const {
     apiMode, apiPrefix, apiSuffix, apiPathOfApp, apiPathOfAppVersion,
-    getSubAppAndItsVersionFn, getSubAppVersionFn, onFetchMetaFailed,
+    getSubAppAndItsVersionFn, onFetchMetaFailed,
     strictMatchVer, getUserName, userLsKey, platform,
   } = mayCache;
   return {
     apiMode, apiPrefix, apiSuffix, apiPathOfApp, apiPathOfAppVersion,
-    getSubAppAndItsVersionFn, getSubAppVersionFn, onFetchMetaFailed,
+    getSubAppAndItsVersionFn, onFetchMetaFailed,
     strictMatchVer, getUserName, userLsKey, platform,
   };
 }
@@ -220,7 +220,7 @@ export function getPlatformConfig(iPlatform) {
 }
 
 
-export function setEmitApp(appName, /** @type {import('@tencent/hel-types').IEmitAppInfo} */emitApp) {
+export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo} */emitApp) {
   const { versionId, platform } = emitApp;
   const sharedCache = getSharedCache(platform);
   const { appName2verEmitApp, appName2Comp, appName2EmitApp, appName2app } = sharedCache;
@@ -265,13 +265,13 @@ export function getAppMeta(appName, platform) {
 }
 
 
-export function setAppMeta(/** @type {import('@tencent/hel-types').ISubApp}*/appMeta, platform) {
+export function setAppMeta(/** @type {import('hel-types').ISubApp}*/appMeta, platform) {
   const { appName2app } = getSharedCache(platform);
   appName2app[appMeta.name] = appMeta;
 }
 
 
-export function setEmitLib(appName, /** @type {import('@tencent/hel-types').IEmitAppInfo} */emitApp, options) {
+export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo} */emitApp, options) {
   const { appGroupName } = options || {};
   const { versionId, appProperties } = emitApp;
   const platform = emitApp.platform || options.platform;
@@ -432,7 +432,7 @@ export function getVersion(appName, options) {
 }
 
 
-export function setVersion(appName, /** @type {import('@tencent/hel-types').ISubAppVersion}*/versionData, options) {
+export function setVersion(appName, /** @type {import('hel-types').ISubAppVersion}*/versionData, options) {
   const { platform } = options || {};
   const { appName2verAppVersion, appName2appVersion, appName2app, appGroupName2firstVer } = getSharedCache(platform);
   const versionId = versionData.sub_app_version;

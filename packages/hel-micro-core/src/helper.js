@@ -30,7 +30,7 @@ export function getCacheRoot() {
 }
 
 
-export function isVerMatchOnline(/** @type {import('@tencent/hel-types').ISubApp}*/appMeta, inputVer) {
+export function isVerMatchOnline(/** @type {import('hel-types').ISubApp}*/appMeta, inputVer) {
   // 如果不传版本号，就表示匹配线上版本
   if (!inputVer) {
     return true;

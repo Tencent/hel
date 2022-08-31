@@ -1,13 +1,23 @@
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
-import type { IGetOptions } from './api';
+import type { IHelGetOptions } from './api';
 import type { IInnerPreFetchOptions } from '../types';
 import * as core from 'hel-micro-core';
 import { loadAppAssets } from '../dom';
 import * as apiSrv from './api';
-import { safeParse, getLocalStorage, getCustomMeta, getAllExtraCssList } from '../util';
+import { safeParse, getLocalStorage, getCustomMeta, getAllExtraCssList, noop } from '../util';
 import { getPlatformConfig, getPlatform } from '../shared/platform';
 import storageKeys from '../consts/storageKeys';
 import defaults from '../consts/defaults';
+import { PLAT_UNPKG } from '../consts/logic';
+import { isEmitVerMatchInputVer } from '../shared/util';
+
+
+interface ISrvInnerOptions {
+  platform: Platform;
+  apiMode: ApiMode;
+  versionId: string;
+  loadOptions: IInnerPreFetchOptions;
+}
 
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
@@ -47,25 +57,6 @@ function getDiskCachedApp(appName: string) {
 }
 
 
-/**
- * 尝试获取用户在具体指定了版本号的元数据
- * @param appName
- * @param appVersion
- */
-async function tryGetSpecifiedVersion(appVersion: ISubAppVersion, anotherVerId: string, platform: Platform, apiMode: ApiMode) {
-  const appName = appVersion.sub_app_name;
-  if (anotherVerId) {
-    const anotherVersionData = await apiSrv.getSubAppVersion(anotherVerId, { platform, apiMode, appName });
-    if (!anotherVersionData) {
-      throw new Error(`版本${anotherVerId}不存在`);
-    }
-    core.setVersion(appName, anotherVersionData);
-    return anotherVersionData;
-  }
-  return appVersion;
-}
-
-
 function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
   if (appVersion && typeof options.onAppVersionFetched === 'function') {
     options.onAppVersionFetched(appVersion);
@@ -92,27 +83,41 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
 
   const memApp = core.getAppMeta(appName, platform);
   const memAppVersion = core.getVersion(appName, { platform });
+  // memAppVersion.sub_app_version
 
   try {
-    const gacOptions = { platform, apiMode, versionId, loadOptions: options };
+    const srcInnerOptions = { platform, apiMode, versionId, loadOptions: options };
     // 优先从内存获取
-    if (memApp && memAppVersion) {
+    if (
+      platform !== PLAT_UNPKG
+      && memApp
+      && memAppVersion
+      && isEmitVerMatchInputVer(appName, platform, memAppVersion.sub_app_version, versionId)
+    ) {
       mayCachedApp = { appInfo: memApp, appVersion: memAppVersion };
+
       // 允许使用硬盘缓存的情况下，尝试优先从硬盘获取
     } else if (enableDiskCache) {
       mayCachedApp = getDiskCachedApp(appName);
       if (!mayCachedApp) {
-        mayCachedApp = await getAndCacheApp(appName, gacOptions);
+        mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
       } else {
-        // 将硬盘缓存数据写回到内存
-        cacheApp(mayCachedApp.appInfo, { appVersion: mayCachedApp.appVersion, platform, toDisk: false, loadOptions: options });
-        // 异步缓存一份最新的数据
-        getAndCacheApp(appName, gacOptions).catch(err => err);
+        const { appInfo, appVersion } = mayCachedApp;
+
+        // 缓存无效，从远端获取，（注：enableDiskCache = true 情况下，未指定 versionId 时，总是相信本地缓存是最新的）
+        if (versionId && appVersion.sub_app_version !== versionId) {
+          mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
+        } else {
+          // 将硬盘缓存数据写回到内存
+          cacheApp(appInfo, { appVersion: appVersion, platform, toDisk: false, loadOptions: options });
+          // 异步缓存一份最新的数据
+          getAndCacheApp(appName, srcInnerOptions).catch(err => noop(err));
+        }
       }
 
       // 从远端获取
     } else {
-      mayCachedApp = await getAndCacheApp(appName, gacOptions);
+      mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
     }
 
     // 此处记录【应用组名】对应【平台】，仅为了让模块暴露方在使用 exposeLib 接口或 libReady 接口如未显式的指定平台值，
@@ -121,10 +126,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
     // 出现推导错误的情况出现
     core.setAppPlatform(appName, platform);
 
-    let { appVersion } = mayCachedApp;
-    appVersion = await tryGetSpecifiedVersion(appVersion, versionId, platform, apiMode);
-    // 拿到的版本可能会被指定了版本号的数据替代
-    return { ...mayCachedApp, appVersion };
+    return mayCachedApp;
   } catch (err: any) {
     // 指定了具体版本但未获取到，上层有指定 fallbackHook，则报错让上层处理
     if (err.message.includes('ver not found') && getFallbackHook(options)) {
@@ -144,13 +146,10 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
 }
 
 
-export async function getAppAndVersion(appName: string, options: IGetOptions = {}) {
-  const { versionId, isFullVersion = false } = options;
+export async function getAppAndVersion(appName: string, options: IHelGetOptions) {
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
-  const { app: appInfo, version: appVersion } = await apiSrv.getSubAppAndItsVersion(
-    appName,
-    { versionId, platform, apiMode, isFullVersion },
-  );
+  const fixedOptions = { ...options, platform, apiMode };
+  const { app: appInfo, version: appVersion } = await apiSrv.getSubAppAndItsVersion(appName, fixedOptions);
   if (!appVersion) {
     throw new Error(`ver ${appInfo.online_version} not found`);
   }
@@ -176,9 +175,9 @@ export function cacheApp(appInfo: ISubApp, options: { appVersion: ISubAppVersion
 }
 
 
-export async function getAndCacheApp(appName: string, options: { platform: Platform, apiMode: ApiMode, versionId: string, loadOptions: IInnerPreFetchOptions }) {
+export async function getAndCacheApp(appName: string, options: ISrvInnerOptions) {
   const { platform, apiMode, versionId, loadOptions } = options;
-  const ret = await getAppAndVersion(appName, { platform, apiMode, versionId });
+  const ret = await getAppAndVersion(appName, { platform, apiMode, versionId, loadOptions });
   const { appInfo, appVersion } = ret;
   cacheApp(appInfo, { appVersion, platform, loadOptions });
   return ret;

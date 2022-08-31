@@ -42,15 +42,16 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
 
   // 非严格版本匹配模式，只需要应用组名和平台值匹配即可，满足一些用户copy了资源到自己的项目目录下也想要正常加载的场景
   const inputPlatform = platform || getPlatform();
-  if (strictMatchVer === false && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
-    log('[[ judgeAppReady ]] treat emitApp as wanted under strictMatchVer === false', appInfo);
+  if (strictMatchVer === false && appGroupName && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
+    log('[[ judgeAppReady ]] treat emitApp as wanted when strictMatchVer is false', appInfo);
     next();
   }
 
   const { custom } = preFetchOptions;
   if (custom) {
     const { enable = true, host, appGroupName: customAppGroupName } = custom;
-    if (enable && host && (appGroupName === appName || appGroupName === customAppGroupName)) {
+    // 防止 appGroupName 是 undefined
+    if (enable && host && appGroupName && (appGroupName === appName || appGroupName === customAppGroupName)) {
       next();
     }
   }

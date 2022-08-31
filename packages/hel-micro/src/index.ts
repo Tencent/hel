@@ -3,15 +3,14 @@ export type {
 } from './types';
 import * as core from 'hel-micro-core';
 import { isSubApp } from './shared/signal';
-import fetchAppAndVersion from './process/fetchAppAndVersion';
 import emitApp from './process/emitApp';
 import * as appStyleSrv from './services/appStyle';
 import * as appParamSrv from './services/appParam';
+import * as appMetaSrv from './services/appMeta';
 import getFakeHelContext from './user-util/getFakeHelContext';
 import { preFetchApp, preFetchLib } from './user-util/preFetch';
 import { getExtraData, setExtraData } from './user-util/extraData';
-import { bindExternals, bindReactRuntime } from './user-util/bindExternals';
-import { getMetaDataUrl } from './user-util/getMetaDataUrl';
+import { bindExternals, bindReactRuntime, bindVueRuntime } from './user-util/bindExternals';
 import { init } from './shared/helMicro';
 import defaultsCst from './consts/defaults';
 
@@ -22,8 +21,7 @@ export {
   preFetchApp,
   appStyleSrv,
   appParamSrv,
-  fetchAppAndVersion,
-  getMetaDataUrl,
+  appMetaSrv,
   emitApp,
   init,
   isSubApp,
@@ -31,6 +29,7 @@ export {
   getExtraData,
   setExtraData,
   bindExternals,
+  bindVueRuntime,
   bindReactRuntime,
   core,
 };
@@ -41,8 +40,7 @@ export default {
   preFetchApp,
   appStyleSrv,
   appParamSrv,
-  fetchAppAndVersion,
-  getMetaDataUrl,
+  appMetaSrv,
   emitApp,
   init,
   isSubApp,
@@ -50,6 +48,7 @@ export default {
   getExtraData,
   setExtraData,
   bindExternals,
+  bindVueRuntime,
   bindReactRuntime,
   core,
 };

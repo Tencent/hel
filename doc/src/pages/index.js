@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import remoteLib from 'hel-remote-lib-tpl';
+import remoteLib from 'hel-tpl-remote-lib';
 import { preFetchLib } from 'hel-micro';
 import MdViewer from '@site/src/components/MdViewer';
 // import MdViewer from '@site/src/components/MonacoEditor';

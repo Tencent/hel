@@ -1,4 +1,5 @@
-import type { ISubAppVersion, Platform, ApiMode, ISubApp } from 'hel-types';
+import type { ISubAppVersion, Platform, ApiMode } from 'hel-types';
+import type { IOnFetchMetaFailed, IGetSubAppAndItsVersionFn } from 'hel-micro-core';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -66,10 +67,8 @@ export interface IPreFetchOptionsBase {
   apiMode?: ApiMode;
   // TODO 抽象 metaHooks
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
-  /** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据，优先级高于 init 定义的钩子函数 */
-  onFetchMetaFailed?: (
-    params: { appName: string },
-  ) => Promise<{ app: ISubApp, version: ISubAppVersion }> | { app: ISubApp, version: ISubAppVersion } | void;
+  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
+  onFetchMetaFailed?: IOnFetchMetaFailed;
   custom?: {
     host: string,
     /** default: true */
@@ -80,8 +79,10 @@ export interface IPreFetchOptionsBase {
     extraCssList?: string[],
     /**
      * default: 'only_cust'，仅在 enable=true 时此配置才有效
+     * 
      * IPreFetchOptionsBase.extraCssList: outCss,
      * IPreFetchOptionsBase.custom.extraCssList: custCss
+     * 
      * 配置了 outCss 时，如何处理 custCss 和 outCss 的关系
      * merge: custCss 和 outCss 合并
      * only_cust: 保留 custCss，丢弃 outCss

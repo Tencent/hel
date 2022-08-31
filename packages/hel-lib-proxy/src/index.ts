@@ -10,7 +10,7 @@ import core from 'hel-micro-core';
 import * as share from './share';
 export * from './typings';
 
-core.log(' hel-micro-core ver 3.7.3');
+core.log(' hel-micro-core ver 3.8.0');
 
 /** 
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块

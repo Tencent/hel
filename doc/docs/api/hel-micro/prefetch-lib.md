@@ -13,21 +13,21 @@ sidebar_position: 2
 
 通过指定模块名称拉取模块，默认总是拉取最新版本，如当前用户在灰度名单里，则返回灰度版本
 ```ts
-const lib = await preFetchLib('hel-remote-lib-tpl');
+const lib = await preFetchLib('hel-tpl-remote-lib');
 // lib.xxx 此处可以调用模块任意方法
 ```
 
 通过指定模块名称、版本号拉取模块
 ```ts
-const lib = await preFetchLib('hel-remote-lib-tpl', { versionId:'1.0.0' });
+const lib = await preFetchLib('hel-tpl-remote-lib', { versionId:'1.0.0' });
 // lib.xxx 此处可以调用模块任意方法
 ```
 
 
 通过指定模块名称、版本号、平台拉取模块，默认是`unpkg`, 当用户独立部署了`Hel Pack`服务并需要跨多个平台获取模块时，需指定平台值
 ```ts
-const lib = await preFetchLib('hel-remote-lib-tpl', { 
-  versionId:'hel-remote-lib-tpl_20220522003658', platform:'hel',
+const lib = await preFetchLib('hel-tpl-remote-lib', { 
+  versionId:'hel-tpl-remote-lib_20220522003658', platform:'hel',
 });
 // lib.xxx 此处可以调用模块任意方法
 ```
@@ -48,16 +48,16 @@ ReactDOM.render(<App/>, document.getElementById('root'));
 ```jsx title="src/index.js"
 (async function(){
     const helMicro = await import('hel-micro');
-    await helMicro.preFetchLib('hel-remote-lib-tpl');
+    await helMicro.preFetchLib('hel-tpl-remote-lib');
     import('./loadApp')
 })()
 ```
 
-之后你只需要使用npm安装`hel-remote-lib-tpl`包，就可以项目任意文件头部静态导入该模块了
+之后你只需要使用npm安装`hel-tpl-remote-lib`包，就可以项目任意文件头部静态导入该模块了
 > 如果是懒加载模式，且不关心模块源码与类型，可以不用安装此npm包
 
 ```jsx title="src/whatever.js"
-import remoteLib from 'hel-remote-lib-tpl';
+import remoteLib from 'hel-tpl-remote-lib';
 
 function callRemoteMethod(){
   return remoteLib.num.random(19);

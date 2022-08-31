@@ -36,8 +36,8 @@ export default function renderApp(options: IRenderAppOptions) {
       renderSelfFn(App, hostNode);
     } else if (createRoot) {
       // 也支持用户透传 createRoot 句柄来适配 react-18 渲染
-      const render = createRoot(hostNode);
-      render(<App />);
+      const root = createRoot(hostNode);
+      root.render(<App />);
     } else {
       // @ts-ignore 因18版本react类型有问题，此处暂时让第三方引用编译到此处不报类型错误
       ReactDom.render(<App />, hostNode);

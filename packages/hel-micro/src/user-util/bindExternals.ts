@@ -38,3 +38,14 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   bindExternals(externalObj);
 }
 
+
+/**
+ * 方便 vite 开放环境配置共享 vue
+ * @param reactRuntimeObj
+ */
+export function bindVueRuntime(vueRuntimeObj: { Vue: any }) {
+  const externalObj = {
+    LEAH_Vue: vueRuntimeObj.Vue,
+  };
+  bindExternals(externalObj);
+}

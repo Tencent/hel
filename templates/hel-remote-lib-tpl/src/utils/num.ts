@@ -29,5 +29,6 @@ export function canBeNum(val: any) {
 
 export function random(seed: number) {
   return Math.floor(seed * Math.random());
-  // return 888; //
+  // return 10000;
+  // return 888;
 }

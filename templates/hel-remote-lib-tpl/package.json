@@ -1,18 +1,18 @@
 {
-  "name": "hel-remote-lib-tpl",
-  "appGroupName": "hel-remote-lib-tpl",
+  "name": "hel-tpl-remote-lib",
+  "appGroupName": "hel-tpl-remote-lib",
   "main": "hel_proxy/entry.js",
   "module": "hel_proxy_es/entry.js",
   "unpkg": "hel_dist/entry.js",
   "types": "lib/entrance/libTypes.ts",
-  "version": "1.0.0",
+  "version": "2.0.2",
   "dependencies": {
     "@types/lodash": "^4.14.182",
-    "hel-lib-proxy": "^3.7.3",
+    "hel-lib-proxy": "^3.8.0",
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "hel-lib-proxy": "^3.7.3"
+    "hel-lib-proxy": "^3.8.0"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
