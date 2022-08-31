@@ -4,17 +4,24 @@ import type { IGetOptions } from 'hel-micro-core';
 import type { IInnerPreFetchOptions } from '../types';
 import { getPlatform, log, getVerLib, getVerApp, getPlatformConfig, getAppMeta } from 'hel-micro-core';
 import { isEmitVerMatchInputVer } from '../shared/util';
+import { PLAT_UNPKG } from '../consts/logic';
 
 
 export function getLibOrApp(appName: string, isLib: boolean, getOptions: IGetOptions) {
   const { platform = getPlatform(), versionId = '' } = getOptions;
-  // 不传递的话，保持和 hel-micro-core 里一致的设定，hel-micro-core 默认是true
+  // 不传递的话，保持和 hel-micro-core 里一致的设定，hel-micro-core 默认是 true
   const strictMatchVer = getOptions.strictMatchVer ?? getPlatformConfig(platform).strictMatchVer;
   const newGetOptions = { ...getOptions, strictMatchVer };
 
   if (isLib) {
     const lib = getVerLib(appName, newGetOptions);
-    const appMeta = getAppMeta(appName);
+    const appMeta = getAppMeta(appName, platform);
+
+    // @ts-ignore, unpkg 平台的 appMeta 里记录的 online_version 不可靠，这里要结合 __setByLatest 一起判断，采用觉得是否采用 lib
+    if (platform === PLAT_UNPKG && !versionId && appMeta && appMeta.__setByLatest !== true) {
+      return null;
+    }
+
     return lib ? {
       appName, appGroupName: appMeta?.app_group_name || '', platform, appProperties: lib,
       isLib: true, versionId, Comp: null, lifecycle: undefined

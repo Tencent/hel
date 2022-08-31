@@ -159,14 +159,27 @@ export async function getAppAndVersion(appName: string, options: IHelGetOptions)
 
 export function cacheApp(appInfo: ISubApp, options: { appVersion: ISubAppVersion, platform: Platform, toDisk?: boolean, loadOptions: IInnerPreFetchOptions }) {
   const { appVersion, platform, toDisk = true, loadOptions } = options;
-  const appName = appInfo.name;
+  let appMeta = appInfo;
+  const appName = appMeta.name;
   // 写 disk
   if (toDisk) {
     getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
   }
 
-  // 写 mem
-  core.setAppMeta(appInfo, platform);
+  // 写 mem app
+  if (platform === PLAT_UNPKG) {
+    const meta = core.getAppMeta(appName, platform);
+    // @ts-ignore, inject __setByLatest
+    if (meta?.__setByLatest !== true) {
+      // @ts-ignore, inject __setByLatest，确保未设置版本好的调用写入 appMeta 后，后续其他版本的调用不在写入新的 appMeta
+      appMeta = !loadOptions.versionId ? { ...appMeta, __setByLatest: true } : appMeta;
+      core.setAppMeta(appMeta, platform);
+    }
+  } else {
+    core.setAppMeta(appInfo, platform);
+  }
+
+  // 写 mem version
   core.setVersion(appName, appVersion, { platform });
 
   // 记录sdk注入的额外样式
