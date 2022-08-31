@@ -10,4 +10,4 @@ const helDevUtils = require('hel-dev-utils');
 const pkg = require('../package.json');
 
 const fileFullPath = path.join(__dirname, '../src/configs/subApp');
-helDevUtils.check(pkg, fileFullPath);
+helDevUtils.check(pkg, { fileFullPath, checkEnv: false });

@@ -1,12 +1,12 @@
 ## remote-react-comps-tpl
 最简单的远程react组件模板
-
+codesandbox:  https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0?file=/src/App.js
 
 ### 发布 npm
-发布模块类型文件和代理对象到 npm 仓库
+发布远程组件到npm
 ```bash
-npm run build_proxy
-tnpm publish
+npm run build
+npm publish
 ```
 
 ### 本地联调
@@ -34,7 +34,7 @@ new webpack.optimize.LimitChunkCountPlugin({
 ```
 
 ### shouldInlineRuntimeChunk 
-设置为false，以便提速海拉元数据提取插件执行过程
+设置为false，不产生产物map文件
 
 
 ### 单文件css

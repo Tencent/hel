@@ -38,7 +38,11 @@ export function getHelOriginalEnvParams() {
 export function getHelEnvParams(pkg, options = {}) {
   /** 子应用组名 */
   const defaultAppGroupName = pkg.appGroupName;
-  const defaultHomePage = options.defaultHomePage || pkg.homepage || '/';
+  let defaultHomePage = options.defaultHomePage;
+  // 允许用户设定 ''，不用 ?? 写法是为了兼容性考虑，此处编译有问题，暂时不查具体原因了
+  if (defaultHomePage === undefined || defaultHomePage === null) {
+    defaultHomePage = pkg.homepage || '/';
+  }
 
   const {
     appHomePage = defaultHomePage,

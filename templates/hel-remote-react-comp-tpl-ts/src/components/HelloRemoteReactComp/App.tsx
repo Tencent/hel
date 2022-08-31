@@ -20,7 +20,7 @@ const App = React.forwardRef(function App(props: IProps, ref: any) {
       <header className="App-header" onClick={() => props.onHeaderClick?.('header click')}>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          <h1>This is a hel remote react component</h1>
+          <h1>This is a hel remote react component (ts)</h1>
           <h2>emitted by hel-micro</h2>
         </p>
         <a

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "target": "es5",
     "outDir": "lib-js",
     "noEmit": false,
@@ -19,7 +19,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["jest"],
+    "types": [
+      "jest",
+    ],
     "jsx": "react"
   },
   "include": ["src/**/*"],

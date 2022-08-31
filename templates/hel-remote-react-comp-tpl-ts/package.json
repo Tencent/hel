@@ -1,9 +1,10 @@
 {
-  "name": "remote-tpl-react-comps",
-  "appGroupName": "remote-tpl-react-comps",
+  "name": "hel-tpl-remote-react-comps-ts",
+  "appGroupName": "hel-tpl-remote-react-comps-ts",
   "main": "hel_proxy/entry.js",
   "module": "hel_proxy_es/entry.js",
   "types": "lib/entrance/libTypes.ts",
+  "unpkg": "hel_dist/entry.js",
   "version": "1.0.0",
   "dependencies": {
     "hel-lib-proxy": "^3.8.0",
@@ -20,10 +21,11 @@
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
     "check": "node ./scripts/check.js",
-    "start": "cross-env REACT_APP_IS_LOCAL=true PORT=3103 node scripts/start.js",
-    "build": "node scripts/build.js",
-    "build_dist": "npm run build",
-    "build_proxy": "npm run build_proxy_umd && npm run build_proxy_es",
+    "start": "cross-env PORT=3103 node scripts/start.js",
+    "build": "npm run check_name && npm run build_dist && npm run build_meta && npm run build_proxy",
+    "check_name": "node scripts/check.js",
+    "build_dist": "node scripts/build.js",
+    "build_proxy": "npm run build_proxy_umd && npm run build_proxy_es && cp ./hel_proxy/entry.js ./hel_dist",
     "build_proxy_umd": "tsc & node ./scripts/replaceToRelativePath.js & rollup -c",
     "build_proxy_es": "tsc & node ./scripts/replaceToRelativePath.js & cross-env BUILD_ENV=es rollup -c",
     "lint": "eslint ./src --ext ts,tsx",
@@ -57,7 +59,6 @@
   "devDependencies": {
     "@babel/core": "7.9.0",
     "@svgr/webpack": "4.3.3",
-    "hel-dev-utils": "^2.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -91,6 +92,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
+    "hel-dev-utils": "^2.1.0",
     "html-webpack-plugin": "4.0.0-beta.11",
     "http-proxy-middleware": "^1.0.6",
     "identity-obj-proxy": "3.0.0",
@@ -99,6 +101,7 @@
     "jest-enzyme": "^7.1.2",
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.2",
+    "jsdom": "^20.0.0",
     "lint-staged": "^10.5.3",
     "mini-css-extract-plugin": "0.9.0",
     "mockjs": "^1.1.0",
@@ -129,12 +132,13 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "files": [
+    "hel_dist",
     "hel_proxy",
     "hel_proxy_es",
     "lib",
     "src",
     "README.md",
-    "tsconfig.json",
+    "jsconfig.json",
     "scripts"
   ]
 }

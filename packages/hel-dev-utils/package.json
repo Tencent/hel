@@ -1,6 +1,6 @@
 {
   "name": "hel-dev-utils",
-  "version": "1.3.0",
+  "version": "2.1.0",
   "main": "lib/index.js",
   "author": {
     "name": "fantasticsoul"
