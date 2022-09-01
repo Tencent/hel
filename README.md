@@ -10,9 +10,20 @@
 see doc： https://tnfe.github.io/hel
 
 ## Demo
-[hel-loadash codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
 
-[hel-loadash git](https://github.com/hel-eco/hel-lodash)
+### 载入远程js库
+
+codesandbox: https://codesandbox.io/s/hel-lodash-zf8jh8
+
+git: https://github.com/hel-eco/hel-lodash
+
+### 载入远程react组件
+
+codesandbox: https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0
+
+git: https://github.com/hel-eco/hel-tpl-remote-react-comp
+
+git ts: https://github.com/hel-eco/hel-tpl-remote-react-comp-ts
 
 ## Why hel-micro
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
