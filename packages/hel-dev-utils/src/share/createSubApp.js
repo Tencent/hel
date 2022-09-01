@@ -21,8 +21,8 @@ const presetExternals = {
 export default function createSubApp(pkg, innerOptions, userOptions) {
   const { frameworkType } = innerOptions;
   const optionsVar = userOptions || {};
-  // 设置 defaultHomePage 为 ''，是为了让下面的 getPublicPathOrUrl 第一位参数生效 
-  const envParams = base.getHelEnvParams(pkg, { defaultHomePage: '' });
+  // 设置 defaultHomePage 兜底为 ''，是为了让下面的 getPublicPathOrUrl 第一位参数生效 
+  const envParams = base.getHelEnvParams(pkg, { defaultHomePage: optionsVar.defaultHomePage || '' });
   const externals = optionsVar.externals || presetExternals[frameworkType];
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 

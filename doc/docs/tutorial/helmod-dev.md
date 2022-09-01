@@ -8,10 +8,6 @@ sidebar_position: 2
 
 可以被别的项目动态引用，也可应用其他动态模块作为自己的依赖
 
-- 学会将现有项目改造为hel模块
-
-以便实现在Hel Pack平台做版本管理、灰度发布控制、秒级回滚、向其他项目提供远程组件等功能
-
 
 ## 开发远程库
 
@@ -32,7 +28,7 @@ git clone https://github.com/hel-eco/hel-tpl-remote-lib my-xxx-lib
 
 ### 改subApp
 
-`src/configs/subApp.ts`改为你hel模块组名，以便让hel流水线构建时能够校验通过
+`src/configs/subApp.ts`改为你hel模块组名，以便让构建元数据时能够校验通过
 ```ts
 export const LIB_NAME = 'my-xx-lib';
 ```
