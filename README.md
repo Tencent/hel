@@ -15,7 +15,6 @@ see doc： https://tnfe.github.io/hel
 
 codesandbox[示例](https://codesandbox.io/s/hel-lodash-zf8jh8)，仓库[代码](https://github.com/hel-eco/hel-lodash)
 
-git: https://github.com/hel-eco/hel-lodash
 
 ### 载入远程react组件
 
