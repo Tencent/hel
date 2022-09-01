@@ -29,10 +29,9 @@ git ts: https://github.com/hel-eco/hel-tpl-remote-react-comp-ts
 ### 载入远程vue组件
 
 codesandbox: https://codesandbox.io/s/demo-load-remote-vue-comp-st0295
+> 托管在 [https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html](unpkg) 和 [git.io](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html), 被 codesandbox 示例远程载入
 
 git: https://github.com/hel-eco/hel-tpl-remote-vue-comp
-
-git.io: https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html
 
 ## Why hel-micro
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
