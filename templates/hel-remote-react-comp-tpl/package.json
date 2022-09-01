@@ -1,7 +1,7 @@
 {
   "name": "hel-tpl-remote-react-comps",
   "appGroupName": "hel-tpl-remote-react-comps",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "main": "hel_proxy/entry.js",
   "module": "hel_proxy_es/entry.js",
   "types": "lib/entrance/libTypes.ts",
@@ -11,12 +11,14 @@
     "hel-micro": "^3.8.1",
     "react": ">=16.8.0",
     "react-app-polyfill": ">=1.0.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "scheduler": ">=0.23.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-app-polyfill": ">=1.0.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "scheduler": ">=0.23.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",

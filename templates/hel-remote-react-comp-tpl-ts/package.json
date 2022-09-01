@@ -5,7 +5,7 @@
   "module": "hel_proxy_es/entry.js",
   "types": "lib/entrance/libTypes.ts",
   "unpkg": "hel_dist/entry.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "hel-lib-proxy": "^3.8.0",
     "hel-micro": "^3.8.1",
@@ -138,7 +138,7 @@
     "lib",
     "src",
     "README.md",
-    "jsconfig.json",
+    "tsconfig.json",
     "scripts"
   ]
 }

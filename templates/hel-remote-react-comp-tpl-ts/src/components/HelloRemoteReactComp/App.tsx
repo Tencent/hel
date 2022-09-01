@@ -12,7 +12,7 @@ const App = React.forwardRef(function App(props: IProps, ref: any) {
 
   React.useImperativeHandle(ref, () => ({
     sayHello() {
-      alert('Hello');
+      alert('Hello hel-micro remote comp (ts)');
     }
   }));
   return (
