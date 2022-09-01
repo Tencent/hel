@@ -11,19 +11,19 @@ see doc： https://tnfe.github.io/hel
 
 ## Demo
 
-- 载入远程组件 hel-lodash
+### 载入远程组件 hel-lodash
 
-[codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js) https://codesandbox.io/s/hel-lodash-zf8jh8
+codesandbox: https://codesandbox.io/s/hel-lodash-zf8jh8
 
-[git](https://github.com/hel-eco/hel-lodash) https://github.com/hel-eco/hel-lodash
+git: https://github.com/hel-eco/hel-lodash
 
-- 载入远程组件 hel-tpl-remote-react-comp
+### 载入远程组件 hel-tpl-remote-react-comp
 
-[codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0?file=/src/App.js)  https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0
+codesandbox: https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0
 
-[git](https://github.com/hel-eco/hel-tpl-remote-react-comp) https://github.com/hel-eco/hel-tpl-remote-react-comp
+git: https://github.com/hel-eco/hel-tpl-remote-react-comp
 
-[git ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) https://github.com/hel-eco/hel-tpl-remote-react-comp-ts
+git ts: https://github.com/hel-eco/hel-tpl-remote-react-comp-ts
 
 ## Why hel-micro
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
