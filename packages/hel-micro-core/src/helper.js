@@ -17,9 +17,11 @@ export function getPlatform() {
 export function getPlatformSharedCache(platform) {
   const p = platform || getPlatform();
   const cacheRoot = getCacheRoot();
-  const cacheNode = cacheRoot.caches[p];
+  let cacheNode = cacheRoot.caches[p];
   if (!cacheNode) {
-    cacheRoot.caches[p] = makeCacheNode(platform);
+    const platCache = makeCacheNode(platform);
+    cacheRoot.caches[p] = platCache;
+    cacheNode = platCache;
   }
   return cacheNode;
 }
