@@ -5,7 +5,7 @@
   "module": "hel_proxy_es/entry.js",
   "types": "lib/entrance/libTypes.ts",
   "unpkg": "hel_dist/entry.js",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "dependencies": {
     "hel-lib-proxy": "^3.8.0",
     "hel-micro": "^3.8.1",
@@ -36,7 +36,8 @@
     "set_home_page": "cross-env-shell HEL_APP_HOME_PAGE=http://127.0.0.1:8080",
     "build_cust": "npm run set_home_page \"npm run build_dist && npm run build_meta\"",
     "test": "jest",
-    "snap": "jest -u"
+    "snap": "jest -u",
+    "pub": "npm publish --registry=https://registry.npmjs.org"
   },
   "eslintConfig": {
     "extends": "react-app"
