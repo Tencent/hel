@@ -11,13 +11,13 @@ see doc： https://tnfe.github.io/hel
 
 ## Demo
 
-### 载入远程组件 hel-lodash
+### 载入远程js库
 
 codesandbox: https://codesandbox.io/s/hel-lodash-zf8jh8
 
 git: https://github.com/hel-eco/hel-lodash
 
-### 载入远程组件 hel-tpl-remote-react-comp
+### 载入远程react组件
 
 codesandbox: https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0
 
