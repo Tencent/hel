@@ -19,7 +19,7 @@ git: https://github.com/hel-eco/hel-lodash
 
 ### 载入远程react组件
 
-codesandbox[示例]([https://codesandbox.io/s/hel-lodash-zf8jh8](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0))，仓库[js代码](https://github.com/hel-eco/hel-tpl-remote-react-comp)，仓库[ts代码](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts)
+codesandbox[示例](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0)，仓库[js代码](https://github.com/hel-eco/hel-tpl-remote-react-comp)，仓库[ts代码](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts)
 
 
 ### 载入远程vue组件
