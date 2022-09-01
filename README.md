@@ -24,7 +24,7 @@ codesandbox[示例](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0)
 ### 载入远程vue组件
 
 codesandbox[示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)，仓库[js代码](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
-> 托管在 [unpkg](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) 和 [git.io](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html), 被 codesandbox 示例远程载入
+> 组件运行代码托管在 [unpkg](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) 和 [git.io](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html), 被 codesandbox 示例使用`hel-micro`动态载入
 
 
 ## Why hel-micro
