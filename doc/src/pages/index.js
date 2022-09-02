@@ -5,8 +5,6 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import remoteLib from 'hel-tpl-remote-lib';
-import { preFetchLib } from 'hel-micro';
 import MdViewer from '@site/src/components/MdViewer';
 // import MdViewer from '@site/src/components/MonacoEditor';
 import * as demoCode from '@site/src/components/demoCode';
@@ -40,13 +38,19 @@ function DemoArea() {
 
 
   return <div style={{ textAlign: 'center' }}>
-    <div style={{ width: "680px", margin: '0 auto' }}>
+    <div style={{ width: "780px", margin: '0 auto' }}>
       <RadioBtn checked={checkedMap['remoteLib']} value="remoteLib" onClick={clickRadio}>
-        远程库-预加载 <a href="https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js:183-225" target="blank">CodesandBox预览</a>
+        远程库-预加载 <a href="https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js:183-225" target="blank">线上预览</a>
       </RadioBtn>
-      <RadioBtn checked={checkedMap['remoteLibLazy']} value="remoteLibLazy" onClick={clickRadio}>远程库-懒加载</RadioBtn>
-      <RadioBtn checked={checkedMap['remoteReact']} value="remoteReact" onClick={clickRadio}>远程react组件</RadioBtn>
-      <RadioBtn checked={checkedMap['remoteVue']} value="remoteVue" onClick={clickRadio}>远程vue组件</RadioBtn>
+      <RadioBtn checked={checkedMap['remoteLibLazy']} value="remoteLibLazy" onClick={clickRadio}>
+        远程库-懒加载
+      </RadioBtn>
+      <RadioBtn checked={checkedMap['remoteReact']} value="remoteReact" onClick={clickRadio}>
+        远程react组件 <a href="https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0" target="blank">线上预览</a>
+      </RadioBtn>
+      <RadioBtn checked={checkedMap['remoteVue']} value="remoteVue" onClick={clickRadio}>
+        远程vue组件 <a href="https://codesandbox.io/s/demo-load-remote-vue-comp-st0295" target="blank">线上预览</a>
+      </RadioBtn>
     </div>
     <MdViewer
       value={demoCode[demoType]}
@@ -56,11 +60,6 @@ function DemoArea() {
 
 
 function HomepageHeader() {
-  React.useEffect(() => {
-    preFetchLib('remote-lib-tpl').then(() => {
-      console.log('safely call remoteLib.num.random', remoteLib.num.random(222));
-    });
-  }, []);
   const { siteConfig } = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}
@@ -73,7 +72,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/tutorial/intro">
-            快速开始 - 10s ⏱️
+            快速开始 - 1 min ⏱️
           </Link>
           <div style={{ display: 'inline-block', width: '28px' }}></div>
         </div>

@@ -31,17 +31,17 @@ import helMicro from 'hel-micro';
 
 // 不关心类型且需要使用时才加载模块，使用 helMicro.preFetchLib 获取远程库即可
 export async function callRemoteMethod(){
-  const remoteLib = await helMicro.preFetchLib('hel-remote-lib-tpl');
+  const remoteLib = await helMicro.preFetchLib('hel-tpl-remote-lib');
   return remoteLib.num.random(19);
 }
 
 /** --------------------------------------------------------------------------- */
 // 关心模块类型，且需要使用时才加载模块，安装模块并导出模块类型并传给泛型参数即可
-import type { Lib } from 'hel-remote-lib-tpl';
+import type { Lib } from 'hel-tpl-remote-lib';
 import helMicro from 'hel-micro';
 
 export async function  callRemoteMethod(){
-  const remoteLib = await helMicro.preFetchLib<Lib>('hel-remote-lib-tpl');
+  const remoteLib = await helMicro.preFetchLib<Lib>('hel-tpl-remote-lib');
   return remoteLib.num.random(19);
 }
 `;
@@ -50,7 +50,7 @@ export async function  callRemoteMethod(){
 export const remoteReact = `
 // 这是一个由 hel-micro 从 HelPack 动态拉取的远程 react 组件
 // 注：能这样头部静态import导入是因为入口文件处已执行预加载
-import { HelloRemoteReactComp } from 'hel-remote-react-comps-tpl';
+import { HelloRemoteReactComp } from 'hel-tpl-remote-react-comps';
 
 function Demo(){
   // 像本地组件一样使用远程组件吧
@@ -64,7 +64,7 @@ function Demo(){
 import { useRemoteComp } from 'hel-micro-react';
 
 function ShadowDemo(){
-  const Comp = useRemoteComp('remote-react-comps-tpl', 'HelloRemoteReactComp');
+  const Comp = useRemoteComp('hel-tpl-remote-react-comps', 'HelloRemoteReactComp');
   return <Comp  label="hi remote comp" />;
 }
 `;
@@ -81,7 +81,7 @@ export const remoteVue = `
 <script>
 // 这是一个由 hel-micro 从 HelPack 动态拉取的远程vue组件
 // 注：能这样头部静态import导入是因为入口文件处已执行预加载
-import { HelloRemoteVueComp } from 'hel-remote-vue-comps-tpl';
+import { HelloRemoteVueComp } from 'hel-tpl-remote-vue-comps';
 
 export default {
   name: 'App',
