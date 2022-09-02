@@ -26,7 +26,7 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
   const externals = optionsVar.externals || presetExternals[frameworkType];
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 
-  if (optionsVar.npmCdnType) {
+  if (optionsVar.npmCdnType && !optionsVar.defaultHomePage) {
     envParams.appHomePage = getNpmCdnHomePage(pkg, optionsVar.npmCdnType);
   }
 

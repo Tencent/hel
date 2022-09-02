@@ -20,7 +20,7 @@ git clone https://github.com/hel-eco/hel-tpl-remote-lib my-xxx-lib
 
 ### 改package.json
 
-将`name`和`appGroupName`改为hel模块组名
+将`name`和`appGroupName`改为自己想要设定的hel模块组名
 ```
   "name": "my-xx-lib",
   "appGroupName": "my-xx-lib",
@@ -37,34 +37,30 @@ export const LIB_NAME = 'my-xx-lib';
 
 在`utils`目录下新增任意模块，或导入已有的第三方npm模块（即是将npm模块提升为hel动态模块），并在`utils/index.ts`里导出即可
 
-- 执行单测
+### 执行单测
 
 已内置`jest`，执行`npm run test`即可
 
-- 发布类型与源码
 
-此步骤可选，仅当需要给模块使用方提供类型文件时才需要
+### 发布组件
 
-仅发布类型，执行
-```bash
-npm run build_proxy
-tnpm publish
+先修改`package.json`里的`version`值
+
+然后发布源码和托管到`unpkg`文件服务的运行代码
+```
+npm run build
+npm publish
 ```
 
-在hel流水线构建动态模块后，使用方即可按照使用，更多细节请阅读[快速开始](/docs/tutorial/intro)
-```js
-import xxLib from 'my-xx-lib';
+或发布可供桩函数mock的运行代码、源码和托管到`unpkg`文件服务的运行代码
+```
+npm run build_stub
+npm publish
 ```
 
-此步骤可选，仅发布用于辅助给模块使用方`jest`通过动态模块的桩模块时才需要
+:::tip
+`build_stub`是可选的执行项，仅是为了方便模块使用方的项目执行单测时，`jest`可通过npm的cjs模块来做函数打桩，`npm run build` 和 `npm run build_stub` 二者执行其中一个即可
 
-仅发布模块cjs产物，执行
-```bash
-npm run build_bundle
-tnpm publish
-```
-
-该步骤是可选的，仅是为了方便模块使用方的项目执行单测时，可以通过npm的cjs模块来做函数打桩
 ```ts
 import entry from 'my-xx-lib/hel_bundle/entry';
 
@@ -72,9 +68,8 @@ jest.doMock('my-xx-lib', () => {
   return entry['my-xx-lib'];
 });
 ```
+:::
 
-发布源码和类型
-```
-npm run build
-npm publish
-```
+有关`如何发布到自定义的托管文件服务`，可跳转到[模块发布](/docs/tutorial/helmod-pub)查阅以便了解更多详情
+
+其余文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues) ....

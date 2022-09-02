@@ -19,6 +19,7 @@
     "check": "node ./scripts/check",
     "start": "cross-env HOST=localhost IS_LOCAL=true npm run app",
     "app": "node scripts/start.js",
+    "build_stub": "npm run build && npm run build_bundle",
     "build": "npm run check_name && npm run build_dist && npm run build_meta && npm run build_proxy",
     "check_name": "node scripts/check.js",
     "build_dist": "node scripts/build.js",

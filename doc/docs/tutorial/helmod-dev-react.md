@@ -40,11 +40,9 @@ export const LIB_NAME = 'rrc-xxx';
 在`src/components`目录下新增组件，并`src/components/index`文件里导出即可
 
 
-### 发布组件
-```bash
-npm run build
-npm publish
-```
+## 发布组件
+
+跳转到[模块发布](/docs/tutorial/helmod-pub)查看
 
 
-文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues) ....
+其余文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues) ....
