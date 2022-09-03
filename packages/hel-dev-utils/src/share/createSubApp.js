@@ -21,14 +21,9 @@ const presetExternals = {
 export default function createSubApp(pkg, innerOptions, userOptions) {
   const { frameworkType } = innerOptions;
   const optionsVar = userOptions || {};
-  // 设置 defaultHomePage 兜底为 ''，是为了让下面的 getPublicPathOrUrl 第一位参数生效 
-  const envParams = base.getHelEnvParams(pkg, { defaultHomePage: optionsVar.defaultHomePage || '' });
+  const envParams = base.getHelEnvParams(pkg, optionsVar);
   const externals = optionsVar.externals || presetExternals[frameworkType];
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
-
-  if (optionsVar.npmCdnType && !optionsVar.defaultHomePage) {
-    envParams.appHomePage = getNpmCdnHomePage(pkg, optionsVar.npmCdnType);
-  }
 
   return {
     /**
@@ -54,15 +49,14 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     },
     jsonpFnName,
     /**
-     * @param {string} [defaultPathOrUrl] 
+     * @param {string} [fallbackPathOrUrl] 兜底用的 publicPathOrUrl
      * @param {boolean} [ensureEndSlash] 
      * @returns 
      */
-    getPublicPathOrUrl: (defaultPathOrUrl = '/', ensureEndSlash = true) => {
-      if (envParams.appHomePage) {
-        return base.getPublicPathOrUrl(envParams.appHomePage, ensureEndSlash);
-      }
-      return defaultPathOrUrl;
+    getPublicPathOrUrl: (fallbackPathOrUrl = '/', ensureEndSlash = true) => {
+      const pathOrUrl = envParams.appHomePage || fallbackPathOrUrl;
+      const finalPathOrUrl = base.getPublicPathOrUrl(pathOrUrl, ensureEndSlash);
+      return finalPathOrUrl;
     },
     distDir: cst.HEL_DIST_DIR,
   };

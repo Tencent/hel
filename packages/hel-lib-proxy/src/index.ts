@@ -74,9 +74,14 @@ export function libReady(appGroupName: string, libProperties: LibProperties, opt
 
 export const isSubApp = core.isSubApp;
 
+export function isMasterApp() {
+  return !core.isSubApp();
+};
+
 export default {
   libReady,
   exposeLib,
   getLib,
   isSubApp,
+  isMasterApp,
 };

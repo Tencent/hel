@@ -1,5 +1,5 @@
-/** @typedef {import('typings').IGetHelEnvParamsOptions} IGetHelEnvParamsOptions */
-
+/** @typedef {import('typings').ICreateSubAppOptions} ICreateSubAppOptions */
+import { getNpmCdnHomePage } from '../inner-utils/index';
 
 export function ensureSlash(inputPath, needsSlash) {
   const hasEndSlash = inputPath.endsWith('/');
@@ -13,7 +13,7 @@ export function ensureSlash(inputPath, needsSlash) {
 }
 
 
-export function getHelOriginalEnvParams() {
+export function getHelProcessEnvParams() {
   // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
   const {
     // appHomePage, 形如 http://xxx.cdn.com/hel/app1_2020121201011666
@@ -32,27 +32,21 @@ export function getHelOriginalEnvParams() {
 
 /**
  * @param {Record<string, any>} pkg
- * @param {IGetHelEnvParamsOptions} options
+ * @param {ICreateSubAppOptions} options
  * @returns
  */
 export function getHelEnvParams(pkg, options = {}) {
-  /** 子应用组名 */
-  const defaultAppGroupName = pkg.appGroupName;
-  let defaultHomePage = options.defaultHomePage;
-  // 允许用户设定 ''，不用 ?? 写法是为了兼容性考虑，此处编译有问题，暂时不查具体原因了
-  if (defaultHomePage === undefined || defaultHomePage === null) {
-    defaultHomePage = pkg.homepage || '/';
+  let cdnHomPage = '';
+  if (options.npmCdnType) {
+    cdnHomPage = getNpmCdnHomePage(pkg, options.npmCdnType);
   }
 
-  const {
-    appHomePage = defaultHomePage,
-    appGroupName = defaultAppGroupName,
-    appName = defaultAppGroupName,
-  } = getHelOriginalEnvParams();
+  // 来自 process.env 的值优先级最高
+  const p0EnvParams = getHelProcessEnvParams();
   return {
-    appHomePage,
-    appGroupName,
-    appName,
+    appHomePage: p0EnvParams.appHomePage || options.homePage || cdnHomPage || pkg.homepage || '',
+    appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || '',
+    appName: p0EnvParams.appName || pkg.appGroupName || '',
   };
 }
 
