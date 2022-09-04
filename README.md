@@ -13,17 +13,17 @@ see doc： https://tnfe.github.io/hel
 
 ### 载入远程js库
 
-codesandbox[示例](https://codesandbox.io/s/hel-lodash-zf8jh8)，被载入的js库仓库[代码](https://github.com/hel-eco/hel-lodash)
+codesandbox[示例](https://codesandbox.io/s/hel-lodash-zf8jh8)，远程js库[仓库模板](https://github.com/hel-eco/hel-tpl-remote-lib)
 
 
 ### 载入远程react组件
 
-codesandbox[示例](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0)，被载入的react组件仓库[js代码](https://github.com/hel-eco/hel-tpl-remote-react-comp)，[ts代码](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts)
+codesandbox[示例](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0)，远程react组件[js仓库模板](https://github.com/hel-eco/hel-tpl-remote-react-comp)，[ts仓库代码](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts)
 
 
 ### 载入远程vue组件
 
-codesandbox[示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)，被载入的vue组件仓库[js代码](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
+codesandbox[示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)，远程vue组件[js仓库模板](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
 > 组件运行代码托管在 [unpkg](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) 和 [git.io](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html), 被 codesandbox 示例使用`hel-micro`动态载入
 
 
