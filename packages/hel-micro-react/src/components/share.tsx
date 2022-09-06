@@ -1,28 +1,17 @@
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
-import type { ISubAppVersion } from 'hel-types';
 import React from 'react';
 import core from 'hel-micro-core';
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
+import { getDefaultPlatform } from '../_diff';
 import defaults from '../consts/defaults';
 
 const { helLoadStatus } = core;
 
-export interface IFetchOptions {
-  platform: string,
-  appendCss?: boolean,
-  setStyleAsString?: boolean,
-  needStyleStr?: boolean,
-  versionId?: string,
-  enableDiskCache?: boolean,
-  onAppVersionFetched?: (appVersion: ISubAppVersion) => any,
-  extraCssUrlList?: string[],
-  getExcludeCssList?: IInnerRemoteModuleProps['getExcludeCssList'],
-};
-
-
 export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const ensuredProps = { ...props };
 
+  ensuredProps.platform = getDefaultPlatform(props.platform);
+  ensuredProps.extraCssUrlList = props.extraCssUrlList || [];
   ensuredProps.isLib = props.isLib ?? false;
   ensuredProps.shadow = props.shadow ?? defaults.SHADOW;
   ensuredProps.setStyleAsString = props.setStyleAsString ?? defaults.SET_STYLE_AS_STRING;
@@ -107,7 +96,7 @@ export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
  * 标记执行中 ---> 开启骨架屏 ---> 异步拉取组件样式 ---> 拉取结束触发forceUpdate
  */
 export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any) {
-  const { isLoadAppStyleExecutingRef, setErrMsg, SkeletonView, forceUpdate, fetchOptions } = ctx;
+  const { isLoadAppStyleExecutingRef, setErrMsg, SkeletonView, forceUpdate } = ctx;
   // 还在执行中，依然返回骨架屏
   if (isLoadAppStyleExecutingRef.current) {
     return getFetchingResult(SkeletonView);
@@ -115,7 +104,7 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
 
   isLoadAppStyleExecutingRef.current = true;
   // 异步拉取样式函数 
-  appStyleSrv.fetchStyleStr(props.name, fetchOptions).then(() => {
+  appStyleSrv.fetchStyleStr(props.name, props).then(() => {
     isLoadAppStyleExecutingRef.current = false;
     tryTriggerOnStyleFetched(props);
     forceUpdate();
@@ -133,7 +122,7 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
  * 标记执行中 ---> 开启骨架屏 ---> 异步拉取组件 ---> 拉取结束触发 forceUpdate
  */
 export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
-  const { isLoadAppDataExecutingRef, setErrMsg, SkeletonView, forceUpdate, fetchOptions } = ctx;
+  const { isLoadAppDataExecutingRef, setErrMsg, SkeletonView, forceUpdate } = ctx;
   // 还在执行中，依然返回骨架屏
   if (isLoadAppDataExecutingRef.current) {
     return getFetchingResult(SkeletonView);
@@ -142,8 +131,8 @@ export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
   isLoadAppDataExecutingRef.current = true;
   // 声明拉取函数
   const doPreFetch = async () => {
-    if (props.isLib) return preFetchLib(props.name, fetchOptions);
-    return preFetchApp(props.name, fetchOptions);
+    if (props.isLib) return preFetchLib(props.name, props);
+    return preFetchApp(props.name, props);
   };
 
   // 开始执行异步获取组件操作
@@ -162,21 +151,3 @@ export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
   return getFetchingResult(SkeletonView);
 }
 
-
-
-export function extractOptionsFromProps(props: IInnerRemoteModuleProps): IFetchOptions {
-  const platform = props.platform || core.getPlatform();
-  const versionId = props.versionId;
-  const extraCssUrlList = props.extraCssUrlList || [];
-  return {
-    platform,
-    versionId,
-    appendCss: props.appendCss,
-    getExcludeCssList: props.getExcludeCssList,
-    setStyleAsString: props.setStyleAsString,
-    enableDiskCache: props.enableDiskCache,
-    onAppVersionFetched: props.onAppVersionFetched,
-    needStyleStr: props.needStyleStr,
-    extraCssUrlList,
-  };
-}

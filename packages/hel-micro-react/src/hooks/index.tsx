@@ -1,6 +1,6 @@
 import type {
   IUseRemoteCompOptions, IUseRemoteLibCompOptions,
-  AnyComp, ObjectFromList, Len2StrArr, GetSubVal, AnyRecord,
+  AnyComp, ObjectFromList, Len2StrArr, GetSubVal, GetSubVals, AnyRecord,
 } from '../types';
 import { useRemoteCompLogic, useRemoteLibCompLogic } from './base';
 
@@ -31,13 +31,12 @@ export function useRemoteComp<T extends any = React.ForwardRefExoticComponent<an
  *    ret.Comp.TabPanel = ret.getSubVal<Lib['Tabs']['TabPanel']>('TabPanel');
  *  }
  * ```
- * 具体示例见：to-be-added
  */
 export function useRemoteCompAndSubVal<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
   name: string, compName: string, options?: IUseRemoteCompOptions
 ) {
   const CompAndSubVal = useRemoteCompLogic(name, compName, options || {});
-  return CompAndSubVal as { Comp: T, getSubVal: GetSubVal };
+  return CompAndSubVal as { Comp: T, getSubVal: GetSubVal, getSubVals: GetSubVals };
 }
 
 

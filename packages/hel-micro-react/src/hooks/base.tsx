@@ -3,7 +3,7 @@ import type {
 } from '../types';
 import React, { useMemo, forwardRef } from 'react';
 import { preFetchLib, appStyleSrv } from 'hel-micro';
-import { getVerLib } from 'hel-micro-core';
+import { logicSrv } from 'hel-micro';
 import RemoteCompRender from '../components/RemoteCompRender';
 import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
@@ -29,15 +29,22 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
     });
   };
   const getSubVal: GetSubVal = (subCompName: string, waitVal?: any) => {
-    const lib = getVerLib(name, options);
-    return lib?.[compName]?.[subCompName] || waitVal || EmptyView;
+    const emitApp = logicSrv.getLibOrApp(name, passProps);
+    const fallbackVal = waitVal !== undefined ? waitVal : EmptyView;
+    return emitApp?.appProperties?.[compName]?.[subCompName] || fallbackVal;
+  };
+  const getSubVals = (subCompNames: string[], waitVal?: any) => {
+    const vals: Record<string, any> = {};
+    subCompNames.forEach(name => vals[name] = getSubVal(name, waitVal));
+    return vals;
   };
 
   return {
     Comp: needMemo
       ? useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow])
       : factory(),
-    getSubVal
+    getSubVal,
+    getSubVals,
   };
 }
 

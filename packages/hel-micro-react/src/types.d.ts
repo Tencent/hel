@@ -16,6 +16,8 @@ export type Len2StrArr = [string, string];
 
 export type GetSubVal = <T extends any = any>(subCompName: string, waitVal?: any) => T;
 
+export type GetSubVals = <T extends AnyRecord = AnyRecord>(subCompNames: string[], waitVal?: any) => T;
+
 
 /**
  * 默认：false
