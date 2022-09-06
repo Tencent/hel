@@ -160,7 +160,9 @@ export async function getCustomMeta(appName: string, customHost: string) {
 
   const reply = await requestGet(`${customHost}/index.html?_t=${t}`, false);
   const htmlText = reply.data;
-  const reg = /(?<=(src="))[^"]*?(?=")/ig;
+  // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
+  // SyntaxError: Invalid regular expression: invalid group specifier name
+  const reg = new RegExp('(?<=(src="))[^"]*?(?=")', 'ig');
   const srcList: string[] = htmlText.match(reg) || [];
   const bodyAssetList: any[] = [];
   srcList.map((v: string) => {

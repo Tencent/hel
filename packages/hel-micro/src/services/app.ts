@@ -9,7 +9,7 @@ import { getPlatformConfig, getPlatform } from '../shared/platform';
 import storageKeys from '../consts/storageKeys';
 import defaults from '../consts/defaults';
 import { PLAT_UNPKG } from '../consts/logic';
-import { isEmitVerMatchInputVer } from '../shared/util';
+import { isEmitVerMatchInputVer, isCustomValid } from '../shared/util';
 
 
 interface ISrvInnerOptions {
@@ -72,13 +72,11 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
   // 调试模式
-  if (custom) {
-    const { enable = true, host } = custom;
-    if (host && enable) {
-      const { app, version } = await getCustomMeta(appName, host);
-      cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
-      return { appInfo: app, appVersion: version };
-    }
+  if (isCustomValid(custom)) {
+    const { host } = custom;
+    const { app, version } = await getCustomMeta(appName, host);
+    cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
+    return { appInfo: app, appVersion: version };
   }
 
   const memApp = core.getAppMeta(appName, platform);

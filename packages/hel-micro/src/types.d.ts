@@ -22,6 +22,28 @@ export interface IPlatAndVer {
   versionId: string;
 }
 
+export interface ICustom {
+  host: string,
+  /** default: true */
+  enable?: boolean,
+  /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
+  appGroupName?: string,
+  /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
+  extraCssList?: string[],
+  /**
+   * default: 'only_cust'，仅在 enable=true 时此配置才有效
+   *
+   * IPreFetchOptionsBase.extraCssList: outCss,
+   * IPreFetchOptionsBase.custom.extraCssList: custCss
+   *
+   * 配置了 outCss 时，如何处理 custCss 和 outCss 的关系
+   * merge: custCss 和 outCss 合并
+   * only_cust: 保留 custCss，丢弃 outCss
+   * only_out: 丢弃 custCss，保留 outCss
+   */
+  cssStrategy?: 'merge' | 'only_cust' | 'only_out',
+}
+
 export interface IPreFetchOptionsBase {
   /**
    * 是否严格匹配版本，未配置的话默认走 平台配置默认值 true
@@ -69,27 +91,7 @@ export interface IPreFetchOptionsBase {
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
   getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
   onFetchMetaFailed?: IOnFetchMetaFailed;
-  custom?: {
-    host: string,
-    /** default: true */
-    enable?: boolean,
-    /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
-    appGroupName?: string,
-    /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
-    extraCssList?: string[],
-    /**
-     * default: 'only_cust'，仅在 enable=true 时此配置才有效
-     * 
-     * IPreFetchOptionsBase.extraCssList: outCss,
-     * IPreFetchOptionsBase.custom.extraCssList: custCss
-     * 
-     * 配置了 outCss 时，如何处理 custCss 和 outCss 的关系
-     * merge: custCss 和 outCss 合并
-     * only_cust: 保留 custCss，丢弃 outCss
-     * only_out: 丢弃 custCss，保留 outCss
-     */
-    cssStrategy?: 'merge' | 'only_cust' | 'only_out',
-  },
+  custom?: ICustom,
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {

@@ -16,14 +16,26 @@ export function ensureSlash(inputPath, needsSlash) {
 export function getHelProcessEnvParams() {
   // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
   const {
+    HOST,
+    PORT,
     // appHomePage, 形如 http://xxx.cdn.com/hel/app1_2020121201011666
     HEL_APP_HOME_PAGE,
     /** 在构建机环境时，会注入真正对应的应用名 */
     HEL_APP_GROUP_NAME,
     HEL_APP_NAME,
   } = process.env;
+
+  let appHomePage = HEL_APP_HOME_PAGE;
+  // 未传递 HEL_APP_HOME_PAGE 的话，根据 HOST 和 PORT 推导
+  if (!appHomePage && (HOST || PORT)) {
+    const host = HOST || 'localhost';
+    const port = PORT || '80';
+    const hotsStr = host.startsWith('http') ? host : `http://${host}`;
+    appHomePage = `${hotsStr}:${port}`;
+  }
+
   return {
-    appHomePage: HEL_APP_HOME_PAGE,
+    appHomePage,
     appGroupName: HEL_APP_GROUP_NAME,
     appName: HEL_APP_NAME,
   };

@@ -7,6 +7,7 @@ import emitApp from './process/emitApp';
 import * as appStyleSrv from './services/appStyle';
 import * as appParamSrv from './services/appParam';
 import * as appMetaSrv from './services/appMeta';
+import * as logicSrv from './services/logic';
 import getFakeHelContext from './user-util/getFakeHelContext';
 import { preFetchApp, preFetchLib } from './user-util/preFetch';
 import { getExtraData, setExtraData } from './user-util/extraData';
@@ -22,6 +23,7 @@ export {
   appStyleSrv,
   appParamSrv,
   appMetaSrv,
+  logicSrv,
   emitApp,
   init,
   isSubApp,
@@ -41,6 +43,7 @@ export default {
   appStyleSrv,
   appParamSrv,
   appMetaSrv,
+  logicSrv,
   emitApp,
   init,
   isSubApp,

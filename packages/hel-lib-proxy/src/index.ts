@@ -10,7 +10,7 @@ import core from 'hel-micro-core';
 import * as share from './share';
 export * from './typings';
 
-core.log(' hel-micro-core ver 3.8.0');
+core.log('hel-lib-proxy ver 3.8.3');
 
 /** 
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
@@ -48,8 +48,12 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
     }
   }
 
+  if (!platform) {
+    platform = 'unpkg';
+  }
+
   const libObj = share.getLibObj<L>(libName, platform);
-  core.log('[[ exposeLib ]] getLibObj result: ', libObj);
+  core.log('[[ exposeLib ]] getLibObj > platform libObj: ', platform, libObj);
   if (typeof Proxy === 'function' && asProxy) {
     return share.getLibProxy(libName, libObj);
   }

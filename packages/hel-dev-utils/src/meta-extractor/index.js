@@ -4,7 +4,7 @@ import { verbose, getNpmCdnHomePage } from '../inner-utils/index';
 import { getHelEnvParams } from '../base-utils/index';
 import { parseIndexHtml } from './parse';
 import { makeHelMetaJson } from './utils';
-import { fillAssetListByDist } from './fillAssetList'
+import { fillAssetListByDist } from './fillAssetList';
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap

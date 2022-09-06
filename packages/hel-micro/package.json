@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.8.3",
+  "version": "3.8.6",
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/hel-micro.min.js",
@@ -11,11 +11,11 @@
   },
   "bundleDependencies": [],
   "dependencies": {
-    "hel-micro-core": "^3.8.0",
+    "hel-micro-core": "^3.8.3",
     "hel-types": "^3.6.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^3.8.0",
+    "hel-micro-core": "^3.8.3",
     "hel-types": "^3.6.0"
   },
   "deprecated": false,
