@@ -74,6 +74,13 @@ export interface ISrcMap {
   privCssSrcList: string[],
 }
 
+export interface IProjVer {
+  /** o: online_version, t: test_version */
+  map: Record<string, { o: string, t: string }>,
+  /** 后台还会用于预防更新冲突 */
+  utime: number,
+}
+
 export interface IAppRenderInfo {
   name: string,
   version: string,
@@ -121,6 +128,8 @@ export interface ISubApp {
   splash_screen: string,
   /** 应用在 HelPack 里展现的 logo url */
   logo: string,
+  /** 项目id和版本映射关系，目前该配置仅作用于 hel-pack 模块管理台 */
+  proj_ver: IProjVer,
 
   // ----------------- 以下属性暂时都用不到了 --------------
   api_host: string,

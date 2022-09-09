@@ -78,7 +78,7 @@
     "lint-staged": "^10.5.3",
     "pnp-webpack-plugin": "1.6.4",
     "react-dev-utils": "^11.0.4",
-    "replace-absolute-path": "^1.0.0",
+    "replace-absolute-path": "^1.2.0",
     "resolve-url-loader": "^3.1.2",
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
