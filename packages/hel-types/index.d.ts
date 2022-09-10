@@ -75,8 +75,8 @@ export interface ISrcMap {
 }
 
 export interface IProjVer {
-  /** o: online_version, t: test_version */
-  map: Record<string, { o: string, t: string }>,
+  /** o: online_version, t: build_version */
+  map: Record<string, { o: string, b: string }>,
   /** 后台还会用于预防更新冲突 */
   utime: number,
 }
