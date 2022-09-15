@@ -80,6 +80,7 @@ function MayShadowComp(props: IMayShadowProps) {
   const shadowBodyRootRef = React.useRef(null);
   const staticShadowBodyRootRef = React.useRef(getStaticShadowBodyRef(name));
   const forceUpdate = useForceUpdate();
+
   React.useEffect(() => {
     if (shadow && !staticShadowBodyRootRef.current) {
       const evName = getShadowBodyReadyEvName(name);

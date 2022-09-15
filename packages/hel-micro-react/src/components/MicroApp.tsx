@@ -55,8 +55,9 @@ export type MicroAppLegacyType = <T extends AnyRecord = AnyRecord>(
 export const MicroAppLegacy: MicroAppLegacyType = forwardRef((props, reactRef) => {
   // 重名名部分属性名，让下层保持统一
   const { version: versionId, cache: enableDiskCache, appProps: compProps, ...rest } = props;
+  // 历史模式 mountShadowBodyForRef 一定为 true，确保 shadowBody 一定存在，让基于老包开发的提供模块可以正常工作
   const passProps: IInnerRemoteModuleProps = {
-    ...rest, versionId, enableDiskCache, compProps, reactRef, isLegacy: true,
+    ...rest, versionId, enableDiskCache, compProps, reactRef, isLegacy: true, mountShadowBodyForRef: true
   };
   return <RemoteCompRender {...passProps} />;
 });

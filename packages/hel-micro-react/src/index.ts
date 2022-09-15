@@ -4,12 +4,16 @@ export type {
 } from './types';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 import ShadowView from 'shadow-view';
+import { core } from 'hel-micro';
 import { MicroApp, MicroAppLegacy, MicroAppLegacyMemo, LocalComp } from './components/MicroApp';
 import ShadowBody from './components/ShadowBody';
 import BuildInSkeleton from './components/BuildInSkeleton';
 import renderApp from './process/renderApp';
 import * as hooks from './hooks';
 import { useForceUpdate, useExecuteCallbackOnce } from './hooks/share';
+import { VER } from './_diff';
+
+core.log(`hel-micro-react ${VER}`);
 
 const {
   useRemoteComp, useRemoteCompAndSubVal, useRemotePureComp, useRemote2Comps, useRemoteLibComp, useRemotePureLibComp, useRemoteLegacyComp
