@@ -3,4 +3,4 @@
 /** @type {'inner' | 'out'} */
 export const PACK_MODE = 'out';
 
-export const VER = '3.8.3';
+export const VER = '3.9.0';

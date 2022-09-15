@@ -1,10 +1,17 @@
 import type { IEmitAppInfo } from 'hel-types';
-import type { IPreFetchAppOptions, IInnerPreFetchOptions, IPreFetchLibOptions, AnyRecord, VersionId } from '../types';
+import type {
+  IPreFetchAppOptions, IInnerPreFetchOptions, IPreFetchLibOptions,
+  AnyRecord, VersionId, BatchAppNames, IBatchPreFetchLibOptions,
+} from '../types';
 import {
   helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig, getSharedCache,
+  setAppMeta, setVersion,
 } from 'hel-micro-core';
+import type { IHelGetOptionsBase, IHelGetOptions } from '../services/api';
 import { loadApp } from '../services/app';
 import * as logicSrv from '../services/logic';
+import * as apiSrv from '../services/api';
+import { PLAT_UNPKG } from '../consts/logic';
 import { getDefaultPlatform } from '../_diff/index';
 
 const eventBus = getHelEventBus();
@@ -20,13 +27,16 @@ function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | Ver
 
 
 async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions, loadAssetsStarter?: LoadAssetsStarter) {
-  const { platform, isLib = false, versionId, strictMatchVer } = innerOptions;
+  const { platform, isLib = false, versionId, projectId, strictMatchVer } = innerOptions;
   const eventName = isLib ? helEvents.SUB_LIB_LOADED : helEvents.SUB_APP_LOADED;
 
   let handleAppLoaded: any = null;
   await new Promise((resolve) => {
     handleAppLoaded = (appInfo: IEmitAppInfo) => {
-      logicSrv.judgeAppReady(appInfo, { appName, platform, versionId, isLib, next: resolve, strictMatchVer }, innerOptions);
+      logicSrv.judgeAppReady(appInfo,
+        { appName, platform, versionId, projectId, isLib, next: resolve, strictMatchVer },
+        innerOptions,
+      );
     };
 
     // 先监听，再触发资源加载，确保监听不会有遗漏
@@ -110,19 +120,18 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(
 ): Promise<T> {
   const targetOpts = makePreFetchOptions(true, options);
   const appInfo = await innerPreFetch(appName, targetOpts);
+  let appProperties = appInfo?.appProperties;
 
-  // xc 定制逻辑
-  if (!appInfo) {
-    const cache = getSharedCache(targetOpts.platform);
-    const appProperties: any = cache.appName2Lib[appName];
-    if (appProperties) {
-      return appProperties;
+  if (!appProperties && targetOpts.onLibNull) {
+    const fallbackLib = targetOpts.onLibNull(appName, { versionId: targetOpts.versionId });
+    if (fallbackLib) {
+      appProperties = fallbackLib;
     }
   }
-  if (!appInfo) {
+  if (!appProperties) {
     throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!`);
   }
-  return appInfo.appProperties as unknown as T;
+  return appProperties as unknown as T;
 }
 
 
@@ -135,3 +144,57 @@ export async function preFetchApp(appName: string, options?: IPreFetchAppOptions
   const appInfo = await innerPreFetch(appName, targetOpts);
   return appInfo;
 };
+
+
+/**
+ * 批量预加载模块，特别注意一下两点：
+ * 1 因服务器端控制，一次性最多只能获取 8 个
+ * 2 该接口仅支持 hel-pack（包括其他私有部署版）
+ */
+export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
+  appNames: BatchAppNames,
+  batchOptions?: {
+    preFetchConfigs: Record<string, IBatchPreFetchLibOptions | VersionId>,
+    common?: IHelGetOptionsBase,
+  },
+): Promise<T> {
+  const versionIdList: string[] = [];
+  const projectIdList: string[] = [];
+  const optionsMap = batchOptions?.preFetchConfigs || {};
+  const getOptions: IHelGetOptions = { ...(batchOptions?.common || {}) };
+  const platform = getDefaultPlatform(getOptions.platform);
+
+  if (platform === PLAT_UNPKG) {
+    throw new Error('only support platform hel!');
+  }
+  if (appNames.length > 8) {
+    throw new Error('only support 8 appName at most!');
+  }
+
+  appNames.forEach(name => {
+    const oriOptions = optionsMap[name];
+    let options: IPreFetchLibOptions = {};
+    if (!oriOptions || typeof oriOptions === 'string') {
+      options.versionId = (oriOptions as string) || '';
+    } else if (oriOptions) {
+      options = oriOptions;
+    }
+    versionIdList.push(options.versionId || '');
+    projectIdList.push(options.projectId || '');
+  });
+
+  getOptions.versionIdList = versionIdList;
+  getOptions.projectIdList = projectIdList;
+
+  const appDataList = await apiSrv.batchGetSubAppAndItsVersion(appNames, getOptions);
+  // 设置到内存里，方便后续 preFetchLib 执行时可以跳过请求阶段
+  appDataList.forEach(({ app, version }) => {
+    setAppMeta(app, platform);
+    setVersion(app.name, version, { platform });
+  });
+
+  const tasks = appNames.map(name => preFetchLib(name, optionsMap[name]));
+  const mods = await Promise.all(tasks);
+  // @ts-ignore, trust user specified AnyRecord[]
+  return mods;
+}

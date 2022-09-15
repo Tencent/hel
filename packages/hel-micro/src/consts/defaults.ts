@@ -1,6 +1,6 @@
 import * as diffBase from '../_diff/base';
 
-export default {
+const toExport = {
   VER: diffBase.VER,
   SHADOW: true,
   SET_STYLE_AS_STRING: true,
@@ -9,3 +9,5 @@ export default {
   API_MODE: 'get',
   EXTRA_DATA_PREFIX: 'HelExtraData',
 };
+
+export default toExport;

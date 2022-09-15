@@ -1,4 +1,4 @@
-import type { IGetVerOptions, IHelSimpleGetOptions } from './api';
+import type { IGetVerOptions, IHelGetOptions } from './api';
 import type { Platform, ApiMode } from 'hel-types';
 import type { IAppAndVer } from 'hel-micro-core';
 import * as innerApiSrv from './api';
@@ -9,7 +9,7 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
 }
 
 
-export async function getSubAppMeta(versionId: string, options?: IHelSimpleGetOptions): Promise<IAppAndVer> {
+export async function getSubAppMeta(versionId: string, options?: IHelGetOptions): Promise<IAppAndVer> {
   const meta = await innerApiSrv.getSubAppAndItsVersion(versionId, options || {});
   return meta;
 }

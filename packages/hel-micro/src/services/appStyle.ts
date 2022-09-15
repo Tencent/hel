@@ -54,8 +54,8 @@ const inner = {
         // 此处在 for 循环里 try catch，是为了保证 css 获取失败时，不影响组件加载
         // 例如 net::ERR_NAME_NOT_RESOLVED
         try {
-          const reply = await requestGet(cssUrl, false);
-          cachedCssStr = reply.data;
+          const result = await requestGet(cssUrl, false);
+          cachedCssStr = result.reply;
         } catch (err: any) {
           console.error(err);
         }
@@ -70,11 +70,11 @@ const inner = {
     await new Promise((resolve) => {
       handleStyleFetched = (styleInfo: IEmitStyleInfo) => {
         const { appName: emitAppName, platform: emitPlatform, versionId: emitVer } = styleInfo;
-        const { versionId, platform } = options;
+        const { versionId: inputVer, platform } = options;
         if (
           emitAppName !== appName
           || emitPlatform !== platform
-          || !isEmitVerMatchInputVer(appName, platform, emitVer, versionId)
+          || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer })
         ) {
           return;
         }

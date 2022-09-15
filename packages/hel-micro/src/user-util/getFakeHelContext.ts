@@ -8,7 +8,7 @@ function getBodyContainer(idOrTriggerNode: any) {
   return idOrTriggerNode;
 }
 
-export default function (name: string, options?: { platform?: Platform, versionId?: string }) {
+export default function getFakeHelContext(name: string, options?: { platform?: Platform, versionId?: string }) {
   return {
     name,
     platform: options?.platform || getAppPlatform(name),

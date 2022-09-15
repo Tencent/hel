@@ -56,6 +56,11 @@ export interface IPreFetchOptionsBase {
    */
   versionId?: string;
   /**
+   * 该配置仅针对 hel-pack 平台有效（hel-pack对其做了实现）
+   * 
+   */
+  projectId?: string;
+  /**
    * default: true
    */
   appendCss?: boolean;
@@ -91,6 +96,8 @@ export interface IPreFetchOptionsBase {
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
   getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
   onFetchMetaFailed?: IOnFetchMetaFailed;
+  /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
+  onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom,
 }
 
@@ -105,6 +112,18 @@ export interface IPreFetchLibOptions extends IPreFetchOptionsBase {
   __seat__?: any;
 }
 
+export type IBatchPreFetchLibOptions = Omit<IPreFetchLibOptions, 'platform' | 'apiMode' | 'isFullVersion'>;
+
 export interface IPreFetchAppOptions extends IPreFetchOptionsBase {
   __seat__?: any;
 }
+
+export type BatchAppNames =
+  [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string]
+  | [string, string, string, string, string, string]
+  | [string, string, string, string, string, string, string]
+  | [string, string, string, string, string, string, string, string];

@@ -67,7 +67,7 @@ function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any)
 async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions) {
   let mayCachedApp: any = null;
   const {
-    enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', isFirstCall = true, custom,
+    enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', projectId = '', isFirstCall = true, custom,
   } = options;
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
@@ -84,13 +84,13 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
   // memAppVersion.sub_app_version
 
   try {
-    const srcInnerOptions = { platform, apiMode, versionId, loadOptions: options };
+    const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
     // 优先从内存获取
     if (
       platform !== PLAT_UNPKG
       && memApp
       && memAppVersion
-      && isEmitVerMatchInputVer(appName, platform, memAppVersion.sub_app_version, versionId)
+      && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
     ) {
       mayCachedApp = { appInfo: memApp, appVersion: memAppVersion };
 
@@ -187,8 +187,8 @@ export function cacheApp(appInfo: ISubApp, options: { appVersion: ISubAppVersion
 
 
 export async function getAndCacheApp(appName: string, options: ISrvInnerOptions) {
-  const { platform, apiMode, versionId, loadOptions } = options;
-  const ret = await getAppAndVersion(appName, { platform, apiMode, versionId, loadOptions });
+  const { platform, loadOptions } = options;
+  const ret = await getAppAndVersion(appName, options);
   const { appInfo, appVersion } = ret;
   cacheApp(appInfo, { appVersion, platform, loadOptions });
   return ret;

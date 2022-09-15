@@ -44,10 +44,11 @@ interface IJudgeOptions {
   strictMatchVer?: boolean;
   platform?: Platform;
   versionId?: string;
+  projectId?: string;
 }
 export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, preFetchOptions: IInnerPreFetchOptions) {
   log('[[ judgeAppReady ]] receive emitApp', appInfo);
-  const { versionId: inputVer = '', appName, platform, next, strictMatchVer } = options;
+  const { versionId: inputVer = '', projectId, appName, platform, next, strictMatchVer } = options;
   const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);
@@ -72,7 +73,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   if (
     appName !== emitAppName
     || emitPlatform !== platform
-    || !isEmitVerMatchInputVer(appName, platform, emitVer, inputVer)
+    || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, projectId })
   ) {
     log(`still wait ${appPathDesc} emitted`, appInfo, options);
     return;

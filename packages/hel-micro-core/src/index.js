@@ -325,7 +325,7 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
 
 export function getVerLib(appName, inputOptions) {
   const options = inputOptions || {};
-  const { versionId, platform } = inputOptions;
+  const { versionId, platform } = options;
   const sharedCache = getSharedCache(platform);
   const { appName2verEmitLib, appName2Lib, strictMatchVer, appName2isLibAssigned } = sharedCache;
   const targetStrictMatchVer = options.strictMatchVer ?? strictMatchVer;

@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.8.6",
+  "version": "3.9.0",
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/hel-micro.min.js",
@@ -11,12 +11,12 @@
   },
   "bundleDependencies": [],
   "dependencies": {
-    "hel-micro-core": "^3.8.3",
-    "hel-types": "^3.6.0"
+    "hel-micro-core": "^3.9.0",
+    "hel-types": "^3.7.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^3.8.3",
-    "hel-types": "^3.6.0"
+    "hel-micro-core": "^3.9.0",
+    "hel-types": "^3.7.0"
   },
   "deprecated": false,
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",

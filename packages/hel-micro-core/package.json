@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-core",
-  "version": "3.8.3",
+  "version": "3.9.0",
   "author": {
     "name": "fantasticsoul"
   },
@@ -9,10 +9,10 @@
   "module": "es/index.js",
   "bundleDependencies": false,
   "dependencies": {
-    "hel-types": "^3.6.0"
+    "hel-types": "^3.7.0"
   },
   "peerDependencies": {
-    "hel-types": "^3.6.0"
+    "hel-types": "^3.7.0"
   },
   "deprecated": false,
   "description": "hel micro core",

@@ -133,39 +133,39 @@ export async function requestGet(url: string, asJson = true) {
   const res = await getGlobalThis().fetch(url);
   const { status, url: resUrl } = res;
   if (status === 404) {
-    return { url: resUrl, data: null };
+    return { url: resUrl, reply: null };
   }
 
   if (asJson) {
     const json = await res.json();
-    return { url: resUrl, data: json };
+    return { url: resUrl, reply: json };
   }
 
   const text = await res.text();
-  return { url: resUrl, data: text };
+  return { url: resUrl, reply: text };
 }
 
 
 export async function getCustomMeta(appName: string, customHost: string) {
   const t = Date.now();
   try {
-    const { data } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
-    if (data) {
-      data.app.__fromCust = true;
-      return data;
+    const { reply } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
+    if (reply) {
+      reply.app.__fromCust = true;
+      return reply;
     }
   } catch (err: any) {
     noop('json parse fail or other error');
   }
 
-  const reply = await requestGet(`${customHost}/index.html?_t=${t}`, false);
-  const htmlText = reply.data;
+  const result = await requestGet(`${customHost}/index.html?_t=${t}`, false);
+  const htmlText = result.reply;
   // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
   // SyntaxError: Invalid regular expression: invalid group specifier name
   const reg = new RegExp('(?<=(src="))[^"]*?(?=")', 'ig');
   const srcList: string[] = htmlText.match(reg) || [];
   const bodyAssetList: any[] = [];
-  srcList.map((v: string) => {
+  srcList.forEach((v: string) => {
     if (v.startsWith(customHost)) {
       bodyAssetList.push({
         tag: 'script',
