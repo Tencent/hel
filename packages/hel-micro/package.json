@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/hel-micro.min.js",

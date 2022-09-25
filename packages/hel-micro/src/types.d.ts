@@ -92,6 +92,10 @@ export interface IPreFetchOptionsBase {
    */
   enableDiskCache?: boolean;
   apiMode?: ApiMode;
+  /**
+   * preFetchLib指定的请求域名前缀，会覆盖掉init里指定的（如有指定）
+   */
+  apiPrefix?: string;
   // TODO 抽象 metaHooks
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
   getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;

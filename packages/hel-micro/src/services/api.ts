@@ -6,10 +6,6 @@ import { getJSON } from '../dom/jsonp';
 import { apiSrvConst, PLAT_UNPKG } from '../consts/logic';
 import { getDefaultPlatform } from '../_diff';
 
-export interface IUnpkgGetOptions {
-  versionId?: string;
-  platform?: Platform;
-}
 
 export interface IHelGetOptionsBase {
   platform?: Platform;
@@ -147,9 +143,9 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
 }
 
 
-export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IUnpkgGetOptions = {}) {
-  const { versionId, platform } = getOptions;
-  const apiHost = getPlatformHost(platform);
+export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IHelGetOptions) {
+  const { versionId, platform, loadOptions } = getOptions;
+  const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
   const url = await getUnpkgUrl(apiHost, appName, versionId || '');
   return url;
 }

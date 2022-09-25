@@ -4,7 +4,7 @@ import type {
   AnyRecord, VersionId, BatchAppNames, IBatchPreFetchLibOptions,
 } from '../types';
 import {
-  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig, getSharedCache,
+  helLoadStatus, helEvents, getVerLoadStatus, getHelEventBus, setVerLoadStatus, log, getPlatformConfig,
   setAppMeta, setVersion,
 } from 'hel-micro-core';
 import type { IHelGetOptionsBase, IHelGetOptions } from '../services/api';
