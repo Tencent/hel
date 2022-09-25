@@ -16,6 +16,11 @@ function makeHelMicroDebug() {
 
 function ensureHelMicroDebug() {
   if (helMicroDebug) {
+    // 兼容老版本库生成的 __HEL_MICRO_DEBUG__ 对象
+    if (helMicroDebug.logMode === undefined) {
+      helMicroDebug.logMode = 0;
+      helMicroDebug.logFilter = '';
+    }
     return;
   }
 
