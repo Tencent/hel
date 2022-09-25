@@ -120,9 +120,9 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
 }
 
 
-export async function getUnpkgLatestVer(appName: string) {
+export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
   // https://unpkg.com/hel-lodash@1.2.21/1659925934381
-  const { url } = await requestGet(`https://unpkg.com/${appName}@latest/${Date.now()}_${appName}`);
+  const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${Date.now()}_${appName}`);
   const [, includeVer] = url.split('@');
   const [ver] = includeVer.split('/');
   return ver;

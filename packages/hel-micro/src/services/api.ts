@@ -83,7 +83,7 @@ function ensureVersion(version: ISubAppVersion) {
 async function getUnpkgUrl(apiHost: string, appName: string, versionId: string) {
   let ver = versionId;
   if (!ver) {
-    ver = await getUnpkgLatestVer(appName);
+    ver = await getUnpkgLatestVer(appName, apiHost);
   }
   // https://unpkg.com/hel-lodash@1.2.2/hel_dist/hel-meta.json
   return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json?_t=${Date.now()}`;
