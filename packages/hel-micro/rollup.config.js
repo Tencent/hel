@@ -1,5 +1,5 @@
-import typescript from 'rollup-plugin-typescript';
 import commonjs from 'rollup-plugin-commonjs';
+import typescript from 'rollup-plugin-typescript';
 // import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
@@ -35,8 +35,7 @@ const config = {
   output: {
     ...env2outputConf[env],
     exports: 'named',
-    globals: {
-    }
+    globals: {},
   },
   plugins: [
     commonjs(),
@@ -46,8 +45,7 @@ const config = {
     }),
     // 如不想压缩，不配置 terser() 即可
     // terser(),
-  ]
+  ],
 };
-
 
 export default config;

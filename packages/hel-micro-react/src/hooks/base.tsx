@@ -1,16 +1,13 @@
-import type {
-  IInnerUseRemoteCompOptions, IInnerRemoteModuleProps, IUseRemoteLibCompOptions, GetSubVal,
-} from '../types';
-import React, { useMemo, forwardRef } from 'react';
-import { preFetchLib, appStyleSrv } from 'hel-micro';
-import { logicSrv } from 'hel-micro';
-import RemoteCompRender from '../components/RemoteCompRender';
+import { appStyleSrv, logicSrv, preFetchLib } from 'hel-micro';
+import React, { forwardRef, useMemo } from 'react';
 import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
+import RemoteCompRender from '../components/RemoteCompRender';
 import { tryTriggerOnStyleFetched } from '../components/share';
 import defaults from '../consts/defaults';
+import type { GetSubVal, IInnerRemoteModuleProps, IInnerUseRemoteCompOptions, IUseRemoteLibCompOptions } from '../types';
 import { getDefaultPlatform } from '../_diff/index';
-import { useForceUpdate, delay } from './share';
+import { delay, useForceUpdate } from './share';
 
 const { H1_STYLE } = defaults;
 
@@ -35,26 +32,23 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
   };
   const getSubVals = (subCompNames: string[], waitVal?: any) => {
     const vals: Record<string, any> = {};
-    subCompNames.forEach(name => vals[name] = getSubVal(name, waitVal));
+    subCompNames.forEach((name) => (vals[name] = getSubVal(name, waitVal)));
     return vals;
   };
 
   return {
-    Comp: needMemo
-      ? useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow])
-      : factory(),
+    Comp: needMemo ? useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]) : factory(),
     getSubVal,
     getSubVals,
   };
 }
 
-
 /**
  * 区别于 useRemoteCompLogic，该钩子函数跳过所有步骤，直接基于 preFetchLib 获取远程组件
- * @param name 
- * @param compName 
- * @param options 
- * @returns 
+ * @param name
+ * @param compName
+ * @param options
+ * @returns
  */
 export function useRemoteLibCompLogic(name: string, compName: string, options: IUseRemoteLibCompOptions) {
   const { Skeleton, Error, ...restOptions } = options;
@@ -81,13 +75,16 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
       const Comp = RemoteComp || (() => <h1 style={H1_STYLE}>Invalid compName {compName}</h1>);
       return Comp;
     };
-    fetchComp().then((Comp) => {
-      compRef.current = Comp;
-    }).catch((err: any) => {
-      compRef.current = Error || (() => <h1 style={H1_STYLE}>Load comp err {err.message}</h1>);
-    }).finally(() => {
-      forceUpdate();
-    });
+    fetchComp()
+      .then((Comp) => {
+        compRef.current = Comp;
+      })
+      .catch((err: any) => {
+        compRef.current = Error || (() => <h1 style={H1_STYLE}>Load comp err {err.message}</h1>);
+      })
+      .finally(() => {
+        forceUpdate();
+      });
   }
 
   return compRef.current;

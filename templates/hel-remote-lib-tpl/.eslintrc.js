@@ -5,10 +5,7 @@ module.exports = {
   env: {
     jest: true,
   },
-  globals: {
-  },
-  settings: {
-  },
-  rules: {
-  },
+  globals: {},
+  settings: {},
+  rules: {},
 };

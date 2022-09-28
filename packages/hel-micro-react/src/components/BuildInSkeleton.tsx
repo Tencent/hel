@@ -6,7 +6,7 @@ const halfBarStyle = { ...barStyle, width: '50%' };
 
 /**
  * 内置的骨架屏组件
- * @returns 
+ * @returns
  */
 export default function BuildInSkeleton() {
   return (

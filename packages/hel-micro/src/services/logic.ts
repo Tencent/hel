@@ -1,10 +1,8 @@
-
+import { getAppMeta, getPlatform, getPlatformConfig, getVerApp, getVerLib, log } from 'hel-micro-core';
 import type { IEmitAppInfo, Platform } from 'hel-types';
-import type { IInnerPreFetchOptions } from '../types';
-import { getPlatform, log, getVerLib, getVerApp, getPlatformConfig, getAppMeta } from 'hel-micro-core';
-import { isEmitVerMatchInputVer, isCustomValid } from '../shared/util';
 import { PLAT_UNPKG } from '../consts/logic';
-
+import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
+import type { IInnerPreFetchOptions } from '../types';
 
 export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions) {
   const { platform = getPlatform(), versionId = '', isLib } = innerOptions;
@@ -27,15 +25,22 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
 
   if (isLib) {
     const lib = getVerLib(targetName, newGetOptions);
-    return lib ? {
-      appName: targetName, appGroupName: appMeta?.app_group_name || '', platform, appProperties: lib,
-      isLib: true, versionId, Comp: null, lifecycle: undefined
-    } : null;
+    return lib
+      ? {
+          appName: targetName,
+          appGroupName: appMeta?.app_group_name || '',
+          platform,
+          appProperties: lib,
+          isLib: true,
+          versionId,
+          Comp: null,
+          lifecycle: undefined,
+        }
+      : null;
   }
   const emitApp = getVerApp(targetName, newGetOptions);
   return emitApp || null;
 }
-
 
 interface IJudgeOptions {
   appName: string;
@@ -71,13 +76,13 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
 
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
   if (
-    appName !== emitAppName
-    || emitPlatform !== platform
-    || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, projectId })
+    appName !== emitAppName ||
+    emitPlatform !== platform ||
+    !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, projectId })
   ) {
     log(`still wait ${appPathDesc} emitted`, appInfo, options);
     return;
   }
 
   next();
-};
+}

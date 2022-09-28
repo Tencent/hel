@@ -1,6 +1,6 @@
+import { getAppMeta, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
-import type { IInnerPreFetchOptions, ICustom } from '../types';
-import { log, getAppMeta } from 'hel-micro-core';
+import type { ICustom, IInnerPreFetchOptions } from '../types';
 
 interface IVerMatchOptions {
   platform: Platform;
@@ -36,7 +36,6 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
 
   return emitVer === inputVer;
 }
-
 
 export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom is ICustom {
   if (custom) {

@@ -25,7 +25,6 @@ export function callRemoteMethod(){
 }
 `;
 
-
 export const remoteLibLazy = `
 import helMicro from 'hel-micro';
 
@@ -45,7 +44,6 @@ export async function  callRemoteMethod(){
   return remoteLib.num.random(19);
 }
 `;
-
 
 export const remoteReact = `
 // 这是一个由 hel-micro 从 HelPack 动态拉取的远程 react 组件
@@ -68,7 +66,6 @@ function ShadowDemo(){
   return <Comp  label="hi remote comp" />;
 }
 `;
-
 
 export const remoteVue = `
 <!-- 示例见项目 to be added -->

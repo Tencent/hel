@@ -4,7 +4,7 @@ import * as fs from 'fs';
 /**
  * 递归获得某个目录下的所有文件绝对路径
  * @param {string} dirPath 形如:/user/zzk/log/build
- * @return {string[]} filePathList 
+ * @return {string[]} filePathList
  * 形如 ['/user/zzk/log/build/js/xx.js', '/user/zzk/log/build/img/xx.png']
  */
 export function getAllFilePath(dirPath) {
@@ -34,9 +34,9 @@ export function makeFileDescList(fileFullPathList, appHomePage, splitStrForFileP
   const appVersion = getAppVersionFromHomePage(appHomePage);
   const zoneName = getZoneNameFromHomePage(appHomePage);
 
-  fileFullPathList.forEach(fileAbsolutePath => {
+  fileFullPathList.forEach((fileAbsolutePath) => {
     // 获取文件处于build目录下的相对路径，形如：
-    //  /static/js/runtime-main.66c45929.js 
+    //  /static/js/runtime-main.66c45929.js
     //  /asset-manifest.json
     const filePathUnderBuild = fileAbsolutePath.split(splitStrForFilePathUnderBuild)[1];
 
@@ -50,15 +50,14 @@ export function makeFileDescList(fileFullPathList, appHomePage, splitStrForFileP
   return fileDescList;
 }
 
-
 export function verbose(...args) {
   console.log(`[Hel-verbose:] `, ...args);
 }
 
 /**
  * verbose with handler
- * @param {} argHandler 
- * @param  {...any} args 
+ * @param {} argHandler
+ * @param  {...any} args
  */
 export function verboseH(argHandler, ...args) {
   const handledArgs = args.map((arg, idx) => argHandler(arg, idx));
@@ -79,7 +78,7 @@ export function verboseObj(...args) {
 /**
  * input : https://xxxxx.yy.com/<zoneName>/<relativeDirName>
  * output: https://xxxxx.yy.com
- * @param {string} homePage 
+ * @param {string} homePage
  */
 export function getCdnHostFromHomePage(homePage) {
   const [protocolStr, restStr] = homePage.split('//');

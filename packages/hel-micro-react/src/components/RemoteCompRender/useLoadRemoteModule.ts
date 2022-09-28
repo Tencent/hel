@@ -1,10 +1,9 @@
-import type { IInnerRemoteModuleProps } from '../../types';
-import React from 'react';
 import { appStyleSrv, logicSrv } from 'hel-micro';
-import BuildInSkeleton from '../BuildInSkeleton';
+import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
+import type { IInnerRemoteModuleProps } from '../../types';
+import BuildInSkeleton from '../BuildInSkeleton';
 import * as share from '../share';
-
 
 function judgeFetchStyleStr(appName: string, props: IInnerRemoteModuleProps) {
   const styleStr = appStyleSrv.getStyleStr(appName, props);
@@ -15,7 +14,6 @@ function judgeFetchStyleStr(appName: string, props: IInnerRemoteModuleProps) {
   return shouldFetchStyle;
 }
 
-
 function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
   return {
     RemoteModule: props.Component,
@@ -24,7 +22,6 @@ function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
     moduleReady: false,
   };
 }
-
 
 function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCtx: { [key: string]: any }) {
   const { isLib, compName } = props;
@@ -49,7 +46,6 @@ function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCt
 
   return emitApp?.Comp;
 }
-
 
 export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
   const appName = props.name;

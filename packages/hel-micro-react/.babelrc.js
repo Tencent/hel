@@ -1,13 +1,12 @@
-
 module.exports = {
   presets: [
     [
       '@babel/preset-env',
       {
-        modules: false
-      }
+        modules: false,
+      },
     ],
-    '@babel/react'
+    '@babel/react',
   ],
-  plugins: ["@babel/plugin-proposal-class-properties"]
-}
+  plugins: ['@babel/plugin-proposal-class-properties'],
+};

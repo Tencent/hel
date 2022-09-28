@@ -14,7 +14,6 @@ const path = require('path');
 const replacePath = require('replace-absolute-path');
 // const { replaceRelativePath: replacePath, DEFAULT_EXTS } = require('./replace-relative-path');
 
-
 (async function () {
   const srcDir = process.env.BUNDLE === 'true' ? path.resolve(__dirname, '../lib-js') : path.resolve(__dirname, '../src');
   const libDir = process.env.BUNDLE === 'true' ? path.resolve(__dirname, '../lib-js') : path.resolve(__dirname, '../lib');

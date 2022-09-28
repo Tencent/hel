@@ -33,7 +33,7 @@ const config = {
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl:  'http://localhost:3000/hel/blog',
+          editUrl: 'http://localhost:3000/hel/blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -59,10 +59,10 @@ const config = {
           //   label: 'Tutorial',
           // },
           {
-            type: 'docSidebar',  // docSidebar
+            type: 'docSidebar', // docSidebar
             position: 'left',
             sidebarId: 'tutorial', // foldername
-            label: '教程',     // navbar title
+            label: '教程', // navbar title
             docId: 'tutorial/intro',
           },
           {
@@ -73,10 +73,10 @@ const config = {
             docId: 'docs/api/intro',
           },
           {
-            type: 'docSidebar',  // docSidebar
+            type: 'docSidebar', // docSidebar
             position: 'left',
             sidebarId: 'changelog', // foldername
-            label: '日志',     // navbar title
+            label: '日志', // navbar title
             docId: 'changelog',
           },
           { to: '/blog', label: 'Blog', position: 'left' },

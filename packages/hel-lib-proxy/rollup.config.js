@@ -1,5 +1,5 @@
-import typescript from 'rollup-plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript';
 
 const plugins = [
   typescript({
@@ -21,7 +21,5 @@ if (process.env.MIN === 'true') {
 module.exports = {
   input: 'src/index.ts',
   plugins,
-  output: [
-    umdOutput,
-  ],
+  output: [umdOutput],
 };

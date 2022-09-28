@@ -5,7 +5,7 @@ const DOCUMENT_FRAGMENT_NODE = 11;
 
 const JSONP = {
   now: function () {
-    return (new Date()).getTime();
+    return new Date().getTime();
   },
   rand: function () {
     return Math.random().toString().substring(6);
@@ -73,7 +73,7 @@ const JSONP = {
         head[0].appendChild(script);
       }
     });
-  }
+  },
 };
 
 export const getJSON = JSONP.getJSON;

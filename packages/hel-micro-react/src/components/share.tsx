@@ -1,9 +1,9 @@
-import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
-import React from 'react';
-import core from 'hel-micro-core';
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import { getDefaultPlatform } from '../_diff';
+import core from 'hel-micro-core';
+import React from 'react';
 import defaults from '../consts/defaults';
+import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
+import { getDefaultPlatform } from '../_diff';
 
 const { helLoadStatus } = core;
 
@@ -21,7 +21,7 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const needStyleStrForShadow = ensuredProps.shadow && ensuredProps.setStyleAsString;
   // 如果未显式设置是否 appendCss 值，appendCss 默认值受是否需要样式字符串 needStyleStrForShadow 值影响，需要样式字符串则不附加，反正则附加
   // 点击 props.appendCss 可进一步查看详细的默认值生成规则说明
-  ensuredProps.appendCss = props.appendCss ?? (!needStyleStrForShadow);
+  ensuredProps.appendCss = props.appendCss ?? !needStyleStrForShadow;
   ensuredProps.compProps = props.compProps || {};
   ensuredProps.children = ensuredProps.compProps.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
@@ -31,10 +31,8 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   return ensuredProps;
 }
 
-
 export function getErrResult(props: ILocalCompProps, errMsg: string) {
-  const ErrorView = props.Error
-    || (() => <h1 style={defaults.H1_STYLE}>Hel MicroComp error: {errMsg}</h1>);
+  const ErrorView = props.Error || (() => <h1 style={defaults.H1_STYLE}>Hel MicroComp error: {errMsg}</h1>);
   return {
     RemoteModule: () => <ErrorView errMsg={errMsg} />,
     styleStr: '',
@@ -42,7 +40,6 @@ export function getErrResult(props: ILocalCompProps, errMsg: string) {
     moduleReady: false,
   };
 }
-
 
 export function getFetchingResult(SkeletonView: any) {
   return {
@@ -53,7 +50,6 @@ export function getFetchingResult(SkeletonView: any) {
   };
 }
 
-
 export function tryTriggerOnStyleFetched(props: IInnerRemoteModuleProps) {
   if (props.onStyleFetched) {
     const oriStyleStr = appStyleSrv.getStyleStr(props.name, props);
@@ -62,7 +58,6 @@ export function tryTriggerOnStyleFetched(props: IInnerRemoteModuleProps) {
     props.onStyleFetched({ mayHandledStyleStr, oriStyleStr, styleUrlList });
   }
 }
-
 
 /**
  * 拉取远程组件样式核心逻辑
@@ -77,19 +72,21 @@ export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
   }
 
   fetchStyleStatusRef.current = helLoadStatus.LOADING;
-  // 异步拉取样式函数 
-  appStyleSrv.fetchStyleByUrlList(styleUrlList).then((str) => {
-    fetchStyleStatusRef.current = helLoadStatus.LOADED;
-    setStyleStr(str);
-  }).catch(err => {
-    fetchStyleStatusRef.current = helLoadStatus.LOADED;
-    setErrMsg(err.message || 'err occurred while fetch component style');
-  });
+  // 异步拉取样式函数
+  appStyleSrv
+    .fetchStyleByUrlList(styleUrlList)
+    .then((str) => {
+      fetchStyleStatusRef.current = helLoadStatus.LOADED;
+      setStyleStr(str);
+    })
+    .catch((err) => {
+      fetchStyleStatusRef.current = helLoadStatus.LOADED;
+      setErrMsg(err.message || 'err occurred while fetch component style');
+    });
 
   // 返回骨架屏
   return getFetchingResult(SkeletonView);
 }
-
 
 /**
  * 拉取远程组件样式核心逻辑
@@ -103,15 +100,18 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
   }
 
   isLoadAppStyleExecutingRef.current = true;
-  // 异步拉取样式函数 
-  appStyleSrv.fetchStyleStr(props.name, props).then(() => {
-    isLoadAppStyleExecutingRef.current = false;
-    tryTriggerOnStyleFetched(props);
-    forceUpdate();
-  }).catch(err => {
-    isLoadAppStyleExecutingRef.current = false;
-    setErrMsg(err.message || 'err occurred while fetch component style');
-  });
+  // 异步拉取样式函数
+  appStyleSrv
+    .fetchStyleStr(props.name, props)
+    .then(() => {
+      isLoadAppStyleExecutingRef.current = false;
+      tryTriggerOnStyleFetched(props);
+      forceUpdate();
+    })
+    .catch((err) => {
+      isLoadAppStyleExecutingRef.current = false;
+      setErrMsg(err.message || 'err occurred while fetch component style');
+    });
 
   // 返回骨架屏
   return getFetchingResult(SkeletonView);
@@ -136,18 +136,19 @@ export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
   };
 
   // 开始执行异步获取组件操作
-  doPreFetch().then((emitAppOrLib) => {
-    if (!emitAppOrLib) {
-      return setErrMsg('no component fetched');
-    }
-    isLoadAppDataExecutingRef.current = false;
-    forceUpdate();
-  }).catch(err => {
-    isLoadAppDataExecutingRef.current = false;
-    setErrMsg(err.message || 'err occurred while fetch component');
-  });
+  doPreFetch()
+    .then((emitAppOrLib) => {
+      if (!emitAppOrLib) {
+        return setErrMsg('no component fetched');
+      }
+      isLoadAppDataExecutingRef.current = false;
+      forceUpdate();
+    })
+    .catch((err) => {
+      isLoadAppDataExecutingRef.current = false;
+      setErrMsg(err.message || 'err occurred while fetch component');
+    });
 
   // 返回骨架屏
   return getFetchingResult(SkeletonView);
 }
-

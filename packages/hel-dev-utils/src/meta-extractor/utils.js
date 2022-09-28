@@ -5,7 +5,7 @@ import { PLUGIN_VER } from '../configs/consts';
 /**
  * 递归获得某个目录下的所有文件绝对路径
  * @param {string} dirPath 形如:/user/zzk/log/build
- * @return {string[]} filePathList 
+ * @return {string[]} filePathList
  * 形如 ['/user/zzk/log/build/js/xx.js', '/user/zzk/log/build/img/xx.png']
  */
 export function getAllFilePath(dirPath) {
@@ -27,7 +27,7 @@ export function getAllFilePath(dirPath) {
 }
 
 /**
- * 
+ *
  * @param {string} homePage
  * @return {SrcMap}
  */
@@ -70,6 +70,6 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       sub_app_version: version,
       src_map: parsedRet.srcMap,
       html_content: parsedRet.htmlContent,
-    }
+    },
   };
 }

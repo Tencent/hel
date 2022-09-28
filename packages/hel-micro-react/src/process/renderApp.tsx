@@ -1,9 +1,8 @@
-import type { IRenderAppOptions } from '../types';
+import { core, emitApp } from 'hel-micro';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { emitApp, core } from 'hel-micro';
+import type { IRenderAppOptions } from '../types';
 import { getDefaultPlatform } from '../_diff/index';
-
 
 function getHostNode(hostNodeId?: string) {
   const id = hostNodeId ?? 'root';
@@ -18,8 +17,8 @@ function getHostNode(hostNodeId?: string) {
 
 /**
  * 该函数由子应用调用，用于替换原来的 ReactDom.render 渲染入口
- * @param options 
- * @returns 
+ * @param options
+ * @returns
  */
 export default function renderApp(options: IRenderAppOptions) {
   const { App, renderSelf, appGroupName, lifecycle, hostNodeId, renderSelfFn, createRoot } = options;

@@ -1,11 +1,11 @@
-import checkMod from './check';
 import * as baseUtilsMod from './base-utils/index';
-import cstMod from './share/cst';
-import createReactSubAppMod from './sub-app/createReactSubApp';
-import createVue3SubAppMod from './sub-app/createVue3SubApp';
-import createVue2SubAppMod from './sub-app/createVue2SubApp';
-import createLibSubAppMod from './sub-app/createLibSubApp';
+import checkMod from './check';
 import extractHelMetaJsonMod from './meta-extractor/index';
+import cstMod from './share/cst';
+import createLibSubAppMod from './sub-app/createLibSubApp';
+import createReactSubAppMod from './sub-app/createReactSubApp';
+import createVue2SubAppMod from './sub-app/createVue2SubApp';
+import createVue3SubAppMod from './sub-app/createVue3SubApp';
 
 export const check = checkMod;
 export const cst = cstMod;

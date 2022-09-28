@@ -1,13 +1,11 @@
 import { getGlobalThis } from 'hel-micro-core';
 import defaultsCst from '../consts/defaults';
 
-
 function getExtraDataPrefix(appName: string) {
   return `${defaultsCst.EXTRA_DATA_PREFIX}.${appName}`;
 }
 
-
-export function getExtraData<T = any>(appName: string, shouldParse?: boolean): (T | null) {
+export function getExtraData<T = any>(appName: string, shouldParse?: boolean): T | null {
   const shouldParseVar = shouldParse ?? false;
   const str = getGlobalThis().localStorage?.getItem(getExtraDataPrefix(appName)) ?? null;
 
@@ -19,7 +17,6 @@ export function getExtraData<T = any>(appName: string, shouldParse?: boolean): (
   }
   return null;
 }
-
 
 export function setExtraData(appName: string, data: any, shouldStringify?: boolean) {
   const shouldStringifyVar = shouldStringify ?? false;

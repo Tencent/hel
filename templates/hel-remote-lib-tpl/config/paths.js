@@ -25,25 +25,11 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 // );
 const publicUrlOrPath = ''; //subApp.getPublicPathOrUrl('/');
 
-const moduleFileExtensions = [
-  'web.mjs',
-  'mjs',
-  'web.js',
-  'js',
-  'web.ts',
-  'ts',
-  'web.tsx',
-  'tsx',
-  'json',
-  'web.jsx',
-  'jsx',
-];
+const moduleFileExtensions = ['web.mjs', 'mjs', 'web.js', 'js', 'web.ts', 'ts', 'web.tsx', 'tsx', 'json', 'web.jsx', 'jsx'];
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
-  const extension = moduleFileExtensions.find((extension) =>
-    fs.existsSync(resolveFn(`${filePath}.${extension}`)),
-  );
+  const extension = moduleFileExtensions.find((extension) => fs.existsSync(resolveFn(`${filePath}.${extension}`)));
 
   if (extension) {
     return resolveFn(`${filePath}.${extension}`);
@@ -53,8 +39,7 @@ const resolveModule = (resolveFn, filePath) => {
 };
 
 const { HEL_BUNDLE_DIR, HEL_DIST_DIR } = helDevUtils.cst;
-const appIndexJsFile =
-  process.env.BUNDLE === 'true' ? 'lib-js/entrance/libProperties' : 'src/index';
+const appIndexJsFile = process.env.BUNDLE === 'true' ? 'lib-js/entrance/libProperties' : 'src/index';
 const appSrcDir = process.env.BUNDLE === 'true' ? 'lib-js' : 'src';
 const buildDir = process.env.BUNDLE === 'true' ? HEL_BUNDLE_DIR : HEL_DIST_DIR;
 

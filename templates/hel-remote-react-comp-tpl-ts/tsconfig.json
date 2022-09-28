@@ -4,11 +4,7 @@
     "target": "es5",
     "outDir": "lib-js",
     "noEmit": false,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -19,9 +15,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": [
-      "jest",
-    ],
+    "types": ["jest"],
     "jsx": "react"
   },
   "include": ["src/**/*"],

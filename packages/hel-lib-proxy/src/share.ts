@@ -16,10 +16,7 @@ export function getMergedOptions(options?: IOptions) {
  * @param platform
  * @returns
  */
-export function getLibObj<L extends LibProperties>(
-  libName: string,
-  platform?: Platform,
-): L {
+export function getLibObj<L extends LibProperties>(libName: string, platform?: Platform): L {
   // 使用 getAppPlatform?.是为了 防止 peerDependencies 里用户还未升级最新版 hel-micro-core
   const platformVar = platform || getAppPlatform?.(libName);
   const appName2Lib = getSharedCache(platformVar).appName2Lib;
@@ -29,10 +26,7 @@ export function getLibObj<L extends LibProperties>(
   return appName2Lib[libName] as L;
 }
 
-export function getLibProxy<L extends LibProperties>(
-  libName: string,
-  libObj: L,
-): L {
+export function getLibProxy<L extends LibProperties>(libName: string, libObj: L): L {
   //@ts-ignore
   return new Proxy(libObj, {
     get(target, key) {

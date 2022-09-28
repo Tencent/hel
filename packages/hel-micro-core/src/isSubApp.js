@@ -24,7 +24,6 @@ export function trySetMasterAppLoadedSignal() {
   }
 }
 
-
 /**
  * 是否是子应用
  * @returns

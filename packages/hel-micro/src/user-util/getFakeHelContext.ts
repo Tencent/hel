@@ -1,5 +1,5 @@
+import { getAppPlatform, getGlobalThis } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
-import { getGlobalThis, getAppPlatform } from 'hel-micro-core';
 
 function getBodyContainer(idOrTriggerNode: any) {
   if (typeof idOrTriggerNode === 'string') {
@@ -8,7 +8,7 @@ function getBodyContainer(idOrTriggerNode: any) {
   return idOrTriggerNode;
 }
 
-export default function getFakeHelContext(name: string, options?: { platform?: Platform, versionId?: string }) {
+export default function getFakeHelContext(name: string, options?: { platform?: Platform; versionId?: string }) {
   return {
     name,
     platform: options?.platform || getAppPlatform(name),

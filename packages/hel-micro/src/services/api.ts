@@ -1,11 +1,10 @@
-import type { ISubApp, ISubAppVersion, ApiMode, Platform } from 'hel-types';
-import type { IInnerPreFetchOptions } from '../types';
-import { safeParse, requestGet, perfStart, perfEnd, getLocalStorage, getUnpkgLatestVer } from '../util';
-import { getPlatformHost, getPlatformConfig } from '../shared/platform';
-import { getJSON } from '../dom/jsonp';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import { apiSrvConst, PLAT_UNPKG } from '../consts/logic';
+import { getJSON } from '../dom/jsonp';
+import { getPlatformConfig, getPlatformHost } from '../shared/platform';
+import type { IInnerPreFetchOptions } from '../types';
+import { getLocalStorage, getUnpkgLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
 import { getDefaultPlatform } from '../_diff';
-
 
 export interface IHelGetOptionsBase {
   platform?: Platform;
@@ -13,7 +12,6 @@ export interface IHelGetOptionsBase {
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
 }
-
 
 export interface IHelGetOptions extends IHelGetOptionsBase {
   versionId?: string;
@@ -24,14 +22,15 @@ export interface IHelGetOptions extends IHelGetOptionsBase {
   projectIdList?: string[];
 }
 
-
 async function executeGet<T extends any = any>(
   url: string,
   options: {
-    apiMode?: ApiMode, isFullVersion?: boolean, platform: Platform,
-    onlyVersion?: boolean,
+    apiMode?: ApiMode;
+    isFullVersion?: boolean;
+    platform: Platform;
+    onlyVersion?: boolean;
   },
-): Promise<{ data: T, code: string, msg: string }> {
+): Promise<{ data: T; code: string; msg: string }> {
   let ret: any = null;
   const { isFullVersion, platform, onlyVersion } = options;
   // 确保一定向 unpkg 平台发起 get 请求
@@ -43,7 +42,8 @@ async function executeGet<T extends any = any>(
   if (apiMode === 'get') {
     const result = await requestGet(url);
     ret = result.reply;
-  } else { // jsonp get
+  } else {
+    // jsonp get
     ret = await getJSON(url);
   }
   perfEnd(perfLabel);
@@ -64,7 +64,6 @@ async function executeGet<T extends any = any>(
   return ret;
 }
 
-
 function ensureApp(app: ISubApp) {
   const clonedApp = { ...app };
   clonedApp.additional_scripts = safeParse(clonedApp.additional_scripts, []);
@@ -72,13 +71,11 @@ function ensureApp(app: ISubApp) {
   return clonedApp;
 }
 
-
 function ensureVersion(version: ISubAppVersion) {
   const clonedVersion = { ...version };
   clonedVersion.src_map = safeParse(clonedVersion.src_map, {});
   return clonedVersion;
 }
-
 
 async function getUnpkgUrl(apiHost: string, appName: string, versionId: string) {
   let ver = versionId;
@@ -88,7 +85,6 @@ async function getUnpkgUrl(apiHost: string, appName: string, versionId: string) 
   // https://unpkg.com/hel-lodash@1.2.2/hel_dist/hel-meta.json
   return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json?_t=${Date.now()}`;
 }
-
 
 export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], getOptions: IHelGetOptions) {
   const { versionId, projectId, platform, apiMode, isFullVersion = false, versionIdList = [], projectIdList = [] } = getOptions;
@@ -109,9 +105,8 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
 
   const apiHost = getPlatformHost(platform);
   const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey } = getPlatformConfig(platform);
-  const userName = getUserName?.({ platform: targetPlatform, appName })
-    || getLocalStorage().getItem(userLsKey || apiSrvConst.USER_KEY)
-    || '';
+  const userName =
+    getUserName?.({ platform: targetPlatform, appName }) || getLocalStorage().getItem(userLsKey || apiSrvConst.USER_KEY) || '';
   let url = '';
 
   // 为 hel pack 模块管理台拼接请求链接
@@ -142,14 +137,12 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
   return { url, userName };
 }
 
-
 export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, loadOptions } = getOptions;
   const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
   const url = await getUnpkgUrl(apiHost, appName, versionId || '');
   return url;
 }
-
 
 export async function prepareRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { platform } = getOptions;
@@ -168,7 +161,6 @@ export async function prepareRequestInfo(appName: string, getOptions: IHelGetOpt
 
   return { url, userName };
 }
-
 
 async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOptions) {
   const { platform, apiMode, appName, isFullVersion = false } = getOptions;
@@ -198,7 +190,6 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
   return url;
 }
 
-
 /**
  * 获取子应用和它的最新在线版本
  */
@@ -211,10 +202,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
-    const reply = await executeGet(
-      custUrl || url,
-      { apiMode: custApiMode || apiMode, platform: targetPlatform },
-    );
+    const reply = await executeGet(custUrl || url, { apiMode: custApiMode || apiMode, platform: targetPlatform });
     if (0 !== parseInt(reply.code)) {
       throw new Error(reply.msg);
     }
@@ -222,16 +210,16 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   };
 
   if (getFn) {
-    const data = await Promise.resolve(
-      getFn({ platform: targetPlatform, appName, userName, versionId, url, innerRequest })
-    ) as { app: ISubApp, version: ISubAppVersion };
+    const data = (await Promise.resolve(getFn({ platform: targetPlatform, appName, userName, versionId, url, innerRequest }))) as {
+      app: ISubApp;
+      version: ISubAppVersion;
+    };
     return { app: ensureApp(data.app), version: ensureVersion(data.version) };
   }
 
   const data = await innerRequest();
   return data;
 }
-
 
 export interface IGetVerOptions {
   platform: Platform;
@@ -240,7 +228,6 @@ export interface IGetVerOptions {
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
 }
-
 
 /**
  * 获取子应用版本详情 { platform, apiMode, appName: appVersion.sub_app_name }
@@ -259,7 +246,6 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
   return versionData;
 }
 
-
 /**
  * 获取子应用版本详情 { platform, apiMode, appName: appVersion.sub_app_name }
  */
@@ -267,14 +253,15 @@ export async function batchGetSubAppAndItsVersion(appNames: string[], getOptions
   const { apiMode } = getOptions;
   const { url } = await prepareOtherPlatRequestInfo(appNames, getOptions);
 
-  const { data, code, msg } = await executeGet<Array<{ app: ISubApp, version: ISubAppVersion }>>(
-    url, { apiMode, platform: getDefaultPlatform(getOptions.platform) },
-  );
+  const { data, code, msg } = await executeGet<Array<{ app: ISubApp; version: ISubAppVersion }>>(url, {
+    apiMode,
+    platform: getDefaultPlatform(getOptions.platform),
+  });
   if (0 !== parseInt(code)) {
     throw new Error(msg || 'batch get failed');
   }
 
-  const list = data.map(item => ({ app: ensureApp(item.app), version: ensureVersion(item.version) }));
+  const list = data.map((item) => ({ app: ensureApp(item.app), version: ensureVersion(item.version) }));
 
   return list;
 }

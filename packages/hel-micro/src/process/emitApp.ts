@@ -1,5 +1,5 @@
+import { getAppPlatform, getHelEventBus, helEvents, setEmitApp, tryGetAppName, tryGetVersion } from 'hel-micro-core';
 import { IEmitAppInfo } from 'hel-types';
-import { helEvents, setEmitApp, getHelEventBus, tryGetVersion, tryGetAppName, getAppPlatform } from 'hel-micro-core';
 
 const eventBus = getHelEventBus();
 
@@ -23,4 +23,4 @@ export default function emitApp(options: IEmitAppOptions) {
   const emitApp: IEmitAppInfo = { Comp, appName, appGroupName, lifecycle, platform, versionId, isLib: false };
   setEmitApp(appName, emitApp);
   eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);
-};
+}

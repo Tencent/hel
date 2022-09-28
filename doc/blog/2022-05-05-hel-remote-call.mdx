@@ -36,24 +36,34 @@ Use the power of React to create interactive blog posts.
 
 ```
 
+<button
+  onClick={async function () {
+    const helMicro = await import('hel-micro');
+    const lib = await helMicro.preFetchLib('hel-remote-lib-tpl');
+    alert(lib.num.random(22));
+  }}
+>
+  Click me to call remote method!
+</button>
 
-<button onClick={async function(){
-  const helMicro = await import('hel-micro');
-  const lib = await helMicro.preFetchLib('hel-remote-lib-tpl');
-  alert(lib.num.random(22));
-}}>Click me to call remote method!</button>
+<button
+  onClick={async function () {
+    const helMicro = await import('hel-micro');
+    const lib = await helMicro.preFetchLib('hel-remote-lib-tpl', { versionId: 'hel-remote-lib-tpl_20220505181705' });
+    alert(lib.num.random(22));
+  }}
+>
+  调用版本1
+</button>
 
-<button onClick={async function(){
-  const helMicro = await import('hel-micro');
-  const lib = await helMicro.preFetchLib('hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220505181705' });
-  alert(lib.num.random(22));
-}}>调用版本1</button>
-
-<button onClick={async function(){
-  const helMicro = await import('hel-micro');
-  const lib = await helMicro.preFetchLib('hel-remote-lib-tpl', { versionId:'hel-remote-lib-tpl_20220505181324' });
-  alert(lib.num.random(22));
-}}>选择版本2</button>
-
+<button
+  onClick={async function () {
+    const helMicro = await import('hel-micro');
+    const lib = await helMicro.preFetchLib('hel-remote-lib-tpl', { versionId: 'hel-remote-lib-tpl_20220505181324' });
+    alert(lib.num.random(22));
+  }}
+>
+  选择版本2
+</button>
 
 :::

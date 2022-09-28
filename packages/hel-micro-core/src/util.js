@@ -1,5 +1,5 @@
-import { getGlobalThis } from './utilBase';
 import { getHelMicroDebug } from './microDebug';
+import { getGlobalThis } from './utilBase';
 
 function getSearch() {
   try {
@@ -10,16 +10,14 @@ function getSearch() {
   }
 }
 
-
 function isIncludeFilter(firstArg, logFilter) {
   if (!logFilter.includes(',')) {
     return firstArg.includes(logFilter);
   }
   /** @type {string[]} */
   const filterList = logFilter.split(',');
-  return filterList.some(item => firstArg.includes(item));
+  return filterList.some((item) => firstArg.includes(item));
 }
-
 
 export function getSearchObj() {
   const search = getSearch();
@@ -27,7 +25,7 @@ export function getSearchObj() {
   if (search && search.startsWith('?')) {
     const pureSearch = search.substring(1);
     const items = pureSearch.split('&');
-    items.forEach(item => {
+    items.forEach((item) => {
       const [key, value] = item.split('=');
       map[key] = value;
     });
@@ -36,32 +34,26 @@ export function getSearchObj() {
   return map;
 }
 
-
 /** 采用一次缓存值后，便不再从search推导，方便单页面应用路由变化后，依然可以打印log */
 export function allowLog() {
   return getLogMode() !== 0;
 }
 
-
 export function setLogMode(value) {
   getHelMicroDebug().logMode = value;
 }
-
 
 export function getLogMode() {
   return getHelMicroDebug().logMode;
 }
 
-
 export function setLogFilter(value) {
   getHelMicroDebug().logFilter = value;
 }
 
-
 export function getLogFilter() {
   return getHelMicroDebug().logFilter;
 }
-
 
 if (!getHelMicroDebug().isInit) {
   getHelMicroDebug().isInit = true;
@@ -78,14 +70,13 @@ if (!getHelMicroDebug().isInit) {
   }
 }
 
-
 const logPrefix = '  %c--> HEL LOG:';
 const colorDesc = 'color:#ad4e00;font-weight:600';
 export function log(...args) {
   if (!allowLog()) {
     return;
   }
-  const logFn = getLogMode() === 1 ? console.log : (console.trace || console.log);
+  const logFn = getLogMode() === 1 ? console.log : console.trace || console.log;
   const [firstArg, ...rest] = args;
   if (typeof firstArg === 'string') {
     const logFilter = getLogFilter();
@@ -101,7 +92,6 @@ export function log(...args) {
   logFn(logPrefix, colorDesc, ...args);
 }
 
-
 export function getJsRunLocation() {
   let loc = '';
   try {
@@ -113,12 +103,10 @@ export function getJsRunLocation() {
   return loc;
 }
 
-
 export function setSubMapValue(rootObj, key, subKey, subValue) {
   const subMap = safeGetMap(rootObj, key);
   subMap[subKey] = subValue;
 }
-
 
 export function safeGetMap(rootObj, key, defaultMap = {}) {
   let subMap = rootObj[key];
@@ -129,19 +117,16 @@ export function safeGetMap(rootObj, key, defaultMap = {}) {
   return subMap;
 }
 
-
 export function helScriptId(appName) {
   return `helScript_${appName}`;
 }
-
 
 export function helLinkId(appName) {
   return `helLink_${appName}`;
 }
 
-
 export function safeAssign(assignTo, assignFrom) {
-  Object.keys(assignFrom).forEach(key => {
+  Object.keys(assignFrom).forEach((key) => {
     const val = assignFrom[key];
     if (![null, undefined, ''].includes(val)) {
       assignTo[key] = val;

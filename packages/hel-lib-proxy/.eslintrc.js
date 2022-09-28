@@ -1,17 +1,15 @@
 module.exports = {
   root: true,
   parser: 'babel-eslint',
-  extends: [
-    'eslint:recommended'
-  ],
+  extends: ['eslint:recommended'],
   settings: {
     react: {
-      version: "detect"
-    }
+      version: 'detect',
+    },
   },
   parserOptions: {
     ecmaVersion: 6,
-    sourceType: "module",
+    sourceType: 'module',
   },
   env: {
     browser: true,

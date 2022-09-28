@@ -1,13 +1,13 @@
 /**
  * 样式相关的服务
  */
-import type { IGetOptionsLoose, IPlatAndVer, IInnerPreFetchOptions } from '../types';
 import type { HelLoadStatusEnum } from 'hel-micro-core';
-import type { IEmitStyleInfo } from 'hel-types';
 import * as core from 'hel-micro-core';
-import { requestGet, merge2List } from '../util';
-import { getPlatAndVer } from './appParam';
+import type { IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
+import type { IGetOptionsLoose, IInnerPreFetchOptions, IPlatAndVer } from '../types';
+import { merge2List, requestGet } from '../util';
+import { getPlatAndVer } from './appParam';
 
 const { LOADED, LOADING } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
@@ -18,9 +18,8 @@ interface IFetchStyleOptions extends IGetOptionsLoose {
   /** 支持透传额外的样式地址列表 */
   extraCssUrlList?: string[];
   /** 透传 应用自己的样式列表 + extraCssUrlList 额外样式列表给用户，用户可依此再次排除掉一部分样式，返回的是欲排除的样式列表 */
-  getExcludeCssList?: IInnerPreFetchOptions['getExcludeCssList'],
+  getExcludeCssList?: IInnerPreFetchOptions['getExcludeCssList'];
 }
-
 
 const inner = {
   isStyleStatusMatch(appName: string, judeStatus: HelLoadStatusEnum, options: IGetOptionsLoose) {
@@ -71,11 +70,7 @@ const inner = {
       handleStyleFetched = (styleInfo: IEmitStyleInfo) => {
         const { appName: emitAppName, platform: emitPlatform, versionId: emitVer } = styleInfo;
         const { versionId: inputVer, platform } = options;
-        if (
-          emitAppName !== appName
-          || emitPlatform !== platform
-          || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer })
-        ) {
+        if (emitAppName !== appName || emitPlatform !== platform || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer })) {
           return;
         }
         resolve(true);
@@ -116,7 +111,7 @@ const inner = {
     // 获得用户需要排除的所有样式列表
     const excludeCssList = options.getExcludeCssList?.(styleList, { version: core.getVersion(appName, platAndVer) }) || [];
     // 过滤 styleList，去掉未排除的样式得到最终需要转化为字符串的样式列表
-    const finalStyleList = styleList.filter(item => !excludeCssList.includes(item));
+    const finalStyleList = styleList.filter((item) => !excludeCssList.includes(item));
 
     const styleStr = await inner.fetchStyleStr(finalStyleList);
     core.setAppStyleStr(appName, styleStr, platAndVer);
@@ -126,37 +121,29 @@ const inner = {
   },
 };
 
-
 /**
  * 异步拉取应用的所有样式字符串（构建动态产生，页面静态引用的）
  * 调用者需自己确保版本数据已获取，即 preFetchApp 或 preFetchLib 已调用
  */
-export async function fetchStyleStr(
-  appName: string, options: IFetchStyleOptions
-): Promise<string> {
+export async function fetchStyleStr(appName: string, options: IFetchStyleOptions): Promise<string> {
   const styleStr = await inner.fetchAndCacheAppStyleStr(appName, options);
   return styleStr;
 }
-
 
 export async function fetchStyleByUrlList(cssUrlList: string[]) {
   const styleStr = await inner.fetchStyleStr(cssUrlList);
   return styleStr;
 }
 
-
 /**
  * 获取应用缓存的所有样式字符串（构建动态产生，页面静态引用的）
  * 调用者需自己确保样式字符串已拉取，即 fetchStyleStr 已调用
  */
-export function getStyleStr(
-  appName: string, options: IGetOptionsLoose
-) {
+export function getStyleStr(appName: string, options: IGetOptionsLoose) {
   const platAndVer = getPlatAndVer(appName, options);
   const styleStr = core.getAppStyleStr(appName, platAndVer);
   return styleStr;
 }
-
 
 /**
  * 获取应用的所有样式列表（构建动态产生，页面静态引用的）
@@ -167,7 +154,6 @@ export function getStyleUrlList(appName: string, options: IGetOptionsLoose): str
   const getStyleUrlList = inner.getStyleUrlList(appName, options);
   return getStyleUrlList;
 }
-
 
 /**
  * 判断样式是否已经异步拉取过了

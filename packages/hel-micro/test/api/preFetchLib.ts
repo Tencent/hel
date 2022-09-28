@@ -1,5 +1,5 @@
+import { getHelDebug, getHelEventBus, helEvents, setAppMeta, setEmitLib, setVersion } from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
-import { getHelEventBus, helEvents, setAppMeta, setVersion, getHelDebug, setEmitLib } from 'hel-micro-core';
 import { preFetchLib } from 'index';
 import * as mockData from '../mockData';
 

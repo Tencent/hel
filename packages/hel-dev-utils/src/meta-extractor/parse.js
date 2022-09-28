@@ -1,10 +1,10 @@
 /** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
+import * as fs from 'fs';
 import jsdom from 'jsdom';
-import * as  fs from 'fs';
-import * as  util from 'util';
+import * as util from 'util';
 import { verbose } from '../inner-utils/index';
-import { makeAppVersionSrcMap } from './utils';
 import { fillAssetList } from './fillAssetList';
+import { makeAppVersionSrcMap } from './utils';
 
 const readFile = util.promisify(fs.readFile);
 const { JSDOM } = jsdom;
@@ -24,20 +24,14 @@ export async function parseIndexHtml(extractOptions) {
   const dom = new JSDOM(htmlContent);
   const document = dom.window.document;
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(
-      document.head.children, srcMap,
-      { extractMode, buildDirFullPath, appHomePage, isHead: true },
-    ),
-    fillAssetList(
-      document.body.children, srcMap,
-      { extractMode, buildDirFullPath, appHomePage },
-    ),
+    fillAssetList(document.head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true }),
+    fillAssetList(document.body.children, srcMap, { extractMode, buildDirFullPath, appHomePage }),
   ]);
 
-  replaceContentListOfHead.forEach(item => {
+  replaceContentListOfHead.forEach((item) => {
     htmlContent = htmlContent.replace(item.toMatch, item.toReplace);
   });
-  replaceContentLisOfBody.forEach(item => {
+  replaceContentLisOfBody.forEach((item) => {
     htmlContent = htmlContent.replace(item.toMatch, item.toReplace);
   });
 

@@ -1,2 +1,3 @@
 # hel-types
-hel各个包之间需要共享的type文件
+
+hel 各个包之间需要共享的 type 文件

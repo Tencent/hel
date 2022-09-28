@@ -1,4 +1,4 @@
-import { ISubApp, ISubAppVersion, IEmitAppInfo, Platform, ApiMode } from 'hel-types';
+import { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 interface EventBus {
   on: (name: string, cb: (...args: any[]) => void) => void;
   emit: (name: string, ...args: any[]) => void;
@@ -9,17 +9,17 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
 export const helEvents: {
   // renderApp 发射的是 SUB_APP_LOADED
-  SUB_APP_LOADED: 'subAppLoaded',
+  SUB_APP_LOADED: 'subAppLoaded';
   // libReady 发射的是 SUB_LIB_LOADED
-  SUB_LIB_LOADED: 'SubLibLoaded',
+  SUB_LIB_LOADED: 'SubLibLoaded';
   // 3.2+ 新增样式字符串获取完毕事件
-  STYLE_STR_FETCHED: 'StyleStrFetched',
+  STYLE_STR_FETCHED: 'StyleStrFetched';
 };
 
 type HelLoadStatus = {
-  NOT_LOAD: 0,
-  LOADING: 1,
-  LOADED: 2,
+  NOT_LOAD: 0;
+  LOADING: 1;
+  LOADED: 2;
 };
 
 export const helLoadStatus: HelLoadStatus;
@@ -45,14 +45,14 @@ export interface SharedCache {
   /**
    * 请求的域名前缀，默认 src/diff/index.getDefaultApiPrefix
    */
-  apiPrefix: string,
-  apiSuffix: string,
-  apiPathOfApp: string,
-  apiPathOfAppVersion: string,
-  getSubAppAndItsVersionFn: null,
-  onFetchMetaFailed: null,
-  userLsKey: string,
-  getUserName: null,
+  apiPrefix: string;
+  apiSuffix: string;
+  apiPathOfApp: string;
+  apiPathOfAppVersion: string;
+  getSubAppAndItsVersionFn: null;
+  onFetchMetaFailed: null;
+  userLsKey: string;
+  getUserName: null;
   /**
    * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
    */
@@ -64,7 +64,7 @@ export interface SharedCache {
   /**
    * 记录 lib 是否已分配到 appName2Lib 的 libMap 里
    */
-  appName2isLibAssigned: Record<string, boolean>,
+  appName2isLibAssigned: Record<string, boolean>;
   /**
    * 记录在线版本 emitApp
    */
@@ -121,7 +121,7 @@ export function getSharedCache(platform?: Platform): SharedCache;
 export function getHelDebug(): IHelMicroDebug;
 
 interface ILibReadyOptions {
-  platform?: Platform,
+  platform?: Platform;
 }
 
 export function libReady(appName: string, appProperties: any, options?: ILibReadyOptions): void;
@@ -129,8 +129,8 @@ export function libReady(appName: string, appProperties: any, options?: ILibRead
 export function getPlatform(): Platform;
 
 /**
- * 
- * @param platform 
+ *
+ * @param platform
  */
 export function getPlatformHost(platform?: Platform): string;
 
@@ -145,15 +145,14 @@ export interface IAppAndVer {
  */
 export interface IGetSubAppAndItsVersionFn {
   (passCtx: {
-    platform: string,
-    appName: string,
-    userName: string,
-    versionId: string | undefined,
-    url: string,
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer>,
-  }): Promise<IAppAndVer> | IAppAndVer
+    platform: string;
+    appName: string;
+    userName: string;
+    versionId: string | undefined;
+    url: string;
+    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer>;
+  }): Promise<IAppAndVer> | IAppAndVer;
 }
-
 
 /** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据 */
 export interface IOnFetchMetaFailed {
@@ -166,31 +165,31 @@ export interface IPlatformConfigFull {
    * 如存在有老包体未发射版本号的情况，这里可以置为 false，让系统能够正常运行
    */
   strictMatchVer: boolean;
-  apiMode: ApiMode,
+  apiMode: ApiMode;
   /**
    * 未指定 apiPrefix 的情况下，会根据 platform 值决定请求那个域名的接口
    */
-  apiPrefix: string,
+  apiPrefix: string;
   /**
    * 设定了 apiSuffix，则请求一定会带上设定的后缀
    */
-  apiSuffix: string,
+  apiSuffix: string;
   /**
    * default: /openapi/v1/app/info
    * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppAndItsVersion 或 /openapi/v1/app/info/getSubAppAndItsVersionJsonp
    */
-  apiPathOfApp: string,
+  apiPathOfApp: string;
   /**
    * default: 如果未指定，则和 apiPathOfApp 值保持一致
    * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppVersion 或 /openapi/v1/app/info/getSubAppVersionJsonp
    */
-  apiPathOfAppVersion: string,
-  platform: Platform,
-  getSubAppAndItsVersionFn: IGetSubAppAndItsVersionFn
+  apiPathOfAppVersion: string;
+  platform: Platform;
+  getSubAppAndItsVersionFn: IGetSubAppAndItsVersionFn;
   /** 默认 'HelUserRtxName'，hel请求时，尝试重 localStorage 的 {userLsKey} 下获取用户名，以便命中灰度版本 */
   userLsKey: string;
   /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
-  getUserName: (passCtx: { platform: string, appName: string }) => string;
+  getUserName: (passCtx: { platform: string; appName: string }) => string;
   onFetchMetaFailed?: IOnFetchMetaFailed;
 }
 
@@ -226,7 +225,7 @@ export interface IGetOptions {
 
 export function getVerLib(appName: string, options?: IGetOptions): IEmitAppInfo['appProperties'] | null;
 
-export function setEmitLib(appName: string, emitApp: IEmitAppInfo, options?: { appGroupName?: string, platform?: Platform }): void;
+export function setEmitLib(appName: string, emitApp: IEmitAppInfo, options?: { appGroupName?: string; platform?: Platform }): void;
 
 export interface IGetVerOptions {
   versionId?: string;
@@ -241,7 +240,8 @@ export function getAppMeta(appName: string, platform?: Platform): ISubApp | null
 
 export function setAppMeta(appMeta: ISubApp, platform?: Platform): void;
 
-export interface IGetStyleOptions { // 对应样式获取来说，版本必须传
+export interface IGetStyleOptions {
+  // 对应样式获取来说，版本必须传
   platform?: Platform;
   versionId: string;
 }
@@ -290,53 +290,53 @@ export function getAppPlatform(appGroupName: string): Platform;
 export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
 
 declare type DefaultExport = {
-  DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER,
-  helEvents: typeof helEvents,
-  helLoadStatus: typeof helLoadStatus,
-  getHelEventBus: typeof getHelEventBus,
-  getHelDebug: typeof getHelDebug,
-  getSharedCache: typeof getSharedCache,
-  libReady: typeof libReady,
-  getPlatform: typeof getPlatform,
-  getPlatformHost: typeof getPlatformHost,
-  getPlatformConfig: typeof getPlatformConfig,
-  initPlatformConfig: typeof initPlatformConfig,
-  isSubApp: typeof isSubApp,
+  DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
+  helEvents: typeof helEvents;
+  helLoadStatus: typeof helLoadStatus;
+  getHelEventBus: typeof getHelEventBus;
+  getHelDebug: typeof getHelDebug;
+  getSharedCache: typeof getSharedCache;
+  libReady: typeof libReady;
+  getPlatform: typeof getPlatform;
+  getPlatformHost: typeof getPlatformHost;
+  getPlatformConfig: typeof getPlatformConfig;
+  initPlatformConfig: typeof initPlatformConfig;
+  isSubApp: typeof isSubApp;
   // 应用Comp get set
-  getVerApp: typeof getVerApp,
-  setEmitApp: typeof setEmitApp,
+  getVerApp: typeof getVerApp;
+  setEmitApp: typeof setEmitApp;
   // 应用lib get set
-  getVerLib: typeof getVerLib,
-  setEmitLib: typeof setEmitLib,
+  getVerLib: typeof getVerLib;
+  setEmitLib: typeof setEmitLib;
   // 应用元数据 get set
-  getAppMeta: typeof getAppMeta,
-  setAppMeta: typeof setAppMeta,
+  getAppMeta: typeof getAppMeta;
+  setAppMeta: typeof setAppMeta;
   // 版本元数据 get set
-  getVersion: typeof getVersion,
-  setVersion: typeof setVersion,
+  getVersion: typeof getVersion;
+  setVersion: typeof setVersion;
   // 应用的所有样式字符串 get set
-  getAppStyleStr: typeof getAppStyleStr,
-  setAppStyleStr: typeof setAppStyleStr,
+  getAppStyleStr: typeof getAppStyleStr;
+  setAppStyleStr: typeof setAppStyleStr;
   // 版本获取状态 get set
-  setVerLoadStatus: typeof setVerLoadStatus,
-  getVerLoadStatus: typeof getVerLoadStatus,
+  setVerLoadStatus: typeof setVerLoadStatus;
+  getVerLoadStatus: typeof getVerLoadStatus;
   // 样式字符串获取状态 get set
-  getVerStyleStrStatus: typeof getVerStyleStrStatus,
-  setVerStyleStrStatus: typeof setVerStyleStrStatus,
+  getVerStyleStrStatus: typeof getVerStyleStrStatus;
+  setVerStyleStrStatus: typeof setVerStyleStrStatus;
   // sdk注入的额外样式列表 get set
-  getVerExtraCssList: typeof getVerExtraCssList,
-  setVerExtraCssList: typeof setVerExtraCssList,
+  getVerExtraCssList: typeof getVerExtraCssList;
+  setVerExtraCssList: typeof setVerExtraCssList;
 
-  getAppPlatform: typeof getAppPlatform,
-  setAppPlatform: typeof setAppPlatform,
-  tryGetVersion: typeof tryGetVersion,
-  tryGetAppName: typeof tryGetAppName,
-  log: typeof log,
-  allowLog: typeof allowLog,
-  getGlobalThis: typeof getGlobalThis,
-  setGlobalThis: typeof setGlobalThis,
-  trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal,
-}
+  getAppPlatform: typeof getAppPlatform;
+  setAppPlatform: typeof setAppPlatform;
+  tryGetVersion: typeof tryGetVersion;
+  tryGetAppName: typeof tryGetAppName;
+  log: typeof log;
+  allowLog: typeof allowLog;
+  getGlobalThis: typeof getGlobalThis;
+  setGlobalThis: typeof setGlobalThis;
+  trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal;
+};
 
 declare let defaultExport: DefaultExport;
 export default defaultExport;

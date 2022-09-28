@@ -1,6 +1,5 @@
 import { appStyleSrv } from 'index';
 
-
 describe('test appStyleSrv', () => {
   test('appStyleSrv should not be null', () => {
     expect(appStyleSrv).toBeTruthy();

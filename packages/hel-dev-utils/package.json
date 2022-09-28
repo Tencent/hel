@@ -1,14 +1,28 @@
 {
   "name": "hel-dev-utils",
   "version": "2.3.0",
-  "main": "lib/index.js",
+  "description": "hel dev utils",
+  "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
-  "bundleDependencies": false,
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "src",
+    "jsconfig.json",
+    ".babelrc.js",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "cross-env BUILD_ENV=commonjs rollup -c",
+    "build:es": "cross-env BUILD_ENV=es rollup -c",
+    "build:umd": "cross-env BUILD_ENV=development rollup -c",
+    "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
+  },
   "dependencies": {},
-  "deprecated": false,
-  "description": "hel dev utils",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -22,20 +36,6 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.4"
   },
-  "files": [
-    "dist",
-    "lib",
-    "src",
-    "jsconfig.json",
-    ".babelrc.js",
-    "README.md"
-  ],
-  "license": "MIT",
-  "scripts": {
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "build:commonjs": "cross-env BUILD_ENV=commonjs rollup -c",
-    "build:es": "cross-env BUILD_ENV=es rollup -c",
-    "build:umd": "cross-env BUILD_ENV=development rollup -c",
-    "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
-  }
+  "bundleDependencies": false,
+  "deprecated": false
 }

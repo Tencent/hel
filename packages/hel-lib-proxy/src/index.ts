@@ -7,12 +7,7 @@ import type { IGetOptions } from 'hel-micro-core';
 import core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as share from './share';
-import type {
-  IExposeLibOptions,
-  IOptions,
-  LibName,
-  LibProperties,
-} from './typings';
+import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
 export * from './typings';
 
 core.log('hel-lib-proxy ver 3.8.3');
@@ -23,10 +18,7 @@ core.log('hel-lib-proxy ver 3.8.3');
  * @param platform - 默认 'hel'
  * @returns
  */
-export function getLib<T extends any>(
-  libName: LibName,
-  getOptions?: IGetOptions,
-): T | null {
+export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions): T | null {
   return core.getVerLib(libName, getOptions) as T;
 }
 
@@ -43,10 +35,7 @@ export function getLib<T extends any>(
  * @param options
  * @returns
  */
-export function exposeLib<L extends LibProperties>(
-  libName: string,
-  options?: IExposeLibOptions | Platform,
-): L {
+export function exposeLib<L extends LibProperties>(libName: string, options?: IExposeLibOptions | Platform): L {
   let asProxy = true;
   let platform = '';
   if (options) {
@@ -79,11 +68,7 @@ export function exposeLib<L extends LibProperties>(
  * @param appGroupName
  * @param libProperties
  */
-export function libReady(
-  appGroupName: string,
-  libProperties: LibProperties,
-  options?: IOptions,
-) {
+export function libReady(appGroupName: string, libProperties: LibProperties, options?: IOptions) {
   const mergedOptions = share.getMergedOptions(options);
   core.log('[[ libReady ]] mergedOptions: ', mergedOptions);
   // 将注册结果交给 preFetch 函数返回给调用方

@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import * as comps from 'components';
+import ReactDOM from 'react-dom';
 
 function getHostNode(id = 'root') {
   let node = document.getElementById(id);
@@ -17,4 +16,3 @@ const { REACT_APP_COMP_TYPE = 'HelloRemoteReactComp' } = process.env;
 const Comp = comps[REACT_APP_COMP_TYPE] || (() => <h1>comp {REACT_APP_COMP_TYPE} not defined</h1>);
 
 ReactDOM.render(<Comp />, getHostNode('root'));
-

@@ -1,4 +1,3 @@
-
 /// <reference types="node" />
 /// <reference types="react" />
 /// <reference types="react-dom" />
@@ -14,23 +13,21 @@ declare namespace NodeJS {
   }
 }
 
-
 declare module 'react-cookies' {
   export default {
     save: (key: string, value: string) => any,
     load: (key: string) => any,
     getAllCookies: () => any,
-  }
+  };
 }
 declare module 'react-json-editor-ajrm' {
   export default (...args: any[]) => any;
 }
-declare module 'react-json-editor-ajrm/locale/en' {
-}
+declare module 'react-json-editor-ajrm/locale/en' {}
 
 declare module 'cute-http' {
   const anyFn = (...args: any[]) => any;
-  const defaultExport: { const: Record<string, any>, [methodName: string]: (...args: any[]) => any } = {};
+  const defaultExport: { const: Record<string, any>; [methodName: string]: (...args: any[]) => any } = {};
 
   export default defaultExport;
 }
@@ -73,9 +70,7 @@ declare module '*.webp' {
 declare module '*.svg' {
   import * as React from 'react';
 
-  export const ReactComponent: React.FunctionComponent<React.SVGProps<
-    SVGSVGElement
-  > & { title?: string }>;
+  export const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string }>;
 
   const src: string;
   export default src;
@@ -106,16 +101,13 @@ declare module 'rc-picker' {
   }
 }
 
-
 /** @see https://github.com/Qix-/color */
 declare module 'color' {
   export default class {
     constructor(hex: string): this;
     alpha(val: number): this;
     lighten(val: number): this;
-    object(): { r: number, g: number, b: number };
+    object(): { r: number; g: number; b: number };
     hex(): string;
-  };
+  }
 }
-
-

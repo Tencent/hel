@@ -1,6 +1,5 @@
 import { getGlobalThis } from 'hel-micro-core';
 
-
 export function bindExternals(externalsObj: Record<string, any>) {
   const globalThis = getGlobalThis();
   Object.keys(externalsObj).forEach((key: string) => {
@@ -8,7 +7,6 @@ export function bindExternals(externalsObj: Record<string, any>) {
     globalThis[key] = externalsObj[key];
   });
 }
-
 
 interface IReactRuntimeObj {
   /** 对应 react 库 */
@@ -24,7 +22,7 @@ interface IReactRuntimeObj {
 /**
  * vite 开发环境下，直接读取cdn react会照成 invalid hook call问题，见：https://github.com/vitejs/vite/issues/1584
  * 通过调用 bindReactRuntime 主动绑定一下即可
- * @param reactRuntimeObj 
+ * @param reactRuntimeObj
  */
 export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   const externalObj = {
@@ -37,7 +35,6 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   if (reactRuntimeObj.ReactReconciler) externalObj.LEAH_ReactReconciler = reactRuntimeObj.ReactReconciler;
   bindExternals(externalObj);
 }
-
 
 /**
  * 方便 vite 开放环境配置共享 vue

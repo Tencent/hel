@@ -12,7 +12,6 @@ export function ensureSlash(inputPath, needsSlash) {
   }
 }
 
-
 export function getHelProcessEnvParams() {
   // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
   const {
@@ -41,7 +40,6 @@ export function getHelProcessEnvParams() {
   };
 }
 
-
 /**
  * @param {Record<string, any>} pkg
  * @param {ICreateSubAppOptions} options
@@ -62,9 +60,8 @@ export function getHelEnvParams(pkg, options = {}) {
   };
 }
 
-
 /**
- * 
+ *
  * @param {string} appName - hel 管理台注册的应用名
  */
 export function getJsonpFnName(appName) {
@@ -82,7 +79,6 @@ export function getPublicPathOrUrl(homePage, needsSlash = true) {
   return ensureSlash(homePage, needsSlash);
 }
 
-
 /**
  * 返回 react 相关的包体 externals 映射对象
  * 16.14.0
@@ -99,16 +95,15 @@ export function getReactExternals() {
   };
 }
 
-
 /**
  * 返回 vue3 相关的包体 externals 映射对象，目前已有以下版本
  * ```
  * - 3.2.33
  * https://tnfe.gtimg.com/hel-runtime/level1/3.2.33-vue.js
  * https://tnfe.gtimg.com/hel-runtime/level1/3.2.33-vue.dev.js
- * 
+ *
  * ```
- * @returns 
+ * @returns
  */
 export function getVue3Externals() {
   return {
@@ -123,16 +118,15 @@ export function getVue3Externals() {
   };
 }
 
-
 /**
  * 返回 vue2 相关的包体 externals 映射对象，目前已有以下版本
  * ```
  * - 2.6.14
  * https://tnfe.gtimg.com/hel-runtime/level1/2.6.14-vue.js
  * https://tnfe.gtimg.com/hel-runtime/level1/2.6.14-vue.dev.js
- * 
+ *
  * ```
- * @returns 
+ * @returns
  */
 export function getVue2Externals() {
   return {

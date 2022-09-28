@@ -1,4 +1,3 @@
-
 console.log('---------------------------------------------------------------------------------------');
 console.log('| ');
 console.log('| Welcome to use hel remote component');

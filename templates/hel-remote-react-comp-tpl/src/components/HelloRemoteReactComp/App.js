@@ -28,12 +28,7 @@ const App = React.forwardRef(function App(props, ref) {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://tnfe.github.io/hel"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a className="App-link" href="https://tnfe.github.io/hel" target="_blank" rel="noopener noreferrer">
           Learn hel-micro
         </a>
       </header>

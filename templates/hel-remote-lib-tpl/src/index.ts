@@ -1,4 +1,3 @@
-
 async function main() {
   const { libReady } = await import('hel-lib-proxy');
   const { LIB_NAME } = await import('./configs/subApp');
@@ -10,7 +9,7 @@ async function main() {
   const libProperties = await import('./entrance/libProperties');
   // 注意此处传递的是 default
   libReady(LIB_NAME, libProperties.default);
-};
+}
 
 main().catch(console.error);
 

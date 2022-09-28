@@ -1,6 +1,6 @@
-import typescript from 'rollup-plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
 import { cst } from 'hel-dev-utils';
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript';
 import pkg from './package.json';
 
 const env = process.env.BUILD_ENV || 'umd';
@@ -35,7 +35,5 @@ if (process.env.MIN === 'true') {
 module.exports = {
   input: 'src/entrance/libTypes.ts',
   plugins,
-  output: [
-    outputObj,
-  ],
+  output: [outputObj],
 };

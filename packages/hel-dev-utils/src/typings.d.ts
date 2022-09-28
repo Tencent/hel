@@ -1,4 +1,3 @@
-
 export interface IInnerSubAppOptions {
   frameworkType: 'react' | 'vue2' | 'vue3' | 'lib';
 }

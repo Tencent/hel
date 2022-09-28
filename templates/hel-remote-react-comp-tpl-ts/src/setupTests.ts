@@ -6,10 +6,12 @@ import '@testing-library/jest-dom/extend-expect';
 import '../tests/mock/mockHttpService';
 
 // avoid TypeError: window.matchMedia is not a function
-window.matchMedia = window.matchMedia || function () {
-  return {
-    matches: false,
-    addListener() { },
-    removeListener() { },
+window.matchMedia =
+  window.matchMedia ||
+  function () {
+    return {
+      matches: false,
+      addListener() {},
+      removeListener() {},
+    };
   };
-};

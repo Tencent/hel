@@ -1,8 +1,8 @@
 /**
  * 参数相关服务
  */
-import type { IGetOptionsLoose, IPlatAndVer, IGroupedStyleList } from '../types';
 import * as core from 'hel-micro-core';
+import type { IGetOptionsLoose, IGroupedStyleList, IPlatAndVer } from '../types';
 import { getDefaultPlatform } from '../_diff/index';
 
 /**
@@ -17,13 +17,11 @@ export function getPlatAndVer(appName: string, options?: IGetOptionsLoose): IPla
     ver = appMeta?.online_version || appMeta?.build_version || '';
   }
 
-
   return {
     platform: getDefaultPlatform(platform),
     versionId: ver,
   };
 }
-
 
 export function getGroupedStyleList(appName: string, options?: IGetOptionsLoose): IGroupedStyleList {
   const map: IGroupedStyleList = {
@@ -33,7 +31,7 @@ export function getGroupedStyleList(appName: string, options?: IGetOptionsLoose)
   const version = core.getVersion(appName, options);
   if (version) {
     const { webDirPath, chunkCssSrcList } = version.src_map;
-    chunkCssSrcList.forEach(src => {
+    chunkCssSrcList.forEach((src) => {
       src.startsWith(webDirPath) ? map.static.push(src) : map.build.push(src);
     });
   }

@@ -28,7 +28,6 @@ const path = require('path');
       console.log('----------------------------------------------------------------------------------');
     },
   });
-})()
-
+})();
 
 // console.log(getAllFilePath(path.resolve(__dirname, './src')))
