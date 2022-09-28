@@ -1,39 +1,41 @@
 {
   "name": "hel-tpl-remote-lib",
-  "appGroupName": "hel-tpl-remote-lib",
-  "main": "hel_proxy/entry.js",
-  "module": "hel_proxy_es/entry.js",
-  "unpkg": "hel_dist/entry.js",
-  "types": "lib/entrance/libTypes.ts",
   "version": "2.0.2",
-  "dependencies": {
-    "@types/lodash": "^4.14.182",
-    "hel-lib-proxy": "^3.8.0",
-    "lodash": "^4.17.21"
-  },
-  "peerDependencies": {
-    "hel-lib-proxy": "^3.8.0"
-  },
+  "license": "MIT",
+  "main": "hel_proxy/entry.js",
+  "unpkg": "hel_dist/entry.js",
+  "module": "hel_proxy_es/entry.js",
+  "types": "lib/entrance/libTypes.ts",
+  "files": [
+    "hel_proxy",
+    "hel_proxy_es",
+    "hel_bundle",
+    "hel_dist",
+    "lib",
+    "scripts"
+  ],
   "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
-    "check": "node ./scripts/check",
-    "start": "cross-env HOST=localhost IS_LOCAL=true npm run app",
     "app": "node scripts/start.js",
-    "build_stub": "npm run build && npm run build_bundle",
     "build": "npm run check_name && npm run build_dist && npm run build_meta && npm run build_proxy",
-    "check_name": "node scripts/check.js",
+    "build_bundle": "tsc & cross-env BUNDLE=true node ./scripts/replaceToRelativePath.js & cross-env BUNDLE=true node scripts/build.js",
     "build_dist": "node scripts/build.js",
     "build_meta": "node scripts/meta.js",
     "build_proxy": "npm run build_proxy_umd && npm run build_proxy_es && cp ./hel_proxy/entry.js ./hel_dist",
-    "build_proxy_umd": "tsc & node ./scripts/replaceToRelativePath.js & rollup -c",
     "build_proxy_es": "tsc & node ./scripts/replaceToRelativePath.js & cross-env BUILD_ENV=es rollup -c",
-    "build_bundle": "tsc & cross-env BUNDLE=true node ./scripts/replaceToRelativePath.js & cross-env BUNDLE=true node scripts/build.js",
+    "build_proxy_umd": "tsc & node ./scripts/replaceToRelativePath.js & rollup -c",
+    "build_stub": "npm run build && npm run build_bundle",
+    "check": "node ./scripts/check",
+    "check_name": "node scripts/check.js",
+    "postinstall": "node ./scripts/postinstall.js",
     "lint": "eslint ./src --ext ts,tsx",
     "lintfix": "eslint ./src --ext ts,tsx --fix",
+    "start": "cross-env HOST=localhost IS_LOCAL=true npm run app",
     "test": "jest"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -47,12 +49,15 @@
       "last 1 safari version"
     ]
   },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "license": "MIT",
+  "dependencies": {
+    "@types/lodash": "^4.14.182",
+    "hel-lib-proxy": "workspace:*",
+    "jsdom": "^20.0.0",
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
     "@babel/core": "7.9.0",
     "@testing-library/user-event": "^7.1.2",
@@ -70,7 +75,7 @@
     "eslint-loader": "3.0.3",
     "eslint-plugin-import": "2.20.1",
     "file-loader": "4.3.0",
-    "hel-dev-utils": "^2.3.0",
+    "hel-dev-utils": "workspace:*",
     "html-webpack-plugin": "4.0.0-beta.11",
     "jest": "24.9.0",
     "jest-resolve": "24.9.0",
@@ -92,12 +97,8 @@
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "4.3.1"
   },
-  "files": [
-    "hel_proxy",
-    "hel_proxy_es",
-    "hel_bundle",
-    "hel_dist",
-    "lib",
-    "scripts"
-  ]
+  "peerDependencies": {
+    "hel-lib-proxy": "workspace:*"
+  },
+  "appGroupName": "hel-tpl-remote-lib"
 }

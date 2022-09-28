@@ -1,13 +1,13 @@
 {
   "name": "hel-types",
   "version": "3.7.0",
+  "description": "hel types file",
+  "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
-  "deprecated": false,
-  "description": "hel types file",
-  "license": "MIT",
   "main": "src/index.js",
   "module": "src/index.js",
-  "scripts": {}
+  "scripts": {},
+  "deprecated": false
 }

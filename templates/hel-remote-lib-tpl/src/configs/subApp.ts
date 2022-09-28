@@ -4,4 +4,3 @@
 // webpack 打包会把整个 package 对象打到运行代码里
 
 export const LIB_NAME = 'hel-tpl-remote-lib';
-

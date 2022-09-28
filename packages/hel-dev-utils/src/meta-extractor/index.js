@@ -1,10 +1,9 @@
-
 import fs from 'fs';
-import { verbose, getNpmCdnHomePage } from '../inner-utils/index';
 import { getHelEnvParams } from '../base-utils/index';
+import { getNpmCdnHomePage, verbose } from '../inner-utils/index';
+import { fillAssetListByDist } from './fillAssetList';
 import { parseIndexHtml } from './parse';
 import { makeHelMetaJson } from './utils';
-import { fillAssetListByDist } from './fillAssetList';
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap
@@ -12,8 +11,14 @@ import { fillAssetListByDist } from './fillAssetList';
  */
 export default async function extractHelMetaJson(userExtractOptions) {
   const {
-    appHomePage, buildDirFullPath, writeMetaJsonToDist = true, appName,
-    packageJson, npmCdnType = 'unpkg', extractMode = 'build', distDir = 'hel_dist',
+    appHomePage,
+    buildDirFullPath,
+    writeMetaJsonToDist = true,
+    appName,
+    packageJson,
+    npmCdnType = 'unpkg',
+    extractMode = 'build',
+    distDir = 'hel_dist',
   } = userExtractOptions;
 
   const targetHomePage = appHomePage || getNpmCdnHomePage(packageJson, npmCdnType, distDir);
@@ -21,7 +26,9 @@ export default async function extractHelMetaJson(userExtractOptions) {
   const filledExtractOptions = {
     ...userExtractOptions,
     appName: appName || envParams.appName || packageJson.name,
-    appHomePage: targetHomePage, buildDirFullPath, extractMode,
+    appHomePage: targetHomePage,
+    buildDirFullPath,
+    extractMode,
   };
   verbose(`start extractHelMetaJson, appHomePage is ${targetHomePage}`);
 

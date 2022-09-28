@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require('path');
 const paths = require('./paths');
 const pkg = require('../package.json');
 
@@ -10,13 +10,13 @@ if (pkg.appGroupName) {
 }
 
 module.exports = () => ({
-  mode: "production",
+  mode: 'production',
   entry: paths.appIndexJs,
   output: {
-    path: path.resolve(__dirname, "../hel_bundle"),
+    path: path.resolve(__dirname, '../hel_bundle'),
     filename: `entry.js`,
     library: `${bundleName}`,
-    libraryTarget: "commonjs",
+    libraryTarget: 'commonjs',
   },
   module: {
     strictExportPresence: true,
@@ -36,7 +36,6 @@ module.exports = () => ({
               formatter: require.resolve('react-dev-utils/eslintFormatter'),
               eslintPath: require.resolve('eslint'),
               resolvePluginsRelativeTo: __dirname,
-
             },
             loader: require.resolve('eslint-loader'),
           },

@@ -1,5 +1,5 @@
-import type { ISubAppVersion, Platform, ApiMode } from 'hel-types';
-import type { IOnFetchMetaFailed, IGetSubAppAndItsVersionFn } from 'hel-micro-core';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from 'hel-micro-core';
+import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -23,13 +23,13 @@ export interface IPlatAndVer {
 }
 
 export interface ICustom {
-  host: string,
+  host: string;
   /** default: true */
-  enable?: boolean,
+  enable?: boolean;
   /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
-  appGroupName?: string,
+  appGroupName?: string;
   /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
-  extraCssList?: string[],
+  extraCssList?: string[];
   /**
    * default: 'only_cust'，仅在 enable=true 时此配置才有效
    *
@@ -41,7 +41,7 @@ export interface ICustom {
    * only_cust: 保留 custCss，丢弃 outCss
    * only_out: 丢弃 custCss，保留 outCss
    */
-  cssStrategy?: 'merge' | 'only_cust' | 'only_out',
+  cssStrategy?: 'merge' | 'only_cust' | 'only_out';
 }
 
 export interface IPreFetchOptionsBase {
@@ -57,7 +57,7 @@ export interface IPreFetchOptionsBase {
   versionId?: string;
   /**
    * 该配置仅针对 hel-pack 平台有效（hel-pack对其做了实现）
-   * 
+   *
    */
   projectId?: string;
   /**
@@ -70,14 +70,14 @@ export interface IPreFetchOptionsBase {
    * 'static' 表示链接的静态css文件
    * 'build' 表示每次构建新生成的css文件
    */
-  cssAppendTypes?: Array<CssAppendType>,
+  cssAppendTypes?: Array<CssAppendType>;
   /**
    * 默认 []
    * 返回的要排除的 css 链接列表，这些 css 将不会附加到 html 文档上
    */
-  getExcludeCssList?: (allCssList: string[], options: { version: ISubAppVersion | null }) => string[],
+  getExcludeCssList?: (allCssList: string[], options: { version: ISubAppVersion | null }) => string[];
   /** 额外附加的样式列表 */
-  extraCssList?: string[],
+  extraCssList?: string[];
   /**
    * default: false
    * 是否使用平台配置的额外脚本文件或样式文件
@@ -102,13 +102,13 @@ export interface IPreFetchOptionsBase {
   onFetchMetaFailed?: IOnFetchMetaFailed;
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
-  custom?: ICustom,
+  custom?: ICustom;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {
   isLib?: boolean;
-  isFirstCall?: boolean,
-  controlLoadAssets?: boolean,
+  isFirstCall?: boolean;
+  controlLoadAssets?: boolean;
 }
 
 export interface IPreFetchLibOptions extends IPreFetchOptionsBase {
@@ -123,7 +123,7 @@ export interface IPreFetchAppOptions extends IPreFetchOptionsBase {
 }
 
 export type BatchAppNames =
-  [string]
+  | [string]
   | [string, string]
   | [string, string, string]
   | [string, string, string, string]

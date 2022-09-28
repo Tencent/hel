@@ -1,20 +1,65 @@
 {
   "name": "hel-tpl-remote-react-comps",
-  "appGroupName": "hel-tpl-remote-react-comps",
   "version": "0.2.3",
   "main": "hel_proxy/entry.js",
+  "unpkg": "hel_dist/entry.js",
   "module": "hel_proxy_es/entry.js",
   "types": "lib/entrance/libTypes.ts",
-  "unpkg": "hel_dist/entry.js",
-  "dependencies": {
-    "hel-lib-proxy": "^3.8.0",
-    "hel-micro": "^3.8.1",
-    "react": ">=16.8.0",
-    "react-app-polyfill": ">=1.0.0",
-    "react-dom": ">=16.8.0",
-    "scheduler": ">=0.23.0"
+  "files": [
+    "hel_dist",
+    "hel_proxy",
+    "hel_proxy_es",
+    "lib",
+    "src",
+    "README.md",
+    "jsconfig.json",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "npm run check_name && npm run build_dist && npm run build_meta && npm run build_proxy",
+    "build_cust": "npm run set_home_page \"npm run build_dist && npm run build_meta\"",
+    "build_dist": "node scripts/build.js",
+    "build_meta": "node scripts/meta.js",
+    "build_proxy": "npm run build_proxy_umd && npm run build_proxy_es && cp ./hel_proxy/entry.js ./hel_dist",
+    "build_proxy_es": "tsc & node ./scripts/replaceToRelativePath.js & cross-env BUILD_ENV=es rollup -c",
+    "build_proxy_umd": "tsc & node ./scripts/replaceToRelativePath.js & rollup -c",
+    "check": "node ./scripts/check.js",
+    "check_name": "node scripts/check.js",
+    "postinstall": "node ./scripts/postinstall.js",
+    "lint": "eslint ./src --ext ts,tsx",
+    "lintfix": "eslint ./src --ext ts,tsx --fix",
+    "set_home_page": "cross-env-shell HEL_APP_HOME_PAGE=http://127.0.0.1:8080",
+    "snap": "jest -u",
+    "start": "cross-env PORT=3103 node scripts/start.js",
+    "test": "jest"
   },
-  "peerDependencies": {
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "dependencies": {
+    "hel-lib-proxy": "workspace:*",
+    "hel-micro": "workspace:*",
+    "hel-tpl-remote-lib": "workspace:*",
     "react": ">=16.8.0",
     "react-app-polyfill": ">=1.0.0",
     "react-dom": ">=16.8.0",
@@ -45,7 +90,7 @@
     "eslint-webpack-plugin": "^3.1.1",
     "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
-    "hel-dev-utils": "^1.3.0",
+    "hel-dev-utils": "workspace:*",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
@@ -78,55 +123,11 @@
     "webpack-manifest-plugin": "^4.0.2",
     "workbox-webpack-plugin": "^6.4.1"
   },
-  "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
-    "check": "node ./scripts/check.js",
-    "start": "cross-env PORT=3103 node scripts/start.js",
-    "build": "npm run check_name && npm run build_dist && npm run build_meta && npm run build_proxy",
-    "check_name": "node scripts/check.js",
-    "build_dist": "node scripts/build.js",
-    "build_proxy": "npm run build_proxy_umd && npm run build_proxy_es && cp ./hel_proxy/entry.js ./hel_dist",
-    "build_proxy_umd": "tsc & node ./scripts/replaceToRelativePath.js & rollup -c",
-    "build_proxy_es": "tsc & node ./scripts/replaceToRelativePath.js & cross-env BUILD_ENV=es rollup -c",
-    "lint": "eslint ./src --ext ts,tsx",
-    "lintfix": "eslint ./src --ext ts,tsx --fix",
-    "build_meta": "node scripts/meta.js",
-    "set_home_page": "cross-env-shell HEL_APP_HOME_PAGE=http://127.0.0.1:8080",
-    "build_cust": "npm run set_home_page \"npm run build_dist && npm run build_meta\"",
-    "test": "jest",
-    "snap": "jest -u"
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-app-polyfill": ">=1.0.0",
+    "react-dom": ">=16.8.0",
+    "scheduler": ">=0.23.0"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
-  "files": [
-    "hel_dist",
-    "hel_proxy",
-    "hel_proxy_es",
-    "lib",
-    "src",
-    "README.md",
-    "jsconfig.json",
-    "scripts"
-  ]
+  "appGroupName": "hel-tpl-remote-react-comps"
 }

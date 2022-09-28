@@ -1,9 +1,9 @@
 /** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
 import fs from 'fs';
 import util from 'util';
-import { verbose } from '../inner-utils/index';
-import { purify, isNull } from '../inner-utils/obj';
 import { noDupPush } from '../inner-utils/arr';
+import { verbose } from '../inner-utils/index';
+import { isNull, purify } from '../inner-utils/obj';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
@@ -15,7 +15,6 @@ function getLinkType(appHomePage, srcOrHref) {
   return 'staticLink';
 }
 
-
 function getScriptType(appHomePage, srcOrHref) {
   if (srcOrHref.startsWith(appHomePage)) {
     return 'script';
@@ -23,8 +22,7 @@ function getScriptType(appHomePage, srcOrHref) {
   return 'staticScript';
 }
 
-
-function needIgnore(parseOptions, /** @type string */srcOrHref, hreflang = '') {
+function needIgnore(parseOptions, /** @type string */ srcOrHref, hreflang = '') {
   const { appHomePage, extractMode } = parseOptions;
   if (srcOrHref) {
     // 这种类型的css文件不忽略
@@ -34,7 +32,7 @@ function needIgnore(parseOptions, /** @type string */srcOrHref, hreflang = '') {
         return !srcOrHref.startsWith(appHomePage); // 不是以 appHomePage 开头的都忽略掉
       }
       if (extractMode === 'bu_st') {
-        return false;  // 都不忽略，写 staticLink staticScript
+        return false; // 都不忽略，写 staticLink staticScript
       }
       throw new Error(`unknown extract_mode [${extractMode}]`);
     }
@@ -45,8 +43,7 @@ function needIgnore(parseOptions, /** @type string */srcOrHref, hreflang = '') {
   }
   // 控制不忽略，会尝试提取 innerHtml
   return false;
-};
-
+}
 
 let custScriptIdx = 0;
 async function writeInnerHtml(childDom, fileType, parseOptions) {
@@ -63,8 +60,7 @@ async function writeInnerHtml(childDom, fileType, parseOptions) {
   await writeFile(fileAbsolutePath, innerHTML);
   verbose(`write done, the web file will be ${fileWebPath} later`);
   return fileWebPath;
-};
-
+}
 
 /**
  * 提取link、script标签数据并填充到目标assetList
@@ -168,9 +164,9 @@ export async function fillAssetListByDist(parsedRet, extractOptions) {
   const fileFullPathList = getAllFilePath(buildDirFullPath);
   verbose('filePathList', fileFullPathList);
 
-  fileFullPathList.forEach(fileAbsolutePath => {
+  fileFullPathList.forEach((fileAbsolutePath) => {
     //  获取文件处于build目录下的相对路径，形如：
-    //  /static/js/runtime-main.66c45929.js 
+    //  /static/js/runtime-main.66c45929.js
     //  /asset-manifest.json
     const filePathUnderBuild = fileAbsolutePath.split(buildDirFullPath)[1];
 

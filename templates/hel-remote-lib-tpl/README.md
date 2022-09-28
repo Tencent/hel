@@ -1,22 +1,24 @@
 ## remote-lib-tpl
+
 远程仓库模板库
 
 ## 如何参与
-- 改subApp
-`src/configs/subApp.ts`改为你的hel模块名
+
+- 改 subApp `src/configs/subApp.ts`改为你的 hel 模块名
+
 ```ts
 export const APP_GROUP_NAME = 'hlib-xxx'; /// 名字随意，和 package.json name 一样即可
 ```
 
-- 改package.json
-将`hame`和`appGroupName`改为hel模块名(名字随意，保持一样即可)
+- 改 package.json 将`hame`和`appGroupName`改为 hel 模块名(名字随意，保持一样即可)
+
 ```
   "name": "hlib-xxx",
   "appGroupName": "hlib-xxx",
 ```
 
-- 改源代码
-`src/utils/myMod.ts`
+- 改源代码 `src/utils/myMod.ts`
+
 ```ts
 export function sayHelloToHel(from: string) {
   const yourRtxName = ''; // 可改写为你的名字
@@ -24,8 +26,8 @@ export function sayHelloToHel(from: string) {
 }
 ```
 
-- 改单测文件
-`src/utils/__tests__/myMod.ts`
+- 改单测文件 `src/utils/__tests__/myMod.ts`
+
 ```ts
 describe('test myMod', () => {
   test('sayHelloToHel', () => {
@@ -37,18 +39,22 @@ describe('test myMod', () => {
 ```
 
 - 执行单测
+
 ```
 npm run test
 ```
 
 - 发布源码和类型
+
 ```
 npm run build
 npm publish
 ```
 
 ## FAQ
+
 ### 为何入口文件采取动态模块导入写法
+
 如果采用静态导入写法
 
 ```ts
@@ -58,18 +64,20 @@ import { LIB_NAME } from './configs/subApp';
 async function main() {
   const libProperties = await import('./entrance/libProperties');
   libReady(LIB_NAME, libProperties.default);
-};
+}
 
 main().catch(console.error);
 export default 'REMOTE MOD';
 ```
 
 需要将 `config/webpack.config.js`里的 `maxChunks`的值 1 改为 4
+
 ```js
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 4,
     }),
 ```
+
 如果不改动，构建会报错
 
 ```bash
@@ -101,7 +109,7 @@ async function main() {
 
   const libProperties = await import('./entrance/libProperties');
   libReady(LIB_NAME, libProperties.default);
-};
+}
 
 main().catch(console.error);
 export default 'HEL REMOTE MOD';

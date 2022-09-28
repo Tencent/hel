@@ -1,5 +1,5 @@
-import type { IInnerPreFetchOptions } from './types';
 import { allowLog, getGlobalThis } from 'hel-micro-core';
+import type { IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {
   return args;
@@ -11,11 +11,10 @@ export function perfStart(label: string) {
   }
 }
 
-
 // avoid mock js-dom warn:
 // [DOMException [SecurityError]: localStorage is not available for opaque origins]
 export function getLocalStorage() {
-  const mockStorage = { getItem() { }, setItem() { } };
+  const mockStorage = { getItem() {}, setItem() {} };
   try {
     const storage = getGlobalThis()?.localStorage;
     return storage || mockStorage;
@@ -24,13 +23,11 @@ export function getLocalStorage() {
   }
 }
 
-
 export function perfEnd(label: string) {
   if (allowLog()) {
     console.timeEnd(label);
   }
 }
-
 
 export function noDupPush(list: any[], item: any) {
   if (!list.includes(item)) {
@@ -38,24 +35,20 @@ export function noDupPush(list: any[], item: any) {
   }
 }
 
-
 export function merge2List(list1: string[], list2: string[]) {
   const mergedList: string[] = [];
-  list1.forEach(v => noDupPush(mergedList, v));
-  list2.forEach(v => noDupPush(mergedList, v));
+  list1.forEach((v) => noDupPush(mergedList, v));
+  list2.forEach((v) => noDupPush(mergedList, v));
   return mergedList;
 }
-
 
 export function okeys(map: any) {
   return Object.keys(map);
 }
 
-
 export function helScriptId(appName: string) {
   return `helScript_${appName}`;
 }
-
 
 export function helLinkId(appName: string) {
   return `helLink_${appName}`;
@@ -68,10 +61,7 @@ interface NullDef {
   emptyArrIsNull?: boolean;
 }
 export function isNull(value: any, nullDef: NullDef = {}) {
-  const {
-    nullValues = [null, undefined, ''],
-    emptyObjIsNull = true, emptyArrIsNull = true,
-  } = nullDef;
+  const { nullValues = [null, undefined, ''], emptyObjIsNull = true, emptyArrIsNull = true } = nullDef;
 
   const inNullValues = nullValues.includes(value);
   if (inNullValues) {
@@ -93,7 +83,6 @@ export function isNull(value: any, nullDef: NullDef = {}) {
   return false;
 }
 
-
 /**
  * 确定一个有效值，如果左边无效，则取右边的备用值
  * @param firstVal
@@ -103,7 +92,6 @@ export function decideVal(firstVal: any, secondVal: any) {
   if (!isNull(firstVal)) return firstVal;
   return secondVal;
 }
-
 
 export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
   // 防止传入进来的已经是 json 对象
@@ -119,7 +107,6 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
   }
 }
 
-
 export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
   // https://unpkg.com/hel-lodash@1.2.21/1659925934381
   const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${Date.now()}_${appName}`);
@@ -127,7 +114,6 @@ export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
   const [ver] = includeVer.split('/');
   return ver;
 }
-
 
 export async function requestGet(url: string, asJson = true) {
   const res = await getGlobalThis().fetch(url);
@@ -144,7 +130,6 @@ export async function requestGet(url: string, asJson = true) {
   const text = await res.text();
   return { url: resUrl, reply: text };
 }
-
 
 export async function getCustomMeta(appName: string, customHost: string) {
   const t = Date.now();
@@ -192,10 +177,9 @@ export async function getCustomMeta(appName: string, customHost: string) {
         headAssetList: [],
         bodyAssetList,
       },
-    }
+    },
   };
 }
-
 
 export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
   const { extraCssList = [], custom } = loadOptions;

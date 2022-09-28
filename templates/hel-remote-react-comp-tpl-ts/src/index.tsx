@@ -11,7 +11,7 @@
 |--------------------------------------------------------------------------
 */
 // import { preFetchLib } from 'hel-micro';
-import { libReady, isSubApp } from 'hel-lib-proxy';
+import { isSubApp, libReady } from 'hel-lib-proxy';
 import { LIB_NAME } from './configs/subApp';
 
 async function main() {

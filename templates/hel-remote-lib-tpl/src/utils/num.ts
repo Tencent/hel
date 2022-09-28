@@ -21,7 +21,8 @@ export function canBeNum(val: any) {
       return !Number.isNaN(parsed);
     }
     return regs.num1to9.test(val);
-  } if (valType === 'number') {
+  }
+  if (valType === 'number') {
     return true;
   }
   return false;

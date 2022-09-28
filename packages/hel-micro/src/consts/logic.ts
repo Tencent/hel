@@ -1,4 +1,3 @@
-
 export const styleFetchStatus = {
   NO_FETCH: 1,
   FETCHED: 2,

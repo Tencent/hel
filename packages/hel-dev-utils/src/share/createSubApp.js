@@ -1,7 +1,6 @@
 /** @typedef {import('typings').IInnerSubAppOptions} IInnerSubAppOptions */
 /** @typedef {import('typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import * as base from '../base-utils/index';
-import { getNpmCdnHomePage } from '../inner-utils/index';
 import cst from './cst';
 
 const presetExternals = {
@@ -12,7 +11,7 @@ const presetExternals = {
 };
 
 /**
- * 
+ *
  * @param {Record<string, any>} pkg
  * @param {IInnerSubAppOptions} innerOptions
  * @param {ICreateSubAppOptions} [userOptions]
@@ -38,8 +37,8 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     name: envParams.appName,
     externals,
     /**
-     * @param {Record<string, any>} userExternals 
-     * @returns 
+     * @param {Record<string, any>} userExternals
+     * @returns
      */
     getExternals: (userExternals) => {
       if (userExternals && !Array.isArray(userExternals)) {
@@ -50,8 +49,8 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     jsonpFnName,
     /**
      * @param {string} [fallbackPathOrUrl] 兜底用的 publicPathOrUrl
-     * @param {boolean} [ensureEndSlash] 
-     * @returns 
+     * @param {boolean} [ensureEndSlash]
+     * @returns
      */
     getPublicPathOrUrl: (fallbackPathOrUrl = '/', ensureEndSlash = true) => {
       const pathOrUrl = envParams.appHomePage || fallbackPathOrUrl;

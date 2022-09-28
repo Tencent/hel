@@ -1,7 +1,6 @@
-import React from "react";
-import { Pre, Line, LineNo, LineContent } from "./styled";
-import Highlight, { defaultProps } from "prism-react-renderer";
-import theme from "prism-react-renderer/themes/vsDark";
+import Highlight, { defaultProps } from 'prism-react-renderer';
+import theme from 'prism-react-renderer/themes/vsDark';
+import { Line, LineContent, LineNo, Pre } from './styled';
 
 const WithLineNumbers = (props) => (
   <div style={{ width: '1000px', minHeight: '500px', margin: '0 auto' }}>

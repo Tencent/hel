@@ -1,4 +1,3 @@
-
 console.log('---------------------------------------------------------------------------------------');
 console.log('| ');
 console.log('| Welcome to use hel remote module');
@@ -8,4 +7,3 @@ console.log('| you should use hel-micro to load remote module.');
 console.log('| see https://github.com/tnfe/hel to know more details of hel-micro');
 console.log('| ');
 console.log('---------------------------------------------------------------------------------------');
-

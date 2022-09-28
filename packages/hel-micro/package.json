@@ -1,47 +1,15 @@
 {
   "name": "hel-micro",
   "version": "3.9.2",
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "unpkg": "dist/hel-micro.min.js",
-  "types": "src/index.ts",
+  "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
-  "bundleDependencies": [],
-  "dependencies": {
-    "hel-micro-core": "^3.9.0",
-    "hel-types": "^3.7.0"
-  },
-  "peerDependencies": {
-    "hel-micro-core": "^3.9.0",
-    "hel-types": "^3.7.0"
-  },
-  "deprecated": false,
-  "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
-  "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.12.10",
-    "@types/jest": "^27.5.0",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
-    "@typescript-eslint/parser": "^5.27.0",
-    "tslib": "^1.13.0",
-    "babel-cli": "^6.26.0",
-    "cross-env": "^7.0.2",
-    "jest": "^28.1.0",
-    "rollup": "^2.23.0",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript": "^1.0.1",
-    "rollup-plugin-uglify": "^6.0.4",
-    "ts-jest": "^28.0.1",
-    "typescript": "^4.6.3"
-  },
+  "main": "lib/index.js",
+  "unpkg": "dist/hel-micro.min.js",
+  "module": "es/index.js",
+  "types": "src/index.ts",
   "files": [
     "dist",
     "lib",
@@ -61,5 +29,37 @@
     "lint_test": "eslint ./test --ext ts,tsx",
     "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
     "test": "jest"
-  }
+  },
+  "dependencies": {
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@types/jest": "^27.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "babel-cli": "^6.26.0",
+    "cross-env": "^7.0.2",
+    "jest": "^28.1.0",
+    "rollup": "^2.23.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript": "^1.0.1",
+    "rollup-plugin-uglify": "^6.0.4",
+    "ts-jest": "^28.0.1",
+    "tslib": "^1.13.0",
+    "typescript": "^4.6.3"
+  },
+  "peerDependencies": {
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
+  },
+  "bundleDependencies": [],
+  "deprecated": false
 }

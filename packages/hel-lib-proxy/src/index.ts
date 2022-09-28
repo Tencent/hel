@@ -4,24 +4,23 @@
  * 能够更独立的维护包代理逻辑
  */
 import type { IGetOptions } from 'hel-micro-core';
-import type { Platform } from 'hel-types';
-import type { LibName, LibProperties, IOptions, IExposeLibOptions } from './typings';
 import core from 'hel-micro-core';
+import type { Platform } from 'hel-types';
 import * as share from './share';
+import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
 export * from './typings';
 
 core.log('hel-lib-proxy ver 3.8.3');
 
-/** 
+/**
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
- * @param libName 
+ * @param libName
  * @param platform - 默认 'hel'
  * @returns
  */
 export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions): T | null {
   return core.getVerLib(libName, getOptions) as T;
 }
-
 
 /**
  * 模快提供方使用此函數來暴露对外提供接口的【代理对象】，作为 rollup 打包的入口文件之用（也是 types 文件入口）
@@ -54,12 +53,12 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
 
   const libObj = share.getLibObj<L>(libName, platform);
   core.log('[[ exposeLib ]] getLibObj > platform libObj: ', platform, libObj);
+  //@ts-ignore
   if (typeof Proxy === 'function' && asProxy) {
     return share.getLibProxy(libName, libObj);
   }
   return libObj;
 }
-
 
 /**
  * 运行时代码暴露实际的模块对象，该模块对象会被 helEventBus 发射给模块使用方
@@ -80,7 +79,7 @@ export const isSubApp = core.isSubApp;
 
 export function isMasterApp() {
   return !core.isSubApp();
-};
+}
 
 export default {
   libReady,

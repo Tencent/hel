@@ -1,12 +1,11 @@
+import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { getHelEventBus, getGlobalThis } from 'hel-micro-core';
 import ShadowView from 'shadow-view';
 
 const COMP_NAME = 'hel-shadow-body';
 const STATIC_COMP_NAME = 'hel-static-shadow-body';
 const bus = getHelEventBus();
-
 
 function makeBodyMountNode(name: string, prefix: string) {
   const doc = getGlobalThis().document;
@@ -42,7 +41,6 @@ class ShadowBody extends React.Component<{ id: string }> {
   }
 }
 
-
 const staticShadowBodyRefs: Record<string, any> = {};
 const staticShadowBodyRefRenderingMap: Record<string, boolean> = {};
 
@@ -50,12 +48,10 @@ export function getStaticShadowBodyRef(name: string) {
   return staticShadowBodyRefs[name] || null;
 }
 
-
 export function getShadowBodyReadyEvName(name: string) {
   const evName = `ReactShadowBody_${name}`;
   return evName;
 }
-
 
 export function tryMountStaticShadowBody(props: any, createRoot: any) {
   const name = props.id;
@@ -71,12 +67,18 @@ export function tryMountStaticShadowBody(props: any, createRoot: any) {
   const evName = getShadowBodyReadyEvName(name);
 
   // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
-  const uiShadowView = <ShadowView {...{
-    tagName: STATIC_COMP_NAME, ...props, onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
-      staticShadowBodyRefs[name] = bodyRef;
-      bus.emit(evName, bodyRef);
-    }
-  }} />;
+  const uiShadowView = (
+    <ShadowView
+      {...{
+        tagName: STATIC_COMP_NAME,
+        ...props,
+        onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
+          staticShadowBodyRefs[name] = bodyRef;
+          bus.emit(evName, bodyRef);
+        },
+      }}
+    />
+  );
 
   if (createRoot) {
     const root = createRoot(mountNode);
@@ -85,6 +87,5 @@ export function tryMountStaticShadowBody(props: any, createRoot: any) {
     ReactDOM.render(uiShadowView, mountNode);
   }
 }
-
 
 export default ShadowBody;

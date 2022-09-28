@@ -6,11 +6,10 @@ const fs = require('fs');
 const helDevUtils = require('hel-dev-utils');
 const subApp = require('./subApp');
 
-
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
@@ -24,27 +23,13 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 //   require(resolveApp('package.json')).homepage,
 //   process.env.PUBLIC_URL
 // );
-const publicUrlOrPath = subApp.getPublicPathOrUrl('/');
+const publicUrlOrPath = ''; //subApp.getPublicPathOrUrl('/');
 
-const moduleFileExtensions = [
-  'web.mjs',
-  'mjs',
-  'web.js',
-  'js',
-  'web.ts',
-  'ts',
-  'web.tsx',
-  'tsx',
-  'json',
-  'web.jsx',
-  'jsx',
-];
+const moduleFileExtensions = ['web.mjs', 'mjs', 'web.js', 'js', 'web.ts', 'ts', 'web.tsx', 'tsx', 'json', 'web.jsx', 'jsx'];
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
-  const extension = moduleFileExtensions.find(extension =>
-    fs.existsSync(resolveFn(`${filePath}.${extension}`))
-  );
+  const extension = moduleFileExtensions.find((extension) => fs.existsSync(resolveFn(`${filePath}.${extension}`)));
 
   if (extension) {
     return resolveFn(`${filePath}.${extension}`);

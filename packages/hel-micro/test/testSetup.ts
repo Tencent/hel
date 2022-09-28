@@ -2,10 +2,10 @@
  * some setup work here
  */
 import { setGlobalThis } from 'hel-micro-core';
-import * as mockData from './mockData';
 import * as qs from 'qs';
+import * as mockData from './mockData';
 
-const noop = () => { };
+const noop = () => {};
 
 setGlobalThis({
   fetch: async (url: string) => {
@@ -14,7 +14,7 @@ setGlobalThis({
         const searchObj: any = qs.parse(url.split('?')[1]);
         if (searchObj.name === 'invalid-module') {
           return {
-            data: { app: null, version: null }
+            data: { app: null, version: null },
           };
         }
         return {
@@ -35,5 +35,5 @@ setGlobalThis({
     createElement: () => ({}),
     getElementById: noop,
     getElementsByTagName: noop,
-  }
+  },
 });

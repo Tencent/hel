@@ -1,16 +1,15 @@
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
-import type { IHelGetOptions } from './api';
-import type { IInnerPreFetchOptions } from '../types';
 import * as core from 'hel-micro-core';
-import { loadAppAssets } from '../dom';
-import * as apiSrv from './api';
-import { safeParse, getLocalStorage, getCustomMeta, getAllExtraCssList, noop } from '../util';
-import { getPlatformConfig, getPlatform } from '../shared/platform';
-import storageKeys from '../consts/storageKeys';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import defaults from '../consts/defaults';
 import { PLAT_UNPKG } from '../consts/logic';
-import { isEmitVerMatchInputVer, isCustomValid } from '../shared/util';
-
+import storageKeys from '../consts/storageKeys';
+import { loadAppAssets } from '../dom';
+import { getPlatform, getPlatformConfig } from '../shared/platform';
+import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
+import type { IInnerPreFetchOptions } from '../types';
+import { getAllExtraCssList, getCustomMeta, getLocalStorage, noop, safeParse } from '../util';
+import type { IHelGetOptions } from './api';
+import * as apiSrv from './api';
 
 interface ISrvInnerOptions {
   platform: Platform;
@@ -19,13 +18,11 @@ interface ISrvInnerOptions {
   loadOptions: IInnerPreFetchOptions;
 }
 
-
 function getFallbackHook(options: IInnerPreFetchOptions) {
   const conf = core.getPlatformConfig(options.platform);
   const fallbackHook = options.onFetchMetaFailed || conf.onFetchMetaFailed;
   return fallbackHook;
 }
-
 
 /**
  * 如果用户未指定 apiMode，或许将来node 环境则一定是 get
@@ -38,24 +35,20 @@ function computeApiMode(platform?: Platform, specifiedApiMode?: ApiMode) {
   return apiMode;
 }
 
-
 function getPlatformAndApiMode(specifiedPlatform?: Platform, specifiedApiMode?: ApiMode) {
   const platform = getPlatform(specifiedPlatform);
   const apiMode = computeApiMode(platform, specifiedApiMode);
   return { platform, apiMode };
 }
 
-
 function getAppCacheKey(appName: string) {
   return `${storageKeys.LS_CACHE_APP_PREFIX}.${appName}`;
 }
-
 
 function getDiskCachedApp(appName: string) {
   const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
   return safeParse(appCacheStr || '', null);
 }
-
 
 function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
   if (appVersion && typeof options.onAppVersionFetched === 'function') {
@@ -63,12 +56,9 @@ function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any)
   }
 }
 
-
 async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions) {
   let mayCachedApp: any = null;
-  const {
-    enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', projectId = '', isFirstCall = true, custom,
-  } = options;
+  const { enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', projectId = '', isFirstCall = true, custom } = options;
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
   // 调试模式
@@ -87,10 +77,10 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
     const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
     // 优先从内存获取
     if (
-      platform !== PLAT_UNPKG
-      && memApp
-      && memAppVersion
-      && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
+      platform !== PLAT_UNPKG &&
+      memApp &&
+      memAppVersion &&
+      isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
     ) {
       mayCachedApp = { appInfo: memApp, appVersion: memAppVersion };
 
@@ -109,7 +99,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
           // 将硬盘缓存数据写回到内存
           cacheApp(appInfo, { appVersion: appVersion, platform, toDisk: false, loadOptions: options });
           // 异步缓存一份最新的数据
-          getAndCacheApp(appName, srcInnerOptions).catch(err => noop(err));
+          getAndCacheApp(appName, srcInnerOptions).catch((err) => noop(err));
         }
       }
 
@@ -131,7 +121,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
       if (isFirstCall) {
         throw err;
       }
-      return { appInfo: null, appVersion: null, };
+      return { appInfo: null, appVersion: null };
     }
     // 首次调用直接报错
     // 非首次调用依然出错，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
@@ -143,7 +133,6 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
   }
 }
 
-
 export async function getAppAndVersion(appName: string, options: IHelGetOptions) {
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
   const fixedOptions = { ...options, platform, apiMode };
@@ -154,8 +143,10 @@ export async function getAppAndVersion(appName: string, options: IHelGetOptions)
   return { appInfo, appVersion };
 }
 
-
-export function cacheApp(appInfo: ISubApp, options: { appVersion: ISubAppVersion, platform: Platform, toDisk?: boolean, loadOptions: IInnerPreFetchOptions }) {
+export function cacheApp(
+  appInfo: ISubApp,
+  options: { appVersion: ISubAppVersion; platform: Platform; toDisk?: boolean; loadOptions: IInnerPreFetchOptions },
+) {
   const { appVersion, platform, toDisk = true, loadOptions } = options;
   let appMeta = appInfo;
   const appName = appMeta.name;
@@ -185,7 +176,6 @@ export function cacheApp(appInfo: ISubApp, options: { appVersion: ISubAppVersion
   core.setVerExtraCssList(appName, cssList, { platform, versionId: appVersion.sub_app_version });
 }
 
-
 export async function getAndCacheApp(appName: string, options: ISrvInnerOptions) {
   const { platform, loadOptions } = options;
   const ret = await getAppAndVersion(appName, options);
@@ -193,7 +183,6 @@ export async function getAndCacheApp(appName: string, options: ISrvInnerOptions)
   cacheApp(appInfo, { appVersion, platform, loadOptions });
   return ret;
 }
-
 
 /**
  * 加载应用的入口函数，先获取元数据，再加载资源

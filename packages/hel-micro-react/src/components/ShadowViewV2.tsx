@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { useForceUpdate } from '../hooks/share';
 
-
 function ShadowContent(props: any) {
   const { children, root } = props;
   return ReactDOM.createPortal(children, root);
@@ -37,22 +36,22 @@ export default function ShadowViewV2(props: any) {
 
   const shadowRoot = shadowRootRef.current.root;
   const isDelayCalled = isDelayCalledRef.current.called;
-  const compContent = (!shadowDelay || isDelayCalled) ? children : '';
+  const compContent = !shadowDelay || isDelayCalled ? children : '';
 
   return (
     <div ref={shadowHostRef} style={styleWrap}>
       {/* shadowRoot 节点准备就绪才开始调用 createPortal 渲染孩子节点 */}
-      {shadowRoot
-        && <ShadowContent root={shadowRoot}>
+      {shadowRoot && (
+        <ShadowContent root={shadowRoot}>
           <section id={sectionIdRef.current}>
-            {styleSheets.map((url: string, idx: number) => <link key={idx} type='text/css' rel='stylesheet' href={url}></link>)}
-            <style type="text/css">
-              {styleContent}
-            </style>
+            {styleSheets.map((url: string, idx: number) => (
+              <link key={idx} type="text/css" rel="stylesheet" href={url}></link>
+            ))}
+            <style type="text/css">{styleContent}</style>
           </section>
           {compContent}
         </ShadowContent>
-      }
+      )}
     </div>
   );
 }

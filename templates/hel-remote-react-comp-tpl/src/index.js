@@ -10,14 +10,18 @@
 | @date: 2022-06-05
 |--------------------------------------------------------------------------
 */
-// import { preFetchLib } from 'hel-micro';
-import { libReady, isSubApp } from 'hel-lib-proxy';
 import { LIB_NAME } from 'configs/subApp';
+import { isSubApp, libReady } from 'hel-lib-proxy';
+import helMicro from 'hel-micro';
 import reportWebVitals from './reportWebVitals';
 
 async function main() {
   // 如有其他包依赖，且需要在逻辑里静态导入，可在此处执行预抓取
-  // await helMicro.preFetchLib('other-lib');
+  await helMicro.preFetchLib('hel-tpl-remote-lib', {
+    custom: {
+      host: 'http://localhost:3000',
+    },
+  });
 
   const libProperties = await import('./entrance/libProperties');
   // 表示模块已准备就绪，注意此处传递的是 default
@@ -30,7 +34,6 @@ async function main() {
 }
 
 main().catch(console.error);
-
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

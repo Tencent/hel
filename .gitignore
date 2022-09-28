@@ -2,6 +2,7 @@
 .vscode
 .idea
 .docusaurus
+.trubo
 
 node_modules
 build
@@ -13,3 +14,4 @@ templates/hel-remote-react-comp-tpl2
 
 npm-debug.log*
 yarn-debug.log*
+turbo-build.log*

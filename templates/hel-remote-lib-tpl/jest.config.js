@@ -3,37 +3,27 @@
 const jestConfig = {
   roots: ['<rootDir>'],
   // 收集测试覆盖率的匹配文件规则集合，!代表排除的文件
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/types/**/*.ts', '!src/index.tsx', '!src/serviceWorker.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/types/**/*.ts', '!src/index.tsx', '!src/serviceWorker.ts'],
   setupFiles: [],
-  setupFilesAfterEnv: [
-    '<rootDir>/test/utils/testSetup.ts',
-  ],
+  setupFilesAfterEnv: ['<rootDir>/test/utils/testSetup.ts'],
   testMatch: [
-    "<rootDir>/src/**/__tests__/**/*.{ts,tsx}",
-    "<rootDir>/src/**/*.{spec,test}.{ts,tsx}",
+    '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
+    '<rootDir>/src/**/*.{spec,test}.{ts,tsx}',
     '<rootDir>/test/**/*.{spec,test}.{ts,tsx}',
   ],
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
-    "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-    "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js",
+    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
-  transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
-    '^.+\\.module\\.(css|sass|scss)$',
-  ],
+  transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
   modulePaths: ['<rootDir>/src'],
   moduleNameMapper: {
     '^react-native$': 'react-native-web',
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
   },
   moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'jsx'],
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname',
-  ],
+  watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
   reporters: ['default'],
   collectCoverage: true,
 };
@@ -61,7 +51,7 @@ if (testMatch) {
 } else {
   console.log('开始载入jest配置文件，如果是本地执行，想缩小单测范围，可加上testMatch前缀执行，形如');
   // 执行类似命令，缩小测试范围：testMatch='src/xxxDir/__tests__/*.{ts,tsx}' npm run test
-  console.log('testMatch=\'src/xxxDir/__tests__/*.{ts,tsx}\' npm run test');
+  console.log("testMatch='src/xxxDir/__tests__/*.{ts,tsx}' npm run test");
 }
 
 module.exports = jestConfig;

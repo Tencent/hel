@@ -1,0 +1,30 @@
+{
+  "name": "hel",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --cache --write . --ignore-path .gitignore --ignore-unknown"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --cache --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --cache --parser=typescript --write"
+    ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "fs-extra": "^10.1.0",
+    "jsdom": "^20.0.0",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.7.1",
+    "prettier-plugin-organize-imports": "^3.1.1",
+    "prettier-plugin-packagejson": "^2.2.18",
+    "resolve": "^1.22.1",
+    "turbo": "^1.5.3"
+  }
+}

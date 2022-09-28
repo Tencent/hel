@@ -10,7 +10,6 @@ export function getPlatform() {
   // return DEFAULT_PLAT;
 }
 
-
 /**
  * @param {string} platform
  */
@@ -26,13 +25,11 @@ export function getPlatformSharedCache(platform) {
   return cacheNode;
 }
 
-
 export function getCacheRoot() {
   return getHelMicroShared().cacheRoot;
 }
 
-
-export function isVerMatchOnline(/** @type {import('hel-types').ISubApp}*/appMeta, inputVer) {
+export function isVerMatchOnline(/** @type {import('hel-types').ISubApp}*/ appMeta, inputVer) {
   // 如果不传版本号，就表示匹配线上版本
   if (!inputVer) {
     return true;

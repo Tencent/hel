@@ -5,10 +5,9 @@ export type LibName = string;
 export type LibProperties = Record<string, any>;
 /**
  * let statement in user's types/libIndex file below work:
- * export const lib: LibMap<'someLib', LibPropertyType> = libProxy; 
+ * export const lib: LibMap<'someLib', LibPropertyType> = libProxy;
  */
-export type LibMap<Name extends LibName = LibName, Properties extends LibProperties = LibProperties>
-  = { [K in Name]: Properties };
+export type LibMap<Name extends LibName = LibName, Properties extends LibProperties = LibProperties> = { [K in Name]: Properties };
 
 export interface IOptions {
   /**

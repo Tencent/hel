@@ -1,5 +1,5 @@
 import type { IPreFetchOptionsBase } from 'hel-micro';
-import type { Platform, ISubAppVersion } from 'hel-types';
+import type { ISubAppVersion, Platform } from 'hel-types';
 import React from 'react';
 
 export type AnyRecord = Record<string, any>;
@@ -9,7 +9,7 @@ export type AnyComp = React.FC<any> | React.ComponentClass<any>;
 export type AnyCompOrNull = AnyComp | null | undefined;
 
 export type ObjectFromList<T extends ReadonlyArray<string>, V = string> = {
-  [K in (T extends ReadonlyArray<infer U> ? U : never)]: V
+  [K in T extends ReadonlyArray<infer U> ? U : never]: V;
 };
 
 export type Len2StrArr = [string, string];
@@ -18,19 +18,17 @@ export type GetSubVal = <T extends any = any>(subCompName: string, waitVal?: any
 
 export type GetSubVals = <T extends AnyRecord = AnyRecord>(subCompNames: string[], waitVal?: any) => T;
 
-
 /**
  * 默认：false
- * 
+ *
  * 为 true 时，表示使用历史的透传 props 方式
  * 为了让老版本 hel-micro-react 载入远程组件不报错，保持数据形如 { helContext, children, appProps } 透传给远程组件
- * 
+ *
  * 为 false 时，表示使用最新的透传 props 方式
  * 最新模式透传给远程组件的 props 形如 { helContext, children, ...otherUserDefineProps }
  * 即将用户组件上定义的所有属性原封不动传给远程组件，并额外注入一个 helContext 属性
  */
 export type IsLegacy = boolean;
-
 
 /**
  * 用户调用 MicroApp 需要传递的类型描述
@@ -58,7 +56,7 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * 远程组件默认是 memo 起来的，设置为 false 关闭 memo 功能
    */
   needMemo?: boolean;
-  onStyleFetched?: (params: { mayHandledStyleStr: string, oriStyleStr: string, styleUrlList: string[] }) => void;
+  onStyleFetched?: (params: { mayHandledStyleStr: string; oriStyleStr: string; styleUrlList: string[] }) => void;
   /**
    * 异步加载组件过程的过度组件
    */
@@ -102,22 +100,22 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    */
   setStyleAsString?: boolean;
   /**
- * 在shadow模式下，默认使用 ReactDOM.render 挂载 shadowBody 到 body 下, 
- * 18版本react推荐使用 react-dom/client.createRoot 方法替代 ReactDOM.render
- * 但程序内部无法写为如下格式来动态判断是否使用 createRoot 方法
- * ```ts
- *   if (ReactDOM.createRoot) {
- *      // 16 版本react时，webpack编译到此处就报错 webpackMissingModule
- *      const domClient = await import('react-dom/client'); 
- *      const root = domClient.createRoot(mountNode);
- *      root.render(uiShadowView);
- *   } else {
- *      ReactDOM.render(uiShadowView, mountNode);
- *   }
- * ```
- * 如果如果用户在18版本 react 下调用 useRemoteComp 方法并使用了shadow模式，为避免 react-dom/client.createRoot 警告
- * 需人工把 createRoot 传递下来
- */
+   * 在shadow模式下，默认使用 ReactDOM.render 挂载 shadowBody 到 body 下,
+   * 18版本react推荐使用 react-dom/client.createRoot 方法替代 ReactDOM.render
+   * 但程序内部无法写为如下格式来动态判断是否使用 createRoot 方法
+   * ```ts
+   *   if (ReactDOM.createRoot) {
+   *      // 16 版本react时，webpack编译到此处就报错 webpackMissingModule
+   *      const domClient = await import('react-dom/client');
+   *      const root = domClient.createRoot(mountNode);
+   *      root.render(uiShadowView);
+   *   } else {
+   *      ReactDOM.render(uiShadowView, mountNode);
+   *   }
+   * ```
+   * 如果如果用户在18版本 react 下调用 useRemoteComp 方法并使用了shadow模式，为避免 react-dom/client.createRoot 警告
+   * 需人工把 createRoot 传递下来
+   */
   createRoot?: (...args: any) => any;
   /**
    * default: false
@@ -135,7 +133,6 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    */
   ignoreHelContext?: boolean;
 }
-
 
 /**
  * 用户调用 MicroApp 需要传递的类型描述
@@ -166,7 +163,6 @@ export interface IInnerRemoteModuleProps<T extends AnyRecord = AnyRecord> extend
   reactRef?: any;
 }
 
-
 type IMicroAppLegacyPropsBase<T> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
 
 /**
@@ -195,9 +191,9 @@ export interface ILocalCompProps {
    * 额外的样式字符串
    */
   styleStr?: boolean;
-  /** 
+  /**
    * default: 'LocalComp'
-   * shadow节点宿主 web-component id 
+   * shadow节点宿主 web-component id
    */
   name?: string;
   /** 骨架屏组件 */
@@ -208,8 +204,8 @@ export interface ILocalCompProps {
   children?: any;
   reactRef?: React.Ref<any>;
   /**
- * default: true
- */
+   * default: true
+   */
   shadow?: boolean;
   shadowMode?: 'v1' | 'v2';
   /** 改参数只对 v2 生效 */
@@ -218,52 +214,48 @@ export interface ILocalCompProps {
   shadowDelay?: number;
 }
 
-
 export interface IUseRemoteLibCompOptions extends IPreFetchOptionsBase {
   /**
- * 异步加载组件过程的过度组件
- */
+   * 异步加载组件过程的过度组件
+   */
   Skeleton?: AnyCompOrNull;
   /**
    * default: ()=> <h1>HelMicroComp error {errMsg}</h1>
    * 渲染出现错误时的 Error 组件
    */
   Error?: (props: { errMsg: string }) => React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
-  onStyleFetched?: (params: { mayHandledStyleStr: string, oriStyleStr: string, styleUrlList: string[] }) => void;
+  onStyleFetched?: (params: { mayHandledStyleStr: string; oriStyleStr: string; styleUrlList: string[] }) => void;
   handleStyleStr?: (mayFetchedStr: string) => string;
   /** 组件获取到后，延迟返回的时间，单位：ms */
   delay?: number;
 }
 
-
 export interface IInnerUseRemoteCompOptions extends IUseRemoteCompOptions {
   isLegacy?: IsLegacy;
 }
 
-
 export interface IRenderAppOptions {
-  App: AnyComp,
-  appGroupName: string,
-  hostNodeId?: string,
+  App: AnyComp;
+  appGroupName: string;
+  hostNodeId?: string;
   /** 是否自渲染，大多数情况下不需要传入，让子应用自己通过内部维护的 signal 去做判断 */
-  renderSelf?: string,
-  /** 
+  renderSelf?: string;
+  /**
    * 当 renderSelf 为 true 时，如果用户传递了定制的 renderSelfFn 函数（例如react18的新渲染方式），
    * 则会执行此函数，否则默认按 ReactDom.render 来执行自渲染
    */
-  renderSelfFn?: (App: AnyComp, hostNode: ReactDOM.Container) => void,
+  renderSelfFn?: (App: AnyComp, hostNode: ReactDOM.Container) => void;
   /** 也可以透传 createRoot 句柄，来支持18 版本react的渲染 */
   createRoot?: (...args: any[]) => any;
   lifecycle?: {
-    mount: () => void,
-    unmount: () => void,
-  },
+    mount: () => void;
+    unmount: () => void;
+  };
   /**
    * default：'hel'
    */
-  platform?: Platform,
+  platform?: Platform;
 }
-
 
 export interface IHelContext {
   platform: string;
@@ -273,7 +265,7 @@ export interface IHelContext {
    * shadow 模式下组件自身挂载的 shadow-dom 节点
    */
   getShadowAppRoot: () => React.ReactHTMLElement<any> | null;
-  /** 
+  /**
    * 当做远程组件内部的 Select Picker Modal 等组件设置 Container 时，
    * 可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
    * 注意：非shadow 模式渲染，获取不到 shadow root 的
@@ -289,7 +281,6 @@ export interface IHelContext {
    */
   getEnsuredBodyRoot: () => React.ReactHTMLElement<any> | null;
 }
-
 
 /**
  * 被远程加载的组件可以使用该类型来包裹 props

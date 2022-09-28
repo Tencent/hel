@@ -1,6 +1,6 @@
-import libProperties from './libProperties';
 import { exposeLib } from 'hel-lib-proxy';
 import { LIB_NAME } from '../configs/subApp';
+import libProperties from './libProperties';
 
 type LibProperties = typeof libProperties;
 

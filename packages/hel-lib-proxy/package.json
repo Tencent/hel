@@ -1,51 +1,52 @@
 {
   "name": "hel-lib-proxy",
   "version": "3.8.3",
-  "main": "dist/hel-lib-proxy.min.js",
-  "unpkg": "dist/hel-lib-proxy.min.js",
-  "types": "lib/index.d.ts",
-  "npmName": "hel-lib-proxy",
+  "description": "load you lib as a proxy object",
+  "keywords": [
+    "hel-lib-proxy"
+  ],
+  "license": "MIT",
   "author": {
     "name": "fantasticsoul",
     "email": "624313307@qq.com"
+  },
+  "main": "dist/hel-lib-proxy.min.js",
+  "unpkg": "dist/hel-lib-proxy.min.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "npm run build:umd & npm run build:umd-min",
+    "build:umd": "tsc & rollup -c",
+    "build:umd-min": "tsc & cross-env MIN=true rollup -c"
   },
   "browserify": {
     "transform": [
       "loose-envify"
     ]
   },
-  "bundleDependencies": false,
-  "deprecated": false,
-  "description": "load you lib as a proxy object",
+  "dependencies": {
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
+    "cross-env": "^7.0.3",
     "rollup": "^2.38.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript": "^1.0.1",
     "typescript": "^4.1.2"
   },
-  "files": [
-    "dist",
-    "lib",
-    "src"
-  ],
-  "keywords": [
-    "hel-lib-proxy"
-  ],
-  "license": "MIT",
   "peerDependencies": {
-    "hel-micro-core": "^3.8.0",
-    "hel-types": "^3.6.0"
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
   },
-  "dependencies": {
-    "hel-micro-core": "^3.8.0",
-    "hel-types": "^3.6.0"
-  },
-  "scripts": {
-    "build": "npm run build:umd & npm run build:umd-min",
-    "build:umd": "tsc & rollup -c",
-    "build:umd-min": "tsc & MIN=true rollup -c"
-  }
+  "bundleDependencies": false,
+  "deprecated": false,
+  "npmName": "hel-lib-proxy"
 }

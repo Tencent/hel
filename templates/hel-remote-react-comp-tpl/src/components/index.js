@@ -1,5 +1,3 @@
 import HelloRemoteReactComp from './HelloRemoteReactComp';
 
-export {
-  HelloRemoteReactComp,
-}
+export { HelloRemoteReactComp };

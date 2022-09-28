@@ -1,4 +1,3 @@
-
 export interface WuWeiResp<T> {
   code: number;
   data: T[];
@@ -10,11 +9,11 @@ export interface WuWeiPatchResp {
 }
 
 export interface CosResp {
-  code: number,
+  code: number;
   data: {
-    msg: string,
-    url: string,
-  }
+    msg: string;
+    url: string;
+  };
 }
 
 /**形如：
@@ -49,4 +48,3 @@ export interface IUserExtractOptions {
   /** 未指定 appHomePage 时，内部自动用 npmCdnType 结合 packageJson 拼出 appHomePage */
   npmCdnType?: 'unpkg';
 }
-
