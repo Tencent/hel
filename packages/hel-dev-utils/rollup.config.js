@@ -11,22 +11,22 @@ const bundleName = pkg.name.includes('/') ? pkg.name.split('/')[1] : pkg.name;
 const env2outputConf = {
   commonjs: {
     format: 'cjs',
-    dir: 'lib'
+    dir: 'lib',
   },
   es: {
     format: 'es',
-    dir: 'es'
+    dir: 'es',
   },
   development: {
     format: 'umd',
     file: `dist/${bundleName}.js`,
-    name: bundleName
+    name: bundleName,
   },
   production: {
     format: 'umd',
     file: `dist/${bundleName}.min.js`,
-    name: bundleName
-  }
+    name: bundleName,
+  },
 };
 
 const config = {
@@ -35,7 +35,7 @@ const config = {
   output: {
     ...env2outputConf[env],
     exports: 'named',
-    globals: {}
+    globals: {},
   },
   plugins: [
     resolve(),
@@ -43,12 +43,12 @@ const config = {
     //   exclude: '**/node_modules/**',
     //   // runtimeHelpers: true,
     // }),
-    commonjs()
+    commonjs(),
     // json()
     // eslint({
     //   include: ['src/**/*.js'] // 需要检查的部分
     // }),
-  ]
+  ],
 };
 
 export default config;

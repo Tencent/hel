@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 // const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
-const helDevUtils = require("hel-dev-utils");
-const subApp = require("./subApp");
+const helDevUtils = require('hel-dev-utils');
+const subApp = require('./subApp');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
@@ -23,26 +23,26 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 //   require(resolveApp('package.json')).homepage,
 //   process.env.PUBLIC_URL
 // );
-const publicUrlOrPath = ""; //subApp.getPublicPathOrUrl('/');
+const publicUrlOrPath = ''; //subApp.getPublicPathOrUrl('/');
 
 const moduleFileExtensions = [
-  "web.mjs",
-  "mjs",
-  "web.js",
-  "js",
-  "web.ts",
-  "ts",
-  "web.tsx",
-  "tsx",
-  "json",
-  "web.jsx",
-  "jsx",
+  'web.mjs',
+  'mjs',
+  'web.js',
+  'js',
+  'web.ts',
+  'ts',
+  'web.tsx',
+  'tsx',
+  'json',
+  'web.jsx',
+  'jsx',
 ];
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
   const extension = moduleFileExtensions.find((extension) =>
-    fs.existsSync(resolveFn(`${filePath}.${extension}`))
+    fs.existsSync(resolveFn(`${filePath}.${extension}`)),
   );
 
   if (extension) {
@@ -54,26 +54,26 @@ const resolveModule = (resolveFn, filePath) => {
 
 const { HEL_BUNDLE_DIR, HEL_DIST_DIR } = helDevUtils.cst;
 const appIndexJsFile =
-  process.env.BUNDLE === "true" ? "lib-js/entrance/libProperties" : "src/index";
-const appSrcDir = process.env.BUNDLE === "true" ? "lib-js" : "src";
-const buildDir = process.env.BUNDLE === "true" ? HEL_BUNDLE_DIR : HEL_DIST_DIR;
+  process.env.BUNDLE === 'true' ? 'lib-js/entrance/libProperties' : 'src/index';
+const appSrcDir = process.env.BUNDLE === 'true' ? 'lib-js' : 'src';
+const buildDir = process.env.BUNDLE === 'true' ? HEL_BUNDLE_DIR : HEL_DIST_DIR;
 
 // config after eject: we're in ./config/
 module.exports = {
-  dotenv: resolveApp(".env"),
-  appPath: resolveApp("."),
+  dotenv: resolveApp('.env'),
+  appPath: resolveApp('.'),
   appBuild: resolveApp(buildDir),
-  appPublic: resolveApp("public"),
-  appHtml: resolveApp("public/index.html"),
+  appPublic: resolveApp('public'),
+  appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveModule(resolveApp, appIndexJsFile),
-  appPackageJson: resolveApp("package.json"),
+  appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(appSrcDir),
-  appTsConfig: resolveApp("tsconfig.json"),
-  appJsConfig: resolveApp("jsconfig.json"),
-  yarnLockFile: resolveApp("yarn.lock"),
-  testsSetup: resolveModule(resolveApp, "src/setupTests"),
-  proxySetup: resolveApp("src/setupProxy.js"),
-  appNodeModules: resolveApp("node_modules"),
+  appTsConfig: resolveApp('tsconfig.json'),
+  appJsConfig: resolveApp('jsconfig.json'),
+  yarnLockFile: resolveApp('yarn.lock'),
+  testsSetup: resolveModule(resolveApp, 'src/setupTests'),
+  proxySetup: resolveApp('src/setupProxy.js'),
+  appNodeModules: resolveApp('node_modules'),
   publicUrlOrPath,
 };
 

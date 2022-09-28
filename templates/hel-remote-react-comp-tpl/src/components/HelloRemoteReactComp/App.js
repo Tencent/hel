@@ -1,12 +1,12 @@
-import lib from "hel-tpl-remote-lib";
-import React from "react";
-import "./App.css";
-import logo from "./logo.svg";
+import lib from 'hel-tpl-remote-lib';
+import React from 'react';
+import './App.css';
+import logo from './logo.svg';
 
 const App = React.forwardRef(function App(props, ref) {
   React.useImperativeHandle(ref, () => ({
     sayHello() {
-      alert("Hello hel-micro");
+      alert('Hello hel-micro');
     },
   }));
 
