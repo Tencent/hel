@@ -19,7 +19,6 @@ function makeBodyMountNode(name: string, prefix: string) {
 
 class ShadowBody extends React.Component<{ id: string }> {
   node: null | HTMLDivElement = null;
-  props: any;
 
   constructor(props: any) {
     super(props);
