@@ -7,7 +7,6 @@
   },
   "bundleDependencies": false,
   "dependencies": {},
-  "peerDependencies": {},
   "deprecated": false,
   "description": "hel dev utils",
   "devDependencies": {
@@ -34,10 +33,9 @@
   "license": "MIT",
   "scripts": {
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "build:commonjs": "rollup -c --environment BUILD_ENV:commonjs",
-    "build:es": "rollup -c --environment BUILD_ENV:es",
-    "build:umd": "rollup -c --environment BUILD_ENV:development",
-    "build:umd:min": "rollup -c --environment BUILD_ENV:production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:commonjs": "cross-env BUILD_ENV=commonjs rollup -c",
+    "build:es": "cross-env BUILD_ENV=es rollup -c",
+    "build:umd": "cross-env BUILD_ENV=development rollup -c",
+    "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
   }
 }

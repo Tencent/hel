@@ -11,12 +11,12 @@
   },
   "bundleDependencies": [],
   "dependencies": {
-    "hel-micro-core": "^3.9.0",
-    "hel-types": "^3.7.0"
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
   },
   "peerDependencies": {
-    "hel-micro-core": "^3.9.0",
-    "hel-types": "^3.7.0"
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
   },
   "deprecated": false,
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",

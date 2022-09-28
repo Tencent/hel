@@ -9,10 +9,10 @@
   "module": "es/index.js",
   "bundleDependencies": false,
   "dependencies": {
-    "hel-types": "^3.7.0"
+    "hel-types": "workspace:*"
   },
   "peerDependencies": {
-    "hel-types": "^3.7.0"
+    "hel-types": "workspace:*"
   },
   "deprecated": false,
   "description": "hel micro core",

@@ -20,6 +20,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
+    "cross-env": "^7.0.3",
     "rollup": "^2.38.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-terser": "^7.0.2",
@@ -36,16 +37,16 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "hel-micro-core": "^3.8.0",
-    "hel-types": "^3.6.0"
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
   },
   "dependencies": {
-    "hel-micro-core": "^3.8.0",
-    "hel-types": "^3.6.0"
+    "hel-micro-core": "workspace:*",
+    "hel-types": "workspace:*"
   },
   "scripts": {
     "build": "npm run build:umd & npm run build:umd-min",
     "build:umd": "tsc & rollup -c",
-    "build:umd-min": "tsc & MIN=true rollup -c"
+    "build:umd-min": "tsc & cross-env MIN=true rollup -c"
   }
 }

@@ -8,11 +8,12 @@
   "version": "2.0.2",
   "dependencies": {
     "@types/lodash": "^4.14.182",
-    "hel-lib-proxy": "^3.8.0",
+    "hel-lib-proxy": "workspace:*",
+    "jsdom": "^20.0.0",
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "hel-lib-proxy": "^3.8.0"
+    "hel-lib-proxy": "workspace:*"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
@@ -70,7 +71,7 @@
     "eslint-loader": "3.0.3",
     "eslint-plugin-import": "2.20.1",
     "file-loader": "4.3.0",
-    "hel-dev-utils": "^2.3.0",
+    "hel-dev-utils": "workspace:*",
     "html-webpack-plugin": "4.0.0-beta.11",
     "jest": "24.9.0",
     "jest-resolve": "24.9.0",

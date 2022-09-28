@@ -12,13 +12,13 @@
   "description": "react implementation of hel-micro",
   "bundleDependencies": false,
   "dependencies": {
-    "hel-micro": "^3.9.0",
-    "hel-types": "^3.7.0",
+    "hel-micro": "workspace:*",
+    "hel-types": "workspace:*",
     "shadow-view": "^4.0.1"
   },
   "peerDependencies": {
-    "hel-micro": "^3.9.0",
-    "hel-types": "^3.7.0",
+    "hel-micro": "workspace:*",
+    "hel-types": "workspace:*",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2"
   },
