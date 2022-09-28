@@ -1,0 +1,17 @@
+build
+mock
+config
+public
+scripts
+*.md
+node_modules
+dist
+*.d.ts
+compiled
+fixtures
+*.md
+*.yaml
+*.yml
+*.less
+.turbo
+*.svg
