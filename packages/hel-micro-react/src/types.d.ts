@@ -1,6 +1,7 @@
 import type { IPreFetchOptionsBase } from 'hel-micro';
 import type { ISubAppVersion, Platform } from 'hel-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 export type AnyRecord = Record<string, any>;
 

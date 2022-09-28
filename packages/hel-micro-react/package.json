@@ -27,7 +27,10 @@
   },
   "dependencies": {
     "hel-micro": "workspace:*",
+    "hel-micro-core": "workspace:*",
     "hel-types": "workspace:*",
+    "react": ">=16.10.2",
+    "react-dom": ">=16.10.2",
     "shadow-view": "^4.0.1"
   },
   "devDependencies": {
@@ -47,8 +50,9 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "hel-micro": "workspace:*",
-    "hel-types": "workspace:*",
+    "hel-micro": ">=3.9.0",
+    "hel-micro-core": ">=3.9.0",
+    "hel-types": ">=3.7.0",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2"
   },

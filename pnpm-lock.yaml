@@ -160,7 +160,10 @@ importers:
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
       hel-micro: workspace:*
+      hel-micro-core: workspace:*
       hel-types: workspace:*
+      react: '>=16.10.2'
+      react-dom: '>=16.10.2'
       rollup: ^2.23.0
       rollup-plugin-babel: ^4.4.0
       rollup-plugin-commonjs: ^10.1.0
@@ -173,7 +176,10 @@ importers:
       typescript: ^4.6.3
     dependencies:
       hel-micro: link:../hel-micro
+      hel-micro-core: link:../hel-micro-core
       hel-types: link:../hel-types
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       shadow-view: 4.0.1
     devDependencies:
       '@babel/core': 7.19.1
