@@ -1,3 +1,3 @@
 packages:
-  - "packages/*"
-  - "templates/*"
+  - 'packages/*'
+  - 'templates/*'

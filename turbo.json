@@ -11,12 +11,6 @@
     },
     "start": {
       "cache": false
-    },
-    "lintfix": {
-      "cache": false,
-      "dependsOn": [
-        "^lintfix"
-      ]
     }
   },
   "globalDependencies": [
