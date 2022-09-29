@@ -2,9 +2,10 @@
  * 实例化 MicroApp 时，如传递了 platform ， 则调用对应平台的 api，
  * 如未传递 platform ，则读取 initPlatform 设定的平台对应的 api，
  * 如未调用过 initPlatform 设定平台值，则默认调用 hel 平台的 api，
+ * 3.0 之后不再限定 'hel' | 'unpkg'，支持后续 hel 包管理平台私有部署
  */
 
-/** 平台值，如果用户不显示指定的话，优先取 helMicro.init 设定的平台值，未设定的话取默认值 'hel' */
+/** 平台值，如果用户不显示指定的话，优先取 helMicro.init 设定的平台值，未设定的话内网包默认为 hel，外网包默认为 unpkg */
 export type Platform = string;
 
 /**
@@ -74,7 +75,7 @@ export interface ISrcMap {
 }
 
 export interface IProjVer {
-  /** o: online_version, t: build_version */
+  /** o: online_version, b: build_version */
   map: Record<string, { o: string; b: string }>;
   /** 后台还会用于预防更新冲突 */
   utime: number;

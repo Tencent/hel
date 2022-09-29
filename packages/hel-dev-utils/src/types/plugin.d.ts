@@ -64,11 +64,11 @@ export interface BKParams {
 }
 
 export interface InputParams extends BKParams {
-  CMS_CDN_HOST: string; // cos域名
-  CMS_BUILD_ZIP_NAME: string; // build.zip
-  CMS_BUILD_DIR_NAME: string; // build(具体看不同项目的配置，ng项目为dist)
-  CMS_APP_NAME: string; // 子应用的具体名称
-  CMS_APP_TOKEN: string; // 子应用token
-  CMS_APP_CDN_DIR: string; // 每次构建动态生成的子应用资源根目录名称, 同时也是app版本信息
-  CMS_APP_IFRAME_SRC: string; // 当以iframe渲染子应用时，载入子应用的iframeSrc值
+  HEL_CDN_HOST: string; // cos域名
+  HEL_BUILD_ZIP_NAME: string; // build.zip
+  HEL_BUILD_DIR_NAME: string; // build(具体看不同项目的配置，ng项目为dist)
+  HEL_APP_NAME: string; // 子应用的具体名称
+  HEL_APP_TOKEN: string; // 子应用token
+  HEL_APP_CDN_DIR: string; // 每次构建动态生成的子应用资源根目录名称, 同时也是app版本信息
+  HEL_APP_IFRAME_SRC: string; // 当以iframe渲染子应用时，载入子应用的iframeSrc值
 }

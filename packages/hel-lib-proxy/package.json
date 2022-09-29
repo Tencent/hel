@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.8.3",
+  "version": "3.8.5",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -43,8 +43,8 @@
     "typescript": "^4.1.2"
   },
   "peerDependencies": {
-    "hel-micro-core": "workspace:*",
-    "hel-types": "workspace:*"
+    "hel-micro-core": ">=3.9.0",
+    "hel-types": ">=3.7.0"
   },
   "bundleDependencies": false,
   "deprecated": false,

@@ -1,7 +1,8 @@
 /**
  * hel 包代理库，用于暴露占位模块和运行时模块，将此代码独立出来替代放在 hel-micro 里是
- * 考虑到用户可能只是想暴露模块，而非使用 hel-micro 里其他功能，这样可以减少打包体积，且
- * 能够更独立的维护包代理逻辑
+ * 考虑到用户可能只是想暴露模块，而非使用 hel-micro 里其他功能，这样可以减少打包体积，且能够更独立的维护包代理逻辑
+ * @author fatasticsoul
+ * @since 2021-06-06
  */
 import type { IGetOptions } from 'hel-micro-core';
 import core from 'hel-micro-core';
@@ -10,7 +11,7 @@ import * as share from './share';
 import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
 export * from './typings';
 
-core.log('hel-lib-proxy ver 3.8.3');
+core.log('hel-lib-proxy ver 3.8.5');
 
 /**
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
@@ -31,7 +32,7 @@ export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions
  * import { xxxLib } from 'hel-xxx-lib'
  * const sum = xxxLib.sum;
  * ```
- * @param libName - HelPack平台注册的应用名 或 npm包名
+ * @param libName - https://hel.woa.com HelPack平台注册的应用名
  * @param options
  * @returns
  */
@@ -47,13 +48,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
     }
   }
 
-  if (!platform) {
-    platform = 'unpkg';
-  }
-
   const libObj = share.getLibObj<L>(libName, platform);
-  core.log('[[ exposeLib ]] getLibObj > platform libObj: ', platform, libObj);
-  //@ts-ignore
   if (typeof Proxy === 'function' && asProxy) {
     return share.getLibProxy(libName, libObj);
   }
@@ -70,21 +65,15 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
  */
 export function libReady(appGroupName: string, libProperties: LibProperties, options?: IOptions) {
   const mergedOptions = share.getMergedOptions(options);
-  core.log('[[ libReady ]] mergedOptions: ', mergedOptions);
   // 将注册结果交给 preFetch 函数返回给调用方
   core.libReady(appGroupName, libProperties, mergedOptions);
 }
 
 export const isSubApp = core.isSubApp;
 
-export function isMasterApp() {
-  return !core.isSubApp();
-}
-
 export default {
   libReady,
   exposeLib,
   getLib,
   isSubApp,
-  isMasterApp,
 };

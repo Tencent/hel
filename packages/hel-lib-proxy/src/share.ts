@@ -1,11 +1,11 @@
-import { getAppPlatform, getSharedCache, log } from 'hel-micro-core';
+import { getAppPlatform, getPlatform, getSharedCache, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import type { IOptions, LibProperties } from './typings';
 
 export function getMergedOptions(options?: IOptions) {
   const defaultOptions = {
     allowDup: false,
-    platform: options?.platform || 'unpkg',
+    platform: getPlatform(),
   };
   return { ...defaultOptions, ...(options || {}) };
 }
@@ -27,7 +27,6 @@ export function getLibObj<L extends LibProperties>(libName: string, platform?: P
 }
 
 export function getLibProxy<L extends LibProperties>(libName: string, libObj: L): L {
-  //@ts-ignore
   return new Proxy(libObj, {
     get(target, key) {
       const strKey = String(key);
