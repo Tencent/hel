@@ -57,8 +57,8 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "hel-micro-core": "workspace:*",
-    "hel-types": "workspace:*"
+    "hel-micro-core": ">=3.9.0",
+    "hel-types": ">=3.7.0"
   },
   "bundleDependencies": [],
   "deprecated": false
