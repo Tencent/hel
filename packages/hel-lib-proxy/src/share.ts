@@ -1,11 +1,12 @@
-import { getAppPlatform, getPlatform, getSharedCache, log } from 'hel-micro-core';
+import { getAppPlatform, getSharedCache, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import type { IOptions, LibProperties } from './typings';
+import * as diff from './_diff';
 
 export function getMergedOptions(options?: IOptions) {
   const defaultOptions = {
     allowDup: false,
-    platform: getPlatform(),
+    platform: diff.getDefaultPlatform(),
   };
   return { ...defaultOptions, ...(options || {}) };
 }

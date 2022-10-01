@@ -9,9 +9,10 @@ import core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as share from './share';
 import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
+import * as diff from './_diff';
 export * from './typings';
 
-core.log('hel-lib-proxy ver 3.8.5');
+core.log(`hel-lib-proxy ver ${diff.VER}`);
 
 /**
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
@@ -20,7 +21,9 @@ core.log('hel-lib-proxy ver 3.8.5');
  * @returns
  */
 export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions): T | null {
-  return core.getVerLib(libName, getOptions) as T;
+  const filledOptions = { ...(getOptions || {}) };
+  filledOptions.platform = diff.getDefaultPlatform();
+  return core.getVerLib(libName, filledOptions) as T;
 }
 
 /**
