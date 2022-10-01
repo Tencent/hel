@@ -30,7 +30,7 @@ export {
   useRemoteLegacyComp,
 };
 import { core } from 'hel-micro';
-import ShadowView from 'shadow-view';
+import ShadowView from 'shadow-view-react';
 import BuildInSkeleton from './components/BuildInSkeleton';
 import { LocalComp, MicroApp, MicroAppLegacy, MicroAppLegacyMemo } from './components/MicroApp';
 import ShadowBody from './components/ShadowBody';

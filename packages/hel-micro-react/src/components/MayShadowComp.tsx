@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
-import ShadowView from 'shadow-view';
+import ShadowView from 'shadow-view-react';
 import { useForceUpdate } from '../hooks/share';
 import type { AnyComp, AnyCompOrNull, IHelContext, IsLegacy, IUseRemoteCompOptions } from '../types';
 import BuildInSkeleton from './BuildInSkeleton';

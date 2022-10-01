@@ -33,7 +33,8 @@
     "hel-types": "workspace:*",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2",
-    "shadow-view": "^4.0.1"
+    "shadow-view": "^4.0.1",
+    "shadow-view-react": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -58,7 +59,8 @@
     "hel-micro-core": ">=3.9.0",
     "hel-types": ">=3.7.0",
     "react": ">=16.10.2",
-    "react-dom": ">=16.10.2"
+    "react-dom": ">=16.10.2",
+    "shadow-view-react": "^1.0.0"
   },
   "bundleDependencies": false,
   "deprecated": false

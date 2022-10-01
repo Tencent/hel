@@ -1,0 +1,49 @@
+{
+  "name": "shadow-view-react",
+  "version": "1.0.0",
+  "description": "render shadow view for hel-micro-react, inspired Houfeng shadow-view",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "scripts": {
+    "test": "dn test && dn build -e prod"
+  },
+  "author": {
+    "name": "fantasticsoul",
+    "email": "zhongzhengkai@gmail.com",
+    "url": "http://www.zzk.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": ">=16.8.0",
+    "@types/react-dom": ">=16.8.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "peerDependencies": {
+    "@types/react": ">=16.8.0",
+    "@types/react-dom": ">=16.8.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "dn-middleware-browser-sync": "^0.1.0",
+    "dn-middleware-clean": "^1.0.2",
+    "dn-middleware-copy": "^0.2.7",
+    "dn-middleware-server": "^1.1.3",
+    "dn-middleware-shell": "^1.1.0",
+    "dn-middleware-tslint": "^1.1.3",
+    "dn-middleware-typescript": "^2.0.8",
+    "dn-middleware-webpack": "^1.11.5",
+    "typescript": ">=3.5.3"
+  },
+  "files": [
+    "build",
+    "src",
+    "test",
+    "package.json",
+    ".eslintrc.json",
+    ".eslintrc.yml",
+    "README.md",
+    "tsconfig.json"
+  ]
+}

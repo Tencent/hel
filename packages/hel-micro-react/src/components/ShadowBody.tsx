@@ -1,7 +1,7 @@
 import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ShadowView from 'shadow-view';
+import ShadowView from 'shadow-view-react';
 
 const COMP_NAME = 'hel-shadow-body';
 const STATIC_COMP_NAME = 'hel-static-shadow-body';
