@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "license": "MIT",
   "author": {
@@ -31,8 +31,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "hel-micro-core": "workspace:*",
-    "hel-types": "workspace:*"
+    "hel-micro-core": ">=3.9.3",
+    "hel-types": ">=3.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -57,7 +57,7 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "hel-micro-core": ">=3.9.0",
+    "hel-micro-core": ">=3.9.3",
     "hel-types": ">=3.7.0"
   },
   "bundleDependencies": [],

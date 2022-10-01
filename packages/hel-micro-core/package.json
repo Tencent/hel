@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-core",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "description": "hel micro core",
   "license": "MIT",
   "author": {
@@ -26,7 +26,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "hel-types": "workspace:*"
+    "hel-types": ">=3.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -42,7 +42,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "hel-types": "workspace:*"
+    "hel-types": ">=3.7.0"
   },
   "bundleDependencies": false,
   "deprecated": false

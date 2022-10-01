@@ -50,12 +50,16 @@ importers:
       '@babel/preset-react': ^7.12.10
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
+      jsdom: ^20.0.0
       rollup: ^2.23.0
       rollup-plugin-babel: ^4.4.0
       rollup-plugin-commonjs: ^10.1.0
       rollup-plugin-eslint: ^7.0.0
+      rollup-plugin-json: ^4.0.0
       rollup-plugin-node-resolve: ^5.2.0
       rollup-plugin-uglify: ^6.0.4
+    dependencies:
+      jsdom: 20.0.0
     devDependencies:
       '@babel/core': 7.19.1
       '@babel/preset-env': 7.19.1_@babel+core@7.19.1
@@ -66,6 +70,7 @@ importers:
       rollup-plugin-babel: 4.4.0_r56fldxoyazzliugjcx2ns4pma
       rollup-plugin-commonjs: 10.1.0_rollup@2.79.1
       rollup-plugin-eslint: 7.0.0
+      rollup-plugin-json: 4.0.0
       rollup-plugin-node-resolve: 5.2.0_rollup@2.79.1
       rollup-plugin-uglify: 6.0.4_rollup@2.79.1
 
@@ -21288,6 +21293,13 @@ packages:
       rollup-pluginutils: 2.8.2
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /rollup-plugin-json/4.0.0:
+    resolution: {integrity: sha512-hgb8N7Cgfw5SZAkb3jf0QXii6QX/FOkiIq2M7BAQIEydjHvTyxXHQiIzZaTFgx1GK0cRCHOCBHIyEkkLdWKxow==}
+    deprecated: This module has been deprecated and is no longer maintained. Please use @rollup/plugin-json.
+    dependencies:
+      rollup-pluginutils: 2.8.2
     dev: true
 
   /rollup-plugin-node-resolve/5.2.0_rollup@2.79.1:

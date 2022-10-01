@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-react",
-  "version": "3.9.0",
+  "version": "3.9.2",
   "description": "react implementation of hel-micro",
   "license": "MIT",
   "author": {
@@ -28,13 +28,13 @@
   "dependencies": {
     "@types/react": ">=16.0.0",
     "@types/react-dom": ">=16.0.0",
-    "hel-micro": "workspace:*",
-    "hel-micro-core": "workspace:*",
-    "hel-types": "workspace:*",
+    "hel-micro": ">=3.9.3",
+    "hel-micro-core": ">=3.9.3",
+    "hel-types": ">=3.7.0",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2",
     "shadow-view": "^4.0.1",
-    "shadow-view-react": "workspace:*"
+    "shadow-view-react": ">=1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -55,8 +55,8 @@
   "peerDependencies": {
     "@types/react": ">=16.0.0",
     "@types/react-dom": ">=16.0.0",
-    "hel-micro": ">=3.9.0",
-    "hel-micro-core": ">=3.9.0",
+    "hel-micro": ">=3.9.3",
+    "hel-micro-core": ">=3.9.3",
     "hel-types": ">=3.7.0",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2",

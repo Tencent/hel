@@ -170,8 +170,10 @@ export async function fillAssetListByDist(parsedRet, extractOptions) {
     //  /asset-manifest.json
     const filePathUnderBuild = fileAbsolutePath.split(buildDirFullPath)[1];
 
+    // 避免 buildDirFullPath 是以 / 结尾的，导致 filePathUnderBuild 非 / 开头
+    const maySlash = filePathUnderBuild.startsWith('/') ? '' : '/';
     // 拼出 web 路径
-    const fileWebPath = `${appHomePage}/${filePathUnderBuild}`;
+    const fileWebPath = `${appHomePage}${maySlash}${filePathUnderBuild}`;
 
     // 补上剩余的 css 文件路径
     if (fileWebPath.endsWith('.css')) {
