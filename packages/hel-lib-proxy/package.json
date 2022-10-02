@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.9.1",
+  "version": "3.9.3",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -16,7 +16,10 @@
   "files": [
     "dist",
     "lib",
-    "src"
+    "src",
+    "README",
+    "tsconfig.json",
+    "LICENSE"
   ],
   "scripts": {
     "build": "npm run build:umd & npm run build:umd-min",

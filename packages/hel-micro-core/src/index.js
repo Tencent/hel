@@ -122,9 +122,7 @@ export function tryGetVersion(appGroupName, platform) {
 export function tryGetAppName(/** @type string */ version, appGroupName) {
   // 来自 hel 管理台的版本号规则
   if (version.includes('_')) {
-    // version: lib-test_20220621165953
-    const [] = version.split('_');
-    // get: lib-test
+    // lib-test_20220621165953 ---> lib-test
     const appName = version.substring(0, version.length - 15);
     return appName;
   }
@@ -151,7 +149,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appGroupName,
     versionId,
     appProperties,
-    Comp: function EmptyComp() {},
+    Comp: function EmptyComp() { },
     lifecycle: {},
   };
   setEmitLib(appName, emitApp, { appGroupName, platform });
