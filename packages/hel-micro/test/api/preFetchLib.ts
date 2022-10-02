@@ -4,7 +4,7 @@ import { preFetchLib } from 'index';
 import * as mockData from '../mockData';
 
 const eventBus = getHelEventBus();
-getHelDebug().allowLog = true;
+getHelDebug().logMode = 1;
 
 describe('test preFetchLib', () => {
   test('preFetchLib should not be null', () => {

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
+    "lib": ["es2015", "dom"],
     "esModuleInterop": true
   }
 }
