@@ -25,21 +25,17 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
 
   if (isLib) {
     const lib = getVerLib(targetName, newGetOptions);
-    // 此处 prettier 和 eslint 不一致，加了2处 ignore 来忽略
-    return lib
-      // prettier-ignore
-      ? {
-        // prettier-ignore
-        appName: targetName,
-        appGroupName: appMeta?.app_group_name || '',
-        platform,
-        appProperties: lib,
-        isLib: true,
-        versionId,
-        Comp: null,
-        lifecycle: undefined,
-      }
-      : null;
+    const libWrap = {
+      appName: targetName,
+      appGroupName: appMeta?.app_group_name || '',
+      platform,
+      appProperties: lib,
+      isLib: true,
+      versionId,
+      Comp: null,
+      lifecycle: undefined,
+    };
+    return lib ? libWrap : null;
   }
   const emitApp = getVerApp(targetName, newGetOptions);
   return emitApp || null;
@@ -79,9 +75,9 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
 
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
   if (
-    appName !== emitAppName ||
-    emitPlatform !== platform ||
-    !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, projectId })
+    appName !== emitAppName
+    || emitPlatform !== platform
+    || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, projectId })
   ) {
     log(`still wait ${appPathDesc} emitted`, appInfo, options);
     return;

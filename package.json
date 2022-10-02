@@ -6,8 +6,7 @@
   "author": "fantasticsoul",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --cache --write . '!./pnpm-lock.yaml' --ignore-path .gitignore --ignore-unknown",
-    "format2": "prettier-eslint \"src/**/*.js\""
+    "format": "prettier --cache --write . '!./pnpm-lock.yaml' --ignore-path .gitignore --ignore-unknown"
   },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
@@ -33,8 +32,7 @@
     "fs-extra": "^10.1.0",
     "jsdom": "^20.0.0",
     "lint-staged": "^10.5.3",
-    "prettier": "^2.7.1",
-    "prettier-eslint-cli": "^7.1.0",
+    "prettier": "npm:@btmills/prettier@^2.7.1",
     "prettier-plugin-organize-imports": "^3.1.1",
     "prettier-plugin-packagejson": "^2.2.18",
     "resolve": "^1.22.1",
