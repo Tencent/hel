@@ -312,8 +312,8 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   log(`[[ setEmitLib ]] appMeta`, appMeta);
   const verEmitLibMap = util.safeGetMap(appName2verEmitLib, appName);
   if (
-    (!appMeta && !verEmitLibMap[DEFAULT_ONLINE_VER]) || // 使用 custom 配置直接载入目标模块时
-    helper.isVerMatchOnline(appMeta, versionId)
+    (!appMeta && !verEmitLibMap[DEFAULT_ONLINE_VER]) // 使用 custom 配置直接载入目标模块时
+    || helper.isVerMatchOnline(appMeta, versionId)
   ) {
     util.setSubMapValue(appName2verEmitLib, appName, DEFAULT_ONLINE_VER, appProperties);
   }
@@ -355,8 +355,8 @@ export function setVerExtraCssList(appName, cssList, inputOptions) {
   log(`[[ setVerExtraCssList ]] cssList`, cssList);
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   if (
-    (!appMeta && !verExtraCssListMap[DEFAULT_ONLINE_VER]) || // 使用 custom 配置直接载入目标模块时
-    helper.isVerMatchOnline(appMeta, versionId)
+    (!appMeta && !verExtraCssListMap[DEFAULT_ONLINE_VER]) // 使用 custom 配置直接载入目标模块时
+    || helper.isVerMatchOnline(appMeta, versionId)
   ) {
     util.setSubMapValue(appName2verExtraCssList, appName, DEFAULT_ONLINE_VER, cssList);
   }
