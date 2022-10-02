@@ -81,8 +81,8 @@ importers:
       '@typescript-eslint/eslint-plugin': ^4.7.0
       '@typescript-eslint/parser': ^4.7.0
       cross-env: ^7.0.3
-      hel-micro-core: workspace:*
-      hel-types: workspace:*
+      hel-micro-core: '>=3.9.3'
+      hel-types: '>=3.7.0'
       rollup: ^2.38.0
       rollup-plugin-sourcemaps: ^0.6.3
       rollup-plugin-terser: ^7.0.2
@@ -111,8 +111,8 @@ importers:
       '@typescript-eslint/parser': ^5.27.0
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
-      hel-micro-core: workspace:*
-      hel-types: workspace:*
+      hel-micro-core: '>=3.9.3'
+      hel-types: '>=3.7.0'
       jest: ^28.1.0
       rollup: ^2.23.0
       rollup-plugin-babel: ^4.4.0
@@ -157,7 +157,7 @@ importers:
       '@babel/preset-react': ^7.12.10
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
-      hel-types: workspace:*
+      hel-types: '>=3.7.0'
       rollup: ^2.23.0
       rollup-plugin-babel: ^4.4.0
       rollup-plugin-commonjs: ^10.1.0
@@ -188,9 +188,9 @@ importers:
       '@types/react-dom': '>=16.0.0'
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
-      hel-micro: workspace:*
-      hel-micro-core: workspace:*
-      hel-types: workspace:*
+      hel-micro: '>=3.9.3'
+      hel-micro-core: '>=3.9.3'
+      hel-types: '>=3.7.0'
       react: '>=16.10.2'
       react-dom: '>=16.10.2'
       rollup: ^2.23.0
@@ -202,7 +202,7 @@ importers:
       rollup-plugin-typescript: ^1.0.1
       rollup-plugin-uglify: ^6.0.4
       shadow-view: ^4.0.1
-      shadow-view-react: workspace:*
+      shadow-view-react: '>=1.0.0'
       typescript: ^4.6.3
     dependencies:
       '@types/react': 18.0.21

@@ -5,7 +5,7 @@ export function getRootNode(node: Node) {
 }
 
 const { removeChild } = Node.prototype;
-Node.prototype.removeChild = function(child) {
+Node.prototype.removeChild = function (child) {
   if (!removeChild) return;
   try {
     return removeChild.call(this, child);
@@ -15,15 +15,13 @@ Node.prototype.removeChild = function(child) {
 };
 
 const { contains } = Node.prototype;
-Node.prototype.contains = function(otherNode) {
+Node.prototype.contains = function (otherNode) {
   if (!otherNode || !contains) return false;
   const root = getRootNode(this);
   const otherRoot = getRootNode(otherNode);
   if (!root || !otherRoot) return false;
   try {
-    return root === otherRoot
-      ? contains.call(this, otherNode)
-      : contains.call(this, otherRoot.host || otherNode);
+    return root === otherRoot ? contains.call(this, otherNode) : contains.call(this, otherRoot.host || otherNode);
   } catch (err) {
     console.error(err);
     return false;
@@ -31,7 +29,7 @@ Node.prototype.contains = function(otherNode) {
 };
 
 const { compareDocumentPosition } = Node.prototype;
-Node.prototype.compareDocumentPosition = function(otherNode) {
+Node.prototype.compareDocumentPosition = function (otherNode) {
   if (!otherNode || !compareDocumentPosition) return false;
   const root = getRootNode(this);
   const otherRoot = getRootNode(otherNode);
@@ -46,11 +44,8 @@ Node.prototype.compareDocumentPosition = function(otherNode) {
   }
 };
 
-const parentElementDescriptor = Object.getOwnPropertyDescriptor(
-  Node.prototype,
-  "parentElement"
-);
-Object.defineProperty(Node.prototype, "parentElement", {
+const parentElementDescriptor = Object.getOwnPropertyDescriptor(Node.prototype, 'parentElement');
+Object.defineProperty(Node.prototype, 'parentElement', {
   configurable: true,
   enumerable: true,
   get() {
@@ -60,5 +55,5 @@ Object.defineProperty(Node.prototype, "parentElement", {
     if (!parentNode) return null;
     if (parentNode.constructor !== (window as any).ShadowRoot) return null;
     return parentNode.parentElement || parentNode;
-  }
+  },
 });

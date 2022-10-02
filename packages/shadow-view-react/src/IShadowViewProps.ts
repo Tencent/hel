@@ -1,4 +1,4 @@
-import { IShadowRootOptions } from "./IShadowRootOptions";
+import { IShadowRootOptions } from './IShadowRootOptions';
 
 /**
  * ShadowView 属性

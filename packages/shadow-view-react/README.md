@@ -1,5 +1,5 @@
-
 # ShadowViewReact
+
 基于[`shadow-view`](https://github.com/Houfeng/shadow-view)包定制，服务于`hel-micro-react`
 
 # 安装
@@ -16,7 +16,7 @@ function App() {
     <ShadowView
       scoped={{
         style: `*{color:red;}`,
-        imports: ["aaa.css"]
+        imports: ['aaa.css'],
       }}
     >
       <div>这是一个测试</div>

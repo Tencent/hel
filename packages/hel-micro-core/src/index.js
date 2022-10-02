@@ -149,7 +149,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appGroupName,
     versionId,
     appProperties,
-    Comp: function EmptyComp() { },
+    Comp: function EmptyComp() {},
     lifecycle: {},
   };
   setEmitLib(appName, emitApp, { appGroupName, platform });

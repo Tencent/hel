@@ -2,24 +2,28 @@
   "name": "shadow-view-react",
   "version": "1.0.0",
   "description": "render shadow view for hel-micro-react, inspired Houfeng shadow-view",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "scripts": {
-    "test": "dn test && dn build -e prod"
-  },
+  "license": "MIT",
   "author": {
     "name": "fantasticsoul",
     "email": "zhongzhengkai@gmail.com",
     "url": "http://www.zzk.com"
   },
-  "license": "MIT",
-  "dependencies": {
-    "@types/react": ">=16.8.0",
-    "@types/react-dom": ">=16.8.0",
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build",
+    "src",
+    "test",
+    "package.json",
+    ".eslintrc.json",
+    ".eslintrc.yml",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "test": "dn test && dn build -e prod"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@types/react": ">=16.8.0",
     "@types/react-dom": ">=16.8.0",
     "react": ">=16.8.0",
@@ -36,14 +40,10 @@
     "dn-middleware-webpack": "^1.11.5",
     "typescript": ">=3.5.3"
   },
-  "files": [
-    "build",
-    "src",
-    "test",
-    "package.json",
-    ".eslintrc.json",
-    ".eslintrc.yml",
-    "README.md",
-    "tsconfig.json"
-  ]
+  "peerDependencies": {
+    "@types/react": ">=16.8.0",
+    "@types/react-dom": ">=16.8.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  }
 }

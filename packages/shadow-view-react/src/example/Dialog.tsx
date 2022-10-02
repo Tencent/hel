@@ -1,5 +1,5 @@
-import React from "react";
-import { createPortal } from "react-dom";
+import React from 'react';
+import { createPortal } from 'react-dom';
 
 export class Dialog extends React.Component<any> {
   root: HTMLElement;
@@ -7,7 +7,7 @@ export class Dialog extends React.Component<any> {
     // @ts-ignore
     super(props, ...args);
     const doc = window.document;
-    this.root = doc.createElement("div");
+    this.root = doc.createElement('div');
     doc.body.appendChild(this.root);
   }
 

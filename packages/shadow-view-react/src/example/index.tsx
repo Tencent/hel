@@ -1,12 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { ShadowView, attachShadow } from "../";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { attachShadow, ShadowView } from '../';
 
 export class App extends React.Component {
-  state = { msg: "" };
+  state = { msg: '' };
 
   onClick = () => {
-    this.setState({ msg: "Hello" });
+    this.setState({ msg: 'Hello' });
   };
 
   render() {
@@ -35,13 +35,13 @@ export class App extends React.Component {
   portalStyle: HTMLElement;
 
   async createPortal() {
-    const root = document.createElement("div");
+    const root = document.createElement('div');
     document.body.appendChild(root);
     const shadowRoot = attachShadow(root, { delegatesFocus: true });
-    const portalStyle = document.createElement("style");
-    portalStyle.setAttribute("scoped", "");
+    const portalStyle = document.createElement('style');
+    portalStyle.setAttribute('scoped', '');
     shadowRoot.appendChild(portalStyle);
-    const portalRoot = document.createElement("div");
+    const portalRoot = document.createElement('div');
     shadowRoot.appendChild(portalRoot);
     document.body.appendChild = (...args) => {
       return portalRoot.appendChild(...args);
@@ -60,4 +60,4 @@ export class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'));

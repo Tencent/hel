@@ -1,9 +1,9 @@
-import { BRIDGE_EVENT_NAMES } from "./EventNames";
+import { BRIDGE_EVENT_NAMES } from './EventNames';
 
 export function bridge(fromNode: Node, toNode: Node) {
   if (!fromNode || !toNode || fromNode === toNode) return;
   const define = Object.defineProperty;
-  BRIDGE_EVENT_NAMES.forEach(eventName => {
+  BRIDGE_EVENT_NAMES.forEach((eventName) => {
     fromNode.addEventListener(eventName, (fromEvent: any) => {
       fromEvent.stopPropagation();
       const Event = fromEvent.constructor;
@@ -11,24 +11,18 @@ export function bridge(fromNode: Node, toNode: Node) {
         ...fromEvent,
         bubbles: true,
         cancelable: true,
-        composed: true
+        composed: true,
       });
-      const {
-        path = [],
-        target = path[0],
-        srcElement = path[0],
-        toElement = path[0],
-        preventDefault
-      } = fromEvent;
-      define(toEvent, "path", { get: () => path });
-      define(toEvent, "target", { get: () => target });
-      define(toEvent, "srcElement", { get: () => srcElement });
-      define(toEvent, "toElement", { get: () => toElement });
-      define(toEvent, "preventDefault", {
+      const { path = [], target = path[0], srcElement = path[0], toElement = path[0], preventDefault } = fromEvent;
+      define(toEvent, 'path', { get: () => path });
+      define(toEvent, 'target', { get: () => target });
+      define(toEvent, 'srcElement', { get: () => srcElement });
+      define(toEvent, 'toElement', { get: () => toElement });
+      define(toEvent, 'preventDefault', {
         value: () => {
           preventDefault.call(fromEvent);
           return preventDefault.call(toEvent);
-        }
+        },
       });
       toNode.dispatchEvent(toEvent);
     });

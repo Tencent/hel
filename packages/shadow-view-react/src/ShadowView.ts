@@ -1,6 +1,6 @@
-import * as React from "react";
-import { attachShadow, supportShadow } from "./ShadowRoot";
-import { IShadowViewProps } from "./IShadowViewProps";
+import * as React from 'react';
+import { IShadowViewProps } from './IShadowViewProps';
+import { attachShadow, supportShadow } from './ShadowRoot';
 
 /**
  * ShadowView 创建一个启用了 Shadow DOM 的容器
@@ -31,7 +31,7 @@ export class ShadowView extends React.Component<IShadowViewProps> {
    * 渲染组件内容
    */
   public render() {
-    const { tagName = "shadow-view", children, className, style } = this.props;
+    const { tagName = 'shadow-view', children, className, style } = this.props;
     const props: any = { className, style, ref: this.onRef };
     // added by fantasticsoul
     if (this.props.id) props.id = this.props.id;
@@ -48,14 +48,14 @@ export class ShadowView extends React.Component<IShadowViewProps> {
     this.root = root;
     this.hideRoot();
     this.attachShadow();
-    if (typeof ref === "function") ref(root);
-    else if (typeof ref === "string") (<any>this)[ref] = root;
+    if (typeof ref === 'function') ref(root);
+    else if (typeof ref === 'string') (<any>this)[ref] = root;
 
     // added by fantasticsoul
     if (this.props.onShadowRootReady) {
       var options = {
         showRoot: (opacity?: string) => {
-          this.showRoot(opacity || "1"); // 不传默认值的话，就设值不透明度为1
+          this.showRoot(opacity || '1'); // 不传默认值的话，就设值不透明度为1
         },
         root: root,
       };
@@ -68,15 +68,8 @@ export class ShadowView extends React.Component<IShadowViewProps> {
    */
   private renderStyle() {
     const { styleContent, styleSheets = [] } = this.props;
-    const styleBuffer = [
-      ...styleSheets.map(url => `@import url("${url}")`),
-      ...(styleContent ? [styleContent] : [])
-    ];
-    return React.createElement(
-      "style",
-      { key: "style" },
-      styleBuffer.join(";")
-    );
+    const styleBuffer = [...styleSheets.map((url) => `@import url("${url}")`), ...(styleContent ? [styleContent] : [])];
+    return React.createElement('style', { key: 'style' }, styleBuffer.join(';'));
   }
 
   /**
@@ -96,7 +89,7 @@ export class ShadowView extends React.Component<IShadowViewProps> {
     if (this.props.scoped === false) return;
     if (!supportShadow || !this.root || !this.root.children) return;
     const children = [].slice.call(this.root.children);
-    const { mode = "open", delegatesFocus } = this.props;
+    const { mode = 'open', delegatesFocus } = this.props;
     this.shadowRoot = attachShadow(this.root, { mode, delegatesFocus });
     children.forEach((child: HTMLElement) => {
       this.shadowRoot.appendChild(child);
@@ -109,7 +102,7 @@ export class ShadowView extends React.Component<IShadowViewProps> {
   private hideRoot = () => {
     if (!this.root || !this.root.style) return;
     this.originVisibility = this.root.style.opacity;
-    this.root.style.opacity = "0";
+    this.root.style.opacity = '0';
   };
 
   /**
@@ -118,7 +111,7 @@ export class ShadowView extends React.Component<IShadowViewProps> {
   private showRoot = (opacity?: string) => {
     if (!this.root || !this.root.style) return;
     const { transitionDuration } = this.props;
-    this.root.style.transitionDuration = transitionDuration || ".3s";
+    this.root.style.transitionDuration = transitionDuration || '.3s';
     this.root.style.opacity = opacity || this.originVisibility;
   };
 
@@ -147,7 +140,7 @@ export class ShadowView extends React.Component<IShadowViewProps> {
     const rules = [].slice.call(style.rules || style.cssRules || []);
     if (rules.length < 1) return this.showRoot();
     const pending = rules.some((rule: any) => {
-      return !(rule.styleSheet || rule.href === "") && !rule.style;
+      return !(rule.styleSheet || rule.href === '') && !rule.style;
     });
     return pending ? setTimeout(this.checkRootVisibility, 16) : this.showRoot();
   };
