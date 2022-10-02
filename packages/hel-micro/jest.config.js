@@ -1,8 +1,5 @@
 // jest --updateSnapshot 或 jest -u 更新快照
 
-const dirName = __dirname;
-console.log(dirName);
-
 module.exports = {
   preset: 'ts-jest',
   moduleDirectories: ['node_modules', 'src'],
@@ -27,7 +24,8 @@ module.exports = {
   modulePaths: ['<rootDir>/src'],
   // modulePaths: [],
   // 模块别名映射，用于解析时文件查找
-  moduleNameMapper: {},
+  moduleNameMapper: {
+  },
   // 用于查找的文件扩展名集合
   moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'jsx'],
   // moduleFileExtensions: ["web.js", "js", "web.ts", "ts", "web.tsx", "tsx", "json", "web.jsx", "jsx", "node"],

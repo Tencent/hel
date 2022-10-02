@@ -55,8 +55,11 @@ async function executeGet<T extends any = any>(
     if (onlyVersion) {
       ret = version;
     }
-    if (!isFullVersion) {
-      delete version?.html_content;
+    if (!isFullVersion && version) {
+      delete version.html_content;
+    }
+    if (!version) {
+      return { data: null, code: '404', msg: 'no version found' };
     }
     return { data: ret, code: '0', msg: '' };
   }

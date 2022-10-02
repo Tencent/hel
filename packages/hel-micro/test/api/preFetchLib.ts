@@ -23,13 +23,14 @@ describe('test preFetchLib', () => {
     try {
       // 模拟模块获取到并发射的行为
       const app = mockData.makeApp();
-      setAppMeta(app);
+      // @ts-ignore 保持和 services/app.cacheApp 逻辑一致
+      setAppMeta({ __setByLatest: true, ...app });
       setVersion(app.name, mockData.makeVersion());
       setTimeout(() => {
         const libDesc: IEmitAppInfo = {
-          platform: 'hel',
-          appName: 'remote-vue-comps-tpl',
-          appGroupName: 'remote-vue-comps-tpl',
+          platform: 'unpkg',
+          appName: 'app',
+          appGroupName: 'app',
           versionId: mockData.makeVersion().sub_app_version,
           appProperties: { getNum: () => 1 },
           isLib: true,
@@ -40,7 +41,7 @@ describe('test preFetchLib', () => {
       }, 500);
 
       // 开始加载模块
-      const lib = await preFetchLib('remote-vue-comps-tpl');
+      const lib = await preFetchLib('app');
       expect(lib).toBeTruthy();
       expect(lib.getNum()).toBe(1);
     } catch (err) {

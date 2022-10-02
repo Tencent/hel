@@ -1,13 +1,13 @@
 import { getHelMicroShared, makeCacheNode } from './microShared';
+import { DEFAULT_PLAT } from './consts';
 
 /**
  * 获取默认的平台值
  * @returns
  */
 export function getPlatform() {
-  return getHelMicroShared().cacheRoot.platform;
-  // 后续可能彻底不再支持重置平台默认值时，此处可固定返回 DEFAULT_PLAT
-  // return DEFAULT_PLAT;
+  // 后续可能会计划彻底不再支持重置平台默认值
+  return getHelMicroShared().cacheRoot.platform || DEFAULT_PLAT;
 }
 
 /**

@@ -12,6 +12,8 @@ export const PLAT_UNPKG = 'unpkg';
 
 export const PLAT_HEL = 'hel';
 
+export const DEFAULT_PLAT = diffBase.PACK_MODE === 'inner' ? PLAT_HEL : PLAT_UNPKG;
+
 export const HEL_EVENTS = {
   // renderApp 发射的是 SUB_APP_LOADED
   // 此处有个小写开头的瑕疵不再做纠正，
