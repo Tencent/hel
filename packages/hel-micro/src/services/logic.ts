@@ -25,17 +25,20 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
 
   if (isLib) {
     const lib = getVerLib(targetName, newGetOptions);
+    // 此处 prettier 和 eslint 不一致，加了2处 ignore 来忽略
     return lib
+      // prettier-ignore
       ? {
-          appName: targetName,
-          appGroupName: appMeta?.app_group_name || '',
-          platform,
-          appProperties: lib,
-          isLib: true,
-          versionId,
-          Comp: null,
-          lifecycle: undefined,
-        }
+        // prettier-ignore
+        appName: targetName,
+        appGroupName: appMeta?.app_group_name || '',
+        platform,
+        appProperties: lib,
+        isLib: true,
+        versionId,
+        Comp: null,
+        lifecycle: undefined,
+      }
       : null;
   }
   const emitApp = getVerApp(targetName, newGetOptions);
