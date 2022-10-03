@@ -28,7 +28,7 @@
     "lint_fix": "eslint ./src --ext ts,tsx --fix",
     "lint_test": "eslint ./test --ext ts,tsx",
     "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
-    "test": "jest"
+    "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
   "dependencies": {
     "hel-types": ">=3.7.0"
