@@ -36,6 +36,8 @@
     "hel-types": ">=3.7.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/eslint-plugin": "^7.19.1",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "cross-env": "^7.0.3",

@@ -6,7 +6,6 @@ module.exports = {
   presets: [['@babel/env', { loose, modules: false }]],
   plugins: [
     ['@babel/proposal-object-rest-spread', { loose }],
-    ['@babel/proposal-class-properties', { loose }],
     cjs && ['@babel/transform-modules-commonjs', { loose }],
     ['@babel/transform-runtime', { useESModules: !cjs }],
   ].filter(Boolean),
