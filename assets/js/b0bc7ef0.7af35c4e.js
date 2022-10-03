@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkhel_doc=self.webpackChunkhel_doc||[]).push([[9304],{1915:function(e){e.exports=JSON.parse('{"permalink":"/hel/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
