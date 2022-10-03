@@ -33,7 +33,6 @@
     "hel-types": ">=3.7.0",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2",
-    "shadow-view": "^4.0.1",
     "shadow-view-react": ">=1.0.0"
   },
   "devDependencies": {
