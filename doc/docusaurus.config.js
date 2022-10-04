@@ -126,7 +126,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} PCG TNTWeb.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Tencent PCG TNTWeb.`,
       },
       prism: {
         theme: lightCodeTheme,

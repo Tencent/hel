@@ -5,7 +5,7 @@ import { setGlobalThis } from 'hel-micro-core';
 import * as qs from 'qs';
 import * as mockData from './mockData';
 
-const noop = () => { };
+const noop = () => {};
 const INVALID_MODULE = 'invalid-module';
 
 setGlobalThis({

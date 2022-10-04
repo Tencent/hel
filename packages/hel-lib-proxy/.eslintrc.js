@@ -2,9 +2,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   extends: ['eslint:recommended'],
-  plugins: [
-    "@babel",
-  ],
+  plugins: ['@babel'],
   parserOptions: {
     parser: '@babel/eslint-parser',
     ecmaVersion: 2020,

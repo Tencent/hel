@@ -35,8 +35,8 @@
     "hel-tpl-remote-lib": "workspace:*",
     "monaco-editor": "0.30.1",
     "prism-react-renderer": "^1.3.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "18",
+    "react-dom": "18",
     "react-monaco-editor": "0.47.0",
     "styled-components": "^5.3.5"
   }

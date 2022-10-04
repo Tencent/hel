@@ -63,7 +63,9 @@ npm run build_stub
 npm publish
 ```
 
-:::tip `build_stub`是可选的执行项，仅是为了方便模块使用方的项目执行单测时，`jest`可通过 npm 的 cjs 模块来做函数打桩，`npm run build` 和 `npm run build_stub` 二者执行其中一个即可
+:::tip
+
+`build_stub`是可选的执行项，仅是为了方便模块使用方的项目执行单测时，`jest`可通过 npm 的 cjs 模块来做函数打桩，`npm run build` 和 `npm run build_stub` 二者执行其中一个即可
 
 ```ts
 import entry from 'my-xx-lib/hel_bundle/entry';

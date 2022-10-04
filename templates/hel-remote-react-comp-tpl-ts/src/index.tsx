@@ -10,7 +10,6 @@
 | @date: 2022-06-05
 |--------------------------------------------------------------------------
 */
-import { preFetchLib } from 'hel-micro';
 import { isSubApp, libReady } from 'hel-lib-proxy';
 import { LIB_NAME } from './configs/subApp';
 

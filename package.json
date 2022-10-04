@@ -7,9 +7,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build_proxy && npm run build_core",
-    "build_proxy": "pnpm --filter=hel-lib-proxy run build",
     "build_core": "pnpm --filter=hel-micro-core run build",
-    "format": "prettier --cache --write . '!./pnpm-lock.yaml' --ignore-path .gitignore --ignore-unknown"
+    "build_proxy": "pnpm --filter=hel-lib-proxy run build",
+    "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown"
   },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
@@ -20,14 +20,14 @@
     ]
   },
   "dependencies": {
-    "@types/react": ">=16",
-    "@types/react-dom": ">=16",
+    "@types/react": "^16.8.0",
+    "@types/react-dom": "^16.8.0",
     "hel-lib-proxy": "workspace:^3.9.3",
     "hel-micro": "workspace:^3.9.2",
     "hel-micro-core": "workspace:^3.9.2",
     "hel-types": "workspace:^3.7.0",
-    "react": ">=16",
-    "react-dom": ">=16",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "shadow-view-react": "workspace:^1.0.0"
   },
   "devDependencies": {

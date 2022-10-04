@@ -6,9 +6,15 @@ sidebar_position: 2
 
 `preFetchLib`负责拉取并返回远程模块，远程模块通过对接 `hel-lib-proxy` 包的 [exposeLib](https://www.to-be-added.com/coming-soon) 接口弹射出去。
 
-:::tip 面向模块使用方该接口由模块使用方直接调用，可以基于此接口进一步封装到其他依赖注入框架或体系里 :::
+:::tip 面向模块使用方
+
+该接口由模块使用方直接调用，可以基于此接口进一步封装到其他依赖注入框架或体系里
+
+:::
 
 ## 基本用法
+
+### 指定模块名
 
 通过指定模块名称拉取模块，默认总是拉取最新版本，如当前用户在灰度名单里，则返回灰度版本
 
@@ -17,12 +23,21 @@ const lib = await preFetchLib('hel-tpl-remote-lib');
 // lib.xxx 此处可以调用模块任意方法
 ```
 
+### 指定版本号
+
+**参数名称**：`IPreFetchLibOptions.versionId`
+
 通过指定模块名称、版本号拉取模块
 
 ```ts
 const lib = await preFetchLib('hel-tpl-remote-lib', { versionId: '1.0.0' });
-// lib.xxx 此处可以调用模块任意方法
+// or
+const lib = await preFetchLib('hel-tpl-remote-lib', '1.0.0');
 ```
+
+### 指定平台值
+
+**参数名称**：`IPreFetchLibOptions.platform`
 
 通过指定模块名称、版本号、平台拉取模块，默认是`unpkg`, 当用户独立部署了`Hel Pack`服务并需要跨多个平台获取模块时，需指定平台值
 
@@ -31,7 +46,139 @@ const lib = await preFetchLib('hel-tpl-remote-lib', {
   versionId: 'hel-tpl-remote-lib_20220522003658',
   platform: 'hel',
 });
-// lib.xxx 此处可以调用模块任意方法
+```
+
+### 指定额外的样式列表
+
+**参数名称**：`IPreFetchLibOptions.extraCssList`
+
+预加载组件库模块时，如需追加额外的样式列表，可设置此参数
+
+```ts
+const lib = await preFetchLib('hel-antd', {
+  extraCssList: ['https://xxx.com/yyy.css'],
+});
+```
+
+### 开启硬盘缓存
+
+**参数名称**：`IPreFetchLibOptions.enableDiskCache`
+
+默认值是 false，设定为 true 后，每次都优先尝试读取 localStorage 里缓存的应用数据，再异步的拉取的一份新的应用数据缓存起来优点是可提速模块加载速度，节约元数据获取的时间，缺点是则是发版本后，用户需要多刷新一次才能看到最新版本，如为 false ，则总是同步的拉最新的应用数据
+
+```ts
+const lib = await preFetchLib('hel-antd', {
+  enableDiskCache: true,
+});
+```
+
+:::tip 元数据获取提速
+
+关于元数据获取提速，有很多的其他方案，例如后台把高频使用的公共模块元数据直接埋在首页里，供 preFetchLib 直接调用
+
+:::
+
+### 设定 api 前缀
+
+**参数名称**：`IPreFetchLibOptions.apiPrefix`
+
+默认的前缀为`https://unpkg.com`，在模块部署到了其他地方时，可以修改次前缀
+
+```ts
+const lib = await preFetchLib('hel-antd', {
+  apiPrefix: 'https://my-unpkg.com',
+});
+```
+
+### 重置元数据接口
+
+**参数名称**：`IPreFetchLibOptions.getSubAppAndItsVersionFn`
+
+透传`getSubAppAndItsVersionFn`函数，可重定义`hel-micro`的默认请求行为，可根据自己的实际需求来实现。
+
+- 示例 1：请求部署到另一个位置的元数据
+
+未定义`getSubAppAndItsVersionFn`时，下面示例
+
+```ts
+await preFetchLib('hel-tpl-remote-vue-comps');
+```
+
+请求元数据的接口为: https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
+
+当把模块部署到另外一个地方时，通过实现`getSubAppAndItsVersionFn`函数来修改元数请求行为。
+
+```ts
+await preFetchLib('hel-tpl-remote-vue-comps', {
+  async getSubAppAndItsVersionFn() {
+    const res = await fetch('https://hel-eco.github.io/hel-tpl-remote-vue-comp/as_v1/hel-meta.json');
+    const meta = await res.json();
+    return meta;
+  },
+});
+```
+
+> 访问该[用例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295?file=/src/main.js:229-252)
+
+- 示例 2：做一些额外逻辑处理
+
+当前请求自己的管控平台时，在`getSubAppAndItsVersionFn`内部做一些额外的逻辑处理。
+
+```ts
+const lib = await preFetchLib('hel-antd', {
+  async getSubAppAndItsVersionFn(passCtx) {
+    // 下发的首页里预埋了元数据
+    if (window.__PRESET_ANTD_META__) {
+      return window.__PRESET_ANTD_META__;
+    }
+
+    // 走内置的默认请求
+    return passCtx.innerRequest();
+  },
+});
+```
+
+```ts
+const lib = await preFetchLib('remote-tdesign-react', {
+  async getSubAppAndItsVersionFn(passCtx) {
+    // 走自定义的后台（ 通常是用户自己实现的的版本管理后台 或 hel-pack 后台 ）
+    const antdMeta = await axios.get(
+      'https://footprint.qq.com/hel/openapi/v1/app/info/getSubAppAndItsFullVersion?name=remote-tdesign-react',
+    );
+    return antdMeta;
+  },
+});
+```
+
+### 元数据获取失败兜底函数
+
+**参数名称**：`IPreFetchLibOptions.onFetchMetaFailed`
+
+如用户定义了`onFetchMetaFailed`函数，当`hel-micro`调用元数据失败时（内置请求行为失败、定义的`getSubAppAndItsVersionFn`调用失败）会调用此函数
+
+```ts
+const lib = await preFetchLib('remote-tdesign-react', {
+  async onFetchMetaFailed(params) {
+    // 返回一份前端预设的元数据对象，用于兜底
+    return staticMeta;
+  },
+});
+```
+
+### 设置本地联调
+
+**参数名称**：`IPreFetchLibOptions.custom`
+
+当本地开发的项目需要和本地开发的模块联调时，先把模块启动起来，然后项目里使用的`preFetchLib`透传`custom`对象，描述请求的模块链接，来达到本地联调的目的
+
+```ts
+const enableCustom = !!window.location.port;
+await preFetchLib('hel-tpl-remote-vue-comps', {
+  custom: {
+    host: 'http://localhost:7001',
+    enable: enableCustom,
+  },
+});
 ```
 
 ## 静态导入支持
@@ -74,10 +221,11 @@ function callRemoteMethod() {
 
 | <div style={{width:'150px'}}>属性</div> | <div style={{width:'150px'}}>类型</div> | <div style={{width:'200px'}}>默认值</div> | <div style={{width:'355px'}}>描述</div> |
 | --- | --- | --- | --- |
-| platform | string | 'hel' | 指定获取模块元数据的平台 |
+| platform | string | 'unpkg' | 指定获取模块元数据的平台 |
 | versionId | string | undefined | 指定拉取的版本号, 对于 unpkg 服务来说，版本号级 package.json 里的 version 值<br />未指定版本的话，总是拉取最新版本模块元数据，如当前用户在灰度名单里，则拉取灰度版本模块元数据 |
 | appendCss | boolean | true | 是否追加模块样式链接到 html 文档里 |
 | cssAppendTypes | CssAppendType[] | ['static', 'build'] | 该配置项在 appendCss 为 true 时有效，表示按要附加哪几种类型的 css 链接到 html 文档上<br />'static' 表示静态 css 链接文件<br/>'build' 表示每次构建新生成的 css 文件 |
 | apiMode | 'get' \| 'jsonp' | 'jsonp' | api 请求方式 |
+| enableDiskCache | boolean | false | 是否开启硬盘缓存 |
 
 文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues) ....

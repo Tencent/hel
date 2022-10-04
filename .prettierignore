@@ -8,3 +8,4 @@ fixtures
 *.yaml
 *.less
 .turbo
+doc/src/components

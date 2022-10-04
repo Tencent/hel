@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# 制作 lib 库模块仓库
+# 制作 lib 模板项目
 
-本教程引导用户如何使用`react-react-app`创建一个开发远程 lib 库的模板项目，学完整个制作过程，你可以自己定制一个专属你的远程 lib 库的模板项目了，当然了，你也可基于下载我们已做好的[ts 模板项目](https://github.com/hel-eco/hel-tpl-remote-lib)做二次修改。
+本教程引导用户如何使用`react-react-app`创建一个开发远程 lib 库的模板项目，学完整个制作过程，你可以自己定制一个专属你的远程 lib 库的模板项目了，当然了，你也可基于我们已做好的[ts 模板项目](https://github.com/hel-eco/hel-tpl-remote-lib)做二次修改。
 
 ## 初始化项目骨架
 
