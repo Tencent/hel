@@ -8,6 +8,13 @@
 
 see doc： https://tnfe.github.io/hel
 
+## 文章
+[hel-micro 模块联邦新革命](https://juejin.cn/post/7138792768234586148)
+[使用hel-micro制作远程antd、tdesign-react](https://juejin.cn/post/7150639599499509797)
+
+## 视频
+[本地调试简介](https://www.bilibili.com/video/BV1pt4y1J7g9/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+
 ## Demo
 
 ### 载入远程 js 库
