@@ -5,8 +5,8 @@ importers:
   .:
     specifiers:
       '@babel/core': ^7.19.3
-      '@types/react': '>=16'
-      '@types/react-dom': '>=16'
+      '@types/react': ^16.8.0
+      '@types/react-dom': ^16.8.0
       '@typescript-eslint/parser': ^5.38.1
       cross-env: ^7.0.3
       eslint: ^8.24.0
@@ -21,8 +21,8 @@ importers:
       prettier: npm:@btmills/prettier@^2.7.1
       prettier-plugin-organize-imports: ^3.1.1
       prettier-plugin-packagejson: ^2.2.18
-      react: '>=16'
-      react-dom: '>=16'
+      react: ^16.8.0
+      react-dom: ^16.8.0
       resolve: ^1.22.1
       shadow-view-react: workspace:^1.0.0
       ts-jest: ^29.0.3
@@ -30,14 +30,14 @@ importers:
       turbo: ^1.5.3
       typescript: ^4.8.4
     dependencies:
-      '@types/react': 18.0.21
-      '@types/react-dom': 18.0.6
+      '@types/react': 16.14.32
+      '@types/react-dom': 16.9.16
       hel-lib-proxy: link:packages/hel-lib-proxy
       hel-micro: link:packages/hel-micro
       hel-micro-core: link:packages/hel-micro-core
       hel-types: link:packages/hel-types
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
+      react: 16.14.0
+      react-dom: 16.14.0_react@16.14.0
       shadow-view-react: link:packages/shadow-view-react
     devDependencies:
       '@babel/core': 7.19.3
@@ -7445,7 +7445,6 @@ packages:
     resolution: {integrity: sha512-Oqc0RY4fggGA3ltEgyPLc3IV9T73IGoWjkONbsyJ3ZBn+UPPCYpU2ec0i3cEbJuEdZtkqcCF2l1zf2pBdgUGSg==}
     dependencies:
       '@types/react': 16.14.32
-    dev: true
 
   /@types/react-dom/18.0.6:
     resolution: {integrity: sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA==}
@@ -7481,7 +7480,6 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
-    dev: true
 
   /@types/react/18.0.21:
     resolution: {integrity: sha512-7QUCOxvFgnD5Jk8ZKlUAhVcRj7GuJRjnjjiY/IUBWKgOlnvDvTMLD4RTF7NPyVmbRhNrbomZiOepg7M/2Kj1mA==}
@@ -25029,6 +25027,18 @@ packages:
       react: 0.14.10
     dev: true
 
+  /react-dom/16.14.0_react@16.14.0:
+    resolution: {integrity: sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==}
+    peerDependencies:
+      react: ^16.14.0
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.8.1
+      react: 16.14.0
+      scheduler: 0.19.1
+    dev: false
+
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -25222,6 +25232,15 @@ packages:
       envify: 3.4.1
       fbjs: 0.6.1
     dev: true
+
+  /react/16.14.0:
+    resolution: {integrity: sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.8.1
+    dev: false
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
@@ -26412,7 +26431,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: true
 
   /scheduler/0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}

@@ -77,10 +77,10 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
     const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
     // 优先从内存获取
     if (
-      platform !== PLAT_UNPKG &&
-      memApp &&
-      memAppVersion &&
-      isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
+      platform !== PLAT_UNPKG
+      && memApp
+      && memAppVersion
+      && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
     ) {
       mayCachedApp = { appInfo: memApp, appVersion: memAppVersion };
 

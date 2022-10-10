@@ -59,7 +59,7 @@ async function executeGet<T extends any = any>(
       delete version.html_content;
     }
     if (!version) {
-      return { data: null, code: '404', msg: 'no version found' };
+      return { data: ret, code: '404', msg: 'no version found' };
     }
     return { data: ret, code: '0', msg: '' };
   }
@@ -80,10 +80,14 @@ function ensureVersion(version: ISubAppVersion) {
   return clonedVersion;
 }
 
-async function getUnpkgUrl(apiHost: string, appName: string, versionId: string) {
+async function getUnpkgUrl(apiHost: string, appName: string, versionId: string, skip404Sniff = false) {
   let ver = versionId;
   if (!ver) {
-    ver = await getUnpkgLatestVer(appName, apiHost);
+    if (skip404Sniff) {
+      ver = 'latest'; // latest 未必是最新的，unpkg 可能有延时，需用户自己抉择需不需要跳过404嗅探
+    } else {
+      ver = await getUnpkgLatestVer(appName, apiHost);
+    }
   }
   // https://unpkg.com/hel-lodash@1.2.2/hel_dist/hel-meta.json
   return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json?_t=${Date.now()}`;
@@ -143,7 +147,7 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
 export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, loadOptions } = getOptions;
   const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
-  const url = await getUnpkgUrl(apiHost, appName, versionId || '');
+  const url = await getUnpkgUrl(apiHost, appName, versionId || '', loadOptions.skip404Sniff);
   return url;
 }
 

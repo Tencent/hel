@@ -146,9 +146,9 @@ function createDomByAssetList(appName: string, assetList: IAssetItem[], options:
 
       if (href.endsWith('.css')) {
         if (
-          appendCss &&
-          cssAppendTypes.includes(getCssType(webDirPath, href)) && // 当前链接类型是合法的可以附加到 html 文档的链接类型
-          !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
+          appendCss
+          && cssAppendTypes.includes(getCssType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
+          && !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
         ) {
           createLinkElement(appName, appendToBody, attrs);
         }

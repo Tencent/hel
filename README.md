@@ -9,11 +9,13 @@
 see doc： https://tnfe.github.io/hel
 
 ## 文章
+
 1. [hel-micro 模块联邦新革命](https://juejin.cn/post/7138792768234586148)
 
-2. [使用hel-micro制作远程antd、tdesign-react](https://juejin.cn/post/7150639599499509797)
+2. [使用 hel-micro 制作远程 antd、tdesign-react](https://juejin.cn/post/7150639599499509797)
 
 ## 视频
+
 1. [本地调试简介](https://www.bilibili.com/video/BV1pt4y1J7g9/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 
 ## Demo

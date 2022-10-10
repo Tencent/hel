@@ -103,6 +103,12 @@ export interface IPreFetchOptionsBase {
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;
+  /**
+   * default: false
+   * 是否跳过404嗅探，该配置项只针对 unpkg 平台生效，当用户设置为 true 时，就不会发起一个带随机参数的url去试探出最新版本的请求
+   * 请求形如：https://unpkg.com/hel-lodash/xxxxx-not-found
+   */
+  skip404Sniff?: boolean;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {
