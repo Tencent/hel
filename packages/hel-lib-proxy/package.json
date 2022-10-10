@@ -5,6 +5,11 @@
   "keywords": [
     "hel-lib-proxy"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel.git",
+    "directory": "packages/hel-lib-proxy"
+  },
   "license": "MIT",
   "author": {
     "name": "fantasticsoul",

@@ -2,6 +2,18 @@
   "name": "hel-micro",
   "version": "3.9.3",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
+  "keywords": [
+    "hel",
+    "hel-micro",
+    "module federation",
+    "module federation sdk"
+  ],
+  "bugs": "https://github.com/tnfe/hel/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel.git",
+    "directory": "packages/hel-micro"
+  },
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"

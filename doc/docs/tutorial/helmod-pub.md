@@ -96,7 +96,11 @@ npm run build
 
 ---
 
-:::caution **此段有上下横向分割的内容仅代表如何将组件托管到 github.io 文件服务**，用户可将文件托管托管到自己的文件服务 :::
+:::caution
+
+**此段有上下横向分割的内容仅代表如何将组件托管到 github.io 文件服务**，用户可将文件托管托管到自己的文件服务
+
+:::
 
 设定 github pages 目录为 `/docs`，然后可划分子目录同时多个版本的组件，此处我们建议一个`/docs/as_v1`目录表示放置第一个版本的运行代码
 
@@ -106,9 +110,9 @@ npm run build
 
 ---
 
-移除`packjson.json`里的`unpkg`字段描述，表示不将产物托管到`unpkg`服务
+移除`package.json`里的`unpkg`字段描述，表示不将产物托管到`unpkg`服务
 
-移除`packjson.json`里的`files`字段里的`hel_dist`关键字，表示不将产物推到`npm`（即安装模块方的 node_modules 里不会包含此目录）
+移除`package.json`里的`files`字段里的`hel_dist`关键字，表示不将产物推到`npm`（即安装模块方的 node_modules 里不会包含此目录）
 
 执行`git push`推送运行代码
 

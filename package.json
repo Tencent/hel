@@ -11,6 +11,9 @@
     "build_proxy": "pnpm --filter=hel-lib-proxy run build",
     "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown"
   },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
       "prettier --cache --write"

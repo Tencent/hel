@@ -2,6 +2,11 @@
   "name": "shadow-view-react",
   "version": "1.0.0",
   "description": "render shadow view for hel-micro-react, inspired Houfeng shadow-view",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel.git",
+    "directory": "packages/shadow-view-react"
+  },
   "license": "MIT",
   "author": {
     "name": "fantasticsoul",
