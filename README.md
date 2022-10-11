@@ -98,3 +98,13 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 ## [hel-micro-react](packages/hel-micro-react)
 
 依赖 hel-micro 基础 api 实现的 react 组件加载库
+
+## 了解更多
+欢迎入群了解更多
+
+微信群号(7天更新一次，可能会有延迟)：
+![](https://user-images.githubusercontent.com/7334950/195076193-90532e51-47a9-47bb-be40-d13069018f0a.png)
+
+QQ群号(永久有效)：
+![image](https://user-images.githubusercontent.com/7334950/195077095-23521318-7d93-4cde-9437-e3dae4d6ae8e.png)
+
