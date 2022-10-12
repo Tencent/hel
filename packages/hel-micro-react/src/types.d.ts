@@ -1,7 +1,9 @@
 import type { IPreFetchOptionsBase } from 'hel-micro';
 import type { ISubAppVersion, Platform } from 'hel-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
+
+// react-dom <= 16.9.10 并无此类型，取 ReactDOM.Container 会报红警告，这里单独声明一下
+export type Container = Element | Document | DocumentFragment;
 
 export type AnyRecord = Record<string, any>;
 
@@ -245,7 +247,7 @@ export interface IRenderAppOptions {
    * 当 renderSelf 为 true 时，如果用户传递了定制的 renderSelfFn 函数（例如react18的新渲染方式），
    * 则会执行此函数，否则默认按 ReactDom.render 来执行自渲染
    */
-  renderSelfFn?: (App: AnyComp, hostNode: ReactDOM.Container) => void;
+  renderSelfFn?: (App: AnyComp, hostNode: Container) => void;
   /** 也可以透传 createRoot 句柄，来支持18 版本react的渲染 */
   createRoot?: (...args: any[]) => any;
   lifecycle?: {

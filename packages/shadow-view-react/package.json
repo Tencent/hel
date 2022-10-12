@@ -1,6 +1,6 @@
 {
   "name": "shadow-view-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "render shadow view for hel-micro-react, inspired Houfeng shadow-view",
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "tsconfig.json"
   ],
   "scripts": {
+    "build": "./node_modules/.bin/tsc",
     "test": "dn test && dn build -e prod"
   },
   "dependencies": {
