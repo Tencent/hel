@@ -101,7 +101,7 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 依赖 hel-micro 基础 api 实现的 react 组件加载库
 
 ## 了解更多
-欢迎入群了解更多，微信群号(7天更新一次，可能会有延迟)：
+欢迎入群了解更多，微信群号(7天更新一次，可能会有延迟，如已失效，可以先加qq群，再邀请你到微信群)：
 
 <img width="460px" src="https://user-images.githubusercontent.com/7334950/195077415-8318c45f-f3a0-4e48-969e-74f1c99e65ba.png"></img>
 
