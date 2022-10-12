@@ -21,28 +21,21 @@ see doc： https://tnfe.github.io/hel
 ## Demo
 
 
-| 示例名称/功能 | 使用示范 | 模板地址| 模板描述 |
-| --- | --- | --- | --- |
-| 远程ts库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack开发与打包 |
-| 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [github](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack开发与打包 |
-| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [github](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 |
-| 远程 react ts 组件 | [codesandbox]() | [github]() | webpack开发与打包 |
-| 远程 react ts 组件 | [codesandbox]() | [github]() | webpack开发与打包 |
+| 示例名称/功能 | 使用示范 | 模板地址| 模板描述 | 托管位置 |
+| --- | --- | --- | --- | --- |
+| 远程ts库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-lodash) |
+| 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) |[remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps) |
+| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 | [unpkg meta](hhttps://unpkg.com/hel-tpl-remote-react-comps-ts) |
+| 远程 vue2 js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295) | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue-comps)、[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html) 、[unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
+| 远程 vue3 ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack开发，webpack打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue3-comps-ts) |
 
-
-### 载入远程 react 组件
-
-codesandbox[示例](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0)，远程 react 组件[js 仓库模板](https://github.com/hel-eco/hel-tpl-remote-react-comp)，[ts 仓库代码](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts)
-
-### 载入远程 vue 组件
-
-codesandbox[示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)，远程 vue 组件[js 仓库模板](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
-
-> 组件运行代码托管在 [unpkg](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) 和 [git.io](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html), 被 codesandbox 示例使用`hel-micro`动态载入
 
 ## Why hel-micro
-
+接入快、0入侵、简单易用：
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
+
+让模块联邦技术从构建工具插件层面提升到sdk层面，使用更灵活，模块流通性更好（工具链无关）：
+
 
 ### 如何使用远程模块
 
