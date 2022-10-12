@@ -30,11 +30,13 @@ see doc： https://tnfe.github.io/hel
 | 远程 vue3 ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack开发，webpack打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue3-comps-ts) |
 
 
-## Why hel-micro
+## [Why hel-micro](https://tnfe.github.io/hel)
 接入快、0入侵、简单易用：
 ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
 让模块联邦技术从构建工具插件层面提升到sdk层面，使用更灵活，模块流通性更好（工具链无关）：
+<img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png">
+
 
 
 ### 如何使用远程模块
