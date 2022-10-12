@@ -1,5 +1,15 @@
 import { getGlobalThis } from 'hel-micro-core';
 
+function injectDefault(externalItem) {
+  if (!externalItem.default) {
+    try {
+      // eslint-disable-next-line
+      externalItem.default = externalItem;
+    } catch (err) { }
+  }
+  return externalItem;
+}
+
 export function bindExternals(externalsObj: Record<string, any>) {
   const globalThis = getGlobalThis();
   Object.keys(externalsObj).forEach((key: string) => {
@@ -26,7 +36,7 @@ interface IReactRuntimeObj {
  */
 export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   const externalObj = {
-    LEAH_React: reactRuntimeObj.React,
+    LEAH_React: injectDefault(reactRuntimeObj.React),
     LEAH_ReactDOM: reactRuntimeObj.ReactDOM,
     LEAH_ReactIs: null,
     LEAH_ReactReconciler: null,
@@ -42,7 +52,7 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
  */
 export function bindVueRuntime(vueRuntimeObj: { Vue: any }) {
   const externalObj = {
-    LEAH_Vue: vueRuntimeObj.Vue,
+    LEAH_Vue: injectDefault(vueRuntimeObj.Vue),
   };
   bindExternals(externalObj);
 }
