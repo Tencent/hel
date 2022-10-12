@@ -25,7 +25,7 @@ see doc： https://tnfe.github.io/hel
 | --- | --- | --- | --- | --- |
 | 远程ts库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-lodash) |
 | 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) |[remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps) |
-| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 | [unpkg meta](hhttps://unpkg.com/hel-tpl-remote-react-comps-ts) |
+| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps-ts) |
 | 远程 vue2 js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295) | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue-comps)、[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html) 、[unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
 | 远程 vue3 ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack开发，webpack打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue3-comps-ts) |
 
