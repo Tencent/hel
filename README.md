@@ -20,9 +20,15 @@ see doc： https://tnfe.github.io/hel
 
 ## Demo
 
-### 载入远程 js 库
 
-codesandbox[示例](https://codesandbox.io/s/hel-lodash-zf8jh8)，远程 js 库[仓库模板](https://github.com/hel-eco/hel-tpl-remote-lib)
+| 示例名称/功能 | 使用示范 | 模板地址| 模板描述 |
+| --- | --- | --- | --- |
+| 远程ts库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack开发与打包 |
+| 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [github](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack开发与打包 |
+| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [github](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 |
+| 远程 react ts 组件 | [codesandbox]() | [github]() | webpack开发与打包 |
+| 远程 react ts 组件 | [codesandbox]() | [github]() | webpack开发与打包 |
+
 
 ### 载入远程 react 组件
 
