@@ -20,24 +20,19 @@ see doc： https://tnfe.github.io/hel
 
 ## Demo
 
-
-| 示例名称/功能 | 使用示范 | 模板地址| 模板描述 | 托管位置 |
+| 示例名称/功能 | 使用示范 | 模板地址 | 模板描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
-| 远程ts库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-lodash) |
-| 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) |[remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps) |
-| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps-ts) |
-| 远程 vue2 js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295) | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue-comps)、[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html) 、[unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
-| 远程 vue3 ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack开发，webpack打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue3-comps-ts) |
-
+| 远程 ts 库 | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [hel-lodash](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack 开发与打包 | [unpkg meta](https://unpkg.com/hel-lodash) |
+| 远程 react js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack 开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps) |
+| 远程 react ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack 开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-react-comps-ts) |
+| 远程 vue2 js 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295) | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack 开发与打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue-comps)、[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html) 、[unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
+| 远程 vue3 ts 组件 | [codesandbox](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack 开发，webpack 打包 | [unpkg meta](https://unpkg.com/hel-tpl-remote-vue3-comps-ts) |
 
 ## [Why hel-micro](https://tnfe.github.io/hel)
-接入快、0入侵、简单易用：
-![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
-让模块联邦技术从构建工具插件层面提升到sdk层面，使用更灵活，模块流通性更好（工具链无关）：
-<img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png">
+接入快、0 入侵、简单易用： ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
-
+让模块联邦技术从构建工具插件层面提升到 sdk 层面，使用更灵活，模块流通性更好（工具链无关）： <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png">
 
 ### 如何使用远程模块
 
@@ -101,12 +96,11 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 依赖 hel-micro 基础 api 实现的 react 组件加载库
 
 ## 了解更多
-欢迎入群了解更多，微信群号(7天更新一次，可能会有延迟，如已失效，可以先加qq群，再邀请你到微信群)：
+
+欢迎入群了解更多，微信群号(7 天更新一次，可能会有延迟，如已失效，可以先加 qq 群，再邀请你到微信群)：
 
 <img width="460px" src="https://user-images.githubusercontent.com/7334950/195077415-8318c45f-f3a0-4e48-969e-74f1c99e65ba.png"></img>
 
-QQ群号(永久有效)：
+QQ 群号(永久有效)：
 
 <img width="460px" src="https://user-images.githubusercontent.com/7334950/195077095-23521318-7d93-4cde-9437-e3dae4d6ae8e.png"></img>
-
-

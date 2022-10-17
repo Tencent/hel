@@ -68,7 +68,8 @@ export default function (pkg, fileFullPathOrOptions) {
 
   const fileStr = content.toString();
   const strList = fileStr.split(os.EOL);
-  strList.forEach((item) => {
+  for (let i = 0; i < strList.length; i++) {
+    const item = strList[i];
     // export const HEL_APP_GROUP_NAME = 'your-app';
     // or
     // export const LIB_NAME = 'your-app';
@@ -78,9 +79,11 @@ export default function (pkg, fileFullPathOrOptions) {
       appNameStr = appNameStr.replace(/'/gi, '');
       appNameStr = appNameStr.replace(/"/gi, '');
       appNameStr = appNameStr.replace(/;/gi, '');
+      appNameStr = appNameStr.replace(/\r/gi, '');
       srcAppGroupName = appNameStr;
+      break;
     }
-  });
+  }
   if (!srcAppGroupName) {
     throw new Error(`
     HEL_APP_GROUP_NAME or LIB_NAME not found in src/configs/subApp.(js|ts) file,
