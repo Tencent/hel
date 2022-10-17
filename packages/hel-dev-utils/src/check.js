@@ -80,6 +80,7 @@ export default function (pkg, fileFullPathOrOptions) {
       appNameStr = appNameStr.replace(/"/gi, '');
       appNameStr = appNameStr.replace(/;/gi, '');
       appNameStr = appNameStr.replace(/\r/gi, '');
+      appNameStr = appNameStr.replace(/\n/gi, '');
       srcAppGroupName = appNameStr;
       break;
     }
