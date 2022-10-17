@@ -96,11 +96,6 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 依赖 hel-micro 基础 api 实现的 react 组件加载库
 
 ## 了解更多
+欢迎入群了解更多，由于微信讨论群号200人已满，需加作者微信号或qq群号，再邀请你如`hel-micro`讨论群（加号时记得备注 hel 哦）
 
-欢迎入群了解更多，微信群号(7 天更新一次，可能会有延迟，如已失效，可以先加 qq 群，再邀请你到微信群)：
-
-<img width="460px" src="https://user-images.githubusercontent.com/7334950/195077415-8318c45f-f3a0-4e48-969e-74f1c99e65ba.png"></img>
-
-QQ 群号(永久有效)：
-
-<img width="460px" src="https://user-images.githubusercontent.com/7334950/195077095-23521318-7d93-4cde-9437-e3dae4d6ae8e.png"></img>
+<img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
