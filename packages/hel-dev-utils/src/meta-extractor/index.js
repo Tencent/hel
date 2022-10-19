@@ -21,7 +21,7 @@ export default async function extractHelMetaJson(userExtractOptions) {
     distDir = 'hel_dist',
   } = userExtractOptions;
 
-  const targetHomePage = appHomePage || getNpmCdnHomePage(packageJson, npmCdnType, distDir);
+  const targetHomePage = appHomePage || getNpmCdnHomePage(packageJson, { npmCdnType, distDir });
   const envParams = getHelEnvParams(packageJson);
   const filledExtractOptions = {
     ...userExtractOptions,

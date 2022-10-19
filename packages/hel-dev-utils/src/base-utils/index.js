@@ -46,15 +46,16 @@ export function getHelProcessEnvParams() {
  * @returns
  */
 export function getHelEnvParams(pkg, options = {}) {
-  let cdnHomPage = '';
+  let cdnHomPage = options.homePage;
+  // 改写为 unpkg 的 homePage 模式，此时如果透传了 homePage，表示为 unpkg 私服
   if (options.npmCdnType) {
-    cdnHomPage = getNpmCdnHomePage(pkg, options.npmCdnType);
+    cdnHomPage = getNpmCdnHomePage(pkg, { npmCdnType: options.npmCdnType, homePage: options.homePage });
   }
 
   // 来自 process.env 的值优先级最高
   const p0EnvParams = getHelProcessEnvParams();
   return {
-    appHomePage: p0EnvParams.appHomePage || options.homePage || cdnHomPage || pkg.homepage || '',
+    appHomePage: p0EnvParams.appHomePage || cdnHomPage || pkg.homepage || '',
     appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || '',
     appName: p0EnvParams.appName || pkg.appGroupName || '',
   };

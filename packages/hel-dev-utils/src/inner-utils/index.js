@@ -112,8 +112,11 @@ const cdnType2host = {
   unpkg: 'https://unpkg.com',
 };
 
-export function getNpmCdnHomePage(packageJson, npmCdnType = 'unpkg', distDir = 'hel_dist') {
+export function getNpmCdnHomePage(packageJson, options) {
+  const { npmCdnType = 'unpkg', distDir = 'hel_dist', homePage } = options;
   const { name, version } = packageJson;
+  // 优先考虑用户透传的 homePage，表示用户部署了 unpkg 私服
+  const unpkgHost = homePage || cdnType2host[npmCdnType];
   // TDDO，未来考虑更多类型的 cdn，如：jsdelivr
-  return `${cdnType2host[npmCdnType]}/${name}@${version}/${distDir}`;
+  return `${unpkgHost}/${name}@${version}/${distDir}`;
 }
