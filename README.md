@@ -103,7 +103,7 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
   <tr>
       <td align="center">
         <a href="https://console.cloud.tencent.com/wedata/share/overview" target="_blank">
-          <img width="140px;" src="https://raw.githubusercontent.com/fantasticsoul/assets/master/img/cloudbase.png"></img>
+          <img width="140px;" src="https://user-images.githubusercontent.com/7334950/197116513-7c7382b6-a5b5-4fb9-bcd7-2ec891804b7d.png"></img>
         </a>
         <br/>
         <a target="_blank" href="https://console.cloud.tencent.com/wedata/share/overview">
