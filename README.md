@@ -122,8 +122,11 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
     </tr>
 </table>
 
-## 👅了解更多
+## 📦了解更多
 
 欢迎入群了解更多，由于微信讨论群号 200 人已满，需加作者微信号或 qq 群号，再邀请你如`hel-micro`讨论群（加号时记得备注 hel 哦）
 
 <img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
+
+## 👅License
+hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license
