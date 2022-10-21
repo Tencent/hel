@@ -4,7 +4,7 @@
 
 ## [Doc](https://tnfe.github.io/hel)
 
-**hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案
+**hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案❤️
 
 see doc： https://tnfe.github.io/hel
 
@@ -122,7 +122,7 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
     </tr>
 </table>
 
-## 了解更多
+## 👅了解更多
 
 欢迎入群了解更多，由于微信讨论群号 200 人已满，需加作者微信号或 qq 群号，再邀请你如`hel-micro`讨论群（加号时记得备注 hel 哦）
 
