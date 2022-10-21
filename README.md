@@ -102,7 +102,7 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 <table>
   <tr>
       <td align="center">
-        <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms" target="_blank">
+        <a href="https://console.cloud.tencent.com/wedata/share/overview" target="_blank">
           <img width="140px;" src="https://raw.githubusercontent.com/fantasticsoul/assets/master/img/cloudbase.png"></img>
         </a>
         <br/>
@@ -111,7 +111,7 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
         </a> 
       </td>
       <td align="center">
-         <a href="https://wink.org/" target="_blank">
+         <a href="https://news.qq.com/" target="_blank">
           <img width="140px;" src="https://user-images.githubusercontent.com/7334950/197115413-ede5f5fa-70dd-4632-b7f5-f6f8bc167023.png"></img>
         </a>
         <br/>
