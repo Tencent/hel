@@ -95,6 +95,33 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 
 依赖 hel-micro 基础 api 实现的 react 组件加载库
 
+
+## 🐚谁在使用
+欢迎在此[issue](https://github.com/tnfe/hel/issues/31)里提供你的公司logo，公司名，截图、站点等信息，提供给其他用户一些参考信息，让未来有更多的人参与到hel-micro的建设与使用中。
+
+<table>
+  <tr>
+      <td align="center">
+        <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms" target="_blank">
+          <img width="140px;" src="https://raw.githubusercontent.com/fantasticsoul/assets/master/img/cloudbase.png"></img>
+        </a>
+        <br/>
+        <a target="_blank" href="https://console.cloud.tencent.com/wedata/share/overview">
+          <b>腾讯云</b>
+        </a> 
+      </td>
+      <td align="center">
+         <a href="https://wink.org/" target="_blank">
+          <img width="140px;" src="https://user-images.githubusercontent.com/7334950/197115413-ede5f5fa-70dd-4632-b7f5-f6f8bc167023.png"></img>
+        </a>
+        <br/>
+        <a target="_blank" href="https://news.qq.com/">
+          <b>腾讯新闻</b>
+        </a> 
+      </td>
+    </tr>
+</table>
+
 ## 了解更多
 
 欢迎入群了解更多，由于微信讨论群号 200 人已满，需加作者微信号或 qq 群号，再邀请你如`hel-micro`讨论群（加号时记得备注 hel 哦）
