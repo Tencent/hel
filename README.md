@@ -16,7 +16,7 @@ see doc： https://tnfe.github.io/hel
 
 ## 视频
 
-1. [本地调试简介](https://www.bilibili.com/video/BV1pt4y1J7g9/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. 教学系列第一期 [基于hel-micro开发、发布、使用远程js库](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 
 ## 模板
 
