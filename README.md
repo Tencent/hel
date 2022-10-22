@@ -37,6 +37,7 @@ see doc： https://tnfe.github.io/hel
 | 模块名称/功能 | 在线演示 | 仓库地址 | 描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
 | hel-lodash | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [gihub](https://github.com/hel-eco/hel-tpl-remote-lib) | lodash远程包 | [unpkg](https://unpkg.com/hel-lodash/) |
+| hel-antd | [codesandbox](https://codesandbox.io/s/hel-demo-use-antd-tjy3ep) | [gihub](https://github.com/hel-eco/hel-antd) | antd远程包 | [unpkg](https://unpkg.com/hel-antd/) |
 | hel-tdesign-react | [codesandbox](https://codesandbox.io/s/hel-demo-use-tedesign-nw8bfb) | [gihub](https://github.com/hel-eco/hel-tdesign-react) | tdesign-react远程包 | [unpkg](https://unpkg.com/hel-tdesign-react/) |
 
 ## [Why hel-micro](https://tnfe.github.io/hel)
