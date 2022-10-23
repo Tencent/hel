@@ -19,9 +19,9 @@ sidebar_position: 3
 克隆远程 react 组件模板项目为`rrc-xxx`（名字请按实际需要修改，此处仅做示例）
 
 ```bash
-git clone https://github.com/hel-eco/hel-tpl-remote-react-comp-ts rrc-xxx
+npx degit https://github.com/hel-eco/hel-tpl-remote-react-comp-ts rrc-xxx
 // js 可克隆
-git clone https://github.com/hel-eco/hel-tpl-remote-react-comp rrc-xxx
+npx degit https://github.com/hel-eco/hel-tpl-remote-react-comp rrc-xxx
 ```
 
 ### 改 package.json
