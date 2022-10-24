@@ -35,6 +35,12 @@ const lib = await preFetchLib('hel-tpl-remote-lib', { versionId: '1.0.0' });
 const lib = await preFetchLib('hel-tpl-remote-lib', '1.0.0');
 ```
 
+:::tip 未指定版本号情况
+
+未指定特殊的版本号情况下，`preFetchLib` 将拉取最新的版本
+
+:::
+
 ### 指定平台值
 
 **参数名称**：`IPreFetchLibOptions.platform`
