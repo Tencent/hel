@@ -6,7 +6,8 @@
   "author": "fantasticsoul",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build_proxy && npm run build_core",
+    "build": "npm run build_hel && npm run build_proxy && npm run build_core",
+    "build_hel": "pnpm --filter=hel-micro run build",
     "build_core": "pnpm --filter=hel-micro-core run build",
     "build_proxy": "pnpm --filter=hel-lib-proxy run build",
     "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown"
