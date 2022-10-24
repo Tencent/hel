@@ -23,7 +23,7 @@ sidebar_position: 2
 克隆 react 模板库，保存为`hel-antd`目录，接下来的步骤里，我们都将基于此目录下的文件改造
 
 ```bash
-git clone https://github.com/hel-eco/hel-tpl-remote-react-comp-ts.git hel-antd
+npx degit https://github.com/hel-eco/hel-tpl-remote-react-comp-ts.git hel-antd
 ```
 
 ## 修改模块名称

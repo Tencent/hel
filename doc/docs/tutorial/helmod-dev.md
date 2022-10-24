@@ -17,7 +17,7 @@ sidebar_position: 2
 克隆远程库模板为`my-xxx-lib`（名字请按实际需要修改，此处仅做示例）
 
 ```bash
-git clone https://github.com/hel-eco/hel-tpl-remote-lib my-xxx-lib
+npx degit https://github.com/hel-eco/hel-tpl-remote-lib my-xxx-lib
 ```
 
 ### 改 package.json
