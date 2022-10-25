@@ -55,6 +55,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
   if (typeof Proxy === 'function' && asProxy) {
     return share.getLibProxy(libName, libObj);
   }
+  core.log(`[[ exposeLib ]] libName, libObj`, libName, libObj);
   return libObj;
 }
 
