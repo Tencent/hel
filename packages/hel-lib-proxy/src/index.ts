@@ -51,7 +51,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
     }
   }
 
-  let libObj = share.getLibObj<L>(libName, platform);
+  let libObj = share.getLibObj<L>(libName, platform || diff.getDefaultPlatform());
   if (typeof Proxy === 'function' && asProxy) {
     libObj = share.getLibProxy(libName, libObj);
   }
