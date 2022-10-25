@@ -51,9 +51,9 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
     }
   }
 
-  const libObj = share.getLibObj<L>(libName, platform);
+  let libObj = share.getLibObj<L>(libName, platform);
   if (typeof Proxy === 'function' && asProxy) {
-    return share.getLibProxy(libName, libObj);
+    libObj = share.getLibProxy(libName, libObj);
   }
   core.log(`[[ exposeLib ]] libName, libObj`, libName, libObj);
   return libObj;
