@@ -61,7 +61,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   const inputPlatform = platform || getPlatform();
   if (strictMatchVer === false && appGroupName && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
     log('[[ judgeAppReady ]] treat emitApp as wanted when strictMatchVer is false', appInfo);
-    next();
+    return next();
   }
 
   const { custom } = preFetchOptions;
@@ -69,7 +69,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
     const { enable = true, host, appGroupName: customAppGroupName } = custom;
     // 防止 appGroupName 是 undefined
     if (enable && host && appGroupName && (appGroupName === appName || appGroupName === customAppGroupName)) {
-      next();
+      return next();
     }
   }
 
