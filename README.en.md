@@ -21,7 +21,6 @@ see doc: https://tnfe.github.io/hel
 1. [The first video tutorial] [Develop, publish, and use remote js library based on hel-micro](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 1. [The second phase of the video tutorial] [Local joint debugging based on the remote js library developed by hel-micro](https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 
-
 ## template
 
 Users can refer to [module development tutorial](https://tnfe.github.io/hel/docs/tutorial/helmod-dev), and based on [hel-eco](https://github.com/hel-eco) Various template projects provided can be slightly adjusted to publish various types of hel remote modules
@@ -58,7 +57,7 @@ Only one npm command is needed to load a remote module, see the example below [o
 
 ```bash
 npm i hel-micro
-````
+```
 
 - 2 Lazy load remote modules
 
@@ -71,7 +70,7 @@ async function ran(seed) {
   const num = mod.myUtils.num.random(500);
   return num;
 }
-````
+```
 
 - 3 Preload remote modules
 
@@ -81,7 +80,7 @@ Install `hel-lodash`
 
 ```bash
 npm i hel-lodash
-````
+```
 
 Execute the module pull action first
 
@@ -94,14 +93,14 @@ async function main() {
 }
 
 main().catch(console.error);
-````
+```
 
 Statically import `hel-micro` in any file associated with the entry file and call the module method
 
 ```ts
 import m from 'hel-lodash';
 console.log(m.myUtils.num.random(500);) // get random number
-````
+```
 
 ## [hel-micro](packages/hel-micro)
 
@@ -112,6 +111,7 @@ Front-end widgetized sdk, based on hel-micro, it can realize cross-project code 
 React component loading library implemented by hel-micro based api.
 
 ## 🐚 Who is using
+
 You are welcome to provide your company logo, company name, screenshots, website and other information in this [issue](https://github.com/tnfe/hel/issues/31), and provide other users with some reference information, so that in the future More people are involved in the construction and use of hel-micro.
 
 <table>
@@ -144,4 +144,5 @@ Welcome to join the group to learn more. Since the WeChat discussion group is fu
 <img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png" />
 
 ## 👅License
+
 hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license
