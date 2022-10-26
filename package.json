@@ -10,8 +10,8 @@
     "build_core": "pnpm --filter=hel-micro-core run build",
     "build_hel": "pnpm --filter=hel-micro run build",
     "build_proxy": "pnpm --filter=hel-lib-proxy run build",
-    "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown",
     "commitlint": "commitlint -e $HUSKY_GIT_PARAMS",
+    "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown",
     "prepare": "husky install"
   },
   "lint-staged": {
