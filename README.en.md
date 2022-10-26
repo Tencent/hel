@@ -12,7 +12,7 @@ see doc: https://tnfe.github.io/hel
 
 ## article
 
-1. [hel-micro Module Federation New Revolution](https://juejin.cn/post/7138792768234586148)
+1. [hel-micro Module Federation New Revolution](https://dev.to/fantasticsoul/why-is-hel-micro-a-better-implementation-of-module-federation-21ji)
 
 2. [Using hel-micro to make remote antd, tdesign-react](https://juejin.cn/post/7150639599499509797)
 
@@ -46,9 +46,9 @@ The hel remote module released after the transformation based on the template pr
 
 ## [Why hel-micro](https://tnfe.github.io/hel)
 
-Fast access, 0 intrusion, easy to use: ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
+Fast access, 0 intrusion, easy to use: ![image](https://user-images.githubusercontent.com/7334950/198016212-a0002896-caf1-4b59-aa32-e8fb09b15f33.png)
 
-Let the module federation technology be upgraded from the build tool plug-in level to the sdk level, with more flexible use and better module circulation (toolchain irrelevant): <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png" />
+Let the module federation technology be upgraded from the build tool plug-in level to the sdk level, with more flexible use and better module circulation (toolchain irrelevant): <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/198015955-1e294f9c-4a6b-4482-8d54-100a5d3bd38d.png" />
 
 ### How to use remote modules
 
@@ -141,7 +141,7 @@ You are welcome to provide your company logo, company name, screenshots, website
 
 Welcome to join the group to learn more. Since the WeChat discussion group is full of 200 people, you need to add the author's WeChat account or QQ group account, and then invite you to the `hel-micro` discussion group (remember to note hel when adding a sign)
 
-<img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
+<img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png" />
 
 ## 👅License
 hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license
