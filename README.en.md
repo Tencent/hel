@@ -48,7 +48,7 @@ The hel remote module released after the transformation based on the template pr
 
 Fast access, 0 intrusion, easy to use: ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
-Let the module federation technology be upgraded from the build tool plug-in level to the sdk level, with more flexible use and better module circulation (toolchain irrelevant): <img width="1226" alt="image" src="https://user- images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png">
+Let the module federation technology be upgraded from the build tool plug-in level to the sdk level, with more flexible use and better module circulation (toolchain irrelevant): <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png" />
 
 ### How to use remote modules
 

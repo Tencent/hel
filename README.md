@@ -48,7 +48,7 @@ see doc： https://tnfe.github.io/hel
 
 接入快、0 入侵、简单易用： ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
-让模块联邦技术从构建工具插件层面提升到 sdk 层面，使用更灵活，模块流通性更好（工具链无关）： <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png">
+让模块联邦技术从构建工具插件层面提升到 sdk 层面，使用更灵活，模块流通性更好（工具链无关）： <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png" />
 
 ### 如何使用远程模块
 
