@@ -1,5 +1,5 @@
 async function main() {
-  const { libReady } = await import('hel-lib-proxy');
+  const { libReady, isMasterApp } = await import('hel-lib-proxy');
   const { LIB_NAME } = await import('./configs/subApp');
   // 如有其他远程包依赖并且需要在内部使用静态导入的语法，可使用 preFetchLib 来加载这些包体
   // const { preFetchLib } = await import('hel-micro');
@@ -9,6 +9,10 @@ async function main() {
   const libProperties = await import('./entrance/libProperties');
   // 注意此处传递的是 default
   libReady(LIB_NAME, libProperties.default);
+
+  if (isMasterApp()) {
+    await import('./loadApp');
+  }
 }
 
 main().catch(console.error);
