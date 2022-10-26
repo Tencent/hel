@@ -6,7 +6,7 @@
 
 ## [Doc](https://tnfe.github.io/hel)
 
-**hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案❤️
+**hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案 ❤️
 
 see doc： https://tnfe.github.io/hel
 
@@ -18,13 +18,12 @@ see doc： https://tnfe.github.io/hel
 
 ## 视频
 
-1. 【视频教程第一期】[基于hel-micro开发、发布、使用远程js库](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
-1. 【视频教程第二期】[本地联调基于hel-micro开发的远程js库](https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
-
+1. 【视频教程第一期】[基于 hel-micro 开发、发布、使用远程 js 库](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. 【视频教程第二期】[本地联调基于 hel-micro 开发的远程 js 库](https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 
 ## 模板
 
-用户可参考[模块开发教程](https://tnfe.github.io/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的hel远程模块
+用户可参考[模块开发教程](https://tnfe.github.io/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的 hel 远程模块
 
 | 示例名称/功能 | 使用示范 | 模板地址 | 模板描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
@@ -36,13 +35,13 @@ see doc： https://tnfe.github.io/hel
 
 ## 实战
 
-基于模板项目改造后发布的hel远程模块
+基于模板项目改造后发布的 hel 远程模块
 
 | 模块名称/功能 | 在线演示 | 仓库地址 | 描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
-| hel-lodash | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [gihub](https://github.com/hel-eco/hel-lodash) | lodash远程包 | [unpkg](https://unpkg.com/hel-lodash/) |
-| hel-antd | [codesandbox](https://codesandbox.io/s/hel-demo-use-antd-tjy3ep) | [gihub](https://github.com/hel-eco/hel-antd) | antd远程包 | [unpkg](https://unpkg.com/hel-antd/) |
-| hel-tdesign-react | [codesandbox](https://codesandbox.io/s/hel-demo-use-tedesign-nw8bfb) | [gihub](https://github.com/hel-eco/hel-tdesign-react) | tdesign-react远程包 | [unpkg](https://unpkg.com/hel-tdesign-react/) |
+| hel-lodash | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [gihub](https://github.com/hel-eco/hel-lodash) | lodash 远程包 | [unpkg](https://unpkg.com/hel-lodash/) |
+| hel-antd | [codesandbox](https://codesandbox.io/s/hel-demo-use-antd-tjy3ep) | [gihub](https://github.com/hel-eco/hel-antd) | antd 远程包 | [unpkg](https://unpkg.com/hel-antd/) |
+| hel-tdesign-react | [codesandbox](https://codesandbox.io/s/hel-demo-use-tedesign-nw8bfb) | [gihub](https://github.com/hel-eco/hel-tdesign-react) | tdesign-react 远程包 | [unpkg](https://unpkg.com/hel-tdesign-react/) |
 
 ## [Why hel-micro](https://tnfe.github.io/hel)
 
@@ -111,9 +110,9 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 
 依赖 hel-micro 基础 api 实现的 react 组件加载库
 
+## 🐚 谁在使用
 
-## 🐚谁在使用
-欢迎在此[issue](https://github.com/tnfe/hel/issues/31)里提供你的公司logo，公司名，截图、站点等信息，提供给其他用户一些参考信息，让未来有更多的人参与到hel-micro的建设与使用中。
+欢迎在此[issue](https://github.com/tnfe/hel/issues/31)里提供你的公司 logo，公司名，截图、站点等信息，提供给其他用户一些参考信息，让未来有更多的人参与到 hel-micro 的建设与使用中。
 
 <table>
   <tr>
@@ -138,11 +137,12 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
     </tr>
 </table>
 
-## 📦了解更多
+## 📦 了解更多
 
 欢迎入群了解更多，由于微信讨论群号 200 人已满，需加作者微信号或 qq 群号，再邀请你如`hel-micro`讨论群（加号时记得备注 hel 哦）
 
 <img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
 
 ## 👅License
+
 hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license

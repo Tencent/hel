@@ -22,7 +22,7 @@ npx degit https://github.com/hel-eco/hel-tpl-remote-lib my-xx-lib
 
 :::tip npm degit
 
-npm degit 命令是为了检出一份不包含任何git信息的目录，等同于 git clone xxx_url && cd xxx_url && rm- rf ./.gitinfo
+npm degit 命令是为了检出一份不包含任何 git 信息的目录，等同于 git clone xxx_url && cd xxx_url && rm- rf ./.gitinfo
 
 :::
 
