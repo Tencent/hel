@@ -18,7 +18,9 @@ see doc: https://tnfe.github.io/hel
 
 ## video
 
-1. [The first phase of the teaching series] [Develop, publish and use remote js library based on hel-micro] (https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. [The first video tutorial] [Develop, publish, and use remote js library based on hel-micro] (https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. [The second phase of the video tutorial] [Local joint debugging based on the remote js library developed by hel-micro] (https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+
 
 ## template
 
@@ -107,8 +109,7 @@ Front-end widgetized sdk, based on hel-micro, it can realize cross-project code 
 
 ## [hel-micro-react](packages/hel-micro-react)
 
-React component loading library implemented by hel-micro based api
-
+React component loading library implemented by hel-micro based api.
 
 ## 🐚 Who is using
 You are welcome to provide your company logo, company name, screenshots, website and other information in this [issue](https://github.com/tnfe/hel/issues/31), and provide other users with some reference information, so that in the future More people are involved in the construction and use of hel-micro.
@@ -128,3 +129,19 @@ You are welcome to provide your company logo, company name, screenshots, website
          <a href="https://news.qq.com/" target="_blank">
           <img width="140px;" src="https://user-images.githubusercontent.com/7334950/197115413-ede5f5fa-70dd-4632-b7f5-f6f8bc167023.png"></img>
         </a>
+        <br/>
+        <a target="_blank" href="https://news.qq.com/">
+          <b>Tencent News</b>
+        </a>
+      </td>
+    </tr>
+</table>
+
+## 📦Learn more
+
+Welcome to join the group to learn more. Since the WeChat discussion group is full of 200 people, you need to add the author's WeChat account or QQ group account, and then invite you to the `hel-micro` discussion group (remember to note hel when adding a sign)
+
+<img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
+
+## 👅License
+hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license
