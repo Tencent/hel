@@ -18,8 +18,8 @@ see doc: https://tnfe.github.io/hel
 
 ## video
 
-1. [The first video tutorial] [Develop, publish, and use remote js library based on hel-micro] (https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
-1. [The second phase of the video tutorial] [Local joint debugging based on the remote js library developed by hel-micro] (https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. [The first video tutorial] [Develop, publish, and use remote js library based on hel-micro](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+1. [The second phase of the video tutorial] [Local joint debugging based on the remote js library developed by hel-micro](https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
 
 
 ## template
