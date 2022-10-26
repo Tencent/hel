@@ -6,6 +6,7 @@
   "author": "fantasticsoul",
   "main": "index.js",
   "scripts": {
+    "prepublishOnly": "npm run format",
     "build": "npm run build_hel && npm run build_proxy && npm run build_core",
     "build_hel": "pnpm --filter=hel-micro run build",
     "build_core": "pnpm --filter=hel-micro-core run build",
