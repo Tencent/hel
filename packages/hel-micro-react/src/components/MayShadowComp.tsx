@@ -38,12 +38,12 @@ function getPassedProps(
   helProps: IMayShadowProps,
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
-  staticShadowBodyRootRef: React.RefObject<any>,
+  staticShadowBodyRootRef: any,
 ) {
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
   const getShadowAppRoot = () => shadowAppRootRef.current || null;
   const getShadowBodyRoot = () => shadowBodyRootRef.current || null;
-  const getStaticShadowBodyRoot = () => staticShadowBodyRootRef.current || null;
+  const getStaticShadowBodyRoot = () => staticShadowBodyRootRef;
   const getEnsuredBodyRoot = () => getShadowBodyRoot() || getStaticShadowBodyRoot() || getGlobalThis()?.document.body || null;
 
   const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false } = helProps;
@@ -93,15 +93,14 @@ function MayShadowComp(props: IMayShadowProps) {
   } = props;
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
-  const staticShadowBodyRootRef = React.useRef(getStaticShadowBodyRef(name));
   const forceUpdate = useForceUpdate();
 
   React.useEffect(() => {
-    if (shadow && !staticShadowBodyRootRef.current) {
+    const staticRef = getStaticShadowBodyRef(name);
+    if (shadow && !staticRef) {
       const evName = getShadowBodyReadyEvName(name);
-      const evCb = (shadowBodyRef: React.ReactHTMLElement<any>) => {
-        bus.off(evCb);
-        staticShadowBodyRootRef.current = shadowBodyRef;
+      const evCb = () => {
+        bus.off(evName, evCb);
         tryForceUpdate();
       };
       bus.on(evName, evCb);
@@ -109,7 +108,7 @@ function MayShadowComp(props: IMayShadowProps) {
       const renderProps = { id: name, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
       tryMountStaticShadowBody(renderProps, props.createRoot);
       return () => {
-        bus.off(evCb);
+        bus.off(evName, evCb);
       };
     }
   }, []);
@@ -119,8 +118,8 @@ function MayShadowComp(props: IMayShadowProps) {
       // v2 暂无 ShadowAppRoot 结构
       return true;
     }
-
-    return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticShadowBodyRootRef.current;
+    const staticRef = getStaticShadowBodyRef(name);
+    return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
     isShadowRefsReady() && forceUpdate();
@@ -134,7 +133,7 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowBodyRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, staticShadowBodyRootRef);
+  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name));
 
   if (errMsg) {
     return React.createElement(Comp, passedProps);

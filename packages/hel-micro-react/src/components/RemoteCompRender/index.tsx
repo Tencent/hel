@@ -24,6 +24,7 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
 
   if (!moduleReady) {
     const Skeleton = props.Skeleton || BuildInSkeleton;
+    // @ts-ignore
     return <Skeleton />;
   }
 

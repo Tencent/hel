@@ -66,15 +66,15 @@ export function tryMountStaticShadowBody(props: any, createRoot: any) {
   const mountNode = makeBodyMountNode(name, 'staticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name);
 
-  // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
   const uiShadowView = (
+    // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
     <ShadowView
       {...{
         tagName: STATIC_COMP_NAME,
         ...props,
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
           staticShadowBodyRefs[name] = bodyRef;
-          bus.emit(evName, bodyRef);
+          bus.emit(evName);
         },
       }}
     />
