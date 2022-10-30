@@ -4,6 +4,7 @@ export const VER = diffBase.VER;
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 
+/** 第一个载入的版本号，后续接口未指定版本时，总是优先载入一个载入的版本号对应的模块，确保优先使用全局已存在的模块 */
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
 export const UNPKG_PREFIX = 'https://unpkg.com';

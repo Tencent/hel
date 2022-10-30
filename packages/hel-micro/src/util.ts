@@ -1,4 +1,4 @@
-import { allowLog, getGlobalThis } from 'hel-micro-core';
+import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis } from 'hel-micro-core';
 import type { IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {
@@ -108,7 +108,8 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
 }
 
 export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
-  // https://unpkg.com/hel-lodash@1.2.21/1659925934381
+  // https://unpkg.com/hel-lodash@1.2.21/1659925934381_hel-lodash
+  // https://cdn.jsdelivr.net/npm/hel-lodash@2.1.7/1659925934381_hel-lodash
   const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${Date.now()}_${appName}`);
   const [, includeVer] = url.split('@');
   const [ver] = includeVer.split('/');
@@ -172,7 +173,7 @@ export async function getCustomMeta(appName: string, customHost: string) {
     },
     version: {
       sub_app_name: appName,
-      sub_app_version: '',
+      sub_app_version: DEFAULT_ONLINE_VER,
       src_map: {
         headAssetList: [],
         bodyAssetList,

@@ -1,7 +1,7 @@
 import { getGlobalThis } from 'hel-micro-core';
 
-function injectDefault(externalItem) {
-  if (!externalItem.default) {
+function injectDefault(externalItem: any) {
+  if (externalItem && !externalItem.default) {
     try {
       // eslint-disable-next-line
       externalItem.default = externalItem;

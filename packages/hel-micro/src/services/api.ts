@@ -3,8 +3,8 @@ import { apiSrvConst, PLAT_UNPKG } from '../consts/logic';
 import { getJSON } from '../dom/jsonp';
 import { getPlatformConfig, getPlatformHost } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
-import { getLocalStorage, getUnpkgLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
-import { getDefaultPlatform } from '../_diff';
+import { getUnpkgLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
+import { getDefaultPlatform, guessUserName } from '../_diff';
 
 export interface IHelGetOptionsBase {
   platform?: Platform;
@@ -30,7 +30,7 @@ async function executeGet<T extends any = any>(
     platform: Platform;
     onlyVersion?: boolean;
   },
-): Promise<{ data: T; code: string; msg: string }> {
+): Promise<{ data: T | null; code: string; msg: string }> {
   let ret: any = null;
   const { isFullVersion, platform, onlyVersion } = options;
   // 确保一定向 unpkg 平台发起 get 请求
@@ -59,7 +59,7 @@ async function executeGet<T extends any = any>(
       delete version.html_content;
     }
     if (!version) {
-      return { data: ret, code: '404', msg: 'no version found' };
+      return { data: null, code: '404', msg: 'no version found' };
     }
     return { data: ret, code: '0', msg: '' };
   }
@@ -89,7 +89,8 @@ async function getUnpkgUrl(apiHost: string, appName: string, versionId: string, 
       ver = await getUnpkgLatestVer(appName, apiHost);
     }
   }
-  // https://unpkg.com/hel-lodash@1.2.2/hel_dist/hel-meta.json
+  // https://unpkg.com/hel-lodash@2.1.7/hel_dist/hel-meta.json
+  // https://cdn.jsdelivr.net/npm/hel-lodash@2.1.7/hel_dist/hel-meta.json
   return `${apiHost}/${appName}@${ver}/hel_dist/hel-meta.json?_t=${Date.now()}`;
 }
 
@@ -112,8 +113,7 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
 
   const apiHost = getPlatformHost(platform);
   const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey } = getPlatformConfig(platform);
-  const userName =
-    getUserName?.({ platform: targetPlatform, appName }) || getLocalStorage().getItem(userLsKey || apiSrvConst.USER_KEY) || '';
+  const userName = getUserName?.({ platform: targetPlatform, appName }) || guessUserName(userLsKey || apiSrvConst.USER_KEY);
   let url = '';
 
   // 为 hel pack 模块管理台拼接请求链接
@@ -147,7 +147,7 @@ export function prepareOtherPlatRequestInfo(appNameOrNames: string | string[], g
 export async function prepareUnpkgPlatRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, loadOptions } = getOptions;
   const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
-  const url = await getUnpkgUrl(apiHost, appName, versionId || '', loadOptions.skip404Sniff);
+  const url = await getUnpkgUrl(apiHost, appName, versionId || '', loadOptions?.skip404Sniff);
   return url;
 }
 
@@ -210,7 +210,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const reply = await executeGet(custUrl || url, { apiMode: custApiMode || apiMode, platform: targetPlatform });
-    if (0 !== parseInt(reply.code)) {
+    if (0 !== parseInt(reply.code) || !reply) {
       throw new Error(reply.msg);
     }
     return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version) };
@@ -245,7 +245,7 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
   const url = await prepareRequestVersionUrl(versionId, options);
 
   const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, platform: targetPlatform, onlyVersion: true });
-  if (0 !== parseInt(code)) {
+  if (0 !== parseInt(code) || !data) {
     throw new Error(msg || 'ver not found');
   }
 
@@ -264,7 +264,7 @@ export async function batchGetSubAppAndItsVersion(appNames: string[], getOptions
     apiMode,
     platform: getDefaultPlatform(getOptions.platform),
   });
-  if (0 !== parseInt(code)) {
+  if (0 !== parseInt(code) || !data) {
     throw new Error(msg || 'batch get failed');
   }
 

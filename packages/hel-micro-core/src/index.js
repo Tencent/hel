@@ -87,7 +87,7 @@ export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
   // 用户串改过的话，可能是：at c (https://{user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/...)
   const loc = util.getJsRunLocation();
-  util.log(`[[tryGetVersion]] may include source > ${loc}`);
+  util.log(`[[ core:tryGetVersion ]] may include source > ${loc}`);
 
   const { appGroupName2firstVer } = getSharedCache(platform);
   const callerSpecifiedVer = appGroupName2firstVer[appGroupName] || '';
@@ -102,6 +102,10 @@ export function tryGetVersion(appGroupName, platform) {
         return callerSpecifiedVer;
       }
       if (strList.includes(callerSpecifiedVer)) {
+        return callerSpecifiedVer;
+      }
+      // strList: ['xxxx.com:8888', 'static', 'js']，本地联调时的特征
+      if (strList['1'] === 'static' || strList['2'] === 'js') {
         return callerSpecifiedVer;
       }
     }
@@ -226,11 +230,14 @@ export function getPlatformConfig(iPlatform) {
 }
 
 export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo} */ emitApp) {
+  log(`[[ core:setEmitApp ]] appName,emitApp`, appName, emitApp);
   const { versionId, platform } = emitApp;
   const sharedCache = getSharedCache(platform);
-  const { appName2verEmitApp, appName2Comp, appName2EmitApp, appName2app } = sharedCache;
+  const { appName2verEmitApp, appName2Comp, appName2EmitApp } = sharedCache;
 
-  if (helper.isVerMatchOnline(appName2app[appName], versionId)) {
+  // 记录第一个载入的版本号对应 emitApp
+  const verEmitApp = util.safeGetMap(appName2verEmitApp, appName);
+  if (!verEmitApp[DEFAULT_ONLINE_VER]) {
     appName2Comp[appName] = emitApp.Comp;
     appName2EmitApp[appName] = emitApp;
     util.setSubMapValue(appName2verEmitApp, appName, DEFAULT_ONLINE_VER, emitApp);
@@ -248,7 +255,7 @@ export function getVerApp(appName, options) {
   const verEmitAppMap = util.safeGetMap(appName2verEmitApp, appName);
   inner.ensureOnlineModule(verEmitAppMap, appName, platform);
 
-  // 不传递具体版本号就执行默认在线版本
+  // 不传递具体版本号就指向默认的第一个载入的版本
   const versionIdVar = versionId || DEFAULT_ONLINE_VER;
   const verApp = verEmitAppMap[versionIdVar];
 
@@ -258,7 +265,7 @@ export function getVerApp(appName, options) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackApp = targetStrictMatchVer ? null : appName2EmitApp[appName] || legacyWriteVerApp;
   const result = verApp || fallbackApp || null;
-  log(`[[ getVerApp ]] appName,options,result`, appName, options, result);
+  log(`[[ core:getVerApp ]] appName,options,result`, appName, options, result);
   return result;
 }
 
@@ -281,8 +288,7 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   const appMeta = getAppMeta(appName, platform);
 
   const assignLibObj = (appName) => {
-    // 区别于 setEmitApp，使用文件头静态导入模块语法时，默认是从 appName2Lib 拿数据
-    // !!! 不再经过 isVerMatchOnline 逻辑成立后才记录 appName2Lib
+    // 使用文件头静态导入模块语法时，默认是从 appName2Lib 拿数据，
     // 这意味着 文件头静态导入 总是执行第一个加载的版本模块，
     // （ 注：文件头静态导入对接的是 hel-lib-proxy 的 exposeLib，该接口使用的是 appName2Lib ）
     // 所以 多版本同时导入 和 文件头静态导入 本身是冲突的，用户不应该两种用法一起使用，
@@ -309,15 +315,12 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   }
 
   // 当前版本可作为默认线上版本来记录
-  log(`[[ setEmitLib ]] appMeta`, appMeta);
+  log(`[[ core:setEmitLib ]] appMeta`, appMeta);
   const verEmitLibMap = util.safeGetMap(appName2verEmitLib, appName);
-  if (
-    (!appMeta && !verEmitLibMap[DEFAULT_ONLINE_VER]) // 使用 custom 配置直接载入目标模块时
-    || helper.isVerMatchOnline(appMeta, versionId)
-  ) {
+  // 记录第一个载入的版本号对应 lib
+  if (!verEmitLibMap[DEFAULT_ONLINE_VER]) {
     util.setSubMapValue(appName2verEmitLib, appName, DEFAULT_ONLINE_VER, appProperties);
   }
-
   if (versionId) {
     util.setSubMapValue(appName2verEmitLib, appName, versionId, appProperties);
   }
@@ -341,7 +344,7 @@ export function getVerLib(appName, inputOptions) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackLib = targetStrictMatchVer ? null : staticLib;
   const result = verLib || fallbackLib || null;
-  log(`[[ getVerLib ]] appName,options,result`, appName, options, result);
+  log(`[[ core:getVerLib ]] appName,options,result`, appName, options, result);
   return result;
 }
 
@@ -350,17 +353,13 @@ export function setVerExtraCssList(appName, cssList, inputOptions) {
   const { versionId, platform } = options;
   const sharedCache = getSharedCache(platform);
   const { appName2verExtraCssList } = sharedCache;
-  const appMeta = getAppMeta(appName, platform);
 
-  log(`[[ setVerExtraCssList ]] cssList`, cssList);
+  log(`[[ core:setVerExtraCssList ]] cssList`, cssList);
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
-  if (
-    (!appMeta && !verExtraCssListMap[DEFAULT_ONLINE_VER]) // 使用 custom 配置直接载入目标模块时
-    || helper.isVerMatchOnline(appMeta, versionId)
-  ) {
+  // 记录第一个载入的版本号对应 css 资源
+  if (!verExtraCssListMap[DEFAULT_ONLINE_VER]) {
     util.setSubMapValue(appName2verExtraCssList, appName, DEFAULT_ONLINE_VER, cssList);
   }
-
   if (versionId) {
     util.setSubMapValue(appName2verExtraCssList, appName, versionId, cssList);
   }
@@ -373,7 +372,7 @@ export function getVerExtraCssList(appName, inputOptions) {
   const { appName2verExtraCssList } = sharedCache;
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   const cssList = verExtraCssListMap[versionId] || verExtraCssListMap[DEFAULT_ONLINE_VER] || [];
-  log(`[[ getVerExtraCssList ]] options, cssList`, options, cssList);
+  log(`[[ core:getVerExtraCssList ]] options, cssList`, options, cssList);
   return cssList;
 }
 
@@ -424,12 +423,16 @@ export function getVersion(appName, options) {
 
 export function setVersion(appName, /** @type {import('hel-types').ISubAppVersion}*/ versionData, options) {
   const { platform } = options || {};
-  const { appName2verAppVersion, appName2appVersion, appName2app, appGroupName2firstVer } = getSharedCache(platform);
+  const { appName2verAppVersion, appGroupName2firstVer } = getSharedCache(platform);
   const versionId = versionData.sub_app_version;
+  if (!versionId) {
+    return;
+  }
   const appMeta = getAppMeta(appName, platform);
 
-  if (helper.isVerMatchOnline(appName2app[appName], versionId)) {
-    appName2appVersion[appName] = versionData;
+  const verAppVersion = util.safeGetMap(appName2verAppVersion, appName);
+  // 记录第一个载入的版本号对应 versionData
+  if (!verAppVersion[DEFAULT_ONLINE_VER]) {
     util.setSubMapValue(appName2verAppVersion, appName, DEFAULT_ONLINE_VER, versionData);
   }
   util.setSubMapValue(appName2verAppVersion, appName, versionId, versionData);

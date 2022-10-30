@@ -1,6 +1,6 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
-import { DEFAULT_API_URL, PLAT_HEL, PLAT_UNPKG } from './consts';
+import { DEFAULT_API_URL, DEFAULT_PLAT, PLAT_HEL, PLAT_UNPKG } from './consts';
 import * as diffBase from './diff/base';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 import { getHelSingletonHost } from './utilBase';
@@ -51,8 +51,8 @@ function makeHelMicroShared() {
   const helCache = makeCacheNode(PLAT_HEL);
   const unpkgCache = makeCacheNode(PLAT_UNPKG);
   const cacheRoot = {
-    /** 这个值保留着是为了兼容历史逻辑，让老包执行 helper.getPlatform 能够正常取到篡改的默认值，新版包体不在支持设置 platform 值 */
-    platform: '',
+    /** 默认的平台值 */
+    platform: DEFAULT_PLAT,
     /** 1.4+ 新增，用于记录 preFetchLib 时显示传递了 platform 值，供 hel-lib-proxy 使用，
      * 方便多平台共同加载包体场景下， exposeLib 接口如果未显式的传递平台值，能尽量正确推测出应用对应的 platform 值
      * 但是这里依然推荐用户 exposeLib 传递具体的平台值，避免推测错误
@@ -82,7 +82,8 @@ function makeHelMicroShared() {
       emit: (eventName, ...args) => {
         const listeners = name2listeners[eventName];
         if (listeners) {
-          listeners.forEach((cb) => cb(...args));
+          const listenersCopy = listeners.slice();
+          listenersCopy.forEach((cb) => cb(...args));
         }
       },
       off: (eventName, cb) => {
