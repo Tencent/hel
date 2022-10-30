@@ -10,9 +10,12 @@ import type { AnyRecord, IInnerRemoteModuleProps, ILocalCompProps, IMicroAppLega
 import LocalCompRender from './LocalCompRender';
 import RemoteCompRender from './RemoteCompRender';
 
-export type MicroAppType = <T extends AnyRecord = AnyRecord>(props: IMicroAppProps<T>, ref?: React.Ref<any>) => React.ReactElement | null;
+export type MicroAppType = <T extends AnyRecord = AnyRecord>(
+  props: IMicroAppProps<T>,
+  ref?: React.Ref<any>,
+) => React.ReactElement<any, any> | null;
 
-export type LocalCompType = (props: ILocalCompProps, ref?: React.Ref<any>) => React.ReactElement | null;
+export type LocalCompType = (props: ILocalCompProps, ref?: React.Ref<any>) => React.ReactElement<any, any> | null;
 
 /**
  * 渲染地本地组件，满足用户想对当前项目的某个组件直接使用 shadow 隔离能力的情况
@@ -34,7 +37,7 @@ export const MicroApp: MicroAppType = forwardRef((props, reactRef) => {
 export type MicroAppLegacyType = <T extends AnyRecord = AnyRecord>(
   props: IMicroAppLegacyProps<T>,
   ref?: React.Ref<any>,
-) => React.ReactElement | null;
+) => React.ReactElement<any, any> | null;
 
 /**
  * @deprecated 历史遗留组件，推荐用 MicroApp 替代
@@ -65,4 +68,4 @@ export const MicroAppLegacy: MicroAppLegacyType = forwardRef((props, reactRef) =
  */
 export const MicroAppLegacyMemo = React.memo(MicroAppLegacy, () => true) as <T extends AnyRecord = AnyRecord>(
   props: IMicroAppLegacyProps<T>,
-) => React.ReactElement;
+) => React.ReactElement<any, any>;
