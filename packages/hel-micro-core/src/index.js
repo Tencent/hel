@@ -105,7 +105,7 @@ export function tryGetVersion(appGroupName, platform) {
         return callerSpecifiedVer;
       }
       // strList: ['xxxx.com:8888', 'static', 'js']，本地联调时的特征
-      if (strList['1'] === 'static' || strList['2'] === 'js') {
+      if ((strList['1'] === 'static' && strList['2'] === 'js') || strList['1'] === 'js') {
         return callerSpecifiedVer;
       }
     }
@@ -124,7 +124,11 @@ export function tryGetVersion(appGroupName, platform) {
 }
 
 export function tryGetAppName(/** @type string */ version, appGroupName) {
-  // 来自 hel 管理台的版本号规则
+  if (version === DEFAULT_ONLINE_VER) {
+    return appGroupName || '';
+  }
+
+  // 来自 hel-pack 管理台的版本号规则
   if (version.includes('_')) {
     // lib-test_20220621165953 ---> lib-test
     const appName = version.substring(0, version.length - 15);

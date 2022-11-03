@@ -168,8 +168,8 @@ export async function getCustomMeta(appName: string, customHost: string) {
       __fromCust: true,
       name: appName,
       app_group_name: appName,
-      online_version: '',
-      build_version: '',
+      online_version: DEFAULT_ONLINE_VER,
+      build_version: DEFAULT_ONLINE_VER,
     },
     version: {
       sub_app_name: appName,
