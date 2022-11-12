@@ -186,7 +186,7 @@ export interface IEmitAppInfo {
   /** 通过 libReady 发射的数据 */
   isLib: boolean;
   Comp: any;
-  appProperties?: Record<string, any>;
+  appProperties?: Record<string, any> | null;
   lifecycle?: {
     mount?: () => void;
     unmount?: () => void;

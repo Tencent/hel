@@ -25,7 +25,7 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
 
   if (isLib) {
     const lib = getVerLib(targetName, newGetOptions);
-    const libWrap = {
+    const libWrap: IEmitAppInfo = {
       appName: targetName,
       appGroupName: appMeta?.app_group_name || '',
       platform,
