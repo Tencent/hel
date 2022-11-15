@@ -58,7 +58,7 @@ export interface SharedCache {
    */
   appName2Lib: Record<string, Record<string, any>>;
   /**
-   * 记录在线版本 Comp
+   * 记录第一个载入的 Comp
    */
   appName2Comp: Record<string, any>;
   /**
@@ -66,7 +66,7 @@ export interface SharedCache {
    */
   appName2isLibAssigned: Record<string, boolean>;
   /**
-   * 记录在线版本 emitApp
+   * 记录第一个载入的 emitApp
    */
   appName2EmitApp: Record<string, IEmitAppInfo>;
   /** 应用各个版本对应的lib */
@@ -92,15 +92,15 @@ export interface SharedCache {
    */
   appName2verAppVersion: Record<string, Record<string, ISubAppVersion>>;
   /**
-   * 兜底对应的app数据
+   * 记录第一个载入的app数据
    */
   appName2app: Record<string, ISubApp>;
   /**
-   * 兜底对应的线上版本appVersion数据
+   * 记录第一个载入的版本数据
    */
   appName2appVersion: Record<string, ISubAppVersion>;
   /**
-   * 兜底对应的样式字符串
+   * 记录第一个载入的样式字符串
    */
   appName2styleStr: Record<string, string>;
   /**
@@ -140,8 +140,9 @@ export interface IAppAndVer {
 }
 
 /**
- * 定义获取 app 和 version 数据的函数
+ * 定义获取 app 和 version 数据的函数，修改 hel-micro 的默认请求行为，可根据自己的实际需求来实现此函数逻辑
  * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
+ * @see https://tnfe.github.io/hel/docs/api/hel-micro/prefetch-lib#%E9%87%8D%E7%BD%AE%E5%85%83%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3
  */
 export interface IGetSubAppAndItsVersionFn {
   (passCtx: {
@@ -165,6 +166,9 @@ export interface IPlatformConfigFull {
    * 如存在有老包体未发射版本号的情况，这里可以置为 false，让系统能够正常运行
    */
   strictMatchVer: boolean;
+  /**
+   * api 请求模式，支持 'get' 和 'jsonp'，对于 'unpkg' 平台，默认是 'get'，对于 'hel' 平台，默认是 'jsonp'
+   */
   apiMode: ApiMode;
   /**
    * 未指定 apiPrefix 的情况下，会根据 platform 值决定请求那个域名的接口
@@ -176,17 +180,23 @@ export interface IPlatformConfigFull {
   apiSuffix: string;
   /**
    * default: /openapi/v1/app/info
+   * 此设定仅针对 hel 平台有效
    * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppAndItsVersion 或 /openapi/v1/app/info/getSubAppAndItsVersionJsonp
    */
   apiPathOfApp: string;
   /**
    * default: 如果未指定，则和 apiPathOfApp 值保持一致
+   * 此设定仅针对 hel 平台有效
    * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppVersion 或 /openapi/v1/app/info/getSubAppVersionJsonp
    */
   apiPathOfAppVersion: string;
   platform: Platform;
   getSubAppAndItsVersionFn: IGetSubAppAndItsVersionFn;
-  /** 默认 'HelUserRtxName'，hel请求时，尝试重 localStorage 的 {userLsKey} 下获取用户名，以便命中灰度版本 */
+  /**
+   * 默认 'HelUserRtxName'，hel请求时，尝试重 localStorage 的 {userLsKey} 下获取用户名，
+   * 如获取不到会继续尝试从  cookie 的 {userLsKey} 下获取用户名，
+   * 以便让后台知道请求者是谁从而觉得是否要下发灰度版本（如存在灰度版本）
+   */
   userLsKey: string;
   /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
   getUserName: (passCtx: { platform: string; appName: string }) => string;
@@ -223,7 +233,7 @@ export interface IGetOptions {
   strictMatchVer?: boolean;
 }
 
-export function getVerLib(appName: string, options?: IGetOptions): IEmitAppInfo['appProperties'] | null;
+export function getVerLib(appName: string, options?: IGetOptions): IEmitAppInfo['appProperties'];
 
 export function setEmitLib(appName: string, emitApp: IEmitAppInfo, options?: { appGroupName?: string; platform?: Platform }): void;
 

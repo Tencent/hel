@@ -157,7 +157,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appGroupName,
     versionId,
     appProperties,
-    Comp: function EmptyComp() {},
+    Comp: function EmptyComp() { },
     lifecycle: {},
   };
   setEmitLib(appName, emitApp, { appGroupName, platform });
@@ -418,16 +418,17 @@ export function getVersion(appName, options) {
   const { appName2verAppVersion, appName2appVersion } = getSharedCache(platform);
 
   // TODO: 暂未考虑接入 strictMatchVer
-  const fallbackVerData = appName2appVersion[appName] || null;
+  const firstVerData = appName2appVersion[appName] || null;
   if (!versionId) {
-    return fallbackVerData;
+    return firstVerData;
   }
-  return appName2verAppVersion[appName]?.[versionId] || fallbackVerData;
+  // firstVerData 在这里作为兜底返回，正常情况下 appName2verAppVersion 肯定是能取到数据的
+  return appName2verAppVersion[appName]?.[versionId] || firstVerData;
 }
 
 export function setVersion(appName, /** @type {import('hel-types').ISubAppVersion}*/ versionData, options) {
   const { platform } = options || {};
-  const { appName2verAppVersion, appGroupName2firstVer } = getSharedCache(platform);
+  const { appName2verAppVersion, appGroupName2firstVer, appName2appVersion } = getSharedCache(platform);
   const versionId = versionData.sub_app_version;
   if (!versionId) {
     return;
@@ -438,6 +439,7 @@ export function setVersion(appName, /** @type {import('hel-types').ISubAppVersio
   // 记录第一个载入的版本号对应 versionData
   if (!verAppVersion[DEFAULT_ONLINE_VER]) {
     util.setSubMapValue(appName2verAppVersion, appName, DEFAULT_ONLINE_VER, versionData);
+    appName2appVersion[appName] = versionData;
   }
   util.setSubMapValue(appName2verAppVersion, appName, versionId, versionData);
 

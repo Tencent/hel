@@ -13,8 +13,14 @@ export function getPlatAndVer(appName: string, options?: IGetOptionsLoose): IPla
   const { platform, versionId } = options || {};
   let ver = versionId || '';
   if (!versionId) {
-    const appMeta = core.getAppMeta(appName, platform);
-    ver = appMeta?.online_version || appMeta?.build_version || '';
+    const versionData = core.getVersion(appName, { platform });
+    if (versionData) {
+      // 已存在了正在运行的版本数据
+      ver = versionData.sub_app_version;
+    } else {
+      const appMeta = core.getAppMeta(appName, platform);
+      ver = appMeta?.online_version || appMeta?.build_version || '';
+    }
   }
 
   return {
