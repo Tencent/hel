@@ -157,7 +157,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appGroupName,
     versionId,
     appProperties,
-    Comp: function EmptyComp() {},
+    Comp: function EmptyComp() { },
     lifecycle: {},
   };
   setEmitLib(appName, emitApp, { appGroupName, platform });
@@ -252,7 +252,8 @@ export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo}
   }
 }
 
-export function getVerApp(appName, options) {
+export function getVerApp(appName, inputOptions) {
+  const options = inputOptions || {};
   const { versionId, platform } = options || {};
   const { appName2verEmitApp, appName2Comp, strictMatchVer, appName2EmitApp } = getSharedCache(platform);
   const targetStrictMatchVer = options.strictMatchVer ?? strictMatchVer;
