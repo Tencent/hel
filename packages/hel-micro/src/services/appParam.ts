@@ -38,7 +38,7 @@ export function getGroupedStyleList(appName: string, options?: IGetOptionsLoose)
   if (version) {
     const { webDirPath, chunkCssSrcList } = version.src_map;
     chunkCssSrcList.forEach((src) => {
-      src.startsWith(webDirPath) ? map.static.push(src) : map.build.push(src);
+      src.startsWith(webDirPath) ? map.build.push(src) : map.static.push(src);
     });
   }
   return map;
