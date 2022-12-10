@@ -125,8 +125,8 @@ const inner = {
  * 异步拉取应用的所有样式字符串（构建动态产生，页面静态引用的）
  * 调用者需自己确保版本数据已获取，即 preFetchApp 或 preFetchLib 已调用
  */
-export async function fetchStyleStr(appName: string, options: IFetchStyleOptions): Promise<string> {
-  const styleStr = await inner.fetchAndCacheAppStyleStr(appName, options);
+export async function fetchStyleStr(appName: string, options?: IFetchStyleOptions): Promise<string> {
+  const styleStr = await inner.fetchAndCacheAppStyleStr(appName, options || {});
   return styleStr;
 }
 
@@ -139,7 +139,7 @@ export async function fetchStyleByUrlList(cssUrlList: string[]) {
  * 获取应用缓存的所有样式字符串（构建动态产生，页面静态引用的）
  * 调用者需自己确保样式字符串已拉取，即 fetchStyleStr 已调用
  */
-export function getStyleStr(appName: string, options: IGetOptionsLoose) {
+export function getStyleStr(appName: string, options?: IGetOptionsLoose) {
   const platAndVer = getPlatAndVer(appName, options);
   const styleStr = core.getAppStyleStr(appName, platAndVer);
   return styleStr;
@@ -150,14 +150,14 @@ export function getStyleStr(appName: string, options: IGetOptionsLoose) {
  * 调用者需自己确保版本数据已获取，即 preFetchApp 或 preFetchLib 已调用
  * @returns {string[]}
  */
-export function getStyleUrlList(appName: string, options: IGetOptionsLoose): string[] {
-  const getStyleUrlList = inner.getStyleUrlList(appName, options);
+export function getStyleUrlList(appName: string, options?: IGetOptionsLoose): string[] {
+  const getStyleUrlList = inner.getStyleUrlList(appName, options || {});
   return getStyleUrlList;
 }
 
 /**
  * 判断样式是否已经异步拉取过了
  */
-export function isStyleFetched(appName: string, options: IGetOptionsLoose) {
-  return inner.isStyleStatusMatch(appName, LOADED, options);
+export function isStyleFetched(appName: string, options?: IGetOptionsLoose) {
+  return inner.isStyleStatusMatch(appName, LOADED, options || {});
 }

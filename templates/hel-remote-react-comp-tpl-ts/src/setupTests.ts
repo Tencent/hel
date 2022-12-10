@@ -7,8 +7,8 @@ import '../tests/mock/mockHttpService';
 
 // avoid TypeError: window.matchMedia is not a function
 window.matchMedia =
-  window.matchMedia ||
-  function () {
+  window.matchMedia
+  || function () {
     return {
       matches: false,
       addListener() {},

@@ -18,3 +18,7 @@ export const apiSrvConst = {
 export const PLAT_HEL = 'hel';
 
 export const PLAT_UNPKG = 'unpkg';
+
+export const API_NORMAL_GET = 'get';
+
+export const JSONP_MARK = 'Jsonp';

@@ -64,10 +64,16 @@ export interface ISrcMap {
   webDirPath: string;
   headAssetList: IAssetItem[];
   bodyAssetList: IAssetItem[];
+  /** 所有构建产生的 js 资源列表 */
+  chunkJsSrcList: string[];
   /**
-   * 所有的样式url列表
+   * 所有构建产生的 css 资源列表
    */
   chunkCssSrcList: string[];
+  /**
+   * 所有在index.html里声明的静态 css 资源列表
+   */
+  staticCssList: string[];
   /**
    *  标记了 hreflang 为 PRIV_CSS 的文件列表
    */
@@ -77,7 +83,7 @@ export interface ISrcMap {
 export interface IProjVer {
   /** o: online_version, b: build_version */
   map: Record<string, { o: string; b: string }>;
-  /** 后台还会用于预防更新冲突 */
+  /** proj_ver 数据节点的更新时间，后台还会此值来预防更新冲突 */
   utime: number;
 }
 
@@ -91,56 +97,73 @@ export interface IAppRenderInfo {
 
 export interface ISubApp {
   id: number;
-  /** app名称，同时也是浏览器的访问入口凭证 */
+  /** app 名称，同时也是浏览器的访问入口凭证 */
   name: string;
   app_group_name: string;
-  name_in_sec: string;
-  additional_scripts: string[];
-  additional_body_scripts?: string[];
+  /** 当前线上正使用的版本 */
   online_version: string;
+  /** 构建产生的最新版本 */
   build_version: string;
-  /** 应用的分类类型 */
-  class_name: string;
   /** 应用中文名 */
   cnname: string;
-  /** 是否是测试应用 */
-  is_test: 0 | 1;
-  /** 是否置顶（即推荐） */
-  is_top: 1 | 0;
-  /** 负责人 */
-  owners: string[];
-  /** 灰度用户名单 */
-  gray_users: string[];
   /** 应用的仓库地址 */
   git_repo_url: string;
   create_at: string; // "2019-11-05T08:37:17.000Z"
   update_at: string; // "2019-11-05T08:37:17.000Z"
   create_by: string;
   desc: string;
+  /** 插件将资源记录到 src_map 时对应的元数据提取方式，build：只提取构建产物，bu_st：构建产物和静态产生都提取 */
+  extract_mode: 'build' | 'bu_st';
+
+  // ----------------- 以下属性目前针对 HelPack 有效（如用户自搭后台需要也可复用），还在使用中 -------------
+  /** 流水线构建时需要验证的token */
+  token: string;
+  /** 是否正在灰度中，每次流水线构建时如果 enable_gray 是1，则此值会设置为1 */
+  is_in_gray: 1 | 0;
+  /** 是否允许使用灰度功能 */
+  enable_gray: 1 | 0;
+  /** 如果是测试app的话，只下发给测试人员，此种模式的app永远只会将build_version下发给前端，其他xxx_version对于它来说都是冗余的 */
+  is_test: 1 | 0;
+  /** 是否置顶（即推荐） */
+  is_top: 1 | 0;
   /** 是否允许蓝盾【海拉元数据模块提取】插件执行 */
   enable_pipeline: 1 | 0;
   /** 是否允许下发给 HelPack 前台做展示 */
   enable_display: 1 | 0;
-  /** 插件的资源清单元数据提取方式，build：只提取构建产物，bu_st：构建产物和静态产生都提取 */
-  extract_mode: 'build' | 'bu_st';
+  /** 是否允许将构建版本（即灰度版本）发布为线上版本 */
+  enable_build_to_online: 1 | 0;
   /** 托管在 HelPack 渲染时，访问应用的开屏过度图 */
   splash_screen: string;
   /** 应用在 HelPack 里展现的 logo url */
   logo: string;
   /** 项目id和版本映射关系，目前该配置仅作用于 hel-pack 模块管理台 */
   proj_ver: IProjVer;
+  /** 是否在 HelPack 前台渲染 */
+  is_local_render: 1 | 0;
+  additional_scripts: string[];
+  additional_body_scripts?: string[];
+  /** 负责人 */
+  owners: string[];
+  /** 灰度用户名单 */
+  gray_users: string[];
+  /** 应用的分类类型 */
+  class_name: string;
+  /** 是否是星辰项目专属 */
+  is_xc: 1 | 0;
 
-  // ----------------- 以下属性暂时都用不到了 --------------
+  // ----------------- 以下属性目前针对 HelPack 有效，后续可能计划全部下架 --------------
   api_host: string;
   /** 是否是富媒体类型应用 */
   is_rich: 1 | 0;
   /** 是否后端渲染 */
   is_back_render: 1 | 0;
-  iframe_src_map: string | null;
+  iframe_src_map: Record<string, string>;
   /** 【暂无用】原计划为 'react-shadow' | 'react' | 'iframe' */
   render_mode: string;
-  host_map: string;
+  host_map: Record<string, string>;
   ui_framework: string;
+  /** 【已彻底无用】安全平台里对应的名字 */
+  name_in_sec: string;
 }
 
 export interface ISubAppVersion {

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
+    "lib": ["ES2016", "DOM"],
     "baseUrl": "./src",
-    "lib": ["esnext", "dom"],
     "esModuleInterop": true
   }
 }

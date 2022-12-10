@@ -10,6 +10,7 @@ dist
 tmp
 TIMME.md
 package-lock.json
+coverage
 
 npm-debug.log*
 yarn-debug.log*

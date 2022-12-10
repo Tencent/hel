@@ -1,13 +1,14 @@
 import * as core from 'hel-micro-core';
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import { loadAppAssets } from '../browser';
+import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
 import { PLAT_UNPKG } from '../consts/logic';
 import storageKeys from '../consts/storageKeys';
-import { loadAppAssets } from '../dom';
 import { getPlatform, getPlatformConfig } from '../shared/platform';
 import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
-import { getAllExtraCssList, getCustomMeta, getLocalStorage, noop, safeParse } from '../util';
+import { getAllExtraCssList, getCustomMeta, noop, safeParse } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
 
@@ -16,6 +17,11 @@ interface ISrvInnerOptions {
   apiMode: ApiMode;
   versionId: string;
   loadOptions: IInnerPreFetchOptions;
+}
+
+interface ICacheData {
+  appInfo: ISubApp;
+  appVersion: ISubAppVersion;
 }
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
@@ -45,7 +51,14 @@ function getAppCacheKey(appName: string) {
   return `${storageKeys.LS_CACHE_APP_PREFIX}.${appName}`;
 }
 
-function getDiskCachedApp(appName: string) {
+async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
+  if (options.storageType === 'indexedDB') {
+    const indexedDBStorage = getIndexedDB();
+    if (indexedDBStorage) {
+      const appCache = await indexedDBStorage.getItem<ICacheData>(getAppCacheKey(appName));
+      return appCache;
+    }
+  }
   const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
   return safeParse(appCacheStr || '', null);
 }
@@ -57,7 +70,7 @@ function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any)
 }
 
 async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions) {
-  let mayCachedApp: any = null;
+  let mayCachedApp: ICacheData | null = null;
   const { enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', projectId = '', isFirstCall = true, custom } = options;
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
@@ -71,7 +84,6 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
 
   const memApp = core.getAppMeta(appName, platform);
   const memAppVersion = core.getVersion(appName, { platform });
-  // memAppVersion.sub_app_version
 
   try {
     const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
@@ -86,7 +98,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
 
       // 允许使用硬盘缓存的情况下，尝试优先从硬盘获取
     } else if (enableDiskCache) {
-      mayCachedApp = getDiskCachedApp(appName);
+      mayCachedApp = await getDiskCachedApp(appName, options);
       if (!mayCachedApp) {
         mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
       } else {
@@ -125,7 +137,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
     }
     // 首次调用直接报错
     // 非首次调用依然出错，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
-    mayCachedApp = getDiskCachedApp(appName);
+    mayCachedApp = await getDiskCachedApp(appName, options);
     if (isFirstCall || !mayCachedApp) {
       throw err;
     }
@@ -147,12 +159,25 @@ export function cacheApp(
   appInfo: ISubApp,
   options: { appVersion: ISubAppVersion; platform: Platform; toDisk?: boolean; loadOptions: IInnerPreFetchOptions },
 ) {
+  // toDisk 默认是 true
   const { appVersion, platform, toDisk = true, loadOptions } = options;
   let appMeta = appInfo;
   const appName = appMeta.name;
   // 写 disk
   if (toDisk) {
-    getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
+    const saveToLocalStorage = () => {
+      getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
+    };
+    if (loadOptions.storageType === 'indexedDB') {
+      const indexedDBStorage = getIndexedDB();
+      if (indexedDBStorage) {
+        indexedDBStorage.setItem(getAppCacheKey(appName), { appInfo, appVersion });
+      } else {
+        saveToLocalStorage();
+      }
+    } else {
+      saveToLocalStorage();
+    }
   }
 
   // 写 mem app

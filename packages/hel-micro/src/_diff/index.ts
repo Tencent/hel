@@ -1,6 +1,6 @@
 import { getGlobalThis, log } from 'hel-micro-core';
+import { getLocalStorage } from '../browser/helper';
 import { PLAT_UNPKG } from '../consts/logic';
-import { getLocalStorage } from '../util';
 
 export function getDefaultPlatform(inputPlatform?: string) {
   return inputPlatform || PLAT_UNPKG;

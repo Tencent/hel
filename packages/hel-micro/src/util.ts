@@ -11,18 +11,6 @@ export function perfStart(label: string) {
   }
 }
 
-// avoid mock js-dom warn:
-// [DOMException [SecurityError]: localStorage is not available for opaque origins]
-export function getLocalStorage() {
-  const mockStorage = { getItem() {}, setItem() {} };
-  try {
-    const storage = getGlobalThis()?.localStorage;
-    return storage || mockStorage;
-  } catch (err: any) {
-    return mockStorage;
-  }
-}
-
 export function perfEnd(label: string) {
   if (allowLog()) {
     console.timeEnd(label);
@@ -44,6 +32,16 @@ export function merge2List(list1: string[], list2: string[]) {
 
 export function okeys(map: any) {
   return Object.keys(map);
+}
+
+export function purify(obj: Record<string, any>, isValueValid?: (val: any) => boolean): Record<string, any> {
+  // isValidVal or isNull
+  const isValidFn = isValueValid || ((value) => !isNull(value));
+  const pureObj: Record<string, any> = {};
+  okeys(obj).forEach((key) => {
+    if (isValidFn(obj[key])) pureObj[key] = obj[key];
+  });
+  return pureObj;
 }
 
 export function helScriptId(appName: string) {
@@ -139,6 +137,8 @@ export async function getCustomMeta(appName: string, customHost: string) {
     if (reply) {
       reply.app.__fromCust = true;
       return reply;
+    } else {
+      console.warn('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
     }
   } catch (err: any) {
     noop('json parse fail or other error');

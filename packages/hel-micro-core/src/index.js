@@ -157,7 +157,8 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appGroupName,
     versionId,
     appProperties,
-    Comp: function EmptyComp() {},
+    // prettier-ignore
+    Comp: function EmptyComp() { },
     lifecycle: {},
   };
   setEmitLib(appName, emitApp, { appGroupName, platform });
@@ -234,7 +235,7 @@ export function getPlatformConfig(iPlatform) {
 }
 
 export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo} */ emitApp) {
-  log(`[[ core:setEmitApp ]] appName,emitApp`, appName, emitApp);
+  log(`[[ core:setEmitApp ]] appName,emitApp:`, appName, emitApp);
   const { versionId, platform } = emitApp;
   const sharedCache = getSharedCache(platform);
   const { appName2verEmitApp, appName2Comp, appName2EmitApp } = sharedCache;
@@ -254,7 +255,7 @@ export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo}
 
 export function getVerApp(appName, inputOptions) {
   const options = inputOptions || {};
-  const { versionId, platform } = options || {};
+  const { versionId, platform } = options;
   const { appName2verEmitApp, appName2Comp, strictMatchVer, appName2EmitApp } = getSharedCache(platform);
   const targetStrictMatchVer = options.strictMatchVer ?? strictMatchVer;
   const verEmitAppMap = util.safeGetMap(appName2verEmitApp, appName);
@@ -320,7 +321,7 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   }
 
   // 当前版本可作为默认线上版本来记录
-  log(`[[ core:setEmitLib ]] appMeta`, appMeta);
+  log(`[[ core:setEmitLib ]] appMeta:`, appMeta);
   const verEmitLibMap = util.safeGetMap(appName2verEmitLib, appName);
   // 记录第一个载入的版本号对应 lib
   if (!verEmitLibMap[DEFAULT_ONLINE_VER]) {
@@ -349,7 +350,7 @@ export function getVerLib(appName, inputOptions) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackLib = targetStrictMatchVer ? null : staticLib;
   const result = verLib || fallbackLib || null;
-  log(`[[ core:getVerLib ]] appName,options,result`, appName, options, result);
+  log(`[[ core:getVerLib ]] appName,options,result:`, appName, options, result);
   return result;
 }
 
@@ -359,7 +360,7 @@ export function setVerExtraCssList(appName, cssList, inputOptions) {
   const sharedCache = getSharedCache(platform);
   const { appName2verExtraCssList } = sharedCache;
 
-  log(`[[ core:setVerExtraCssList ]] cssList`, cssList);
+  log(`[[ core:setVerExtraCssList ]] cssList:`, cssList);
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   // 记录第一个载入的版本号对应 css 资源
   if (!verExtraCssListMap[DEFAULT_ONLINE_VER]) {
@@ -377,7 +378,7 @@ export function getVerExtraCssList(appName, inputOptions) {
   const { appName2verExtraCssList } = sharedCache;
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   const cssList = verExtraCssListMap[versionId] || verExtraCssListMap[DEFAULT_ONLINE_VER] || [];
-  log(`[[ core:getVerExtraCssList ]] options, cssList`, options, cssList);
+  log(`[[ core:getVerExtraCssList ]] options,cssList:`, options, cssList);
   return cssList;
 }
 

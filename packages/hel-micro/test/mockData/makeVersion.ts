@@ -1,60 +1,78 @@
 import { IAssetItem } from 'hel-types';
 
-export default function makeVersion() {
+interface IMakeVersionOptions {
+  versionId?: string;
+  name?: string;
+  platform?: string;
+}
+
+export default function makeVersion(options?: IMakeVersionOptions) {
+  const { name = 'remote-vue-comps-tpl', platform = 'hel' } = options || {};
+  let { versionId } = options || {};
+  if (!versionId) {
+    versionId = platform === 'hel' ? `${name}_20220602022833` : `1.1.3`;
+  }
+  const versionDesc = platform === 'hel' ? `${name}_20220602022833` : `${name}@${versionId}`;
+
+  let webDirPath = `https://xx.cdn.com/hel/${versionDesc}`;
+  let htmlIndexSrc = `https://xx.cdn.com/hel/${versionDesc}/index.html`;
+  let cssUrl1 = `https://xx.cdn.com/hel/${versionDesc}/css/chunk1.css`;
+  let cssUrl2 = `https://xx.cdn.com/hel/${versionDesc}/css/chunk2.css`;
+  // real meta json see: https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
+  if (platform === 'unpkg') {
+    webDirPath = `https://unpkg.com/${versionDesc}/hel_dist`;
+    htmlIndexSrc = `https://unpkg.com/${versionDesc}/hel_dist/index.html`;
+    cssUrl1 = `https://unpkg.com/${versionDesc}/hel_dist/css/chunk1.css`;
+    cssUrl2 = `https://unpkg.com/${versionDesc}/hel_dist/css/chunk2.css`;
+  }
+
+  if (platform === 'unpkg') {
+  }
+
   return {
     id: 1294,
     sub_app_id: '1016',
-    sub_app_name: 'app',
-    sub_app_version: 'app_20220606060606',
+    sub_app_name: name,
+    sub_app_version: versionId,
     src_map: {
-      webDirPath: 'https://xx.cdn.com/hel/app_20220606060606',
-      htmlIndexSrc: 'https://xx.cdn.com/hel/app_20220606060606/index.html',
+      webDirPath,
+      htmlIndexSrc,
       iframeSrc: '',
-      chunkCssSrcList: [
-        'https://xx.cdn.com/hel/app_20220606060606/css/chunk-22a77020.8cdf916a.css',
-        'https://xx.cdn.com/hel/app_20220606060606/css/chunk-f3ad9638.8cdf916a.css',
-      ],
+      chunkCssSrcList: [cssUrl1, cssUrl2],
       privCssSrcList: [],
       headAssetList: [
         {
           tag: 'link',
           attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/favicon.ico',
-            rel: 'icon',
-          },
-        },
-        {
-          tag: 'link',
-          attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/css/chunk-22a77020.8cdf916a.css',
+            href: cssUrl1,
             rel: 'prefetch',
           },
         },
         {
           tag: 'link',
           attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/css/chunk-f3ad9638.8cdf916a.css',
+            href: cssUrl2,
             rel: 'prefetch',
           },
         },
         {
           tag: 'link',
           attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/js/chunk-22a77020.00c5ef17.js',
+            href: `${webDirPath}/js/chunk-22a77020.00c5ef17.js`,
             rel: 'prefetch',
           },
         },
         {
           tag: 'link',
           attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/js/chunk-f3ad9638.3a5553b3.js',
+            href: `${webDirPath}/js/chunk-f3ad9638.3a5553b3.js`,
             rel: 'prefetch',
           },
         },
         {
           tag: 'link',
           attrs: {
-            href: 'https://xx.cdn.com/hel/app_20220606060606/js/app~e2e93592.bd978cec.js',
+            href: `${webDirPath}/js/app~e2e93592.bd978cec.js`,
             rel: 'preload',
           },
         },
@@ -63,12 +81,15 @@ export default function makeVersion() {
         {
           tag: 'script',
           attrs: {
-            src: 'https://xx.cdn.com/hel/app_20220606060606/js/app~e2e93592.bd978cec.js',
+            src: `${webDirPath}/js/app~e2e93592.bd978cec.js`,
           },
         },
       ] as IAssetItem[],
+      chunkJsSrcList: [],
+      staticCssList: [],
     },
-    html_content: '<div>webpack output html content</div>',
+    html_content:
+      '<!DOCTYPE html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/favicon.ico"><title>remote-vue-comps-tpl</title><script src="https://xx.cdn.com/hel-runtime/level1/v1-2.6.14-vue.js"></script><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/css/chunk-22a77020.8cdf916a.css" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/css/chunk-f3ad9638.8cdf916a.css" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/chunk-22a77020.00c5ef17.js" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/chunk-f3ad9638.3a5553b3.js" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/app~e2e93592.bd978cec.js" rel="preload" as="script"></head><body><noscript><strong>We\'re sorry but remote-vue-comps-tpl doesn\'t work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script src="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/app~e2e93592.bd978cec.js"></script></body></html>',
     create_by: 'fantasticsoul',
     desc: 'feat:接入hel-dev-utils',
     api_host: '',
@@ -78,7 +99,7 @@ export default function makeVersion() {
     git_branch: 'master',
     git_hashes: '67cce83a3fb7ac82a0ccaf6852e791c294b144e0,005c3d58000e6c37cb9e177cb66b4bf94ee620b7',
     git_messages: [],
-    git_repo_url: '',
+    git_repo_url: 'https://github.com/hel-eco/hel-tpl-remote-vue-comp.git',
     plugin_ver: '2.2.2',
     create_at: '2022-06-01T18:29:18.000Z',
     update_at: '2022-06-01T18:29:18.000Z',

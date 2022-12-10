@@ -69,18 +69,21 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
  */
 async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOptions) {
   let emitApp: null | IEmitAppInfo = null;
+  const { versionId, platform, isLib } = preFetchOptions;
+  const fixedInnerOptions = { ...preFetchOptions };
+  const fnName = isLib ? 'preFetchLib' : 'preFetchApp';
   try {
-    const { versionId, platform } = preFetchOptions;
-    const fixedInnerOptions = { ...preFetchOptions };
     const conf = getPlatformConfig(platform);
     // 用户未传的话走平台默认值 true
     fixedInnerOptions.strictMatchVer = preFetchOptions.strictMatchVer ?? conf.strictMatchVer;
+    // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
+    fixedInnerOptions.storageType = preFetchOptions.storageType || 'indexedDB';
 
     emitApp = logicSrv.getLibOrApp(appName, fixedInnerOptions);
     if (emitApp) {
       // 支持用户拉取同一个模块的多个版本，但是实际工程里不鼓励这么做
       if (!versionId || (versionId && emitApp.versionId === versionId)) {
-        log('[[ preFetch ]] hit cached app', appName, fixedInnerOptions);
+        log(`[[ ${fnName} ]] hit cached app:`, appName, fixedInnerOptions);
         return emitApp;
       }
     }
@@ -90,7 +93,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     // 已加载完毕，（子应用js已开始执行）, 未拿到数据说明应用有异步依赖，继续等一下，直到拿到数据
     if (currentLoadStatus === helLoadStatus.LOADED) {
       emitApp = await waitAppEmit(appName, fixedInnerOptions);
-      log('[[ preFetch ]] return emit app', appName, fixedInnerOptions);
+      log(`[[ ${fnName} ]] return emit app:`, appName, fixedInnerOptions, emitApp);
       return emitApp;
     }
 
@@ -101,10 +104,10 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     }
 
     emitApp = await waitAppEmit(appName, preFetchOptions, loadAssetsStarter);
-    log('[[ preFetch ]] return fetch&emit app', appName, fixedInnerOptions);
+    log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
     return emitApp;
   } catch (err) {
-    log('[[ preFetch ]] err', err);
+    log(`[[ ${fnName} ]] err`, err);
     return emitApp;
   }
 }

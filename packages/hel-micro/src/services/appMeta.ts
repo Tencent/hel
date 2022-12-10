@@ -1,5 +1,6 @@
 import type { IAppAndVer } from 'hel-micro-core';
 import type { ApiMode, Platform } from 'hel-types';
+import { API_NORMAL_GET } from '../consts/logic';
 import type { IGetVerOptions, IHelGetOptions } from './api';
 import * as innerApiSrv from './api';
 
@@ -25,9 +26,14 @@ export function getMetaDataUrl(
     versionId?: string;
     platform?: Platform;
     apiMode?: ApiMode;
+    /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
+    protocol?: 'http' | 'https';
   },
 ): string {
-  const { versionId, platform, apiMode = 'get' } = options || {};
-  const { url } = innerApiSrv.prepareOtherPlatRequestInfo(appName, { platform, versionId, apiMode });
+  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http' } = options || {};
+  let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, apiMode });
+  if (protocol === 'http') {
+    url = url.replace('https:', 'http:');
+  }
   return url;
 }
