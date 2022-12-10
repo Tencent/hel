@@ -10,7 +10,7 @@ export default function makeVersion(options?: IMakeVersionOptions) {
   const { name = 'remote-vue-comps-tpl', platform = 'hel' } = options || {};
   let { versionId } = options || {};
   if (!versionId) {
-    versionId = platform === 'hel' ? `${name}_20220602022833` : `1.1.3`;
+    versionId = platform === 'hel' ? `${name}_20220602022833` : '1.1.3';
   }
   const versionDesc = platform === 'hel' ? `${name}_20220602022833` : `${name}@${versionId}`;
 

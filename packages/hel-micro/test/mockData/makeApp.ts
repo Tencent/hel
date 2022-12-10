@@ -10,7 +10,7 @@ export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: s
   const { name = app.name || 'remote-vue-comps-tpl', app_group_name: appGroupName = app.app_group_name || 'remote-vue-comps-tpl' } = app;
   let { build_version: buildVer } = app;
   if (!buildVer) {
-    buildVer = platform === 'hel' ? `${name}_20220602022833` : `1.1.3`;
+    buildVer = platform === 'hel' ? `${name}_20220602022833` : '1.1.3';
   }
 
   const appDemo = {
