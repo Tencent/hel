@@ -3,9 +3,9 @@ import type { Platform } from 'hel-types';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
 
 interface IVerMatchOptions {
-  platform: Platform;
   emitVer: string;
   inputVer: string;
+  platform?: Platform;
   projectId?: string;
 }
 
