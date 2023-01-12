@@ -87,14 +87,12 @@ module.exports = subApp;
 此处可请求到这个地址的包体的代码如下（[线上示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)）
 
 ```ts
-await preFetchLib("hel-tpl-remote-vue-comps", {
-    async getSubAppAndItsVersionFn() {
-    const res = await fetch(
-      "https://hel-eco.github.io/hel-tpl-remote-vue-comp/as_v1/hel-meta.json"
-    );
+await preFetchLib('hel-tpl-remote-vue-comps', {
+  async getSubAppAndItsVersionFn() {
+    const res = await fetch('https://hel-eco.github.io/hel-tpl-remote-vue-comp/as_v1/hel-meta.json');
     const meta = await res.json(); // 拿到指定部署地址的 meta 描述
     return meta;
-  }
+  },
 });
 ```
 
