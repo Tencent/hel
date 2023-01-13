@@ -29,12 +29,14 @@ export interface IHelGetOptions extends IHelGetOptionsBase {
   projectIdList?: string[];
 }
 
+export type BatchGetFn = (passCtx: {
+  platform: string;
+  url: string;
+  innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer[]>;
+}) => Promise<IAppAndVer[]> | IAppAndVer[];
+
 export interface IHelBatchGetOptions extends IHelGetOptions {
-  batchGetFn?: (passCtx: {
-    platform: string;
-    url: string;
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer[]>;
-  }) => Promise<IAppAndVer[]> | IAppAndVer[];
+  batchGetFn?: BatchGetFn;
 }
 
 /** 内部用的工具函数 */
@@ -324,7 +326,7 @@ export async function batchGetSubAppAndItsVersion(appNames: string[], batchGetOp
 
   let list: IAppAndVer[] = [];
   if (batchGetFn) {
-    const fnParams: Parameters<IHelBatchGetOptions['batchGetFn']>[0] = { url, platform: targetPlatform, innerRequest };
+    const fnParams: Parameters<BatchGetFn>[0] = { url, platform: targetPlatform, innerRequest };
     list = (await Promise.resolve(batchGetFn(fnParams))) as IAppAndVer[];
   } else {
     list = await innerRequest();
