@@ -1,3 +1,13 @@
+import { core } from 'hel-micro';
+import ShadowView from 'shadow-view-react';
+import BuildInSkeleton from './components/BuildInSkeleton';
+import { LocalComp, MicroApp, MicroAppLegacy, MicroAppLegacyMemo } from './components/MicroApp';
+import ShadowBody from './components/ShadowBody';
+import * as hooks from './hooks';
+import { useExecuteCallbackOnce, useForceUpdate } from './hooks/share';
+import renderApp from './process/renderApp';
+import { VER } from './_diff';
+
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 export type {
   GetSubVal,
@@ -29,15 +39,6 @@ export {
   useRemotePureLibComp,
   useRemoteLegacyComp,
 };
-import { core } from 'hel-micro';
-import ShadowView from 'shadow-view-react';
-import BuildInSkeleton from './components/BuildInSkeleton';
-import { LocalComp, MicroApp, MicroAppLegacy, MicroAppLegacyMemo } from './components/MicroApp';
-import ShadowBody from './components/ShadowBody';
-import * as hooks from './hooks';
-import { useExecuteCallbackOnce, useForceUpdate } from './hooks/share';
-import renderApp from './process/renderApp';
-import { VER } from './_diff';
 
 core.log(`hel-micro-react ${VER}`);
 

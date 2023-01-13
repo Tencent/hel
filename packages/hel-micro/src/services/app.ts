@@ -109,9 +109,9 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
           mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
         } else {
           // 将硬盘缓存数据写回到内存
-          cacheApp(appInfo, { appVersion: appVersion, platform, toDisk: false, loadOptions: options });
+          cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
           // 异步缓存一份最新的数据
-          getAndCacheApp(appName, srcInnerOptions).catch((err) => noop(err));
+          getAndCacheApp(appName, srcInnerOptions).catch((err: any) => noop(err));
         }
       }
 
@@ -128,17 +128,17 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
 
     return mayCachedApp;
   } catch (err: any) {
-    // 指定了具体版本但未获取到，上层有指定 fallbackHook，则报错让上层处理
-    if (err.message.includes('ver not found') && getFallbackHook(options)) {
-      if (isFirstCall) {
-        throw err;
-      }
+    // 第一次调用出错，抛上去，让上层再尝试一次
+    if (isFirstCall) {
+      throw err;
+    }
+    // 有指定 fallbackHook，返回空结果，让上层触发兜底函数
+    if (getFallbackHook(options)) {
       return { appInfo: null, appVersion: null };
     }
-    // 首次调用直接报错
-    // 非首次调用依然出错，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
+    // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
     mayCachedApp = await getDiskCachedApp(appName, options);
-    if (isFirstCall || !mayCachedApp) {
+    if (!mayCachedApp) {
       throw err;
     }
     return mayCachedApp;
@@ -150,7 +150,7 @@ export async function getAppAndVersion(appName: string, options: IHelGetOptions)
   const fixedOptions = { ...options, platform, apiMode };
   const { app: appInfo, version: appVersion } = await apiSrv.getSubAppAndItsVersion(appName, fixedOptions);
   if (!appVersion) {
-    throw new Error(`ver ${appInfo.online_version} not found`);
+    throw new Error('no version found or builded');
   }
   return { appInfo, appVersion };
 }
@@ -246,16 +246,15 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
     // !!! 需要人工控制开始加载资源的时机
     if (controlLoadAssets) {
       return startLoad;
-    } else {
-      startLoad();
-      return null;
     }
-  } catch (err) {
+    startLoad();
+    return null;
+  } catch (err: any) {
     if (isFirstCall) {
       console.error('loadApp err and try one more time: ', err);
       const ret = await loadApp(appName, { ...options, isFirstCall: false });
       return ret;
     }
-    throw err;
+    throw new Error(`loadApp err: ${err.message}, recommend config onAppVersionFetched hook`);
   }
 }

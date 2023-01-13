@@ -157,8 +157,6 @@ function MayShadowComp(props: IMayShadowProps) {
       finalStyleUrlList = [];
     }
 
-    // TODO 可考虑将 staticShadowBody 管理下沉到 hel-micro-core 内部，
-    // 以便让库发布者可使用 hel-lib-proxy getStaticShadowBody 获得 staticShadowBody 引用
     return (
       <>
         {shadowMode === 'v1' && (

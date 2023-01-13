@@ -6,6 +6,11 @@ import type { IInnerPreFetchOptions } from '../types';
 import { getUnpkgLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
 import { getDefaultPlatform, guessUserName } from '../_diff';
 
+interface IAppAndVer {
+  app: ISubApp;
+  version: ISubAppVersion;
+}
+
 export interface IHelGetOptionsBase {
   platform?: Platform;
   apiMode?: ApiMode;
@@ -24,13 +29,22 @@ export interface IHelGetOptions extends IHelGetOptionsBase {
   projectIdList?: string[];
 }
 
+export interface IHelBatchGetOptions extends IHelGetOptions {
+  batchGetFn?: (passCtx: {
+    platform: string;
+    url: string;
+    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer[]>;
+  }) => Promise<IAppAndVer[]> | IAppAndVer[];
+}
+
 /** 内部用的工具函数 */
 const inner = {
   /** 处理 unpkg 服务返回的结果 */
   handleUnpkgRet(ret: any, options: IHelGetOptionsBase) {
-    const version = ret.version;
+    const { version } = ret;
+    let retVar = ret;
     if (options.onlyVersion) {
-      ret = version;
+      retVar = version;
     }
     if (!options.isFullVersion && version) {
       Reflect.deleteProperty(version, 'html_content');
@@ -38,7 +52,7 @@ const inner = {
     if (!version) {
       return { data: null, code: '404', msg: 'no version found' };
     }
-    return { data: ret, code: '0', msg: '' };
+    return { data: retVar, code: '0', msg: '' };
   },
   appendSearchKV(oriStr: string, key: string, value?: string) {
     let newStr = oriStr;
@@ -68,22 +82,26 @@ async function executeGet<T extends any = any>(
   // 方便追踪请求耗时
   const perfLabel = `request ${url}`;
   perfStart(perfLabel);
-  if (apiMode === API_NORMAL_GET) {
-    const result = await requestGet(url);
-    ret = result.reply;
-  } else {
-    // jsonp get
-    ret = await getJSON(url);
-  }
-  perfEnd(perfLabel);
+  try {
+    if (apiMode === API_NORMAL_GET) {
+      const result = await requestGet(url);
+      ret = result.reply;
+    } else {
+      // jsonp get
+      ret = await getJSON(url);
+    }
+    perfEnd(perfLabel);
 
-  // 请求 unpkg 平台时拿到的是原始数据，和 hel pack 管理台有差异
-  // 这里做一下抹平处理，以便上层可以用一致的方式读取数据
-  if (platform === PLAT_UNPKG) {
-    return inner.handleUnpkgRet(ret, options);
-  }
+    // 请求 unpkg 平台时拿到的是原始数据，和 hel pack 管理台有差异
+    // 这里做一下抹平处理，以便上层可以用一致的方式读取数据
+    if (platform === PLAT_UNPKG) {
+      return inner.handleUnpkgRet(ret, options);
+    }
 
-  return ret;
+    return ret;
+  } catch (err: any) {
+    return { data: null, code: '404', msg: err.message };
+  }
 }
 
 function ensureApp(app: ISubApp) {
@@ -120,7 +138,16 @@ async function getUnpkgUrl(apiHost: string, appName: string, versionId: string, 
  * 生成请求的 hel-pack 平台的请求信息
  */
 export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], getOptions: IHelGetOptions) {
-  const { versionId, projectId, platform, apiMode, isFullVersion = false, versionIdList = [], projectIdList = [] } = getOptions;
+  const {
+    versionId,
+    projectId,
+    platform,
+    apiMode,
+    isFullVersion = false,
+    versionIdList = [],
+    projectIdList = [],
+    loadOptions,
+  } = getOptions;
 
   // trust me, appName will be reassign later
   let appName: string = appNameOrNames as string;
@@ -136,7 +163,7 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
     isBatch = true;
   }
 
-  const apiHost = getPlatformHost(platform);
+  const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
   const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey } = getPlatformConfig(platform);
   const userName = getUserName?.({ platform: targetPlatform, appName }) || guessUserName(userLsKey || apiSrvConst.USER_KEY);
   let url = '';
@@ -232,14 +259,15 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const reply = await executeGet(custUrl || url, { apiMode: custApiMode || apiMode, platform: targetPlatform });
-    if (0 !== parseInt(reply.code) || !reply) {
+    if (0 !== parseInt(reply.code, 10) || !reply) {
       throw new Error(reply?.msg || 'getSubAppAndItsVersion err');
     }
     return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version) };
   };
 
   if (getFn) {
-    const data = (await Promise.resolve(getFn({ platform: targetPlatform, appName, userName, versionId, url, innerRequest }))) as {
+    const fnParams = { platform: targetPlatform, appName, userName, versionId, url, innerRequest };
+    const data = (await Promise.resolve(getFn(fnParams))) as {
       app: ISubApp;
       version: ISubAppVersion;
     };
@@ -267,7 +295,7 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
   const url = await prepareRequestVersionUrl(versionId, options);
 
   const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, platform: targetPlatform, onlyVersion: true });
-  if (0 !== parseInt(code) || !data) {
+  if (0 !== parseInt(code, 10) || !data) {
     throw new Error(msg || 'ver not found');
   }
 
@@ -278,18 +306,28 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
 /**
  * 批量获取子应用版本详情
  */
-export async function batchGetSubAppAndItsVersion(appNames: string[], getOptions: IHelGetOptions) {
-  const { apiMode } = getOptions;
-  const { url } = await prepareHelPlatRequestInfo(appNames, getOptions);
+export async function batchGetSubAppAndItsVersion(appNames: string[], batchGetOptions: IHelBatchGetOptions) {
+  const { apiMode, batchGetFn, platform } = batchGetOptions;
+  const { platform: targetPlatform } = getPlatformConfig(platform);
+  const { url } = await prepareHelPlatRequestInfo(appNames, batchGetOptions);
+  const innerRequest = async () => {
+    const { data, code, msg } = await executeGet<Array<{ app: ISubApp; version: ISubAppVersion }>>(url, {
+      apiMode,
+      platform: getDefaultPlatform(batchGetOptions.platform),
+    });
+    if (0 !== parseInt(code, 10) || !data) {
+      throw new Error(msg || 'batch get failed');
+    }
+    const list = data.map((item) => ({ app: ensureApp(item.app), version: ensureVersion(item.version) }));
+    return list;
+  };
 
-  const { data, code, msg } = await executeGet<Array<{ app: ISubApp; version: ISubAppVersion }>>(url, {
-    apiMode,
-    platform: getDefaultPlatform(getOptions.platform),
-  });
-  if (0 !== parseInt(code) || !data) {
-    throw new Error(msg || 'batch get failed');
+  let list: IAppAndVer[] = [];
+  if (batchGetFn) {
+    const fnParams: Parameters<IHelBatchGetOptions['batchGetFn']>[0] = { url, platform: targetPlatform, innerRequest };
+    list = (await Promise.resolve(batchGetFn(fnParams))) as IAppAndVer[];
+  } else {
+    list = await innerRequest();
   }
-
-  const list = data.map((item) => ({ app: ensureApp(item.app), version: ensureVersion(item.version) }));
   return list;
 }

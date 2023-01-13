@@ -117,7 +117,7 @@ export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
 export async function requestGet(url: string, asJson = true) {
   const res = await getGlobalThis().fetch(url);
   const { status, url: resUrl } = res;
-  if (status === 404) {
+  if (![200, 304].includes(status)) {
     return { url: resUrl, reply: null };
   }
 

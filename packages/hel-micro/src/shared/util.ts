@@ -20,6 +20,7 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
     log('[[ isEmitVerMatchInputVer ]] emitVer should not be null');
     return true;
   }
+
   // 用在线版本或灰度版本比较
   if (!inputVer) {
     // 判断 projectId 是否传入，传入的话看 proj_ver.map[projectId].o 的值是否存在且是否和 emitVer 相等

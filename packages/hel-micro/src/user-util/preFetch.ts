@@ -11,7 +11,7 @@ import {
 } from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
 import { PLAT_UNPKG } from '../consts/logic';
-import type { IHelGetOptions, IHelGetOptionsBase } from '../services/api';
+import type { IHelBatchGetOptions } from '../services/api';
 import * as apiSrv from '../services/api';
 import { loadApp } from '../services/app';
 import * as logicSrv from '../services/logic';
@@ -31,10 +31,10 @@ const eventBus = getHelEventBus();
 type LoadAssetsStarter = (() => void) | null;
 
 function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | VersionId) {
-  let targetOpts: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
-  targetOpts.platform = getDefaultPlatform(targetOpts.platform);
-  targetOpts.isLib = isLib;
-  return targetOpts;
+  const optionsVar: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
+  optionsVar.platform = getDefaultPlatform(optionsVar.platform);
+  optionsVar.isLib = isLib;
+  return optionsVar;
 }
 
 async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions, loadAssetsStarter?: LoadAssetsStarter) {
@@ -156,21 +156,23 @@ export async function preFetchApp(appName: string, options?: IPreFetchAppOptions
 export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
   appNames: BatchAppNames,
   batchOptions?: {
+    /** 针对单个应用的设置 */
     preFetchConfigs: Record<string, IBatchPreFetchLibOptions | VersionId>;
-    common?: IHelGetOptionsBase;
+    /** 通用设置 */
+    common?: IHelBatchGetOptions;
   },
 ): Promise<T> {
   const versionIdList: string[] = [];
   const projectIdList: string[] = [];
   const optionsMap = batchOptions?.preFetchConfigs || {};
-  const getOptions: IHelGetOptions = { ...(batchOptions?.common || {}) };
+  const getOptions: IHelBatchGetOptions = { ...(batchOptions?.common || {}) };
   const platform = getDefaultPlatform(getOptions.platform);
 
   if (platform === PLAT_UNPKG) {
     throw new Error('only support platform hel!');
   }
   if (appNames.length > 8) {
-    throw new Error('only support 8 appName at most!');
+    throw new Error('only support 8 appName at most!'); // 平台默认只支持最多拉8个
   }
 
   appNames.forEach((name) => {

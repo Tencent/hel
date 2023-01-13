@@ -4,21 +4,21 @@ import { getGlobalThis } from 'hel-micro-core';
 const DOCUMENT_FRAGMENT_NODE = 11;
 
 const JSONP = {
-  now: function () {
+  now() {
     return new Date().getTime();
   },
-  rand: function () {
+  rand() {
     return Math.random().toString().substring(6);
   },
   // 删除节点元素
-  removeElem: function (elem: HTMLElement) {
+  removeElem(elem: HTMLElement) {
     const parent = elem.parentNode;
     if (parent && parent.nodeType !== DOCUMENT_FRAGMENT_NODE) {
       parent.removeChild(elem);
     }
   },
   // url 组装 data
-  parseData: function (data?: string | Record<string, any>) {
+  parseData(data?: string | Record<string, any>) {
     let ret = '';
     if (typeof data === 'string') {
       ret = data;
@@ -32,8 +32,8 @@ const JSONP = {
     ret = ret.substring(1);
     return ret;
   },
-  getJSON: function (inputUrl: string, data?: string | Record<string, any>) {
-    return new Promise<any>((resolve) => {
+  getJSON(inputUrl: string, data?: string | Record<string, any>) {
+    return new Promise<any>((resolve, reject) => {
       let callbackName = '';
       let url = inputUrl;
 
@@ -57,6 +57,8 @@ const JSONP = {
       script.type = 'text/javascript';
       script.src = url;
       script.id = callbackName;
+      script.onerror = reject;
+      script.addEventListener('error', reject); // 早期版本的浏览器不支持 script.onerror
 
       // 把传进来的函数重新组装，并把它设置为全局函数，远程会触发该函数
       // @ts-ignore
@@ -76,4 +78,4 @@ const JSONP = {
   },
 };
 
-export const getJSON = JSONP.getJSON;
+export const { getJSON } = JSONP;
