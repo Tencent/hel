@@ -54,7 +54,6 @@ const {
   trySetMasterAppLoadedSignal,
 } = core;
 
-
 export {
   DEFAULT_ONLINE_VER,
   helEvents,
@@ -92,7 +91,6 @@ export {
   // sdk注入的额外样式列表 get set
   getVerExtraCssList,
   setVerExtraCssList,
-
   getAppPlatform,
   setAppPlatform,
   tryGetVersion,
@@ -102,7 +100,6 @@ export {
   getGlobalThis,
   setGlobalThis,
   trySetMasterAppLoadedSignal,
-
   IOnFetchMetaFailed,
   IGetSubAppAndItsVersionFn,
 };
