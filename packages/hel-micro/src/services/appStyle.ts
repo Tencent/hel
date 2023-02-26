@@ -1,9 +1,9 @@
 /**
  * 样式相关的服务
  */
-import type { HelLoadStatusEnum } from 'hel-micro-core';
-import * as core from 'hel-micro-core';
-import type { IEmitStyleInfo } from 'hel-types';
+import type { HelLoadStatusEnum } from '../deps/helMicroCore';
+import * as core from '../deps/helMicroCore';
+import type { IEmitStyleInfo } from '../deps/helTypes';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IGetOptionsLoose, IInnerPreFetchOptions, IPlatAndVer } from '../types';
 import { merge2List, requestGet } from '../util';

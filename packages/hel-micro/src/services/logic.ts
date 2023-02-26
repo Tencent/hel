@@ -1,6 +1,6 @@
-import { getAppMeta, getPlatform, getPlatformConfig, getVerApp, getVerLib, log } from 'hel-micro-core';
-import type { IEmitAppInfo, Platform } from 'hel-types';
 import { PLAT_UNPKG } from '../consts/logic';
+import { getAppMeta, getPlatform, getPlatformConfig, getVerApp, getVerLib, log } from '../deps/helMicroCore';
+import type { IEmitAppInfo, Platform } from '../deps/helTypes';
 import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
 

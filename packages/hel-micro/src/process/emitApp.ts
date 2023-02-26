@@ -1,5 +1,5 @@
-import { getAppPlatform, getHelEventBus, helEvents, setEmitApp, tryGetAppName, tryGetVersion } from 'hel-micro-core';
-import { IEmitAppInfo } from 'hel-types';
+import { getAppPlatform, getHelEventBus, helEvents, setEmitApp, tryGetAppName, tryGetVersion } from '../deps/helMicroCore';
+import { IEmitAppInfo } from '../deps/helTypes';
 
 const eventBus = getHelEventBus();
 

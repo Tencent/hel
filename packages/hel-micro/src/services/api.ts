@@ -1,10 +1,10 @@
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK, PLAT_UNPKG } from '../consts/logic';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from '../deps/helTypes';
+import { getDefaultPlatform, guessUserName } from '../deps/plat';
 import { getPlatformConfig, getPlatformHost } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
 import { getUnpkgLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
-import { getDefaultPlatform, guessUserName } from '../_diff';
 
 interface IAppAndVer {
   app: ISubApp;
@@ -309,6 +309,10 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
  * 批量获取子应用版本详情
  */
 export async function batchGetSubAppAndItsVersion(appNames: string[], batchGetOptions: IHelBatchGetOptions) {
+  if (!appNames.length) {
+    return [];
+  }
+
   const { apiMode, batchGetFn, platform } = batchGetOptions;
   const { platform: targetPlatform } = getPlatformConfig(platform);
   const { url } = await prepareHelPlatRequestInfo(appNames, batchGetOptions);

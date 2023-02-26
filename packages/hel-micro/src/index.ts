@@ -1,5 +1,5 @@
-import * as core from 'hel-micro-core';
 import defaultsCst from './consts/defaults';
+import * as core from './deps/helMicroCore';
 import emitApp from './process/emitApp';
 import * as appMetaSrv from './services/appMeta';
 import * as appParamSrv from './services/appParam';

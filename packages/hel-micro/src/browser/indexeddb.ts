@@ -1,7 +1,7 @@
 /**
  * 本代码实现参考localforage库：https://localforage.github.io/localForage/#localforage
  */
-import { getGlobalThis } from 'hel-micro-core';
+import { getGlobalThis } from '../deps/helMicroCore';
 import { purify } from '../util';
 
 interface IOptions {
@@ -172,69 +172,61 @@ export class IndexedDBStorage {
     return false;
   }
 
-  getObjectStore(storeName: string, mode?: IDBTransactionMode): [Error | null, IDBObjectStore | null] {
-    try {
-      const { db } = this.dbInfo;
-      if (!db) {
-        throw new Error('forget init');
-      }
-      const tx = db.transaction(storeName, mode || 'readonly').objectStore(storeName);
-      return [null, tx];
-    } catch (e: any) {
-      console.error(`get ${storeName} objectStore failed in ${this.dbInfo.name} database`);
-      return [e, null];
+  async getObjectStore(mode?: IDBTransactionMode): Promise<IDBObjectStore> {
+    const dbInfo = await this.getDbInfo();
+    const { name, db, storeName } = dbInfo;
+    if (!db) {
+      throw new Error(`get ${storeName} objectStore failed in ${name} database`);
     }
+    const objectStore = db.transaction(storeName, mode || 'readonly').objectStore(storeName);
+    return objectStore;
+  }
+
+  attachHandler(req: IDBRequest, resolve: any, reject: any) {
+    req.onsuccess = () => {
+      resolve(req.result || null);
+    };
+    req.onerror = () => {
+      reject(req.error);
+    };
   }
 
   getItem<Value extends any = any>(key: string) {
-    const promise = new Promise<Value | null>((resolve, reject) => {
-      this.getReady()
-        ?.then((dbInfo) => {
-          const [error, objectStore] = this.getObjectStore(dbInfo.storeName);
-          if (error || !objectStore) {
-            reject(error);
-            return;
-          }
-          const getreq = objectStore.get(key);
-          getreq.onsuccess = function () {
-            resolve(getreq.result || null);
-          };
-          getreq.onerror = function () {
-            reject(getreq.error);
-          };
+    return new Promise<Value | null>((resolve, reject) => {
+      this.getObjectStore()
+        .then((objectStore) => {
+          const req = objectStore.get(key);
+          this.attachHandler(req, resolve, reject);
         })
         .catch(reject);
     });
-
-    return promise;
   }
 
   setItem<T extends any = any>(key: string, value: T) {
-    const promise = new Promise<T>((resolve, reject) => {
-      this.getReady()
-        ?.then((dbInfo) => {
-          const [error, objectStore] = this.getObjectStore(dbInfo.storeName, 'readwrite');
-          if (error || !objectStore) {
-            reject(error);
-            return;
-          }
-          const putreq = objectStore.put(value, key);
-          putreq.onsuccess = function () {
-            resolve(value);
-          };
-          putreq.onerror = function () {
-            reject(putreq.error);
-          };
+    return new Promise<T>((resolve, reject) => {
+      this.getObjectStore('readwrite')
+        .then((objectStore) => {
+          const req = objectStore.put(value, key);
+          this.attachHandler(req, resolve, reject);
         })
         .catch(reject);
     });
-
-    return promise;
   }
 
-  getReady() {
+  removeItem<T extends any = any>(key: string) {
+    return new Promise<T>((resolve, reject) => {
+      this.getObjectStore('readwrite')
+        .then((objectStore) => {
+          const req = objectStore.delete(key);
+          this.attachHandler(req, resolve, reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  getDbInfo() {
     if (!this.ready) {
-      throw new Error('forget init');
+      return Promise.reject('forget init');
     }
     return this.ready;
   }

@@ -1,5 +1,5 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from 'hel-micro-core';
-import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from 'hel-types';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from './deps/helMicroCore';
+import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from './deps/helTypes';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -127,11 +127,18 @@ export interface IPreFetchOptionsBase {
   /**
    * default: false
    * 是否开启本地缓存
-   * 为 true ，每次都优先尝试读取本地缓存的应用数据，再异步的拉取的一份新的应用数据缓存起来
+   * 为 true ，每次都优先尝试读取本地缓存的应用数据，再异步的拉取的一份新的应用数据缓存起来（ 可通过设置enableSyncMeta 为 false 关闭 ）
    * 优点是可提速模块加载速度，节约元数据获取的时间，缺点是则是发版本后，用户需要多刷新一次才能看到最新版本
    * 为 false ，则总是同步的拉最新的应用数据
    */
   enableDiskCache?: boolean;
+  /** default: true
+   * 当设置硬盘缓存 enableDiskCache 为 true 且发现了已缓存元数据时，此参数才有效，
+   * 表示是否发起延迟请求去异步地同步一下最新的元数据，
+   * 如设置了 enableDiskCache 为 true 且 enableSyncMeta 为 false 时，如已存在缓存元数据 sdk 则会一直使用该缓存
+   * 为了让 sdk 重新最新元数据，可调用 appMetaSrv.clearDiskCachedApp(appName) 来人工清除缓存数据
+   */
+  enableSyncMeta?: boolean;
   /**
    * default: localStorage
    * 选择本地缓存的类型是 localStorage 还是 indexedDB

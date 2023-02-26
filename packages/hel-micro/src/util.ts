@@ -1,4 +1,4 @@
-import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis } from 'hel-micro-core';
+import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis } from './deps/helMicroCore';
 import type { IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {

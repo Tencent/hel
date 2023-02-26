@@ -38,8 +38,13 @@ function needIgnore(parseOptions, /** @type string */ srcOrHref, hreflang = '') 
     }
     // 以双斜杠开头的script引用直接忽略
     if (srcOrHref.startsWith('//')) return true;
+
+    if ((srcOrHref.startsWith('/') || srcOrHref.startsWith('./') || srcOrHref.startsWith('../'))) {
+      return false; // 允许将 /xx/bb.js 格式的值写入到元数据里，适用于资源随主站点部署的情况
+    }
+
     // 用户的子应用未能正确埋入 CMS_APP_HOME_PAGE，需要修改构建脚本的 publicPath 获取方式
-    throw new Error(`src or href is invalid, it must refer to a cdn host, now it is ${srcOrHref}`);
+    throw new Error(`src or href is invalid, it must refer to a cdn host or relative path, now it is ${srcOrHref}`);
   }
   // 控制不忽略，会尝试提取 innerHtml
   return false;

@@ -1,9 +1,9 @@
 /**
  * 参数相关服务
  */
-import * as core from 'hel-micro-core';
+import * as core from '../deps/helMicroCore';
+import { getDefaultPlatform } from '../deps/plat';
 import type { IGetOptionsLoose, IGroupedStyleList, IPlatAndVer } from '../types';
-import { getDefaultPlatform } from '../_diff/index';
 
 /**
  * 推导当前应用的平台与版本

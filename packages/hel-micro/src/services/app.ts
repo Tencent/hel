@@ -1,10 +1,10 @@
-import * as core from 'hel-micro-core';
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import { loadAppAssets } from '../browser';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
 import { PLAT_UNPKG } from '../consts/logic';
 import storageKeys from '../consts/storageKeys';
+import * as core from '../deps/helMicroCore';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from '../deps/helTypes';
 import { getPlatform, getPlatformConfig } from '../shared/platform';
 import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
@@ -63,15 +63,29 @@ async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions)
   return safeParse(appCacheStr || '', null);
 }
 
+export async function clearDiskCachedApp(appName: string) {
+  const indexedDBStorage = getIndexedDB();
+  if (indexedDBStorage) {
+    await indexedDBStorage.removeItem(getAppCacheKey(appName));
+  }
+  getLocalStorage().removeItem(getAppCacheKey(appName));
+}
+
 function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
   if (appVersion && typeof options.onAppVersionFetched === 'function') {
     options.onAppVersionFetched(appVersion);
   }
 }
 
-async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions) {
-  let mayCachedApp: ICacheData | null = null;
-  const { enableDiskCache = defaults.ENABLE_DISK_CACHE, versionId = '', projectId = '', isFirstCall = true, custom } = options;
+export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions, fnOptions?: { callRemote?: boolean }) {
+  const {
+    enableDiskCache = defaults.ENABLE_DISK_CACHE,
+    enableSyncMeta = defaults.ENABLE_SYNC_META,
+    versionId = '',
+    projectId = '',
+    custom,
+  } = options;
+  const { callRemote = true } = fnOptions || {};
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
   // 调试模式
@@ -85,47 +99,65 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
   const memApp = core.getAppMeta(appName, platform);
   const memAppVersion = core.getVersion(appName, { platform });
 
-  try {
-    const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
-    // 优先从内存获取
-    if (
-      platform !== PLAT_UNPKG
-      && memApp
-      && memAppVersion
-      && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
-    ) {
-      mayCachedApp = { appInfo: memApp, appVersion: memAppVersion };
+  const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
+  // 优先从内存获取
+  if (
+    platform !== PLAT_UNPKG
+    && memApp
+    && memAppVersion
+    && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
+  ) {
+    return { appInfo: memApp, appVersion: memAppVersion };
+  }
 
-      // 允许使用硬盘缓存的情况下，尝试优先从硬盘获取
-    } else if (enableDiskCache) {
-      mayCachedApp = await getDiskCachedApp(appName, options);
-      if (!mayCachedApp) {
-        mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
-      } else {
-        const { appInfo, appVersion } = mayCachedApp;
+  let mayCachedApp: ICacheData | null = null;
+  const tryGetFromRemote = async (allowGet: boolean) => {
+    if (allowGet) {
+      const remoteApp = await getAndCacheApp(appName, srcInnerOptions);
+      return remoteApp;
+    }
+    return null;
+  };
 
-        // 缓存无效，从远端获取，（注：enableDiskCache = true 情况下，未指定 versionId 时，总是相信本地缓存是最新的）
-        if (versionId && appVersion.sub_app_version !== versionId) {
-          mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
-        } else {
-          // 将硬盘缓存数据写回到内存
-          cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
-          // 异步缓存一份最新的数据
-          getAndCacheApp(appName, srcInnerOptions).catch((err: any) => noop(err));
-        }
-      }
-
-      // 从远端获取
+  // 允许使用硬盘缓存的情况下，尝试优先从硬盘获取
+  if (enableDiskCache) {
+    mayCachedApp = await getDiskCachedApp(appName, options);
+    if (!mayCachedApp) {
+      mayCachedApp = await tryGetFromRemote(callRemote);
     } else {
-      mayCachedApp = await getAndCacheApp(appName, srcInnerOptions);
+      const { appInfo, appVersion } = mayCachedApp;
+
+      // 缓存无效，从远端获取，（注：enableDiskCache = true 情况下，未指定 versionId 时，总是相信本地缓存是最新的）
+      if (versionId && appVersion.sub_app_version !== versionId) {
+        mayCachedApp = await tryGetFromRemote(callRemote);
+      } else {
+        // 将硬盘缓存数据写回到内存
+        cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
+        // 异步缓存一份最新的数据
+        tryGetFromRemote(enableSyncMeta).catch((err: any) => noop(err));
+      }
     }
 
-    // 此处记录【应用组名】对应【平台】，仅为了让模块暴露方在使用 exposeLib 接口或 libReady 接口如未显式的指定平台值，
-    // 但 preFetch 指定了平台值去拉取模块时，能够自动帮 exposeLib、libReady 推导出模块对应的平台值
-    // 但是依然强烈建议给 exposeLib 、libReady 显式指定平台值，避免用户通过 preFetchLib 引入了多平台的同名包体时
-    // 出现推导错误的情况出现
-    core.setAppPlatform(appName, platform);
+    // 从远端获取
+  } else {
+    mayCachedApp = await tryGetFromRemote(callRemote);
+  }
 
+  // 此处记录【应用组名】对应【平台】，仅为了让模块暴露方在使用 exposeLib 接口或 libReady 接口如未显式的指定平台值，
+  // 但 preFetch 指定了平台值去拉取模块时，能够自动帮 exposeLib、libReady 推导出模块对应的平台值
+  // 但是依然强烈建议给 exposeLib 、libReady 显式指定平台值，避免用户通过 preFetchLib 引入了多平台的同名包体时
+  // 出现推导错误的情况出现
+  if (mayCachedApp) {
+    core.setAppPlatform(appName, platform);
+  }
+
+  return mayCachedApp;
+}
+
+async function getAppFromRemoteOrLocalWithFallback(appName: string, options: IInnerPreFetchOptions) {
+  const { isFirstCall = true } = options;
+  try {
+    const mayCachedApp = await getAppFromRemoteOrLocal(appName, options);
     return mayCachedApp;
   } catch (err: any) {
     // 第一次调用出错，抛上去，让上层再尝试一次
@@ -137,7 +169,7 @@ async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchO
       return { appInfo: null, appVersion: null };
     }
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
-    mayCachedApp = await getDiskCachedApp(appName, options);
+    const mayCachedApp = await getDiskCachedApp(appName, options);
     if (!mayCachedApp) {
       throw err;
     }
@@ -216,7 +248,8 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
   const { isFirstCall = true, controlLoadAssets = false } = options;
 
   try {
-    let { appInfo, appVersion } = await getAppFromRemoteOrLocal(appName, options);
+    const appData = await getAppFromRemoteOrLocalWithFallback(appName, options);
+    let { appInfo, appVersion } = appData || {};
     const noMeta = !appInfo || !appVersion;
 
     // 尝试读取用户兜底数据
@@ -227,6 +260,7 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
         if (meta) {
           appInfo = meta.app;
           appVersion = meta.version;
+          cacheApp(appInfo, { appVersion, platform: getPlatform(options.platform), toDisk: false, loadOptions: options });
         }
       }
     }

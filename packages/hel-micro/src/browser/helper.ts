@@ -1,5 +1,5 @@
-import { getGlobalThis } from 'hel-micro-core';
 import storageKeys from '../consts/storageKeys';
+import { getGlobalThis } from '../deps/helMicroCore';
 import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 
 export function getIndexedDB() {
@@ -18,9 +18,14 @@ export function getIndexedDB() {
     return indexedDBIns.getItem<T>(key);
   }
 
+  function removeItem<T extends any = any>(key: string) {
+    return indexedDBIns.removeItem<T>(key);
+  }
+
   return {
     getItem,
     setItem,
+    removeItem,
   };
 }
 
@@ -28,7 +33,7 @@ export function getIndexedDB() {
 // [DOMException [SecurityError]: localStorage is not available for opaque origins]
 export function getLocalStorage() {
   // prettier-ignore
-  const mockStorage = { getItem() { }, setItem() { } };
+  const mockStorage = { getItem() { }, setItem() { }, removeItem() { } };
   try {
     const storage = getGlobalThis()?.localStorage;
     return storage || mockStorage;

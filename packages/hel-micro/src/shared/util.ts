@@ -1,5 +1,5 @@
-import { getAppMeta, log } from 'hel-micro-core';
-import type { Platform } from 'hel-types';
+import { getAppMeta, log } from '../deps/helMicroCore';
+import type { Platform } from '../deps/helTypes';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
 
 interface IVerMatchOptions {

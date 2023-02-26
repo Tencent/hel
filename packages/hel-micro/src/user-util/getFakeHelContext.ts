@@ -1,5 +1,5 @@
-import { getAppPlatform, getGlobalThis } from 'hel-micro-core';
-import type { Platform } from 'hel-types';
+import { getAppPlatform, getGlobalThis } from '../deps/helMicroCore';
+import type { Platform } from '../deps/helTypes';
 
 function getBodyContainer(idOrTriggerNode: any) {
   if (typeof idOrTriggerNode === 'string') {

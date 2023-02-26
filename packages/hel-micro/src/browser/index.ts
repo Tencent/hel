@@ -1,5 +1,5 @@
-import { getGlobalThis } from 'hel-micro-core';
-import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
+import { getGlobalThis } from '../deps/helMicroCore';
+import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from '../deps/helTypes';
 import type { CssAppendType, IChangeAttrs, IInnerPreFetchOptions, ILinkInfo, IScriptInfo } from '../types';
 import { getAllExtraCssList, helLinkId, helScriptId, merge2List, noop } from '../util';
 

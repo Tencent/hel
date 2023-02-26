@@ -1,5 +1,5 @@
-import { getGlobalThis } from 'hel-micro-core';
 import defaultsCst from '../consts/defaults';
+import { getGlobalThis } from '../deps/helMicroCore';
 
 function getExtraDataPrefix(appName: string) {
   return `${defaultsCst.EXTRA_DATA_PREFIX}.${appName}`;

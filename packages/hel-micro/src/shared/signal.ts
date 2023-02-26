@@ -1,3 +1,3 @@
-import * as core from 'hel-micro-core';
+import * as core from '../deps/helMicroCore';
 
-export const isSubApp = core.isSubApp;
+export const { isSubApp } = core;

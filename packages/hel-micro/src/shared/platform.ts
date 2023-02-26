@@ -1,5 +1,5 @@
-import * as core from 'hel-micro-core';
-import type { Platform } from 'hel-types';
+import * as core from '../deps/helMicroCore';
+import type { Platform } from '../deps/helTypes';
 
 export function getPlatform(platform?: Platform): Platform {
   return platform || core.getPlatform();
