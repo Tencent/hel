@@ -1,7 +1,7 @@
 import * as baseUtilsMod from './base-utils/index';
 import checkMod from './check';
+import cstMod from './configs/consts';
 import extractHelMetaJsonMod from './meta-extractor/index';
-import cstMod from './share/cst';
 import createLibSubAppMod from './sub-app/createLibSubApp';
 import createReactSubAppMod from './sub-app/createReactSubApp';
 import createVue2SubAppMod from './sub-app/createVue2SubApp';

@@ -1,5 +1,6 @@
-/** @typedef {import('types/biz').FileDesc} FileDesc*/
+/** @typedef {import('../../typings').FileDesc} FileDesc*/
 import * as fs from 'fs';
+import cst from '../configs/consts';
 
 /**
  * 递归获得某个目录下的所有文件绝对路径
@@ -71,7 +72,7 @@ export function verboseH(argHandler, ...args) {
 export function verboseObj(...args) {
   verboseH((arg) => {
     if (typeof arg === 'object') return JSON.stringify(arg);
-    else return arg;
+    return arg;
   }, ...args);
 }
 
@@ -110,13 +111,14 @@ export function getZoneNameFromHomePage(homePage) {
 
 const cdnType2host = {
   unpkg: 'https://unpkg.com',
+  jsdelivr: 'https://cdn.jsdelivr.net/npm',
 };
 
 export function getNpmCdnHomePage(packageJson, options) {
-  const { npmCdnType = 'unpkg', distDir = 'hel_dist', homePage } = options;
+  const { npmCdnType = cst.DEFAULT_NPM_CDN_TYPE, distDir = cst.HEL_DIST_DIR, homePage } = options;
   const { name, version } = packageJson;
   // 优先考虑用户透传的 homePage，表示用户部署了 unpkg 私服
-  const unpkgHost = homePage || cdnType2host[npmCdnType];
-  // TDDO，未来考虑更多类型的 cdn，如：jsdelivr
+  const unpkgHost = homePage || cdnType2host[npmCdnType] || '';
+  // TODO，未来考虑更多类型的 cdn，如：jsdelivr
   return `${unpkgHost}/${name}@${version}/${distDir}`;
 }

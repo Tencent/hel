@@ -1,6 +1,7 @@
-/** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
+/** @typedef {import('../../typings').SrcMap} SrcMap*/
 import fs from 'fs';
 import util from 'util';
+import { ensureSlash } from '../base-utils/index';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull, purify } from '../inner-utils/obj';
@@ -8,15 +9,20 @@ import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
 
+function isRelativePath(path) {
+  if (path.startsWith('//')) return false;
+  return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
+}
+
 function getLinkType(appHomePage, srcOrHref) {
-  if (srcOrHref.startsWith(appHomePage)) {
+  if (isRelativePath(appHomePage) || srcOrHref.startsWith(appHomePage)) {
     return 'link';
   }
   return 'staticLink';
 }
 
 function getScriptType(appHomePage, srcOrHref) {
-  if (srcOrHref.startsWith(appHomePage)) {
+  if (isRelativePath(appHomePage) || srcOrHref.startsWith(appHomePage)) {
     return 'script';
   }
   return 'staticScript';
@@ -39,12 +45,12 @@ function needIgnore(parseOptions, /** @type string */ srcOrHref, hreflang = '') 
     // 以双斜杠开头的script引用直接忽略
     if (srcOrHref.startsWith('//')) return true;
 
-    if ((srcOrHref.startsWith('/') || srcOrHref.startsWith('./') || srcOrHref.startsWith('../'))) {
+    if (isRelativePath(srcOrHref)) {
       return false; // 允许将 /xx/bb.js 格式的值写入到元数据里，适用于资源随主站点部署的情况
     }
 
     // 用户的子应用未能正确埋入 CMS_APP_HOME_PAGE，需要修改构建脚本的 publicPath 获取方式
-    throw new Error(`src or href is invalid, it must refer to a cdn host or relative path, now it is ${srcOrHref}`);
+    throw new Error(`src or href is invalid, it must refer to a cdn host, now it is ${srcOrHref}`);
   }
   // 控制不忽略，会尝试提取 innerHtml
   return false;
@@ -53,14 +59,14 @@ function needIgnore(parseOptions, /** @type string */ srcOrHref, hreflang = '') 
 let custScriptIdx = 0;
 async function writeInnerHtml(childDom, fileType, parseOptions) {
   const { buildDirFullPath, appHomePage } = parseOptions;
-  const innerHTML = childDom.innerHTML;
+  const { innerHTML } = childDom;
   if (!innerHTML) return '';
 
   verbose(`found a user customized ${fileType} tag node in html, try extract its content and write them to local fs`);
-  custScriptIdx++;
+  custScriptIdx += 1;
   const scriptName = `hel_userChunk_${custScriptIdx}.${fileType}`;
   const fileAbsolutePath = `${buildDirFullPath}/${scriptName}`;
-  const fileWebPath = `${appHomePage}/${scriptName}`;
+  const fileWebPath = `${ensureSlash(appHomePage, false)}/${scriptName}`;
 
   await writeFile(fileAbsolutePath, innerHTML);
   verbose(`write done, the web file will be ${fileWebPath} later`);
@@ -161,7 +167,7 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
 }
 
 /**
- * @param {import('types/biz').IUserExtractOptions} extractOptions
+ * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function fillAssetListByDist(parsedRet, extractOptions) {
   const { buildDirFullPath, appHomePage } = extractOptions;
@@ -178,7 +184,7 @@ export async function fillAssetListByDist(parsedRet, extractOptions) {
     // 避免 buildDirFullPath 是以 / 结尾的，导致 filePathUnderBuild 非 / 开头
     const maySlash = filePathUnderBuild.startsWith('/') ? '' : '/';
     // 拼出 web 路径
-    const fileWebPath = `${appHomePage}${maySlash}${filePathUnderBuild}`;
+    const fileWebPath = `${ensureSlash(appHomePage)}${maySlash}${filePathUnderBuild}`;
 
     // 补上剩余的 css 文件路径
     if (fileWebPath.endsWith('.css')) {

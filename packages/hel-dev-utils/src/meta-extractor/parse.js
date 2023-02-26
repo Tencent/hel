@@ -1,4 +1,4 @@
-/** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
+/** @typedef {import('../../typings').SrcMap} SrcMap*/
 import * as fs from 'fs';
 import jsdom from 'jsdom';
 import * as util from 'util';
@@ -10,7 +10,7 @@ const readFile = util.promisify(fs.readFile);
 const { JSDOM } = jsdom;
 
 /**
- * @param {import('types/biz').IUserExtractOptions} extractOptions
+ * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
   const { appHomePage, appName, extractMode, buildDirFullPath } = extractOptions;
@@ -22,10 +22,10 @@ export async function parseIndexHtml(extractOptions) {
   const srcMap = makeAppVersionSrcMap(appHomePage);
 
   const dom = new JSDOM(htmlContent);
-  const document = dom.window.document;
+  const { head, body } = dom.window.document;
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(document.head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true }),
-    fillAssetList(document.body.children, srcMap, { extractMode, buildDirFullPath, appHomePage }),
+    fillAssetList(head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true }),
+    fillAssetList(body.children, srcMap, { extractMode, buildDirFullPath, appHomePage }),
   ]);
 
   replaceContentListOfHead.forEach((item) => {

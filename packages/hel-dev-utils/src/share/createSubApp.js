@@ -1,7 +1,7 @@
-/** @typedef {import('typings').IInnerSubAppOptions} IInnerSubAppOptions */
-/** @typedef {import('typings').ICreateSubAppOptions} ICreateSubAppOptions */
+/** @typedef {import('../../typings').IInnerSubAppOptions} IInnerSubAppOptions */
+/** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import * as base from '../base-utils/index';
-import cst from './cst';
+import cst from '../configs/consts';
 
 const presetExternals = {
   react: base.getReactExternals(),
@@ -19,12 +19,20 @@ const presetExternals = {
  */
 export default function createSubApp(pkg, innerOptions, userOptions) {
   const { frameworkType } = innerOptions;
-  const optionsVar = userOptions || {};
+  const optionsVar = Object.assign(
+    {
+      platform: cst.DEFAULT_PLAT,
+      npmCdnType: cst.DEFAULT_NPM_CDN_TYPE,
+      handleHomePage: true,
+    },
+    userOptions || {},
+  );
   const envParams = base.getHelEnvParams(pkg, optionsVar);
   const externals = optionsVar.externals || presetExternals[frameworkType];
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 
   return {
+    platform: optionsVar.platform,
     /**
      * 资源的网络根目录
      * 形如：
@@ -32,6 +40,7 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
      * 2 http://www.cdn.com/xxx/yyy
      */
     homePage: envParams.appHomePage,
+    npmCdnType: optionsVar.npmCdnType,
     groupName: envParams.appGroupName,
     /** 构建时可注入到应用的APP_NAME下 */
     name: envParams.appName,

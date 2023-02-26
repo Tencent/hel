@@ -1,6 +1,7 @@
-/** @typedef {import('types/domain-inner').SrcMap} SrcMap*/
+/** @typedef {import('../../typings').SrcMap} SrcMap*/
 import * as fs from 'fs';
-import { PLUGIN_VER } from '../configs/consts';
+import { ensureSlash } from '../base-utils/index';
+import cst from '../configs/consts';
 
 /**
  * 递归获得某个目录下的所有文件绝对路径
@@ -11,7 +12,7 @@ import { PLUGIN_VER } from '../configs/consts';
 export function getAllFilePath(dirPath) {
   const _getAllFilePath = (dirPath, filePathList) => {
     const names = fs.readdirSync(dirPath);
-    names.forEach(function (name) {
+    names.forEach((name) => {
       const stats = fs.statSync(`${dirPath}/${name}`);
       if (stats.isDirectory()) {
         _getAllFilePath(`${dirPath}/${name}`, filePathList);
@@ -36,7 +37,7 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
   // 从上往下的key顺序也是在html创建的顺序
   return {
     webDirPath: homePage,
-    htmlIndexSrc: `${homePage}/index.html`,
+    htmlIndexSrc: `${ensureSlash(homePage, false)}/index.html`,
     iframeSrc,
     chunkCssSrcList: [], // app's all css files
     privCssSrcList: [], // 独立放置 hreflang 为 PRIV_CSS 的文件
@@ -47,12 +48,44 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap
- * @param {import('types/biz').IUserExtractOptions} userExtractOptions
+ * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { appName, packageJson, extractMode = 'build' } = userExtractOptions;
+  const { appName, packageJson, extractMode = 'build', platform = cst.DEFAULT_PLAT, appHomePage } = userExtractOptions;
   const appGroupName = packageJson.appGroupName || appName;
-  const version = packageJson.version;
+
+  /**
+   *  构建版本号，当指定了 appHomePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
+   *  默认生成规则：
+   *  内网包：裁出 appHomePage ${cdnHost}/${appZone}/${appName}_${dateStr} 里的 ${appName}_${dateStr} 作为版本号
+   *  外网包：pkg.version
+   */
+  let version = userExtractOptions.buildVer;
+  const packVer = packageJson.version;
+  if (!version) {
+    if (platform === 'unpkg') {
+      version = packVer;
+    } else {
+      try {
+        // ${cdnHost}/${appZone}/${appName}_${dateStr}
+        const [, restStr] = appHomePage.split('//');
+        const [, , versionMakeOnPipeline] = restStr.split('/');
+        if (versionMakeOnPipeline) {
+          const arr = versionMakeOnPipeline.split('_');
+          const lastItem = arr[arr.length - 1];
+          // 特征符合 helpack 的版本号
+          if (lastItem && lastItem.length === 14 && new RegExp('^[1-9]+[0-9]*$').test(lastItem)) {
+            version = versionMakeOnPipeline;
+          }
+        }
+      } catch (err) {}
+
+      if (!version) {
+        // 自定义 homePage 后，版本未必能推导出来，降级为使用 package.json 版本号
+        version = packVer;
+      }
+    }
+  }
   const repo = packageJson.repository || {};
 
   return {
@@ -65,7 +98,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       build_version: version,
     },
     version: {
-      plugin_ver: PLUGIN_VER,
+      plugin_ver: cst.PLUGIN_VER,
       sub_app_name: appName,
       sub_app_version: version,
       src_map: parsedRet.srcMap,

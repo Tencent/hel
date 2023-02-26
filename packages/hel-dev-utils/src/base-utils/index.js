@@ -1,15 +1,15 @@
-/** @typedef {import('typings').ICreateSubAppOptions} ICreateSubAppOptions */
+/** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import { getNpmCdnHomePage } from '../inner-utils/index';
 
 export function ensureSlash(inputPath, needsSlash) {
   const hasEndSlash = inputPath.endsWith('/');
   if (hasEndSlash && !needsSlash) {
     return inputPath.substr(0, inputPath.length - 1);
-  } else if (!hasEndSlash && needsSlash) {
-    return `${inputPath}/`;
-  } else {
-    return inputPath;
   }
+  if (!hasEndSlash && needsSlash) {
+    return `${inputPath}/`;
+  }
+  return inputPath;
 }
 
 export function getHelProcessEnvParams() {
@@ -46,28 +46,34 @@ export function getHelProcessEnvParams() {
  * @returns
  */
 export function getHelEnvParams(pkg, options = {}) {
-  let cdnHomPage = options.homePage;
-  // 改写为 unpkg 的 homePage 模式，此时如果透传了 homePage，表示为 unpkg 私服
-  if (options.npmCdnType) {
-    cdnHomPage = getNpmCdnHomePage(pkg, { npmCdnType: options.npmCdnType, homePage: options.homePage });
+  const { platform, homePage: userCustomHomePage, handleHomePage = true, npmCdnType } = options;
+  let cdnHomePage = '';
+  // 计算 unpkg 平台 的 homePage 值，此时如果透传了 homePage，表示 unpkg 为私服
+  if (platform === 'unpkg' && handleHomePage) {
+    cdnHomePage = getNpmCdnHomePage(pkg, { npmCdnType, homePage: userCustomHomePage });
   }
 
   // 来自 process.env 的值优先级最高
   const p0EnvParams = getHelProcessEnvParams();
   return {
-    appHomePage: p0EnvParams.appHomePage || cdnHomPage || pkg.homepage || '',
+    appHomePage: p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '',
     appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || '',
     appName: p0EnvParams.appName || pkg.appGroupName || '',
   };
 }
 
 /**
- *
- * @param {string} appName - hel 管理台注册的应用名
+ * @param {string} appName - hel 管理台注册的应用名 或 package.name
+ * @param {boolean} [useTimestampSuffix=true] - default: true, 是否设置时间戳后缀
+ * 设置为 true 时，支持同一个模块正确执行多版本js文件
+ * 如不需要同屏加载同一个模块的多个版本功能，且需要自己定制一些其他逻辑，可以设置为false
  */
-export function getJsonpFnName(appName) {
-  // 支持同一个模块正确执行多版本js文件
-  return `helJsonp_${appName}_${Date.now()}`;
+export function getJsonpFnName(appName, useTimestampSuffix = true) {
+  if (useTimestampSuffix) {
+    return `helJsonp_${appName}_${Date.now()}`;
+  }
+
+  return `helJsonp_${appName}`;
 }
 
 /**

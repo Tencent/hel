@@ -35,7 +35,9 @@ const config = {
   output: {
     ...env2outputConf[env],
     exports: 'named',
-    globals: {},
+    globals: {
+      'hel-micro-core': 'helMicroCore',
+    },
   },
   plugins: [
     commonjs(),

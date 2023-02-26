@@ -12,6 +12,7 @@ import { getExtraData, setExtraData } from './user-util/extraData';
 import getFakeHelContext from './user-util/getFakeHelContext';
 import { batchPreFetchLib, preFetchApp, preFetchLib } from './user-util/preFetch';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase } from './types';
+
 export {
   preFetchLib,
   preFetchApp,
