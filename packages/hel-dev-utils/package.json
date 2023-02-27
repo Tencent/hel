@@ -1,6 +1,6 @@
 {
   "name": "hel-dev-utils",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "hel dev utils",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
   },
   "dependencies": {
-    "jsdom": ">=12.0.0"
+    "jsdom": "^15.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -46,7 +46,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "jsdom": ">=12.0.0"
+    "jsdom": "^15.0.0"
   },
   "bundleDependencies": false,
   "deprecated": false
