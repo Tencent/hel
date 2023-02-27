@@ -170,7 +170,8 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function fillAssetListByDist(parsedRet, extractOptions) {
-  const { buildDirFullPath, appHomePage } = extractOptions;
+  const { buildDirFullPath, subApp } = extractOptions;
+  const { homePage } = subApp;
   const { srcMap } = parsedRet;
   const fileFullPathList = getAllFilePath(buildDirFullPath);
   verbose('filePathList', fileFullPathList);
@@ -184,7 +185,7 @@ export async function fillAssetListByDist(parsedRet, extractOptions) {
     // 避免 buildDirFullPath 是以 / 结尾的，导致 filePathUnderBuild 非 / 开头
     const maySlash = filePathUnderBuild.startsWith('/') ? '' : '/';
     // 拼出 web 路径
-    const fileWebPath = `${ensureSlash(appHomePage)}${maySlash}${filePathUnderBuild}`;
+    const fileWebPath = `${ensureSlash(homePage)}${maySlash}${filePathUnderBuild}`;
 
     // 补上剩余的 css 文件路径
     if (fileWebPath.endsWith('.css')) {

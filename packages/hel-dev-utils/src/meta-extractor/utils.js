@@ -51,13 +51,13 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
  * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { appName, packageJson, extractMode = 'build', platform = cst.DEFAULT_PLAT, appHomePage } = userExtractOptions;
-  const appGroupName = packageJson.appGroupName || appName;
+  const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
+  const { homePage, groupName, name: appName, platform } = subApp;
 
   /**
-   *  构建版本号，当指定了 appHomePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
+   *  构建版本号，当指定了 homePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
    *  默认生成规则：
-   *  内网包：裁出 appHomePage ${cdnHost}/${appZone}/${appName}_${dateStr} 里的 ${appName}_${dateStr} 作为版本号
+   *  内网包：裁出 homePage ${cdnHost}/${appZone}/${appName}_${dateStr} 里的 ${appName}_${dateStr} 作为版本号
    *  外网包：pkg.version
    */
   let version = userExtractOptions.buildVer;
@@ -68,7 +68,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
     } else {
       try {
         // ${cdnHost}/${appZone}/${appName}_${dateStr}
-        const [, restStr] = appHomePage.split('//');
+        const [, restStr] = homePage.split('//');
         const [, , versionMakeOnPipeline] = restStr.split('/');
         if (versionMakeOnPipeline) {
           const arr = versionMakeOnPipeline.split('_');
@@ -91,7 +91,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
   return {
     app: {
       name: appName,
-      app_group_name: appGroupName,
+      app_group_name: groupName,
       git_repo_url: repo.url || packageJson.homepage || '',
       extract_mode: extractMode,
       online_version: version,

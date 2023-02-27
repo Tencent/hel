@@ -110,12 +110,25 @@ export interface FileDesc {
   fileWebPathWithoutHost: string;
 }
 
+export interface ISubAppBuildDesc {
+  platform: string;
+  homePage: string;
+  npmCdnType: string;
+  groupName: string;
+  name: string;
+  externals: Record<string, any>;
+  /** return merged externals */
+  getExternals: (userExternals?: Record<string, any>) => Record<string, any>;
+  jsonpFnName: string;
+  getPublicPathOrUrl: (fallbackPathOrUrl = '/', ensureEndSlash = true) => string;
+  distDir: string;
+}
+
 /** 用户自定义的各种提取选项 */
 export interface IUserExtractOptions {
   buildDirFullPath: string;
   packageJson: Record<string, any>;
-  /** default: hel(内网包)，unpkg(外网包)，platform 影响 buildVer 生成规则 */
-  platform?: string;
+  subApp: ISubAppBuildDesc;
   /**
    *  构建版本号，当指定了 appHomePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
    *  默认生成规则：
@@ -127,14 +140,8 @@ export interface IUserExtractOptions {
   extractMode?: 'build' | 'bu_st';
   /** default: hel_dist */
   distDir?: string;
-  /** default: process.env.HEL_APP_NAME || pkg.appGroupName */
-  appName?: string;
   /** default: true */
   writeMetaJsonToDist?: boolean;
-  /** 形如 https://xxxxx.yy.com/<zoneName>/<relativeDirName> */
-  appHomePage?: string;
-  /** 未指定 appHomePage 时，内部自动用 npmCdnType 结合 packageJson 拼出 appHomePage */
-  npmCdnType?: 'unpkg' | 'jsdelivr';
 }
 
 export interface IInnerSubAppOptions {
