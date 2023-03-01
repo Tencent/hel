@@ -28,6 +28,8 @@ export type HelLoadStatusEnum = HelLoadStatus[keyof HelLoadStatus];
 
 export function getHelEventBus(): EventBus;
 
+export function getUserEventBus(): EventBus;
+
 export interface IHelMicroDebug {
   /** 0: 不打印，1: log, 2: trace */
   logMode: number;
@@ -304,6 +306,7 @@ declare type DefaultExport = {
   helEvents: typeof helEvents;
   helLoadStatus: typeof helLoadStatus;
   getHelEventBus: typeof getHelEventBus;
+  getUserEventBus: typeof getUserEventBus;
   getHelDebug: typeof getHelDebug;
   getSharedCache: typeof getSharedCache;
   libReady: typeof libReady;
