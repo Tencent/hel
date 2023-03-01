@@ -40,14 +40,49 @@ export function makeCacheNode(platform) {
     appName2appVersion: {},
     appName2styleStr: {},
     appGroupName2firstVer: {},
+    // below properties wait to be overwrite if not unpkg platform
+    guessUserName: null,
+    getDefaultApiPrefix: null,
   };
   return cacheNode;
 }
 
-function makeHelMicroShared() {
+function makeEventBus() {
   /** @type {Record<string, any[]>} */
   const name2listeners = {};
+  return {
+    on: (eventName, cb) => {
+      let listeners = name2listeners[eventName];
+      if (!listeners) {
+        const arr = [];
+        name2listeners[eventName] = arr;
+        listeners = arr;
+      }
+      listeners.push(cb);
+    },
+    emit: (eventName, ...args) => {
+      const listeners = name2listeners[eventName];
+      if (listeners) {
+        const listenersCopy = listeners.slice();
+        listenersCopy.forEach((cb) => cb(...args));
+      }
+    },
+    off: (eventName, cb) => {
+      const listeners = name2listeners[eventName];
+      if (listeners) {
+        for (let i = 0, len = listeners.length; i < len; i++) {
+          const cbItem = listeners[i];
+          if (cbItem === cb) {
+            listeners.splice(i, 1);
+            break;
+          }
+        }
+      }
+    },
+  };
+}
 
+function makeHelMicroShared() {
   const helCache = makeCacheNode(PLAT_HEL);
   const unpkgCache = makeCacheNode(PLAT_UNPKG);
   const cacheRoot = {
@@ -67,38 +102,12 @@ function makeHelMicroShared() {
     },
   };
 
+  const innerEventBus = makeEventBus();
+  const userEventBus = makeEventBus();
   return {
     createFeature: getJsRunLocation(),
-    eventBus: {
-      on: (eventName, cb) => {
-        let listeners = name2listeners[eventName];
-        if (!listeners) {
-          const arr = [];
-          name2listeners[eventName] = arr;
-          listeners = arr;
-        }
-        listeners.push(cb);
-      },
-      emit: (eventName, ...args) => {
-        const listeners = name2listeners[eventName];
-        if (listeners) {
-          const listenersCopy = listeners.slice();
-          listenersCopy.forEach((cb) => cb(...args));
-        }
-      },
-      off: (eventName, cb) => {
-        const listeners = name2listeners[eventName];
-        if (listeners) {
-          for (let i = 0, len = listeners.length; i < len; i++) {
-            const cbItem = listeners[i];
-            if (cbItem === cb) {
-              listeners.splice(i, 1);
-              break;
-            }
-          }
-        }
-      },
-    },
+    eventBus: innerEventBus,
+    userEventBus,
     cacheRoot,
     /** 指向的是  cacheRoot.caches.unpkg ，放第一层仅用于方便控制台查看，实际业务逻辑还是走 caches 去取 */
     unpkgCache,
@@ -124,6 +133,11 @@ export function ensureHelMicroShared() {
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
     });
+
+    // 补齐老包缺失的 userEventBus 对象
+    if (!helMicroShared.userEventBus) {
+      helMicroShared.userEventBus = makeEventBus();
+    }
     return;
   }
 

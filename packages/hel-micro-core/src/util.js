@@ -22,7 +22,7 @@ function isIncludeFilter(firstArg, logFilter) {
 export function getSearchObj() {
   const search = getSearch();
   const map = {};
-  if (search && search.startsWith('?')) {
+  if (search?.startsWith('?')) {
     const pureSearch = search.substring(1);
     const items = pureSearch.split('&');
     items.forEach((item) => {

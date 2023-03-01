@@ -45,35 +45,33 @@ const inner = {
   },
 };
 
-export const isSubApp = isSubMod.isSubApp;
-
-// 暴露出去，仅仅为兼容以前的调用此函数代码不报错，但是说明上已标即不鼓励使用
-export const trySetMasterAppLoadedSignal = isSubMod.trySetMasterAppLoadedSignal;
+// 暴露 trySetMasterAppLoadedSignal 出去，仅为兼容以前的调用此函数代码不报错，但是说明上已标即不鼓励使用
+export const { trySetMasterAppLoadedSignal, isSubApp } = isSubMod;
 
 /**
  * 获取默认的平台值
  * @returns
  */
-export const getPlatform = helper.getPlatform;
+export const { getPlatform } = helper;
 
 export const helEvents = consts.HEL_EVENTS;
 
 export const helLoadStatus = consts.HEL_LOAD_STATUS;
 
-export const DEFAULT_ONLINE_VER = consts.DEFAULT_ONLINE_VER;
+export const { DEFAULT_ONLINE_VER } = consts;
 
-export const log = util.log;
-
-export const allowLog = util.allowLog;
+export const { allowLog, log } = util;
 
 export const getHelDebug = debugMod.getHelMicroDebug;
 
-export const getGlobalThis = utilBase.getGlobalThis;
-
-export const setGlobalThis = utilBase.setGlobalThis;
+export const { getGlobalThis, setGlobalThis } = utilBase;
 
 export function getHelEventBus() {
   return getHelMicroShared().eventBus;
+}
+
+export function getUserEventBus() {
+  return getHelMicroShared().userEventBus;
 }
 
 /**
@@ -146,7 +144,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
 
   const appMeta = getAppMeta(appName, platform);
   // @ts-ignore，来自于用户设定 cust 配置弹射的模块
-  if (appMeta && appMeta.__fromCust) {
+  if (appMeta?.__fromCust) {
     versionId = appMeta.online_version;
     appName = appMeta.name;
   }
@@ -235,7 +233,7 @@ export function getPlatformConfig(iPlatform) {
 }
 
 export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo} */ emitApp) {
-  log(`[[ core:setEmitApp ]] appName,emitApp:`, appName, emitApp);
+  log('[[ core:setEmitApp ]] appName,emitApp:', appName, emitApp);
   const { versionId, platform } = emitApp;
   const sharedCache = getSharedCache(platform);
   const { appName2verEmitApp, appName2Comp, appName2EmitApp } = sharedCache;
@@ -271,12 +269,12 @@ export function getVerApp(appName, inputOptions) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackApp = targetStrictMatchVer ? null : appName2EmitApp[appName] || legacyWriteVerApp;
   const result = verApp || fallbackApp || null;
-  log(`[[ core:getVerApp ]] appName,options,result`, appName, options, result);
+  log('[[ core:getVerApp ]] appName,options,result:', appName, options, result);
   return result;
 }
 
 export function getAppMeta(appName, platform) {
-  const appName2app = getSharedCache(platform).appName2app;
+  const { appName2app } = getSharedCache(platform);
   return appName2app[appName];
 }
 
@@ -321,7 +319,7 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   }
 
   // 当前版本可作为默认线上版本来记录
-  log(`[[ core:setEmitLib ]] appMeta:`, appMeta);
+  log('[[ core:setEmitLib ]] appMeta:', appMeta);
   const verEmitLibMap = util.safeGetMap(appName2verEmitLib, appName);
   // 记录第一个载入的版本号对应 lib
   if (!verEmitLibMap[DEFAULT_ONLINE_VER]) {
@@ -350,7 +348,7 @@ export function getVerLib(appName, inputOptions) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackLib = targetStrictMatchVer ? null : staticLib;
   const result = verLib || fallbackLib || null;
-  log(`[[ core:getVerLib ]] appName,options,result:`, appName, options, result);
+  log('[[ core:getVerLib ]] appName,options,result:', appName, options, result);
   return result;
 }
 
@@ -360,7 +358,7 @@ export function setVerExtraCssList(appName, cssList, inputOptions) {
   const sharedCache = getSharedCache(platform);
   const { appName2verExtraCssList } = sharedCache;
 
-  log(`[[ core:setVerExtraCssList ]] cssList:`, cssList);
+  log('[[ core:setVerExtraCssList ]] cssList:', cssList);
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   // 记录第一个载入的版本号对应 css 资源
   if (!verExtraCssListMap[DEFAULT_ONLINE_VER]) {
@@ -378,7 +376,7 @@ export function getVerExtraCssList(appName, inputOptions) {
   const { appName2verExtraCssList } = sharedCache;
   const verExtraCssListMap = util.safeGetMap(appName2verExtraCssList, appName);
   const cssList = verExtraCssListMap[versionId] || verExtraCssListMap[DEFAULT_ONLINE_VER] || [];
-  log(`[[ core:getVerExtraCssList ]] options,cssList:`, options, cssList);
+  log('[[ core:getVerExtraCssList ]] options,cssList:', options, cssList);
   return cssList;
 }
 
@@ -482,6 +480,7 @@ export default {
   isSubApp,
   trySetMasterAppLoadedSignal,
   getHelEventBus,
+  getUserEventBus,
   getHelDebug,
   getSharedCache,
   getPlatform,

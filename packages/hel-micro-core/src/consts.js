@@ -1,6 +1,6 @@
 import * as diffBase from './diff/base';
 
-export const VER = diffBase.VER;
+export const { VER } = diffBase;
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 
