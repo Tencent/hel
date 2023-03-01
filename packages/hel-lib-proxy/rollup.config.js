@@ -9,8 +9,11 @@ const plugins = [
 ];
 const umdOutput = {
   format: 'umd',
-  name: 'hel-lib-proxy',
+  name: 'helLibProxy',
   file: 'dist/hel-lib-proxy.js',
+  globals: {
+    'hel-micro-core': 'helMicroCore',
+  },
 };
 
 if (process.env.MIN === 'true') {
@@ -21,5 +24,5 @@ if (process.env.MIN === 'true') {
 module.exports = {
   input: 'src/index.ts',
   plugins,
-  output: [umdOutput],
+  output: umdOutput,
 };

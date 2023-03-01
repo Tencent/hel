@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "3.11.6",
+  "version": "3.12.0",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "keywords": [
     "hel",
@@ -43,7 +43,7 @@
     "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
   "dependencies": {
-    "hel-micro-core": ">=3.10.0",
+    "hel-micro-core": ">=3.11.0",
     "hel-types": ">=3.8.0"
   },
   "devDependencies": {
@@ -69,7 +69,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "hel-micro-core": ">=3.10.0",
+    "hel-micro-core": ">=3.11.0",
     "hel-types": ">=3.8.0"
   },
   "bundleDependencies": [],

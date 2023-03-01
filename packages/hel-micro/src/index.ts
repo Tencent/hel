@@ -21,6 +21,7 @@ export {
   appMetaSrv,
   logicSrv,
   emitApp,
+  eventBus,
   init,
   isSubApp,
   getFakeHelContext,
@@ -31,6 +32,18 @@ export {
   bindReactRuntime,
   core,
 };
+
+const { getUserEventBus } = core;
+
+/**
+ * // 发射事件
+ * eventBus.emit('evName', ...args);
+ * // 监听事件
+ * eventBus.on('evName', (...args)=>{ // your logic });
+ * // 取消监听
+ * eventBus.off('evName', cb);
+ */
+const eventBus = getUserEventBus();
 
 core.log(`hel-micro ${defaultsCst.VER}`);
 
@@ -43,6 +56,7 @@ const toExport = {
   appMetaSrv,
   logicSrv,
   emitApp,
+  eventBus,
   init,
   isSubApp,
   getFakeHelContext,

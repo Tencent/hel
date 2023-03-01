@@ -1,5 +1,5 @@
 import { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
-interface EventBus {
+export interface EventBus {
   on: (name: string, cb: (...args: any[]) => void) => void;
   emit: (name: string, ...args: any[]) => void;
   off: (name: string, cb: (...args: any[]) => void) => void;

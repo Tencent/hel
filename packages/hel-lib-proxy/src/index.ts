@@ -14,6 +14,18 @@ export * from './typings';
 
 core.log(`hel-lib-proxy ver ${diff.VER}`);
 
+const { getUserEventBus } = core;
+
+/**
+ * // 发射事件
+ * eventBus.emit('evName', ...args);
+ * // 监听事件
+ * eventBus.on('evName', (...args)=>{ // your logic });
+ * // 取消监听
+ * eventBus.off('evName', cb);
+ */
+const eventBus = getUserEventBus();
+
 /**
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
  * @param libName
@@ -85,4 +97,5 @@ export default {
   getLib,
   isSubApp,
   isMasterApp,
+  eventBus,
 };
