@@ -33,7 +33,7 @@ export {
   core,
 };
 
-const { getUserEventBus } = core;
+export const { resetGlobalThis } = core;
 
 /**
  * // 发射事件
@@ -43,7 +43,7 @@ const { getUserEventBus } = core;
  * // 取消监听
  * eventBus.off('evName', cb);
  */
-const eventBus = getUserEventBus();
+const eventBus = core.getUserEventBus();
 
 core.log(`hel-micro ${defaultsCst.VER}`);
 
@@ -65,6 +65,7 @@ const toExport = {
   bindExternals,
   bindVueRuntime,
   bindReactRuntime,
+  resetGlobalThis,
   core,
 };
 

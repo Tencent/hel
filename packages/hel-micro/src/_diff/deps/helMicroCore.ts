@@ -1,6 +1,9 @@
 // 采用以下 export * 写法会导致在线IDE如codesandbox取到空属性对象 {} 的bug，故这里全部再导出去一次
 import * as core from 'hel-micro-core';
-export type { HelLoadStatusEnum, IAppAndVer, IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IPlatformConfig } from 'hel-micro-core';
+export type {
+  HelLoadStatusEnum, IAppAndVer, IGetSubAppAndItsVersionFn,
+  IOnFetchMetaFailed, IPlatformConfig, IGetOptions
+ } from 'hel-micro-core';
 export {
   DEFAULT_ONLINE_VER,
   helEvents,
@@ -10,6 +13,7 @@ export {
   getHelDebug,
   getSharedCache,
   libReady,
+  appReady,
   getPlatform,
   getPlatformHost,
   getPlatformConfig,
@@ -48,6 +52,7 @@ export {
   getGlobalThis,
   setGlobalThis,
   trySetMasterAppLoadedSignal,
+  resetGlobalThis,
 };
 
 const {
@@ -59,6 +64,7 @@ const {
   getHelDebug,
   getSharedCache,
   libReady,
+  appReady,
   getPlatform,
   getPlatformHost,
   getPlatformConfig,
@@ -97,5 +103,6 @@ const {
   allowLog,
   getGlobalThis,
   setGlobalThis,
+  resetGlobalThis,
   trySetMasterAppLoadedSignal,
 } = core;

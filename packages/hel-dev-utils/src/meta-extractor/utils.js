@@ -40,6 +40,7 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
     htmlIndexSrc: `${ensureSlash(homePage, false)}/index.html`,
     iframeSrc,
     chunkCssSrcList: [], // app's all css files
+    chunkJsSrcList: [], // app's all js files
     privCssSrcList: [], // 独立放置 hreflang 为 PRIV_CSS 的文件
     headAssetList: [],
     bodyAssetList: [],

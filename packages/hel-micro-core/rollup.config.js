@@ -7,7 +7,8 @@ import pkg from './package.json';
 
 const external = Object.keys(pkg.peerDependencies);
 const env = process.env.BUILD_ENV;
-const bundleName = pkg.name.includes('/') ? pkg.name.split('/')[1] : pkg.name;
+const distFileName = 'hel-micro-core';
+const globalName = 'HelMicroCore';
 
 const env2outputConf = {
   commonjs: {
@@ -20,13 +21,13 @@ const env2outputConf = {
   },
   development: {
     format: 'umd',
-    file: `dist/${bundleName}.js`,
-    name: bundleName,
+    file: `dist/${distFileName}.js`,
+    name: globalName,
   },
   production: {
     format: 'umd',
-    file: `dist/${bundleName}.min.js`,
-    name: bundleName,
+    file: `dist/${distFileName}.min.js`,
+    name: globalName,
   },
 };
 

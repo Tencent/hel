@@ -5,9 +5,6 @@ import * as diffBase from './diff/base';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 import { getHelSingletonHost } from './utilBase';
 
-/** @type {ReturnType<typeof makeHelMicroShared>} */
-let helMicroShared = getHelSingletonHost().__HEL_MICRO_SHARED__;
-
 export function makeCacheNode(platform) {
   /** @type {import('../index').SharedCache} */
   const cacheNode = {
@@ -122,6 +119,7 @@ function makeHelMicroShared() {
 }
 
 export function ensureHelMicroShared() {
+  let helMicroShared = getHelMicroShared();
   if (helMicroShared) {
     const cacheRoot = helMicroShared.cacheRoot;
     safeGetMap(cacheRoot, 'appGroupName2platform');
@@ -145,6 +143,7 @@ export function ensureHelMicroShared() {
   getHelSingletonHost().__HEL_MICRO_SHARED__ = helMicroShared;
 }
 
+/** @return {ReturnType<typeof makeHelMicroShared>} */
 export function getHelMicroShared() {
-  return helMicroShared;
+  return getHelSingletonHost().__HEL_MICRO_SHARED__;
 }

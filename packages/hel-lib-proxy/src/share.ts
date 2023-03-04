@@ -5,7 +5,7 @@ import * as diff from './_diff';
 
 export function getMergedOptions(options?: IOptions) {
   const defaultOptions = {
-    allowDup: false,
+    allowDup: false, // TODO，此参数目前是多余的，后续考虑移除或实现
     platform: diff.getDefaultPlatform(),
   };
   return { ...defaultOptions, ...(options || {}) };

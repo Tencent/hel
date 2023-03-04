@@ -14,6 +14,8 @@ export interface SrcMap {
   privCssSrcList: string[];
   /** 应用包含的所有 css 列表 */
   chunkCssSrcList: string[];
+  /** 应用包含的所有 js 列表 */
+  chunkJsSrcList: string[];
   headAssetList: string[];
   bodyAssetList: string[];
 }

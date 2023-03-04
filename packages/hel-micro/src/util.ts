@@ -98,7 +98,7 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
   }
   try {
     return JSON.parse(jsonStr);
-  } catch (err) {
+  } catch (err: any) {
     if (defaultValue !== undefined) return defaultValue;
     if (errMsg) throw new Error(errMsg);
     throw err;
@@ -130,7 +130,7 @@ export async function requestGet(url: string, asJson = true) {
   return { url: resUrl, reply: text };
 }
 
-export async function getCustomMeta(appName: string, customHost: string) {
+export async function getCustomMeta(appName: string, customHost: string, appGroupName?: string) {
   const t = Date.now();
   try {
     const { reply } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
@@ -167,7 +167,7 @@ export async function getCustomMeta(appName: string, customHost: string) {
       // @ts-ignore，标记来自 cust 配置
       __fromCust: true,
       name: appName,
-      app_group_name: appName,
+      app_group_name: appGroupName || appName,
       online_version: DEFAULT_ONLINE_VER,
       build_version: DEFAULT_ONLINE_VER,
     },

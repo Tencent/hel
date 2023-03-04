@@ -1,6 +1,27 @@
 import { getHelMicroDebug } from './microDebug';
 import { getGlobalThis } from './utilBase';
 
+initMicroDebug();
+
+function initMicroDebug() {
+  if (getHelMicroDebug().isInit) {
+    return;
+  }
+
+  getHelMicroDebug().isInit = true;
+  const searchObj = getSearchObj();
+  const { hellog, hellogf } = searchObj;
+  const ls = getGlobalThis().localStorage;
+
+  // 优先读 url 上的控制参数 hellog，再读 localStorage 里的控制参数
+  const logMode = hellog || ls.getItem('HelConfig.logMode') || 0;
+  setLogMode(logMode);
+
+  // 优先读 url 上的控制参数 hellogf
+  const logFilter = hellogf || ls.getItem('HelConfig.logFilter') || '';
+  setLogFilter(logFilter);
+}
+
 function getSearch() {
   try {
     return getGlobalThis().top?.location?.search || '';
@@ -29,7 +50,6 @@ export function getSearchObj() {
       const [key, value] = item.split('=');
       map[key] = value;
     });
-    return map;
   }
   return map;
 }
@@ -40,7 +60,10 @@ export function allowLog() {
 }
 
 export function setLogMode(value) {
-  getHelMicroDebug().logMode = value;
+  const modeNum = parseInt(value, 10);
+  if ([1, 2].includes(modeNum)) {
+    getHelMicroDebug().logMode = modeNum;
+  }
 }
 
 export function getLogMode() {
@@ -55,21 +78,6 @@ export function getLogFilter() {
   return getHelMicroDebug().logFilter;
 }
 
-if (!getHelMicroDebug().isInit) {
-  getHelMicroDebug().isInit = true;
-  const searchObj = getSearchObj();
-  const { hellog, hellogf } = searchObj;
-  if (hellog == '1') {
-    setLogMode(1);
-  } else if (hellog == '2') {
-    setLogMode(2);
-  }
-
-  if (hellogf) {
-    setLogFilter(hellogf);
-  }
-}
-
 const logPrefix = '  %c--> HEL LOG:';
 const colorDesc = 'color:#ad4e00;font-weight:600';
 export function log(...args) {
@@ -78,18 +86,17 @@ export function log(...args) {
   }
   const logFn = getLogMode() === 1 ? console.log : console.trace || console.log;
   const [firstArg, ...rest] = args;
-  if (typeof firstArg === 'string') {
-    const logFilter = getLogFilter();
-    const logParams = [`${logPrefix} ${firstArg}`, colorDesc, ...rest];
-    if (logFilter) {
-      isIncludeFilter(firstArg, logFilter) && logFn(...logParams);
-      return;
-    }
-    logFn(...logParams);
-    return;
+  if (typeof firstArg !== 'string') {
+    return logFn(logPrefix, colorDesc, ...args);
   }
 
-  logFn(logPrefix, colorDesc, ...args);
+  const logFilter = getLogFilter();
+  const logParams = [`${logPrefix} ${firstArg}`, colorDesc, ...rest];
+  if (logFilter) {
+    isIncludeFilter(firstArg, logFilter) && logFn(...logParams);
+    return;
+  }
+  logFn(...logParams);
 }
 
 export function getJsRunLocation() {

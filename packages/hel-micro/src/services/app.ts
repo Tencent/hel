@@ -90,8 +90,8 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
 
   // 调试模式
   if (isCustomValid(custom)) {
-    const { host } = custom;
-    const { app, version } = await getCustomMeta(appName, host);
+    const { host, appGroupName } = custom;
+    const { app, version } = await getCustomMeta(appName, host, appGroupName);
     cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
     return { appInfo: app, appVersion: version };
   }
@@ -198,12 +198,19 @@ export function cacheApp(
   // 写 disk
   if (toDisk) {
     const saveToLocalStorage = () => {
-      getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
+      try {
+        getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
+      } catch (err: any) {
+        core.log('save localStorage failed');
+      }
     };
     if (loadOptions.storageType === 'indexedDB') {
       const indexedDBStorage = getIndexedDB();
       if (indexedDBStorage) {
-        indexedDBStorage.setItem(getAppCacheKey(appName), { appInfo, appVersion });
+        indexedDBStorage.setItem(getAppCacheKey(appName), { appInfo, appVersion }).catch((err: any) => {
+          core.log(`save indexeddb failed, use localStorage instead, err: ${err.message}`);
+          saveToLocalStorage();
+        });
       } else {
         saveToLocalStorage();
       }
@@ -266,10 +273,10 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
     }
 
     if (!appInfo) {
-      throw new Error(`应用${appName}不存在`);
+      throw new Error(`app[${appName}] not exist`);
     }
     if (!appVersion) {
-      throw new Error(`应用${appName}的版本不存在`);
+      throw new Error(`app[${appName}]'s version[${options.versionId}] not exist`);
     }
     tryTriggerOnAppVersionFetched(appVersion, options);
 
@@ -289,6 +296,6 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
       const ret = await loadApp(appName, { ...options, isFirstCall: false });
       return ret;
     }
-    throw new Error(`loadApp err: ${err.message}, recommend config onAppVersionFetched hook`);
+    throw new Error(`loadApp err ( ${err.message} ), recommend config onAppVersionFetched hook`);
   }
 }

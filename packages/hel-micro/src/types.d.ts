@@ -28,6 +28,12 @@ export interface ICustom {
   enable?: boolean;
   /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
   appGroupName?: string;
+  /**
+   * default: false
+   * 谨慎设置此选项！当设置为 true 时，就是相信调试的远程模块一定和当前传入的名字是匹配的，
+   * hel-micro 会跳过一切检查，将对应地址的远程模块返回给调用方，可能会造成模块不符合预期结果的危险后果
+   */
+  trust?: boolean;
   /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
   extraCssList?: string[];
   /**

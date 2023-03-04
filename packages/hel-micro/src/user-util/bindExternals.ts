@@ -5,7 +5,7 @@ function injectDefault(externalItem: any) {
     try {
       // eslint-disable-next-line
       externalItem.default = externalItem;
-    } catch (err) {}
+    } catch (err: any) {}
   }
   return externalItem;
 }

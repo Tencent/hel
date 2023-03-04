@@ -21,7 +21,7 @@ export function guessUserName(userLsKey: string): string {
         map[k] = v;
       });
     userName = map[userLsKey] || '';
-  } catch (err) {
+  } catch (err: any) {
     log('[[ guessUserName ]]', err);
   }
   return userName;

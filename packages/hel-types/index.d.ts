@@ -164,6 +164,7 @@ export interface ISubApp {
   ui_framework: string;
   /** 【已彻底无用】安全平台里对应的名字 */
   name_in_sec: string;
+  [key: string]: any;
 }
 
 export interface ISubAppVersion {
@@ -199,6 +200,7 @@ export interface ISubAppVersion {
   git_repo_url: string;
   /** 海拉插件版本号，记录当前应用是基于那一版插件构建的 */
   plugin_ver: string;
+  [key: string]: any;
 }
 
 export interface IEmitAppInfo {

@@ -122,11 +122,22 @@ export function getSharedCache(platform?: Platform): SharedCache;
  */
 export function getHelDebug(): IHelMicroDebug;
 
-interface ILibReadyOptions {
+export interface ILibReadyOptions {
   platform?: Platform;
+  versionId?: string;
+  appName?: string;
 }
 
-export function libReady(appName: string, appProperties: any, options?: ILibReadyOptions): void;
+export interface IAppReadyOptions {
+  platform?: string;
+  versionId?: string;
+  lifecycle?: IEmitAppInfo['lifecycle'];
+  appName?: string;
+}
+
+export function libReady(appGroupName: string, appProperties: any, options?: ILibReadyOptions): void;
+
+export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOptions): void;
 
 export function getPlatform(): Platform;
 
@@ -246,7 +257,7 @@ export interface IGetVerOptions {
 
 export function getVersion(appName: string, options?: IGetVerOptions): ISubAppVersion | null;
 
-export function setVersion(appName: string, versionData: ISubAppVersion, options?: { platform: Platform }): void;
+export function setVersion(appName: string, versionData: ISubAppVersion, options?: { platform?: Platform }): void;
 
 export function getAppMeta(appName: string, platform?: Platform): ISubApp | null;
 
@@ -291,6 +302,11 @@ export function getGlobalThis(): typeof globalThis;
 export function setGlobalThis(mockGlobalThis: any);
 
 /**
+ * 重置 globalThis，帮助一些微前端框架的子应用运行 hel-micro 时能够正常获取子模块
+ */
+export function resetGlobalThis(mockGlobalThis: any);
+
+/**
  * 优先获取用户为某个应用单独设定的平台值，目前设定的时机有 preFetch、preFetchLib 时指定的平台值
  * @returns
  */
@@ -310,6 +326,7 @@ declare type DefaultExport = {
   getHelDebug: typeof getHelDebug;
   getSharedCache: typeof getSharedCache;
   libReady: typeof libReady;
+  appReady: typeof appReady;
   getPlatform: typeof getPlatform;
   getPlatformHost: typeof getPlatformHost;
   getPlatformConfig: typeof getPlatformConfig;
@@ -318,7 +335,7 @@ declare type DefaultExport = {
   // 应用Comp get set
   getVerApp: typeof getVerApp;
   setEmitApp: typeof setEmitApp;
-  // 应用lib get set
+  // 应用lib get set del
   getVerLib: typeof getVerLib;
   setEmitLib: typeof setEmitLib;
   // 应用元数据 get set
@@ -348,6 +365,7 @@ declare type DefaultExport = {
   allowLog: typeof allowLog;
   getGlobalThis: typeof getGlobalThis;
   setGlobalThis: typeof setGlobalThis;
+  resetGlobalThis: typeof resetGlobalThis;
   trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal;
 };
 

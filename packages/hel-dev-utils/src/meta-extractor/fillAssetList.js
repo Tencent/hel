@@ -83,7 +83,7 @@ async function writeInnerHtml(childDom, fileType, parseOptions) {
  * @param {string} parseOptions.appHomePage  - http://s.inews.gtimg.com/om_20200408203828
  */
 export async function fillAssetList(doms, fillTargets, parseOptions) {
-  const { headAssetList, bodyAssetList, chunkCssSrcList, privCssSrcList } = fillTargets;
+  const { headAssetList, bodyAssetList, chunkCssSrcList, chunkJsSrcList, privCssSrcList } = fillTargets;
   const assetList = parseOptions.isHead ? headAssetList : bodyAssetList;
   const cssList = chunkCssSrcList;
   const privCssList = privCssSrcList;
@@ -128,6 +128,8 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
         targetSrc = await writeInnerHtml(childDom, 'js', parseOptions);
       }
       if (!targetSrc) continue;
+
+      noDupPush(chunkJsSrcList, targetSrc);
       if (needIgnore(parseOptions, targetSrc)) {
         verbose(`ignore script ${targetSrc}`);
         continue;

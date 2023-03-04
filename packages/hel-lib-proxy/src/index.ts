@@ -4,7 +4,7 @@
  * @author fatasticsoul
  * @since 2021-06-06
  */
-import type { IGetOptions } from 'hel-micro-core';
+import type { IGetOptions, IAppReadyOptions } from 'hel-micro-core';
 import core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as share from './share';
@@ -24,7 +24,7 @@ const { getUserEventBus } = core;
  * // 取消监听
  * eventBus.off('evName', cb);
  */
-const eventBus = getUserEventBus();
+export const eventBus = getUserEventBus();
 
 /**
  * 对某个库执行 preFetchLib 后，可通过此函数拿到目标模块
@@ -67,7 +67,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
   if (typeof Proxy === 'function' && asProxy) {
     libObj = share.getLibProxy(libName, libObj);
   }
-  core.log(`[[ exposeLib ]] libName, libObj`, libName, libObj);
+  core.log('[[ exposeLib ]] libName, libObj', libName, libObj);
   return libObj;
 }
 
@@ -81,8 +81,18 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
  */
 export function libReady(appGroupName: string, libProperties: LibProperties, options?: IOptions) {
   const mergedOptions = share.getMergedOptions(options);
-  // 将注册结果交给 preFetch 函数返回给调用方
+  // 将注册结果返回给 preFetchLib 函数调用方
   core.libReady(appGroupName, libProperties, mergedOptions);
+}
+
+export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOptions) {
+  // 将注册结果返回给 preFetchApp 函数调用方
+  core.appReady(appGroupName, Comp, options);
+}
+
+export function exposeApp<T extends any = any>(libName: string, options?: IGetOptions): T {
+  const Comp = core.getVerApp(libName, options) as T;
+  return Comp;
 }
 
 export function isMasterApp() {
@@ -98,4 +108,6 @@ export default {
   isSubApp,
   isMasterApp,
   eventBus,
+  appReady,
+  exposeApp,
 };

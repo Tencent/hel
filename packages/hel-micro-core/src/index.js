@@ -12,10 +12,17 @@ import * as utilBase from './utilBase';
 
 util.log(`hel-micro-core ver ${consts.VER}`);
 
-// 载入此包就尝试设置 masterApp 锁，以推断自己是不是父应用
-isSubMod.trySetMasterAppLoadedSignal();
-// 确保 __HEL_MICRO_SHARED__ 存在
-ensureHelMicroShared();
+export function resetGlobalThis(globalThis) {
+  if (globalThis) {
+    setGlobalThis(globalThis);
+  }
+  // 载入此包就尝试设置 masterApp 锁，以推断自己是不是父应用
+  isSubMod.trySetMasterAppLoadedSignal(!!globalThis);
+  // 确保 __HEL_MICRO_SHARED__ 存在
+  ensureHelMicroShared();
+}
+
+resetGlobalThis();
 
 const inner = {
   setVerLoadStatus(appName, loadStatus, statusMapKey, options) {
@@ -139,8 +146,8 @@ export function tryGetAppName(/** @type string */ version, appGroupName) {
 
 export function libReady(appGroupName, appProperties, options = {}) {
   const platform = options.platform || getAppPlatform(appGroupName);
-  let versionId = tryGetVersion(appGroupName, platform);
-  let appName = tryGetAppName(versionId, appGroupName);
+  let versionId = options.versionId || tryGetVersion(appGroupName, platform);
+  let appName = options.appName || tryGetAppName(versionId, appGroupName);
 
   const appMeta = getAppMeta(appName, platform);
   // @ts-ignore，来自于用户设定 cust 配置弹射的模块
@@ -149,7 +156,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     appName = appMeta.name;
   }
 
-  const emitApp = {
+  const emitLib = {
     platform,
     appName,
     appGroupName,
@@ -159,10 +166,22 @@ export function libReady(appGroupName, appProperties, options = {}) {
     Comp: function EmptyComp() { },
     lifecycle: {},
   };
-  setEmitLib(appName, emitApp, { appGroupName, platform });
-
+  setEmitLib(appName, emitLib, { appGroupName, platform });
+  setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
-  eventBus.emit(helEvents.SUB_LIB_LOADED, emitApp);
+  eventBus.emit(helEvents.SUB_LIB_LOADED, emitLib);
+}
+
+export function appReady(appGroupName, Comp, emitOptions = {}) {
+  const { lifecycle } = emitOptions;
+  const platform = emitOptions.platform || getAppPlatform(appGroupName);
+  const versionId = emitOptions.versionId || tryGetVersion(appGroupName, platform);
+  const appName = emitOptions.appName || tryGetAppName(versionId, appGroupName);
+  const emitApp = { Comp, appName, appGroupName, lifecycle, platform, versionId, isLib: false };
+  setEmitApp(appName, emitApp);
+  setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
+  const eventBus = getHelEventBus();
+  eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);
 }
 
 export function getPlatformHost(iPlatform) {
@@ -406,7 +425,7 @@ export function setAppPlatform(appGroupName, platform) {
 
 /**
  * 优先获取用户为某个应用单独设定的平台值，目前设定的时机有 preFetch、preFetchLib 时指定的平台值
- * 这里是为了在 exposeLib 接口未指定平台值时可以动态的推导出目标模块的平台值
+ * 这里是为了辅助 exposeLib 接口未指定平台值时能够动态推导出目标模块的平台值
  * @returns
  */
 export function getAppPlatform(appGroupName) {
@@ -516,8 +535,10 @@ export default {
   tryGetAppName,
   initPlatformConfig,
   libReady,
+  appReady,
   log,
   allowLog,
   getGlobalThis,
   setGlobalThis,
+  resetGlobalThis,
 };

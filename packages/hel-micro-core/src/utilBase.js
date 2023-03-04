@@ -1,16 +1,20 @@
 /*
 |--------------------------------------------------------------------------
-| 
+|
 | 下沉一下基础函数，避免循环引用
 | util <---> microDebug
-| 改进后依赖形如 
+| 改进后依赖形如
 | util ---> microDebug ---> utilBase
-| 
+|
 |--------------------------------------------------------------------------
 */
 
 let mockGlobalThis = null;
 
+/**
+ *
+ * @returns {typeof globalThis}
+ */
 export function getGlobalThis() {
   if (mockGlobalThis) {
     return mockGlobalThis;

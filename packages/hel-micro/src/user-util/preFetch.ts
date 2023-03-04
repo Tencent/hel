@@ -33,9 +33,13 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
   const eventName = isLib ? helEvents.SUB_LIB_LOADED : helEvents.SUB_APP_LOADED;
 
   let handleAppLoaded: any = null;
-  await new Promise((resolve) => {
+  await new Promise((resolve, reject) => {
     handleAppLoaded = (appInfo: IEmitAppInfo) => {
-      logicSrv.judgeAppReady(appInfo, { appName, platform, versionId, projectId, isLib, next: resolve, strictMatchVer }, innerOptions);
+      logicSrv.judgeAppReady(
+        appInfo,
+        { appName, platform, versionId, projectId, isLib, next: resolve, error: reject, strictMatchVer },
+        innerOptions,
+      );
     };
 
     // 先监听，再触发资源加载，确保监听不会有遗漏
@@ -74,8 +78,8 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     if (emitApp) {
       // 支持用户拉取同一个模块的多个版本，但是实际工程里不鼓励这么做
       if (!versionId || (versionId && emitApp.versionId === versionId)) {
-        log(`[[ ${fnName} ]] hit cached app:`, appName, fixedInnerOptions);
-        return emitApp;
+        log(`[[ ${fnName} ]] return cached app:`, appName, fixedInnerOptions);
+        return { emitApp, msg: '' };
       }
     }
 
@@ -85,7 +89,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     if (currentLoadStatus === helLoadStatus.LOADED) {
       emitApp = await waitAppEmit(appName, fixedInnerOptions);
       log(`[[ ${fnName} ]] return emit app:`, appName, fixedInnerOptions, emitApp);
-      return emitApp;
+      return { emitApp, msg: '' };
     }
 
     // 还未开始加载，标记加载中，防止连续的 preFetch 调用重复触发 loadApp
@@ -94,12 +98,12 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
       loadAssetsStarter = await loadApp(appName, { ...fixedInnerOptions, controlLoadAssets: true });
     }
 
+    // 正在加载中，等待模块获取
     emitApp = await waitAppEmit(appName, preFetchOptions, loadAssetsStarter);
     log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
-    return emitApp;
-  } catch (err) {
-    log(`[[ ${fnName} ]] err`, err);
-    return emitApp;
+    return { emitApp, msg: '' };
+  } catch (err: any) {
+    return { emitApp, msg: err.message };
   }
 }
 
@@ -114,8 +118,8 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
  */
 export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: string, options?: IPreFetchLibOptions | VersionId): Promise<T> {
   const targetOpts = makePreFetchOptions(true, options);
-  const appInfo = await innerPreFetch(appName, targetOpts);
-  let appProperties = appInfo?.appProperties;
+  const { emitApp, msg } = await innerPreFetch(appName, targetOpts);
+  let appProperties = emitApp?.appProperties;
 
   if (!appProperties && targetOpts.onLibNull) {
     const fallbackLib = targetOpts.onLibNull(appName, { versionId: targetOpts.versionId });
@@ -124,7 +128,8 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
     }
   }
   if (!appProperties) {
-    throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!`);
+    const details = msg ? ` details : ${msg}` : '';
+    throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!${details}`);
   }
   return appProperties as unknown as T;
 }
