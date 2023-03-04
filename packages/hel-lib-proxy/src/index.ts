@@ -4,7 +4,7 @@
  * @author fatasticsoul
  * @since 2021-06-06
  */
-import type { IGetOptions, IAppReadyOptions } from 'hel-micro-core';
+import type { IAppReadyOptions, IGetOptions } from 'hel-micro-core';
 import core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as share from './share';

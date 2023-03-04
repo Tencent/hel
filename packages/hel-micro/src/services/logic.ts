@@ -1,11 +1,22 @@
 import { PLAT_UNPKG } from '../consts/logic';
 import {
-  IGetOptions, getAppMeta, getPlatform, getPlatformConfig, getVerApp, getVerLib, log, libReady,
-  setAppMeta, setVersion, getVersion, getVerExtraCssList, setVerExtraCssList,
+  getAppMeta,
+  getPlatform,
+  getPlatformConfig,
+  getVerApp,
+  getVerExtraCssList,
+  getVerLib,
+  getVersion,
+  IGetOptions,
+  libReady,
+  log,
+  setAppMeta,
+  setVerExtraCssList,
+  setVersion,
 } from '../deps/helMicroCore';
 import type { IEmitAppInfo, Platform } from '../deps/helTypes';
-import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
 import emitApp from '../process/emitApp';
+import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
 
 function tryFixAssociateData(appName: string, appGroupName: string, getOptions: IGetOptions) {
