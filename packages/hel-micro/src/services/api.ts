@@ -165,10 +165,16 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
     isBatch = true;
   }
 
+  const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey, shouldUseGray } = getPlatformConfig(platform);
   const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
-  const { apiSuffix, apiPathOfApp, platform: targetPlatform, getUserName, userLsKey } = getPlatformConfig(platform);
   const userName = getUserName?.({ platform: targetPlatform, appName }) || guessUserName(userLsKey || apiSrvConst.USER_KEY);
-  let url = '';
+
+  const grayFn = loadOptions?.shouldUseGray || shouldUseGray;
+  const grayResult = grayFn?.();
+  let grayVar = '';
+  if (typeof grayResult === 'boolean') {
+    grayVar = grayResult ? '1' : '0';
+  }
 
   // 为 hel pack 模块管理台拼接请求链接
   const jsonpMark = apiMode === API_NORMAL_GET ? '' : JSONP_MARK;
@@ -181,10 +187,12 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   const finalInterfaceName = `${interfaceName}${jsonpMark}`;
 
   const finalApiPath = apiPathOfApp || apiSrvConst.API_PATH_PREFIX;
+  let url = '';
   url = `${apiHost}${finalApiPath}/${finalInterfaceName}?name=${urlAppName}`;
   url = inner.appendSearchKV(url, 'userName', userName);
   url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
+  url = inner.appendSearchKV(url, 'gray', grayVar);
   url = inner.appendSuffix(url, apiSuffix);
 
   return { url, userName };

@@ -178,6 +178,12 @@ export interface IPreFetchOptionsBase {
    * 如需查看更多信息，可查看第二位参数 fnCtx ( 可查类型 IChangeAttrsFnCtx )
    */
   changeAttrs?: IChangeAttrs;
+  /**
+   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
+   * true：强制返回灰度版本，false：强制返回线上版本
+   * 定义了此函数，返回true或false都会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
+   */
+  shouldUseGray?: () => boolean | null;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {

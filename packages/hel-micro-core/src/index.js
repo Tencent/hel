@@ -133,7 +133,7 @@ export function tryGetAppName(/** @type string */ version, appGroupName) {
     return appGroupName || '';
   }
 
-  // 来自 hel-pack 管理台的版本号规则
+  // 来自 helpack 管理台的版本号规则
   if (version.includes('_')) {
     // lib-test_20220621165953 ---> lib-test
     const appName = version.substring(0, version.length - 15);

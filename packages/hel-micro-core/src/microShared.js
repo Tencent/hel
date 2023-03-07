@@ -9,7 +9,6 @@ export function makeCacheNode(platform) {
   /** @type {import('../index').SharedCache} */
   const cacheNode = {
     isConfigOverwrite: false,
-    isInnerConfigOverwrite: false,
     platform,
     initPack: diffBase.PACK_MODE,
     apiMode: 'jsonp',
@@ -37,9 +36,19 @@ export function makeCacheNode(platform) {
     appName2appVersion: {},
     appName2styleStr: {},
     appGroupName2firstVer: {},
+    isInnerHooksInit: false,
     // below properties wait to be overwrite if not unpkg platform
-    guessUserName: null,
-    getDefaultApiPrefix: null,
+    innerHooks: {
+      guessUserName: null,
+      getApiPrefix: null,
+      getApiPathOfApp: null,
+      getApiPathOfAppVersion: null,
+      getFullMetaReqPath: null,
+      getFullVersionReqPath: null,
+      guessVersionId: null,
+      onPreFetchFailed: null,
+      onPreFetchSuccess: null,
+    },
   };
   return cacheNode;
 }

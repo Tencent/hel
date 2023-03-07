@@ -14,11 +14,11 @@ function initMicroDebug() {
   const ls = getGlobalThis().localStorage;
 
   // 优先读 url 上的控制参数 hellog，再读 localStorage 里的控制参数
-  const logMode = hellog || ls.getItem('HelConfig.logMode') || 0;
+  const logMode = hellog || ls?.getItem('HelConfig.logMode') || 0;
   setLogMode(logMode);
 
   // 优先读 url 上的控制参数 hellogf
-  const logFilter = hellogf || ls.getItem('HelConfig.logFilter') || '';
+  const logFilter = hellogf || ls?.getItem('HelConfig.logFilter') || '';
   setLogFilter(logFilter);
 }
 

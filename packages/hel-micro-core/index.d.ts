@@ -214,6 +214,11 @@ export interface IPlatformConfigFull {
   /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
   getUserName: (passCtx: { platform: string; appName: string }) => string;
   onFetchMetaFailed?: IOnFetchMetaFailed;
+  /**
+   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
+   * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
+   */
+  shouldUseGray: () => boolean | null;
 }
 
 export type IPlatformConfig = Partial<IPlatformConfigFull>;
