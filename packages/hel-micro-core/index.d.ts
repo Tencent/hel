@@ -55,6 +55,7 @@ export interface SharedCache {
   onFetchMetaFailed: null;
   userLsKey: string;
   getUserName: null;
+  shouldUseGray: null;
   /**
    * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
    */

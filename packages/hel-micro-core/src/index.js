@@ -213,6 +213,8 @@ function getPureConfig(mayCache) {
     getUserName,
     userLsKey,
     platform,
+    shouldUseGray,
+    getApiPrefix,
   } = mayCache;
   return {
     apiMode,
@@ -226,6 +228,8 @@ function getPureConfig(mayCache) {
     getUserName,
     userLsKey,
     platform,
+    shouldUseGray,
+    getApiPrefix,
   };
 }
 

@@ -1,3 +1,4 @@
+import xhrFetch from './browser/xhr';
 import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis } from './deps/helMicroCore';
 import type { IInnerPreFetchOptions } from './types';
 
@@ -114,7 +115,7 @@ export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
   return ver;
 }
 
-export async function requestGet(url: string, asJson = true) {
+export async function requestByFetch(url: string, asJson: boolean) {
   const res = await getGlobalThis().fetch(url);
   const { status, url: resUrl } = res;
   if (![200, 304].includes(status)) {
@@ -130,6 +131,25 @@ export async function requestGet(url: string, asJson = true) {
   return { url: resUrl, reply: text };
 }
 
+export async function requestByXHR(url: string, asJson: boolean) {
+  const res = await xhrFetch(url, { method: 'GET', responseType: asJson ? 'json' : 'text' });
+  const { status, data, url: resUrl = '' } = res;
+  if (status === 400) {
+    return { url: resUrl, reply: null };
+  }
+  return { url: resUrl, reply: data };
+}
+
+export async function requestGet(url: string, asJson = true) {
+  let requester = requestByXHR;
+  // 如果支持fetch则使用
+  if (!!getGlobalThis().fetch) {
+    requester = requestByFetch;
+  }
+  const result = await requester(url, asJson);
+  return result;
+}
+
 export async function getCustomMeta(appName: string, customHost: string, appGroupName?: string) {
   const t = Date.now();
   try {
@@ -137,9 +157,8 @@ export async function getCustomMeta(appName: string, customHost: string, appGrou
     if (reply) {
       reply.app.__fromCust = true;
       return reply;
-    } else {
-      console.warn('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
     }
+    console.warn('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
   } catch (err: any) {
     noop('json parse fail or other error');
   }
