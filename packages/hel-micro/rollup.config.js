@@ -20,7 +20,7 @@ const env2outputConf = {
   },
   development: {
     format: 'umd',
-    file: `dist/${distFileName}js`,
+    file: `dist/${distFileName}.js`,
     name: globalName,
   },
   production: {
