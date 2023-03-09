@@ -28,7 +28,6 @@ function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | Ver
 
 async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions, loadAssetsStarter?: LoadAssetsStarter) {
   const eventBus = getHelEventBus();
-
   const { platform, isLib = false, versionId, projectId, strictMatchVer } = innerOptions;
   const eventName = isLib ? helEvents.SUB_LIB_LOADED : helEvents.SUB_APP_LOADED;
 
