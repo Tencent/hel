@@ -127,13 +127,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);
-
-  // 非严格版本匹配模式，只需要应用组名和平台值匹配即可，满足一些用户copy了资源到自己的项目目录下也想要正常加载的场景
   const inputPlatform = platform || getPlatform();
-  if (strictMatchVer === false && appGroupName && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
-    log('[[ judgeAppReady ]] treat emitApp as wanted when strictMatchVer is false(appInfo):', appInfo);
-    return next();
-  }
 
   const { custom } = preFetchOptions;
   if (custom) {
@@ -161,9 +155,15 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
     }
   }
 
+  // 非严格版本匹配模式，只需要应用组名和平台值匹配即可，满足一些用户copy了资源到自己的项目目录下也想要正常加载的场景
+  if (strictMatchVer === false && appGroupName && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
+    log('[[ judgeAppReady ]] treat emitApp as wanted when strictMatchVer is false(appInfo):', appInfo);
+    return next();
+  }
+
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
-  const toMatch = { platform, emitVer, inputVer, projectId };
-  if (appName !== emitAppName || emitPlatform !== platform || !isEmitVerMatchInputVer(appName, toMatch)) {
+  const toMatch = { platform, emitVer, inputVer, projectId, strictMatchVer };
+  if (appName !== emitAppName || inputPlatform !== emitPlatform || !isEmitVerMatchInputVer(appName, toMatch)) {
     log(`still wait ${appPathDesc} emitted (appInfo,toMatch):`, appInfo, toMatch);
     return;
   }

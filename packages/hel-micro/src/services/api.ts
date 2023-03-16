@@ -158,7 +158,7 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   let urlProjId = projectId;
   let isBatch = false;
   if (Array.isArray(appNameOrNames)) {
-    appName = appNameOrNames[0];
+    [appName] = appNameOrNames;
     urlAppName = appNameOrNames.join(',');
     urlVersion = versionIdList.join(',');
     urlProjId = projectIdList.join(',');

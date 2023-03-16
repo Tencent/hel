@@ -84,32 +84,32 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     versionId = '',
     projectId = '',
     custom,
+    strictMatchVer,
   } = options;
   const { callRemote = true } = fnOptions || {};
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
 
   // 调试模式
   if (isCustomValid(custom)) {
-    const { host, appGroupName } = custom;
-    const { app, version } = await getCustomMeta(appName, host, appGroupName);
+    const { app, version } = await getCustomMeta(appName, custom);
     cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
     return { appInfo: app, appVersion: version };
   }
 
   const memApp = core.getAppMeta(appName, platform);
-  const memAppVersion = core.getVersion(appName, { platform });
+  const memAppVersion = core.getVersion(appName, { platform, versionId });
 
-  const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
   // 优先从内存获取
   if (
     platform !== PLAT_UNPKG
     && memApp
     && memAppVersion
-    && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId })
+    && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
   ) {
     return { appInfo: memApp, appVersion: memAppVersion };
   }
 
+  const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
   let mayCachedApp: ICacheData | null = null;
   const tryGetFromRemote = async (allowGet: boolean) => {
     if (allowGet) {

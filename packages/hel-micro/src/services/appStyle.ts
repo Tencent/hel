@@ -5,7 +5,7 @@ import type { HelLoadStatusEnum } from '../deps/helMicroCore';
 import * as core from '../deps/helMicroCore';
 import type { IEmitStyleInfo } from '../deps/helTypes';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { IGetOptionsLoose, IInnerPreFetchOptions, IPlatAndVer } from '../types';
+import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
 import { merge2List, requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 
@@ -19,6 +19,7 @@ interface IFetchStyleOptions extends IGetOptionsLoose {
   extraCssUrlList?: string[];
   /** 透传 应用自己的样式列表 + extraCssUrlList 额外样式列表给用户，用户可依此再次排除掉一部分样式，返回的是欲排除的样式列表 */
   getExcludeCssList?: IInnerPreFetchOptions['getExcludeCssList'];
+  strictMatchVer?: boolean;
 }
 
 const inner = {
@@ -64,13 +65,21 @@ const inner = {
     return str;
   },
 
-  async waitStyleReady(appName: string, options: IPlatAndVer) {
+  async waitStyleReady(appName: string, options: IWaitStyleReadyOptions) {
     let handleStyleFetched: any = null;
+    const conf = core.getPlatformConfig(options.platform);
+    // 用户未传的话走平台默认值 true
+    const strictMatchVer = options.strictMatchVer ?? conf.strictMatchVer;
+
     await new Promise((resolve) => {
       handleStyleFetched = (styleInfo: IEmitStyleInfo) => {
         const { appName: emitAppName, platform: emitPlatform, versionId: emitVer } = styleInfo;
         const { versionId: inputVer, platform } = options;
-        if (emitAppName !== appName || emitPlatform !== platform || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer })) {
+        if (
+          emitAppName !== appName
+          || emitPlatform !== platform
+          || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, strictMatchVer })
+        ) {
           return;
         }
         resolve(true);
@@ -98,7 +107,7 @@ const inner = {
 
     // 有其他上层调用已经触发样式获取逻辑，这里调用 waitStyleReady 等待样式获取动作完成即可
     if (inner.isStyleStatusMatch(appName, LOADING, options)) {
-      await inner.waitStyleReady(appName, platAndVer);
+      await inner.waitStyleReady(appName, { ...platAndVer, strictMatchVer: options.strictMatchVer });
       const cachedStr = core.getAppStyleStr(appName, platAndVer);
       return cachedStr;
     }

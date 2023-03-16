@@ -1,6 +1,6 @@
 import xhrFetch from './browser/xhr';
-import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis } from './deps/helMicroCore';
-import type { IInnerPreFetchOptions } from './types';
+import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis, log } from './deps/helMicroCore';
+import type { ICustom, IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {
   return args;
@@ -150,20 +150,27 @@ export async function requestGet(url: string, asJson = true) {
   return result;
 }
 
-export async function getCustomMeta(appName: string, customHost: string, appGroupName?: string) {
+export async function getCustomMeta(appName: string, custom: ICustom) {
+  const { host, appGroupName, skipFetchHelMeta = false } = custom;
   const t = Date.now();
-  try {
-    const { reply } = await requestGet(`${customHost}/hel-meta.json?_t=${t}`);
-    if (reply) {
-      reply.app.__fromCust = true;
-      return reply;
+  if (!skipFetchHelMeta) {
+    try {
+      const { reply } = await requestGet(`${host}/hel-meta.json?_t=${t}`);
+      if (reply) {
+        reply.app.__fromCust = true;
+        return reply;
+      }
+      log('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
+    } catch (err: any) {
+      noop('json parse fail or other error');
     }
-    console.warn('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
-  } catch (err: any) {
-    noop('json parse fail or other error');
   }
 
-  const result = await requestGet(`${customHost}/index.html?_t=${t}`, false);
+  // TODO: 分析 script style 内部文本
+  // const arr = Array.from(htmlText.matchAll(new RegExp('(?<=\<script\>).*?(?=(\</script\>|$))', 'g')));
+  // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
+
+  const result = await requestGet(`${host}/index.html?_t=${t}`, false);
   const htmlText = result.reply;
   // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
   // SyntaxError: Invalid regular expression: invalid group specifier name
@@ -171,7 +178,7 @@ export async function getCustomMeta(appName: string, customHost: string, appGrou
   const srcList: string[] = htmlText.match(reg) || [];
   const bodyAssetList: any[] = [];
   srcList.forEach((v: string) => {
-    if (v.startsWith(customHost)) {
+    if (v.startsWith(host)) {
       bodyAssetList.push({
         tag: 'script',
         attrs: {
