@@ -39,7 +39,15 @@ export function getGlobalThis() {
 }
 
 export function setGlobalThis(specGlobalThis) {
+  let prevShared = null;
+  if (mockGlobalThis?.__HEL_MICRO_SHARED__) {
+    prevShared = mockGlobalThis.__HEL_MICRO_SHARED__;
+  }
   mockGlobalThis = specGlobalThis;
+  // 避免 resetGlobalThis 被用户调用后，共享数据丢失
+  if (prevShared) {
+    mockGlobalThis.__HEL_MICRO_SHARED__ = prevShared;
+  }
 }
 
 /**

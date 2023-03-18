@@ -27,12 +27,17 @@ export function getLibObj<L extends LibProperties>(libName: string, platform?: P
   return appName2Lib[libName] as L;
 }
 
-export function getLibProxy<L extends LibProperties>(libName: string, libObj: L): L {
+export function getLibProxy<L extends LibProperties>(libName: string, libObj: L, platform?: Platform): L {
   return new Proxy(libObj, {
     get(target, key) {
       const strKey = String(key);
       log(`[[getLibProxy]] call lib [${libName}] method [${strKey}]`);
-      return target[strKey];
+      if (Object.keys(target).length) {
+        return target[strKey];
+      }
+      // 支持 resetGlobalThis 后，也能够安全获取到模块
+      const safeTarget = getLibObj(libName, platform);
+      return safeTarget[strKey];
     },
   });
 }

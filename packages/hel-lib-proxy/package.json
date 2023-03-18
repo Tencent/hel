@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.13.0",
+  "version": "3.13.2",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
