@@ -51,7 +51,7 @@ export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions
  * @param options
  * @returns
  */
-export function exposeLib<L extends LibProperties>(libName: string, options?: IExposeLibOptions | Platform): L {
+export function exposeLib<L extends LibProperties>(libName: string, versionId: string, options?: IExposeLibOptions | Platform): L {
   let asProxy = true;
   let platform = '';
   if (options) {
@@ -64,9 +64,9 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
   }
   platform = platform || diff.getDefaultPlatform();
 
-  let libObj = share.getLibObj<L>(libName, platform);
+  let libObj = share.getLibObj<L>(libName, versionId, platform);
   if (typeof Proxy === 'function' && asProxy) {
-    libObj = share.getLibProxy(libName, libObj, platform);
+    libObj = share.getLibProxy(libName, libObj, versionId, platform);
   }
   core.log('[[ exposeLib ]] libName, libObj', libName, libObj);
   return libObj;

@@ -17,17 +17,20 @@ export function getMergedOptions(options?: IOptions) {
  * @param platform
  * @returns
  */
-export function getLibObj<L extends LibProperties>(libName: string, platform?: Platform): L {
+export function getLibObj<L extends LibProperties>(libName: string, versionId: string, platform?: Platform): L {
   // 使用 getAppPlatform?.是为了 防止 peerDependencies 里用户还未升级最新版 hel-micro-core
   const platformVar = platform || getAppPlatform?.(libName);
   const appName2Lib = getSharedCache(platformVar).appName2Lib;
   if (!appName2Lib[libName]) {
     appName2Lib[libName] = {};
   }
-  return appName2Lib[libName] as L;
+  if (!appName2Lib[libName][versionId]) {
+    appName2Lib[libName][versionId] = {};
+  }
+  return appName2Lib[libName][versionId] as L;
 }
 
-export function getLibProxy<L extends LibProperties>(libName: string, libObj: L, platform?: Platform): L {
+export function getLibProxy<L extends LibProperties>(libName: string, libObj: L, versionId: string, platform?: Platform): L {
   return new Proxy(libObj, {
     get(target, key) {
       const strKey = String(key);
@@ -36,7 +39,7 @@ export function getLibProxy<L extends LibProperties>(libName: string, libObj: L,
         return target[strKey];
       }
       // 支持 resetGlobalThis 后，也能够安全获取到模块
-      const safeTarget = getLibObj(libName, platform);
+      const safeTarget = getLibObj(libName, versionId, platform);
       return safeTarget[strKey];
     },
   });

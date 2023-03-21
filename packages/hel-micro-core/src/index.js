@@ -314,17 +314,23 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
   const { appName2verEmitLib, appName2Lib, appName2isLibAssigned } = sharedCache;
   const appMeta = getAppMeta(appName, platform);
 
-  const assignLibObj = (appName) => {
+  const assignLibObj = (appName, versionId) => {
     // 使用文件头静态导入模块语法时，默认是从 appName2Lib 拿数据，
     // 这意味着 文件头静态导入 总是执行第一个加载的版本模块，
     // （ 注：文件头静态导入对接的是 hel-lib-proxy 的 exposeLib，该接口使用的是 appName2Lib ）
     // 所以 多版本同时导入 和 文件头静态导入 本身是冲突的，用户不应该两种用法一起使用，
     // 否则 文件头静态导入 的模块是不稳定的，除非用户知道后果并刻意这样做
     // marked at 2022-05-06
-    const libObj = appName2Lib[appName];
+    if (!Object.prototype.hasOwnProperty.call(appName2Lib, appName)) {
+      appName2Lib[appName] = {};
+    }
+    if (!Object.prototype.hasOwnProperty.call(appName2Lib[appName], versionId)) {
+      appName2Lib[appName][versionId] = undefined;
+    }
+    const libObj = appName2Lib[appName][versionId];
     // 未静态导入时，libObj 是 undefined
     if (!libObj) {
-      appName2Lib[appName] = appProperties;
+      appName2Lib[appName][versionId] = appProperties;
     } else if (typeof libObj === 'object' && Object.keys(libObj).length === 0) {
       // 静态导入时，emptyChunk 那里调用 exposeLib 会提前生成一个 {} 对象
       // 这里只需负责 merge 模块提供方通过 libReady 提供的模块对象
@@ -332,13 +338,13 @@ export function setEmitLib(appName, /** @type {import('hel-types').IEmitAppInfo}
     }
     appName2isLibAssigned[appName] = true;
   };
-  assignLibObj(appName);
+  assignLibObj(appName, versionId);
   // 确保 preFetchLib 传入测试应用名时，exposeLib 获取的代理对象能够指到测试库
   // 这样静态导入才能正常工作
   if (appGroupName) {
-    assignLibObj(appGroupName);
+    assignLibObj(appGroupName, versionId);
   } else {
-    appMeta && assignLibObj(appMeta.app_group_name);
+    appMeta && assignLibObj(appMeta.app_group_name, versionId);
   }
 
   // 当前版本可作为默认线上版本来记录
