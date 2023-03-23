@@ -1,6 +1,6 @@
 import xhrFetch from './browser/xhr';
-import { allowLog, DEFAULT_ONLINE_VER, getGlobalThis, log } from './deps/helMicroCore';
-import type { ICustom, IInnerPreFetchOptions } from './types';
+import { allowLog, getGlobalThis } from './deps/helMicroCore';
+import type { IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {
   return args;
@@ -148,64 +148,6 @@ export async function requestGet(url: string, asJson = true) {
   }
   const result = await requester(url, asJson);
   return result;
-}
-
-export async function getCustomMeta(appName: string, custom: ICustom) {
-  const { host, appGroupName, skipFetchHelMeta = false } = custom;
-  const t = Date.now();
-  if (!skipFetchHelMeta) {
-    try {
-      const { reply } = await requestGet(`${host}/hel-meta.json?_t=${t}`);
-      if (reply) {
-        reply.app.__fromCust = true;
-        return reply;
-      }
-      log('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
-    } catch (err: any) {
-      noop('json parse fail or other error');
-    }
-  }
-
-  // TODO: 分析 script style 内部文本
-  // const arr = Array.from(htmlText.matchAll(new RegExp('(?<=\<script\>).*?(?=(\</script\>|$))', 'g')));
-  // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
-
-  const result = await requestGet(`${host}/index.html?_t=${t}`, false);
-  const htmlText = result.reply;
-  // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
-  // SyntaxError: Invalid regular expression: invalid group specifier name
-  const reg = new RegExp('(?<=(src="))[^"]*?(?=")', 'ig');
-  const srcList: string[] = htmlText.match(reg) || [];
-  const bodyAssetList: any[] = [];
-  srcList.forEach((v: string) => {
-    if (v.startsWith(host)) {
-      bodyAssetList.push({
-        tag: 'script',
-        attrs: {
-          src: v,
-        },
-      });
-    }
-  });
-
-  return {
-    app: {
-      // @ts-ignore，标记来自 cust 配置
-      __fromCust: true,
-      name: appName,
-      app_group_name: appGroupName || appName,
-      online_version: DEFAULT_ONLINE_VER,
-      build_version: DEFAULT_ONLINE_VER,
-    },
-    version: {
-      sub_app_name: appName,
-      sub_app_version: DEFAULT_ONLINE_VER,
-      src_map: {
-        headAssetList: [],
-        bodyAssetList,
-      },
-    },
-  };
 }
 
 export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {

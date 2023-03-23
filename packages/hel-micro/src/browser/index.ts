@@ -145,7 +145,7 @@ function createLinkElement(appName: string, options: ICreateLinkOptions) {
   const linkDom = doc.createElement('link');
   linkDom.id = helLinkId(appName);
   linkDom.rel = rel;
-  linkDom.href = href;
+  linkDom.rel = rel || 'stylesheet';
   if (as) linkDom.as = as;
   tryCallChangeAttrs('link', { appName, appGroupName, el: linkDom, attrs, changeAttrs });
 

@@ -6,11 +6,12 @@ import storageKeys from '../consts/storageKeys';
 import * as core from '../deps/helMicroCore';
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from '../deps/helTypes';
 import { getPlatform, getPlatformConfig } from '../shared/platform';
-import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
+import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
-import { getAllExtraCssList, getCustomMeta, noop, safeParse } from '../util';
+import { getAllExtraCssList, noop, safeParse } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
+import { getCustomMeta, isCustomValid } from './custom';
 
 interface ISrvInnerOptions {
   platform: Platform;

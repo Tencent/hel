@@ -16,8 +16,9 @@ import {
 } from '../deps/helMicroCore';
 import type { IEmitAppInfo, Platform } from '../deps/helTypes';
 import emitApp from '../process/emitApp';
-import { isCustomValid, isEmitVerMatchInputVer } from '../shared/util';
+import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
+import { isCustomValid } from './custom';
 
 function tryFixAssociateData(appName: string, appGroupName: string, getOptions: IGetOptions) {
   const { platform } = getOptions;
