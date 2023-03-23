@@ -3,15 +3,9 @@ import * as apis from './apis';
 // 这些函数最后一位参数是 string 时，作为版本号处理
 const versionIdFns = ['preFetchLib', 'preFetchApp'];
 // 这些函数参数无平台值，可忽略处理
-const ingoreFns = [
-  'log', 'allowLog', 'getGlobalThis', 'setGlobalThis', 'resetGlobalThis', 'getAppPlatform',
-  'tryGetAppName', 'isSubApp',
-];
+const ingoreFns = ['log', 'allowLog', 'getGlobalThis', 'setGlobalThis', 'resetGlobalThis', 'getAppPlatform', 'tryGetAppName', 'isSubApp'];
 // 这些函数最后一位是平台值字符串
-const platStrFns = [
-  'getPlatformConfig', 'initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion',
-  'setAppPlatform',
-];
+const platStrFns = ['getPlatformConfig', 'initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'];
 
 function injectPlat(platform: string, fnName: string, fn: any) {
   return (...args: any[]) => {
@@ -25,7 +19,7 @@ function injectPlat(platform: string, fnName: string, fn: any) {
     if (platStrFns.includes(fnName)) {
       args[lastIndex] = lastArg || platform;
     } else if (versionIdFns.includes(fnName)) {
-      args[lastIndex] = { platform, ...(lastArgType === 'string' ? { versionId: lastArg } : (lastArg || {})) };
+      args[lastIndex] = { platform, ...(lastArgType === 'string' ? { versionId: lastArg } : lastArg || {}) };
     } else {
       args[lastIndex] = { platform, ...(lastArg || {}) };
     }
@@ -36,7 +30,7 @@ function injectPlat(platform: string, fnName: string, fn: any) {
 
 function tryInectPlatForMethods(platform: string, obj: any) {
   const newObj: any = {};
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     const value = apis[key];
     const valueType = typeof value;
     if (valueType === 'function') {

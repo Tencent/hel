@@ -96,19 +96,19 @@ export interface SharedCache {
    */
   appGroupName2firstVer: Record<string, string>;
   isP0InitCalled: boolean;
-  apiPrefix: '', // 必须
+  apiPrefix: ''; // 必须
   /** 是否严格匹配版本 */
-  strictMatchVer: true,
-  apiMode: 'jsonp',
-  apiSuffix: '',
-  apiPathOfApp: string,
-  apiPathOfAppVersion: '',
-  getApiPrefix: null,
-  getSubAppAndItsVersionFn: null,
-  userLsKey: '',
-  getUserName: null,
-  onFetchMetaFailed: null,
-  shouldUseGray: null,
+  strictMatchVer: true;
+  apiMode: 'jsonp';
+  apiSuffix: '';
+  apiPathOfApp: string;
+  apiPathOfAppVersion: '';
+  getApiPrefix: null;
+  getSubAppAndItsVersionFn: null;
+  userLsKey: '';
+  getUserName: null;
+  onFetchMetaFailed: null;
+  shouldUseGray: null;
 }
 
 /**
