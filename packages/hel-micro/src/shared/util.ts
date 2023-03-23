@@ -1,7 +1,6 @@
 import { getAppMeta, log } from 'hel-micro-core';
 import { PLAT_UNPKG } from '../consts/logic';
 import type { Platform } from '../deps/helTypes';
-import type { ICustom, IInnerPreFetchOptions } from '../types';
 
 interface IVerMatchOptions {
   emitVer: string;
@@ -45,18 +44,4 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
   }
 
   return emitVer === inputVer;
-}
-
-export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom is ICustom {
-  if (custom) {
-    const { enable = true, host } = custom;
-    return !!(host && enable);
-  }
-  return false;
-}
-
-export function checkPlatformHooks(platform: string) {
-  if (platform === PLAT_UNPKG) {
-    return;
-  }
 }
