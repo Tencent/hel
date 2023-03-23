@@ -1,5 +1,4 @@
 import { getAppMeta, log } from 'hel-micro-core';
-import { PLAT_UNPKG } from '../consts/logic';
 import type { Platform } from '../deps/helTypes';
 
 interface IVerMatchOptions {
