@@ -1,6 +1,7 @@
-import { getAppMeta, log } from '../deps/helMicroCore';
+import { getAppMeta, log } from 'hel-micro-core';
 import type { Platform } from '../deps/helTypes';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
+import { PLAT_UNPKG } from '../consts/logic';
 
 interface IVerMatchOptions {
   emitVer: string;
@@ -52,4 +53,12 @@ export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom i
     return !!(host && enable);
   }
   return false;
+}
+
+
+export function checkPlatformHooks(platform: string) {
+  if (platform === PLAT_UNPKG) {
+    return;
+  }
+
 }

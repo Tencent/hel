@@ -5,6 +5,15 @@ import type { IGetVerOptions, IHelGetOptions } from './api';
 import * as innerApiSrv from './api';
 import * as innerAppSrv from './app';
 
+export interface IGetMetaDataUrlOptions {
+  versionId?: string;
+  platform?: Platform;
+  apiMode?: ApiMode;
+  /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
+  protocol?: 'http' | 'https';
+  projectId?: string;
+}
+
 export async function getSubAppVersion(versionId: string, options: IGetVerOptions) {
   const versionData = await innerApiSrv.getSubAppVersion(versionId, options);
   return versionData;
@@ -21,17 +30,7 @@ export async function getSubAppMeta(versionId: string, options?: IHelGetOptions)
  * @param options
  * @returns
  */
-export function getMetaDataUrl(
-  appName: string,
-  options?: {
-    versionId?: string;
-    platform?: Platform;
-    apiMode?: ApiMode;
-    /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
-    protocol?: 'http' | 'https';
-    projectId?: string;
-  },
-): string {
+export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions): string {
   const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId } = options || {};
   let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
   if (protocol === 'http') {

@@ -26,11 +26,11 @@ export function makeCacheNode(platform) {
     appName2appVersion: {},
     appName2styleStr: {},
     appGroupName2firstVer: {},
-    isInnerHooksInit: false,
-    // below properties can be overwrite for use custom platform
+    isP0InitCalled: false,
+    // below properties can be overwrite for user custom platform
+    apiPrefix: '', // 必须
     strictMatchVer: true,
     apiMode: 'jsonp',
-    apiPrefix: '',
     apiSuffix: '',
     apiPathOfApp: DEFAULT_API_URL,
     apiPathOfAppVersion: '',

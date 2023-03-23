@@ -41,21 +41,6 @@ export interface SharedCache {
   isConfigOverwrite: boolean;
   initPack: 'inner' | 'out';
   platform: Platform;
-  /** 是否严格匹配版本 */
-  strictMatchVer: boolean;
-  apiMode: ApiMode;
-  /**
-   * 请求的域名前缀，默认 src/diff/index.getDefaultApiPrefix
-   */
-  apiPrefix: string;
-  apiSuffix: string;
-  apiPathOfApp: string;
-  apiPathOfAppVersion: string;
-  getSubAppAndItsVersionFn: null;
-  onFetchMetaFailed: null;
-  userLsKey: string;
-  getUserName: null;
-  shouldUseGray: null;
   /**
    * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
    */
@@ -110,6 +95,20 @@ export interface SharedCache {
    * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
    */
   appGroupName2firstVer: Record<string, string>;
+  isP0InitCalled: boolean;
+  apiPrefix: '', // 必须
+  /** 是否严格匹配版本 */
+  strictMatchVer: true,
+  apiMode: 'jsonp',
+  apiSuffix: '',
+  apiPathOfApp: string,
+  apiPathOfAppVersion: '',
+  getApiPrefix: null,
+  getSubAppAndItsVersionFn: null,
+  userLsKey: '',
+  getUserName: null,
+  onFetchMetaFailed: null,
+  shouldUseGray: null,
 }
 
 /**
@@ -229,17 +228,6 @@ export function initPlatformConfig(config: IPlatformConfig, platform?: Platform)
 export function getPlatformConfig(platform?: Platform): IPlatformConfigFull;
 
 export function isSubApp(): boolean;
-
-/**
- * @deprecated
- * !!! 此函数已废弃，无需再调用，主应用第一行加载了hel-micro-core模块时内部会自己完成调用
- * 调用了也不会设置成功
- * ---------------------------------------------------------------
- * 原来的场景是
- * 主应用第一行需要调用此函数，来推导出自己是不是主应用
- * ---------------------------------------------------------------
- */
-export function trySetMasterAppLoadedSignal(): void;
 
 export function getVerApp(appName: string, options?: IGetOptions): IEmitAppInfo | null;
 
@@ -372,7 +360,6 @@ declare type DefaultExport = {
   getGlobalThis: typeof getGlobalThis;
   setGlobalThis: typeof setGlobalThis;
   resetGlobalThis: typeof resetGlobalThis;
-  trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal;
 };
 
 declare let defaultExport: DefaultExport;

@@ -289,9 +289,9 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
 }
 
 export interface IGetVerOptions {
-  platform: Platform;
   apiMode: ApiMode;
   appName: string;
+  platform?: Platform;
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
 }

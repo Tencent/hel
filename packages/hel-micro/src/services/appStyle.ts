@@ -14,7 +14,7 @@ const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
 /** 缓存拉去过的字符串, TODO: 下沉到 core */
 const cssUrlMap: Record<string, string> = {};
-interface IFetchStyleOptions extends IGetOptionsLoose {
+export interface IFetchStyleOptions extends IGetOptionsLoose {
   /** 支持透传额外的样式地址列表 */
   extraCssUrlList?: string[];
   /** 透传 应用自己的样式列表 + extraCssUrlList 额外样式列表给用户，用户可依此再次排除掉一部分样式，返回的是欲排除的样式列表 */

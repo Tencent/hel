@@ -52,9 +52,6 @@ const inner = {
   },
 };
 
-// 暴露 trySetMasterAppLoadedSignal 出去，仅为兼容以前的调用此函数代码不报错，但是说明上已标即不鼓励使用
-export const { trySetMasterAppLoadedSignal, isSubApp } = isSubMod;
-
 /**
  * 获取默认的平台值
  * @returns
@@ -496,12 +493,27 @@ export function setAppStyleStr(appName, str, options) {
   util.setSubMapValue(appName2verStyleFetched, appName, versionId, helLoadStatus.LOADED);
 }
 
+/**
+ * 此函数服务于基于 hel-micro 二次封装发布的定制包，当 p0Init 调用后，依然还能允许调用一次 init 重新一些平台参数
+ * 但如果先调用了 init 那么 p0Init 是不能被调用的，所以定制包可以调用 p0Init 注入自己的平台相关参数后，
+ * 在暴露 init 出去给用户一次额外的机会定义或覆盖此平台的相关参数
+ */
+export function p0Init() {
+  const cache = helper.getPlatformSharedCache(iPlatform);
+  const pureConfig = getPureConfig(config);
+  if (cache.isP0InitCalled) {
+    // 对应平台的 initPlatformConfig 只接受一次调用
+    return;
+  }
+  cache.isP0InitCalled = true;
+  util.safeAssign(cache, pureConfig);
+}
+
 export default {
   DEFAULT_ONLINE_VER,
   helLoadStatus,
   helEvents,
   isSubApp,
-  trySetMasterAppLoadedSignal,
   getHelEventBus,
   getUserEventBus,
   getHelDebug,

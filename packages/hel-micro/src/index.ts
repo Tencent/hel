@@ -1,18 +1,8 @@
-import defaultsCst from './consts/defaults';
-import * as core from './deps/helMicroCore';
-import emitApp from './process/emitApp';
-import * as appMetaSrv from './services/appMeta';
-import * as appParamSrv from './services/appParam';
-import * as appStyleSrv from './services/appStyle';
-import * as logicSrv from './services/logic';
-import { init } from './shared/helMicro';
-import { isSubApp } from './shared/signal';
-import { bindExternals, bindReactRuntime, bindVueRuntime } from './user-util/bindExternals';
-import { getExtraData, setExtraData } from './user-util/extraData';
-import getFakeHelContext from './user-util/getFakeHelContext';
-import { batchPreFetchLib, preFetchApp, preFetchLib } from './user-util/preFetch';
+import * as apis from './apis'
+import createInstance from './createInstance';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase } from './types';
-export {
+
+export const {
   preFetchLib,
   preFetchApp,
   batchPreFetchLib,
@@ -21,7 +11,6 @@ export {
   appMetaSrv,
   logicSrv,
   emitApp,
-  eventBus,
   init,
   isSubApp,
   getFakeHelContext,
@@ -30,22 +19,13 @@ export {
   bindExternals,
   bindVueRuntime,
   bindReactRuntime,
-  core,
+} = apis;
+export const { resetGlobalThis } = apis.core;
+export const eventBus = apis.core.getUserEventBus();
+
+export {
+  createInstance,
 };
-
-export const { resetGlobalThis } = core;
-
-/**
- * // 发射事件
- * eventBus.emit('evName', ...args);
- * // 监听事件
- * eventBus.on('evName', (...args)=>{ // your logic });
- * // 取消监听
- * eventBus.off('evName', cb);
- */
-const eventBus = core.getUserEventBus();
-
-core.log(`hel-micro ${defaultsCst.VER}`);
 
 const toExport = {
   preFetchLib,
@@ -66,7 +46,8 @@ const toExport = {
   bindVueRuntime,
   bindReactRuntime,
   resetGlobalThis,
-  core,
+  core: apis.core,
+  createInstance,
 };
 
 export default toExport;
