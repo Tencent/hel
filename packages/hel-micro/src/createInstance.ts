@@ -1,5 +1,5 @@
-import type { IIncetanceOptions } from './types';
 import * as apis from './apis';
+import type { IIncetanceOptions } from './types';
 
 // 这些函数仅1个参数，第1位参数是平台值
 const arg1PlatFns = ['getPlatformConfig', 'getPlatformHost', 'getSharedCache'];
@@ -55,7 +55,7 @@ function tryInectPlatForMethods(platform: string, obj: any) {
 
 type Apis = typeof apis;
 type CreateInstance = (platform: string, options?: IIncetanceOptions) => AllApis;
-type AllApis = Apis & { createInstance: CreateInstance }
+type AllApis = Apis & { createInstance: CreateInstance };
 
 export default function createInstance(platform: string, options?: IIncetanceOptions): AllApis {
   const newApis = tryInectPlatForMethods(platform, apis);
