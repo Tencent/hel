@@ -11,5 +11,5 @@ export function getDefaultApiPrefix(platform) {
     return UNPKG_PREFIX;
   }
 
-  return getApiInnerPrefix();
+  return getApiInnerPrefix(platform);
 }
