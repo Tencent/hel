@@ -1,29 +1,34 @@
+import type { IIncetanceOptions } from './types';
 import * as apis from './apis';
 
-// 这些函数最后一位参数是 string 时，作为版本号处理
-const versionIdFns = ['preFetchLib', 'preFetchApp'];
-// 这些函数参数无平台值，可忽略处理
-const ingoreFns = ['log', 'allowLog', 'getGlobalThis', 'setGlobalThis', 'resetGlobalThis', 'getAppPlatform', 'tryGetAppName', 'isSubApp'];
-// 这些函数最后一位是平台值字符串
-const platStrFns = ['getPlatformConfig', 'initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'];
+// 这些函数仅1个参数，第1位参数是平台值
+const arg1PlatFns = ['getPlatformConfig', 'getPlatformHost', 'getSharedCache'];
+// 这些函数共2个参数，第2位参数是平台值
+const arg2PlatFns = ['initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'];
+// 这些函数共2个参数，第2位参数是包含平台值的对象
+const arg2PlatObjFns = ['setEmitLib'];
+// 这些函数共2个参数，第2位参数是包含平台值的对象或版本号
+const arg2VerOrPlatObjFns = ['preFetchLib', 'preFetchApp'];
+// 这些函数共3个参数，第3位参数是包含平台值的对象
+const arg3PlatObjFns = ['setVersion'];
 
 function injectPlat(platform: string, fnName: string, fn: any) {
   return (...args: any[]) => {
-    if (ingoreFns.includes(fnName)) {
-      return fn.apply(this, args);
+    if (arg1PlatFns.includes(fnName)) {
+      args[0] = args[0] || platform;
+    } else if (arg2PlatFns.includes(fnName)) {
+      args[1] = args[1] || platform;
+    } else if (arg2VerOrPlatObjFns.includes(fnName)) {
+      const lastArg = args[1];
+      const lastArgType = typeof lastArg;
+      args[1] = { platform, ...(lastArgType === 'string' ? { versionId: lastArg } : lastArg || {}) };
+    } else if (arg2PlatObjFns.includes(fnName)) {
+      args[1] = { platform, ...(args[1] || {}) };
+    } else if (arg3PlatObjFns.includes(fnName)) {
+      args[2] = { platform, ...(args[2] || {}) };
     }
 
-    const lastIndex = args.length - 1;
-    const lastArg = args[lastIndex];
-    const lastArgType = typeof lastArg;
-    if (platStrFns.includes(fnName)) {
-      args[lastIndex] = lastArg || platform;
-    } else if (versionIdFns.includes(fnName)) {
-      args[lastIndex] = { platform, ...(lastArgType === 'string' ? { versionId: lastArg } : lastArg || {}) };
-    } else {
-      args[lastIndex] = { platform, ...(lastArg || {}) };
-    }
-
+    // @ts-ignore
     return fn.apply(this, args);
   };
 }
@@ -31,6 +36,7 @@ function injectPlat(platform: string, fnName: string, fn: any) {
 function tryInectPlatForMethods(platform: string, obj: any) {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
+    // @ts-ignore
     const value = apis[key];
     const valueType = typeof value;
     if (valueType === 'function') {
@@ -47,7 +53,11 @@ function tryInectPlatForMethods(platform: string, obj: any) {
   return newObj;
 }
 
-export default function createInstance(platform: string): typeof apis {
+type Apis = typeof apis;
+type CreateInstance = (platform: string, options?: IIncetanceOptions) => AllApis;
+type AllApis = Apis & { createInstance: CreateInstance }
+
+export default function createInstance(platform: string, options?: IIncetanceOptions): AllApis {
   const newApis = tryInectPlatForMethods(platform, apis);
   newApis.createInstance = createInstance;
   return newApis;

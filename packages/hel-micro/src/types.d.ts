@@ -227,3 +227,7 @@ export type BatchAppNames =
   | [string, string, string, string, string, string]
   | [string, string, string, string, string, string, string]
   | [string, string, string, string, string, string, string, string];
+
+export interface IIncetanceOptions {
+
+}

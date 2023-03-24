@@ -20,6 +20,7 @@ export const {
   bindExternals,
   bindVueRuntime,
   bindReactRuntime,
+  core,
 } = apis;
 export const { resetGlobalThis } = apis.core;
 export const eventBus = apis.core.getUserEventBus();
