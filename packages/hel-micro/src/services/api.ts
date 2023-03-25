@@ -170,7 +170,7 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   const userName = getUserName?.({ platform: targetPlatform, appName }) || guessUserName(userLsKey || apiSrvConst.USER_KEY);
 
   const grayFn = loadOptions?.shouldUseGray || shouldUseGray;
-  const grayResult = grayFn?.();
+  const grayResult = grayFn?.({ appName });
   let grayVar = '';
   if (typeof grayResult === 'boolean') {
     grayVar = grayResult ? '1' : '0';

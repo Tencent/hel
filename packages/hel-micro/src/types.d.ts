@@ -1,4 +1,4 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from './deps/helMicroCore';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IShouldUseGray } from './deps/helMicroCore';
 import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from './deps/helTypes';
 
 export interface IGetOptionsLoose {
@@ -198,7 +198,7 @@ export interface IPreFetchOptionsBase {
    * true：强制返回灰度版本，false：强制返回线上版本
    * 定义了此函数，返回true或false都会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
-  shouldUseGray?: () => boolean | null;
+  shouldUseGray?: IShouldUseGray;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {

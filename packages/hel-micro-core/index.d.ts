@@ -55,7 +55,7 @@ export interface SharedCache {
   onFetchMetaFailed: null;
   userLsKey: string;
   getUserName: null;
-  shouldUseGray: null;
+  shouldUseGray?: IShouldUseGray;
   /**
    * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
    */
@@ -174,6 +174,12 @@ export interface IOnFetchMetaFailed {
   (params: { appName: string }): Promise<IAppAndVer> | IAppAndVer | void;
 }
 
+/**
+ * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
+ * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
+ */
+export type IShouldUseGray = (passCtx: { appName: string }) => boolean | null;
+
 export interface IPlatformConfigFull {
   /**
    * 是否严格匹配版本，默认 true
@@ -219,7 +225,7 @@ export interface IPlatformConfigFull {
    * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
    * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
-  shouldUseGray: () => boolean | null;
+  shouldUseGray: IShouldUseGray;
 }
 
 export type IPlatformConfig = Partial<IPlatformConfigFull>;

@@ -7,6 +7,7 @@ export type {
   IGetSubAppAndItsVersionFn,
   IOnFetchMetaFailed,
   IPlatformConfig,
+  IShouldUseGray,
 } from 'hel-micro-core';
 export {
   DEFAULT_ONLINE_VER,
