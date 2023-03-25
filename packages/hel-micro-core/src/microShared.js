@@ -151,5 +151,5 @@ export function ensureHelMicroShared() {
 
 /** @return {ReturnType<typeof makeHelMicroShared>} */
 export function getHelMicroShared() {
-  return getHelSingletonHost().__HEL_MICRO_SHARED__;
+  return getHelSingletonHost().__HEL_MICRO_SHARED__ || {};
 }

@@ -6,6 +6,8 @@ import { setGlobalThis } from 'hel-micro-core';
 import * as qs from 'qs';
 import * as mockData from './mockData';
 
+console.log('------------------------- run testSetup --------------------------');
+
 // prettier-ignore
 const noop = () => { };
 const nativeConsole = console;

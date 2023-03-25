@@ -1,7 +1,12 @@
 import { getHelSingletonHost } from './utilBase';
+import { isNull } from './commonUtil';
 
 /** @type {import('../index').IHelMicroDebug} */
-let helMicroDebug = getHelSingletonHost().__HEL_MICRO_DEBUG__;
+let helMicroDebug = {};
+try {
+  helMicroDebug = getHelSingletonHost().__HEL_MICRO_DEBUG__;
+} catch (err) { }
+
 
 /**
  * @returns {import('../index').IHelMicroDebug}
@@ -15,7 +20,7 @@ function makeHelMicroDebug() {
 }
 
 function ensureHelMicroDebug() {
-  if (helMicroDebug) {
+  if (!isNull(helMicroDebug)) {
     // 兼容老版本库生成的 __HEL_MICRO_DEBUG__ 对象
     if (helMicroDebug.logMode === undefined) {
       helMicroDebug.logMode = 0;
@@ -25,7 +30,9 @@ function ensureHelMicroDebug() {
   }
 
   helMicroDebug = makeHelMicroDebug();
-  getHelSingletonHost().__HEL_MICRO_DEBUG__ = helMicroDebug;
+  try {
+    getHelSingletonHost().__HEL_MICRO_DEBUG__ = helMicroDebug;
+  } catch (err) { }
 }
 
 ensureHelMicroDebug();

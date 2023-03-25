@@ -40,10 +40,11 @@
     "lint_fix": "eslint ./src --ext ts,tsx --fix",
     "lint_test": "eslint ./test --ext ts,tsx",
     "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
-    "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
+    "test": "pnpm --filter=hel-micro-core run build:commonjs && jest",
+    "t": "jest"
   },
   "dependencies": {
-    "hel-micro-core": "4.0.0-alpha.4",
+    "hel-micro-core": "4.0.0-alpha.6",
     "hel-types": ">=3.8.2"
   },
   "devDependencies": {
@@ -69,7 +70,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "hel-micro-core": "4.0.0-alpha.4",
+    "hel-micro-core": "4.0.0-alpha.6",
     "hel-types": ">=3.8.2"
   },
   "bundleDependencies": [],

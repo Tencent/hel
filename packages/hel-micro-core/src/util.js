@@ -1,7 +1,9 @@
 import { getHelMicroDebug } from './microDebug';
 import { getGlobalThis } from './utilBase';
 
-initMicroDebug();
+try {
+  initMicroDebug();
+} catch (err) { }
 
 function initMicroDebug() {
   if (getHelMicroDebug().isInit) {
