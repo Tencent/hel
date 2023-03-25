@@ -182,7 +182,7 @@ export interface IPlatformConfigFull extends IPlatformConfigInitFull {
   origin: IPlatformConfig;
 }
 
-export interface SharedCache extends IPlatformConfigFull{
+export interface SharedCache extends IPlatformConfigFull {
   isConfigOverwrite: boolean;
   platform: Platform;
   /**

@@ -107,6 +107,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
     return { emitApp, msg: '' };
   } catch (err: any) {
+    console.error(err);
     return { emitApp, msg: err.message };
   }
 }

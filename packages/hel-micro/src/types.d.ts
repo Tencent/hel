@@ -1,4 +1,4 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IOriginInitOptions } from 'hel-micro-core';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IOriginInitOptions, IShouldUseGray } from 'hel-micro-core';
 import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 
 export interface IGetOptionsLoose {
@@ -76,7 +76,7 @@ export interface ICustom {
    * 因此获取动作可能会报一个 404 not found 符合预期的行为，用户可设定 skipFetchHelMeta 为 true 跳过此步骤
    * 但建议加载线上模块时（非本地联调时），保持 skipFetchHelMeta 为 false 比较好，有利于提高模块加载速度（ 无html解析hel-meta.json过程 ）
    */
-  skipFetchHelMeta?: boolean;
+  skipFetchHelMeta?: IShouldUseGray;
 }
 
 export interface ILinkInfo {

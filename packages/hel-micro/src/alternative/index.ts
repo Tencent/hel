@@ -1,9 +1,9 @@
-import type { IPlatformConfigFull } from 'hel-micro-core';
+import type { IPlatformConfigInitFull } from 'hel-micro-core';
 import { getPlatformConfig } from 'hel-micro-core';
 import { isNull } from '../util';
 import * as builtinFns from './builtin';
 
-type PropName = keyof IPlatformConfigFull;
+type PropName = keyof IPlatformConfigInitFull;
 
 export function getFn(platform: string | undefined, fnName: PropName, userFn?: any): any {
   const conf = getPlatformConfig(platform);
@@ -31,7 +31,7 @@ export function getVal<T extends any = any>(platform: string | undefined, key: P
   const { origin } = conf;
   const confVal: any = conf[key];
   // @ts-ignore
-  const originVal = origin[key];
+  const originVal: any = origin[key];
   if (!isNull(confVal)) {
     return confVal;
   }

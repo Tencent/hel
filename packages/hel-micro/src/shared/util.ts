@@ -14,18 +14,19 @@ interface IVerMatchOptions {
  * @returns true，匹配成功，false，匹配失败
  */
 export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOptions) {
+  const fnMark = '[[ isEmitVerMatchInputVer ]]';
   const { platform, emitVer, inputVer, projectId } = options;
   const strictMatchVer = alt.getVal(platform, 'strictMatchVer', options.strictMatchVer);
 
   const appMeta = getAppMeta(appName, platform);
   if (strictMatchVer === false) {
-    log(`[[ isEmitVerMatchInputVer ]] set strictMatchVer false for app (${appName}), trust emitVer (${emitVer}) is the target version`);
+    log(`${fnMark} set strictMatchVer false for app (${appName}), trust emitVer (${emitVer}) is the target version`);
     return true;
   }
 
   // 模块版本信息未发射上来的话，当做匹配成功
   if (!emitVer) {
-    log('[[ isEmitVerMatchInputVer ]] emitVer should not be null');
+    log(`${fnMark} emitVer should not be null`);
     return true;
   }
 

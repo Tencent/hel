@@ -1,5 +1,5 @@
 const toExport = {
-  VER: 'v4.0.0-alpha.1',
+  VER: 'v4.0.0-alpha.2',
   SHADOW: true,
   SET_STYLE_AS_STRING: true,
   ENABLE_DISK_CACHE: false,
