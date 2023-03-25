@@ -1,4 +1,4 @@
-import { getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus } from 'hel-micro-core';
+import { getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus, commonUtil } from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
 import * as alt from '../alternative';
 import defaults from '../consts/defaults';
@@ -18,7 +18,8 @@ import type {
   SemverApi,
   VersionId,
 } from '../types';
-import { getObjsVal } from '../util';
+
+const { getObjsVal } = commonUtil;
 
 const { ENABLE_DISK_CACHE, ENABLE_SYNC_META, STORAGE_TYPE } = defaults;
 

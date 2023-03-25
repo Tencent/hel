@@ -1,7 +1,6 @@
-import { originInit } from 'hel-micro-core';
+import { originInit, commonUtil } from 'hel-micro-core';
 import * as apis from './apis';
 import type { ICreateInstanceOptions } from './types';
-import { purify } from './util';
 
 interface IInjectOptions {
   semverApi: boolean;
@@ -13,7 +12,7 @@ const ignoreKeys = ['eventBus', 'getExtraData', 'setExtraData', 'bindExternals',
 // core 层面函数处理规则
 const coreRules = {
   // 不需要处理的
-  ignoreFns: ['tryGetAppName', 'log'],
+  ignoreFns: ['tryGetAppName', 'log', 'commonUtil'],
   // 这些函数仅1个参数，第1位参数是平台值
   arg1PlatFns: ['getPlatformConfig', 'getPlatformHost', 'getSharedCache'],
   // 这些函数共2个参数，第2位参数是平台值
@@ -27,7 +26,7 @@ const arg1PlatObjFns = ['emitApp', 'init'];
 function injectPlat(platform: string, fnName: string, fn: any, options: IInjectOptions) {
   const { semverApi, isCore } = options;
   return (...args: any[]) => {
-    const mergePlatObj = (obj: any) => ({ platform, ...purify(obj || {}) });
+    const mergePlatObj = (obj: any) => ({ platform, ...commonUtil.purify(obj || {}) });
     const [arg0, arg1, arg2] = args;
 
     if (isCore) {

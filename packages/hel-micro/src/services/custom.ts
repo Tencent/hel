@@ -1,6 +1,6 @@
-import { DEFAULT_ONLINE_VER, log } from 'hel-micro-core';
+import { DEFAULT_ONLINE_VER, log, commonUtil } from 'hel-micro-core';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
-import { noop, requestGet } from '../util';
+import { requestGet } from '../util';
 
 const type2conf = {
   js: {
@@ -69,7 +69,7 @@ export async function getCustomMeta(appName: string, custom: ICustom) {
       }
       log('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
     } catch (err: any) {
-      noop('json parse fail or other error');
+      commonUtil.noop('json parse fail or other error');
     }
   }
 

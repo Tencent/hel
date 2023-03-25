@@ -1,10 +1,6 @@
-import { allowLog, getGlobalThis } from 'hel-micro-core';
+import { allowLog, getGlobalThis, commonUtil } from 'hel-micro-core';
 import xhrFetch from './browser/xhr';
 import type { IInnerPreFetchOptions } from './types';
-
-export function noop(...args: any) {
-  return args;
-}
 
 export function perfStart(label: string) {
   if (allowLog()) {
@@ -18,95 +14,12 @@ export function perfEnd(label: string) {
   }
 }
 
-export function noDupPush(list: any[], item: any) {
-  if (!list.includes(item)) {
-    list.push(item);
-  }
-}
-
-export function merge2List(list1: string[], list2: string[]) {
-  const mergedList: string[] = [];
-  list1.forEach((v) => noDupPush(mergedList, v));
-  list2.forEach((v) => noDupPush(mergedList, v));
-  return mergedList;
-}
-
-export function okeys(map: any) {
-  return Object.keys(map);
-}
-
-export function purify(obj: Record<string, any>, isValueValid?: (val: any) => boolean): Record<string, any> {
-  // isValidVal or isNull
-  const isValidFn = isValueValid || ((value) => !isNull(value));
-  const pureObj: Record<string, any> = {};
-  okeys(obj).forEach((key) => {
-    if (isValidFn(obj[key])) pureObj[key] = obj[key];
-  });
-  return pureObj;
-}
-
-export function getObjsVal<T extends any = any>(objs: any[], key: string, backupVal?: any): T {
-  let val = backupVal;
-  for (const item of objs) {
-    const mayValidVal = item[key];
-    if (![null, undefined, ''].includes(mayValidVal)) {
-      val = mayValidVal;
-      break;
-    }
-  }
-  return val;
-}
-
 export function helScriptId(appName: string) {
   return `helScript_${appName}`;
 }
 
 export function helLinkId(appName: string) {
   return `helLink_${appName}`;
-}
-
-interface NullDef {
-  nullValues?: any[];
-  /** {} 算不算空，true算空 */
-  emptyObjIsNull?: boolean;
-  emptyArrIsNull?: boolean;
-}
-export function isNull(value: any, nullDef: NullDef = {}) {
-  const { nullValues = [null, undefined, ''], emptyObjIsNull = true, emptyArrIsNull = true } = nullDef;
-
-  const inNullValues = nullValues.includes(value);
-  if (inNullValues) {
-    return true;
-  }
-
-  if (Array.isArray(value)) {
-    if (emptyArrIsNull) return value.length === 0;
-    return false;
-  }
-
-  if (typeof value === 'object') {
-    const keys = okeys(value);
-    const keyLen = keys.length;
-    if (emptyObjIsNull) return keyLen === 0;
-    return false;
-  }
-
-  return false;
-}
-
-export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
-  // 防止传入进来的已经是 json 对象
-  if (jsonStr && typeof jsonStr !== 'string') {
-    return jsonStr;
-  }
-  try {
-    const result = JSON.parse(jsonStr); // 避免 JSON.parse('null') ---> null
-    return result || defaultValue;
-  } catch (err: any) {
-    if (defaultValue !== undefined) return defaultValue;
-    if (errMsg) throw new Error(errMsg);
-    throw err;
-  }
 }
 
 /**
@@ -169,7 +82,7 @@ export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
     if (cssStrategy === 'only_out') {
       return extraCssList;
     }
-    const mergedList: string[] = merge2List(extraCssList, custCssList);
+    const mergedList: string[] = commonUtil.merge2List(extraCssList, custCssList);
     return mergedList;
   }
   return extraCssList;

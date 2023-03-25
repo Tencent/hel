@@ -6,7 +6,7 @@ import * as core from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
-import { merge2List, requestGet } from '../util';
+import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 
 const { LOADED, LOADING } = core.helLoadStatus;
@@ -40,7 +40,7 @@ const inner = {
       buildCssList = appVersion.src_map?.chunkCssSrcList || [];
     }
 
-    const allCssList = merge2List(extraCssList, buildCssList);
+    const allCssList = core.commonUtil.merge2List(extraCssList, buildCssList);
     return allCssList;
   },
 

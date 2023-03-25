@@ -27,7 +27,7 @@
     "@types/react-dom": "^16.8.0",
     "hel-lib-proxy": "workspace:^3.9.3",
     "hel-micro": "workspace:^3.9.2",
-    "hel-micro-core": "workspace:3.13.1",
+    "hel-micro-core": "workspace:*",
     "hel-types": "workspace:^3.7.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",

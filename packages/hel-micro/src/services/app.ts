@@ -8,7 +8,7 @@ import storageKeys from '../consts/storageKeys';
 import { getPlatform, getPlatformConfig } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
-import { getAllExtraCssList, noop, safeParse } from '../util';
+import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
 import { getCustomMeta, isCustomValid } from './custom';
@@ -60,7 +60,7 @@ async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions)
     }
   }
   const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
-  return safeParse(appCacheStr || '', null);
+  return core.commonUtil.safeParse(appCacheStr || '', null);
 }
 
 export async function clearDiskCachedApp(appName: string) {
@@ -135,7 +135,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
         // 将硬盘缓存数据写回到内存
         cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
         // 异步缓存一份最新的数据
-        tryGetFromRemote(enableSyncMeta).catch((err: any) => noop(err));
+        tryGetFromRemote(enableSyncMeta).catch((err: any) => core.commonUtil.noop(err));
       }
     }
 

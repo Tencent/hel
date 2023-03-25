@@ -351,7 +351,7 @@ interface NullDef {
   emptyArrIsNull?: boolean;
 }
 
-export type ObjUtil = {
+export type CommonUtil = {
   noDupPush: (list: any[], item: any) => void;
   merge2List: (list1: string[], list2: string[]) => string[];
   okeys: (map: any) => string[];
@@ -359,7 +359,10 @@ export type ObjUtil = {
   getObjsVal: <T extends any = any>(objs: any[], key: string, backupVal?: any) => T;
   isNull: (value: any, nullDef?: NullDef) => boolean;
   safeParse: <T extends any = any>(jsonStr: any, defaultValue: T, errMsg?: string) => T;
+  noop: (...args: any[]) => any[];
 };
+
+export const commonUtil: CommonUtil;
 
 declare type DefaultExport = {
   DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
@@ -413,7 +416,7 @@ declare type DefaultExport = {
   getGlobalThis: typeof getGlobalThis;
   setGlobalThis: typeof setGlobalThis;
   resetGlobalThis: typeof resetGlobalThis;
-  objUtil: ObjUtil,
+  commonUtil: CommonUtil;
 };
 
 declare let defaultExport: DefaultExport;

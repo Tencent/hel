@@ -1,10 +1,13 @@
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import { commonUtil } from 'hel-micro-core';
 import * as alt from '../alternative';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
 import { getPlatform, getPlatformHost } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
-import { getSemverLatestVer, perfEnd, perfStart, requestGet, safeParse } from '../util';
+import { getSemverLatestVer, perfEnd, perfStart, requestGet } from '../util';
+
+const { safeParse } = commonUtil;
 
 interface IHelMeta {
   app: ISubApp;
@@ -116,7 +119,13 @@ function ensureApp(app: ISubApp) {
 
 function ensureVersion(version: ISubAppVersion) {
   const clonedVersion = { ...version };
-  clonedVersion.src_map = safeParse(clonedVersion.src_map, {});
+  clonedVersion.src_map = safeParse(
+    clonedVersion.src_map,
+    {
+      htmlIndexSrc: '', webDirPath: '', headAssetList: [], chunkJsSrcList: [],
+      bodyAssetList: [], chunkCssSrcList: [], staticCssList: [], privCssSrcList: [],
+    },
+  );
   return clonedVersion;
 }
 

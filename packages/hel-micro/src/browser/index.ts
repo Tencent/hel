@@ -1,7 +1,9 @@
-import { getGlobalThis } from 'hel-micro-core';
+import { getGlobalThis, commonUtil } from 'hel-micro-core';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
 import type { CssAppendType, IChangeAttrs, IInnerPreFetchOptions, ILinkInfo, IScriptInfo } from '../types';
-import { getAllExtraCssList, helLinkId, helScriptId, merge2List, noop } from '../util';
+import { getAllExtraCssList, helLinkId, helScriptId } from '../util';
+
+const { noop } = commonUtil;
 
 /**
  * 做一下净化处理
@@ -236,7 +238,7 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     getExcludeCssList,
   } = loadOptions;
   const allExtraCssList = getAllExtraCssList(loadOptions);
-  const allCssList = merge2List(allExtraCssList, chunkCssSrcList);
+  const allCssList = commonUtil.merge2List(allExtraCssList, chunkCssSrcList);
   const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
 
   const createAdditionalScripts = (scripts?: string[], appendToBody?: boolean) => {

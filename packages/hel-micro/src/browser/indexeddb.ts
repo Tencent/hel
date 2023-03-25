@@ -1,8 +1,7 @@
 /**
  * 本代码实现参考localforage库：https://localforage.github.io/localForage/#localforage
  */
-import { getGlobalThis } from 'hel-micro-core';
-import { purify } from '../util';
+import { getGlobalThis, commonUtil } from 'hel-micro-core';
 
 interface IOptions {
   name: string;
@@ -67,7 +66,7 @@ export class IndexedDBStorage {
     const { dbInfo } = this;
     if (options) {
       const { name, storeName, version } = options;
-      Object.assign(dbInfo, purify({ name, storeName, version }));
+      Object.assign(dbInfo, commonUtil.purify({ name, storeName, version }));
     }
     let dbContext = dbContexts[dbInfo.name];
     if (!dbContext) {
@@ -110,8 +109,8 @@ export class IndexedDBStorage {
           if (err.name === 'ConstraintError') {
             console.warn(
               `The database "${dbInfo.name}"`
-                + ` has been upgraded from version ${e.oldVersion} to version ${e.newVersion}, `
-                + `but the storage "${dbInfo.storeName}" already exists.`,
+              + ` has been upgraded from version ${e.oldVersion} to version ${e.newVersion}, `
+              + `but the storage "${dbInfo.storeName}" already exists.`,
             );
           } else {
             throw err;

@@ -1,3 +1,8 @@
+
+export function noop(...args) {
+  return args;
+}
+
 export function safeParse(jsonStr, defaultValue, errMsg) {
   // 防止传入进来的已经是 json 对象
   if (jsonStr && typeof jsonStr !== 'string') {
@@ -13,7 +18,7 @@ export function safeParse(jsonStr, defaultValue, errMsg) {
   }
 }
 
-export function isNull(value, nullDef) {
+export function isNull(value, nullDef = {}) {
   const { nullValues = [null, undefined, ''], emptyObjIsNull = true, emptyArrIsNull = true } = nullDef;
 
   const inNullValues = nullValues.includes(value);

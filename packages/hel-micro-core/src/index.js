@@ -6,11 +6,11 @@ import * as helper from './helper';
 import * as isSubMod from './isSubApp';
 import * as debugMod from './microDebug';
 import { ensureHelMicroShared, getHelMicroShared } from './microShared';
+import * as commonUtilMod from './commonUtil';
 import * as util from './util';
 import * as utilBase from './utilBase';
-import * as objUtilMod from './objUtil';
 
-export const objUtil = objUtilMod;
+export const commonUtil = commonUtilMod;
 
 util.log(`hel-micro-core ver ${consts.VER}`);
 
@@ -571,7 +571,7 @@ const toExport = {
   getGlobalThis,
   setGlobalThis,
   resetGlobalThis,
-  objUtil,
+  commonUtil,
 };
 
 export default toExport;
