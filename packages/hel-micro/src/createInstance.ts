@@ -1,4 +1,4 @@
-import { originInit, commonUtil } from 'hel-micro-core';
+import { commonUtil, originInit } from 'hel-micro-core';
 import * as apis from './apis';
 import type { ICreateInstanceOptions } from './types';
 

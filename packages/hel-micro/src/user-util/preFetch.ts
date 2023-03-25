@@ -1,4 +1,4 @@
-import { getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus, commonUtil } from 'hel-micro-core';
+import { commonUtil, getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus } from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
 import * as alt from '../alternative';
 import defaults from '../consts/defaults';

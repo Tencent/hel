@@ -1,4 +1,4 @@
-import { DEFAULT_ONLINE_VER, log, commonUtil } from 'hel-micro-core';
+import { commonUtil, DEFAULT_ONLINE_VER, log } from 'hel-micro-core';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
 import { requestGet } from '../util';
 

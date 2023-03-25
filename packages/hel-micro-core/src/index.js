@@ -1,12 +1,12 @@
 /** @typedef {import('../index').IPlatformConfig} IPlatformConfig */
 /** @typedef {import('../index').IPlatformConfigFull} IPlatformConfigFull */
 /** @typedef {import('../index').SharedCache} SharedCache */
+import * as commonUtilMod from './commonUtil';
 import * as consts from './consts';
 import * as helper from './helper';
 import * as isSubMod from './isSubApp';
 import * as debugMod from './microDebug';
 import { ensureHelMicroShared, getHelMicroShared } from './microShared';
-import * as commonUtilMod from './commonUtil';
 import * as util from './util';
 import * as utilBase from './utilBase';
 

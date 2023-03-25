@@ -1,5 +1,5 @@
 import type { IPlatformConfigInitFull } from 'hel-micro-core';
-import { getPlatformConfig, commonUtil } from 'hel-micro-core';
+import { commonUtil, getPlatformConfig } from 'hel-micro-core';
 import * as builtinFns from './builtin';
 
 type PropName = keyof IPlatformConfigInitFull;

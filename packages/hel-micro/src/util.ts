@@ -1,4 +1,4 @@
-import { allowLog, getGlobalThis, commonUtil } from 'hel-micro-core';
+import { allowLog, commonUtil, getGlobalThis } from 'hel-micro-core';
 import xhrFetch from './browser/xhr';
 import type { IInnerPreFetchOptions } from './types';
 

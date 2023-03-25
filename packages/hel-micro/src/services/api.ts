@@ -1,5 +1,5 @@
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import { commonUtil } from 'hel-micro-core';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import * as alt from '../alternative';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
@@ -119,13 +119,16 @@ function ensureApp(app: ISubApp) {
 
 function ensureVersion(version: ISubAppVersion) {
   const clonedVersion = { ...version };
-  clonedVersion.src_map = safeParse(
-    clonedVersion.src_map,
-    {
-      htmlIndexSrc: '', webDirPath: '', headAssetList: [], chunkJsSrcList: [],
-      bodyAssetList: [], chunkCssSrcList: [], staticCssList: [], privCssSrcList: [],
-    },
-  );
+  clonedVersion.src_map = safeParse(clonedVersion.src_map, {
+    htmlIndexSrc: '',
+    webDirPath: '',
+    headAssetList: [],
+    chunkJsSrcList: [],
+    bodyAssetList: [],
+    chunkCssSrcList: [],
+    staticCssList: [],
+    privCssSrcList: [],
+  });
   return clonedVersion;
 }
 
