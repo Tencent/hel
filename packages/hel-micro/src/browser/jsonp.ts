@@ -1,4 +1,4 @@
-import { getGlobalThis } from '../deps/helMicroCore';
+import { getGlobalThis } from 'hel-micro-core';
 
 // @see https://www.runoob.com/jsref/prop-node-nodetype.html
 const DOCUMENT_FRAGMENT_NODE = 11;

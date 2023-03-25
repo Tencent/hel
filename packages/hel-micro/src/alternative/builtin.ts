@@ -1,12 +1,8 @@
 import { getGlobalThis, log } from 'hel-micro-core';
 import { getLocalStorage } from '../browser/helper';
-import { PLAT_UNPKG } from '../consts/logic';
 
-export function getDefaultPlatform(inputPlatform?: string) {
-  return inputPlatform || PLAT_UNPKG;
-}
-
-export function guessUserName(userLsKey: string): string {
+export function getUserName(options: { userLsKey: string }): string {
+  const { userLsKey } = options;
   let userName = getLocalStorage().getItem(userLsKey) || '';
   if (userName) {
     return userName;
@@ -21,8 +17,9 @@ export function guessUserName(userLsKey: string): string {
         map[k] = v;
       });
     userName = map[userLsKey] || '';
+    log('[[ getUserName ]] result:', userName);
   } catch (err: any) {
-    log('[[ guessUserName ]]', err);
+    log('[[ getUserName ]] err:', err);
   }
   return userName;
 }

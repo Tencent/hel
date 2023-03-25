@@ -1,5 +1,5 @@
+import { allowLog, getGlobalThis } from 'hel-micro-core';
 import xhrFetch from './browser/xhr';
-import { allowLog, getGlobalThis } from './deps/helMicroCore';
 import type { IInnerPreFetchOptions } from './types';
 
 export function noop(...args: any) {
@@ -45,6 +45,18 @@ export function purify(obj: Record<string, any>, isValueValid?: (val: any) => bo
   return pureObj;
 }
 
+export function getObjsVal<T extends any = any>(objs: any[], key: string, backupVal?: any): T {
+  let val = backupVal;
+  for (const item of objs) {
+    const mayValidVal = item[key];
+    if (![null, undefined, ''].includes(mayValidVal)) {
+      val = mayValidVal;
+      break;
+    }
+  }
+  return val;
+}
+
 export function helScriptId(appName: string) {
   return `helScript_${appName}`;
 }
@@ -82,23 +94,14 @@ export function isNull(value: any, nullDef: NullDef = {}) {
   return false;
 }
 
-/**
- * 确定一个有效值，如果左边无效，则取右边的备用值
- * @param firstVal
- * @param secondVal
- */
-export function decideVal(firstVal: any, secondVal: any) {
-  if (!isNull(firstVal)) return firstVal;
-  return secondVal;
-}
-
 export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
   // 防止传入进来的已经是 json 对象
   if (jsonStr && typeof jsonStr !== 'string') {
     return jsonStr;
   }
   try {
-    return JSON.parse(jsonStr);
+    const result = JSON.parse(jsonStr); // 避免 JSON.parse('null') ---> null
+    return result || defaultValue;
   } catch (err: any) {
     if (defaultValue !== undefined) return defaultValue;
     if (errMsg) throw new Error(errMsg);
@@ -106,7 +109,10 @@ export function safeParse(jsonStr: any, defaultValue: any, errMsg?: string) {
   }
 }
 
-export async function getUnpkgLatestVer(appName: string, apiPrefix: string) {
+/**
+ * 默认请求 unpkg
+ */
+export async function getSemverLatestVer(appName: string, apiPrefix: string) {
   // https://unpkg.com/hel-lodash@1.2.21/1659925934381_hel-lodash
   // https://cdn.jsdelivr.net/npm/hel-lodash@2.1.7/1659925934381_hel-lodash
   const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${Date.now()}_${appName}`);

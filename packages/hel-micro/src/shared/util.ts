@@ -1,5 +1,6 @@
 import { getAppMeta, log } from 'hel-micro-core';
-import type { Platform } from '../deps/helTypes';
+import type { Platform } from 'hel-types';
+import * as alt from '../alternative';
 
 interface IVerMatchOptions {
   emitVer: string;
@@ -13,7 +14,9 @@ interface IVerMatchOptions {
  * @returns true，匹配成功，false，匹配失败
  */
 export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOptions) {
-  const { platform, emitVer, inputVer, projectId, strictMatchVer } = options;
+  const { platform, emitVer, inputVer, projectId } = options;
+  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', options.strictMatchVer);
+
   const appMeta = getAppMeta(appName, platform);
   if (strictMatchVer === false) {
     log(`[[ isEmitVerMatchInputVer ]] set strictMatchVer false for app (${appName}), trust emitVer (${emitVer}) is the target version`);

@@ -1,4 +1,4 @@
-import { DEFAULT_ONLINE_VER, log } from '../deps/helMicroCore';
+import { DEFAULT_ONLINE_VER, log } from 'hel-micro-core';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
 import { noop, requestGet } from '../util';
 

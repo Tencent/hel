@@ -1,10 +1,10 @@
+import * as core from 'hel-micro-core';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import * as alt from '../alternative';
 import { loadAppAssets } from '../browser';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
-import { PLAT_UNPKG } from '../consts/logic';
 import storageKeys from '../consts/storageKeys';
-import * as core from '../deps/helMicroCore';
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from '../deps/helTypes';
 import { getPlatform, getPlatformConfig } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
@@ -26,8 +26,7 @@ interface ICacheData {
 }
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
-  const conf = core.getPlatformConfig(options.platform);
-  const fallbackHook = options.onFetchMetaFailed || conf.onFetchMetaFailed;
+  const fallbackHook = alt.getFn(options.platform, 'onFetchMetaFailed', options.onFetchMetaFailed);
   return fallbackHook;
 }
 
@@ -86,6 +85,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     projectId = '',
     custom,
     strictMatchVer,
+    semverApi,
   } = options;
   const { callRemote = true } = fnOptions || {};
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
@@ -100,9 +100,9 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   const memApp = core.getAppMeta(appName, platform);
   const memAppVersion = core.getVersion(appName, { platform, versionId });
 
-  // 优先从内存获取
+  // 优先从内存获取（非语义化api获取的 memAppVersion 才是有意义的，可进入此逻辑做判断）
   if (
-    platform !== PLAT_UNPKG
+    !semverApi
     && memApp
     && memAppVersion
     && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
@@ -221,7 +221,7 @@ export function cacheApp(
   }
 
   // 写 mem app
-  if (platform === PLAT_UNPKG) {
+  if (loadOptions.semverApi) {
     const meta = core.getAppMeta(appName, platform);
     // @ts-ignore, inject __setByLatest
     if (meta?.__setByLatest !== true) {

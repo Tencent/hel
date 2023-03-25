@@ -1,6 +1,6 @@
-import type { IPlatformConfig } from '../deps/helMicroCore';
-import * as core from '../deps/helMicroCore';
-import type { Platform } from '../deps/helTypes';
+import type { IPlatformConfig } from 'hel-micro-core';
+import * as core from 'hel-micro-core';
+import type { Platform } from 'hel-types';
 
 export function getHelEventBus() {
   return core.getHelEventBus();

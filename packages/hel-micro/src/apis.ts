@@ -1,5 +1,5 @@
+export * as core from 'hel-micro-core';
 export { default as defaultsCst } from './consts/defaults';
-export * as core from './deps/helMicroCore';
 export { default as emitApp } from './process/emitApp';
 export * as appMetaSrv from './services/appMeta';
 export * as appParamSrv from './services/appParam';

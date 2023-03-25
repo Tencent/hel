@@ -1,6 +1,6 @@
+import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 import { API_NORMAL_GET } from '../consts/logic';
-import type { IAppAndVer } from '../deps/helMicroCore';
-import type { ApiMode, Platform } from '../deps/helTypes';
+import type { IHelMeta } from '../types';
 import type { IGetVerOptions, IHelGetOptions } from './api';
 import * as innerApiSrv from './api';
 import * as innerAppSrv from './app';
@@ -14,12 +14,18 @@ export interface IGetMetaDataUrlOptions {
   projectId?: string;
 }
 
-export async function getSubAppVersion(versionId: string, options: IGetVerOptions) {
+/**
+ * 获取应用构建版本数据
+ */
+export async function getSubAppVersion(versionId: string, options: IGetVerOptions): Promise<ISubAppVersion> {
   const versionData = await innerApiSrv.getSubAppVersion(versionId, options);
   return versionData;
 }
 
-export async function getSubAppMeta(versionId: string, options?: IHelGetOptions): Promise<IAppAndVer> {
+/**
+ * 获取应用自身描述和构建版本数据
+ */
+export async function getSubAppMeta(versionId: string, options?: IHelGetOptions): Promise<IHelMeta> {
   const meta = await innerApiSrv.getSubAppAndItsVersion(versionId, options || {});
   return meta;
 }
@@ -32,7 +38,7 @@ export async function getSubAppMeta(versionId: string, options?: IHelGetOptions)
  */
 export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions): string {
   const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId } = options || {};
-  let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
+  let { url } = innerApiSrv.prepareCustomPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
   if (protocol === 'http') {
     url = url.replace('https:', 'http:');
   }

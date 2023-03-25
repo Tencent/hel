@@ -1,9 +1,9 @@
 /**
  * 样式相关的服务
  */
-import type { HelLoadStatusEnum } from '../deps/helMicroCore';
-import * as core from '../deps/helMicroCore';
-import type { IEmitStyleInfo } from '../deps/helTypes';
+import type { HelLoadStatusEnum } from 'hel-micro-core';
+import * as core from 'hel-micro-core';
+import type { IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
 import { merge2List, requestGet } from '../util';
@@ -67,14 +67,11 @@ const inner = {
 
   async waitStyleReady(appName: string, options: IWaitStyleReadyOptions) {
     let handleStyleFetched: any = null;
-    const conf = core.getPlatformConfig(options.platform);
-    // 用户未传的话走平台默认值 true
-    const strictMatchVer = options.strictMatchVer ?? conf.strictMatchVer;
 
     await new Promise((resolve) => {
       handleStyleFetched = (styleInfo: IEmitStyleInfo) => {
         const { appName: emitAppName, platform: emitPlatform, versionId: emitVer } = styleInfo;
-        const { versionId: inputVer, platform } = options;
+        const { versionId: inputVer, platform, strictMatchVer } = options;
         if (
           emitAppName !== appName
           || emitPlatform !== platform

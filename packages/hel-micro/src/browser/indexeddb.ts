@@ -1,7 +1,7 @@
 /**
  * 本代码实现参考localforage库：https://localforage.github.io/localForage/#localforage
  */
-import { getGlobalThis } from '../deps/helMicroCore';
+import { getGlobalThis } from 'hel-micro-core';
 import { purify } from '../util';
 
 interface IOptions {

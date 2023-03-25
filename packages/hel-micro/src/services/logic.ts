@@ -1,8 +1,6 @@
-import { PLAT_UNPKG } from '../consts/logic';
 import {
   getAppMeta,
   getPlatform,
-  getPlatformConfig,
   getVerApp,
   getVerExtraCssList,
   getVerLib,
@@ -13,8 +11,9 @@ import {
   setAppMeta,
   setVerExtraCssList,
   setVersion,
-} from '../deps/helMicroCore';
-import type { IEmitAppInfo, Platform } from '../deps/helTypes';
+} from 'hel-micro-core';
+import type { IEmitAppInfo, Platform } from 'hel-types';
+import * as alt from '../alternative';
 import emitApp from '../process/emitApp';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
@@ -77,8 +76,7 @@ function fixAppAssociateData(appName: string, appGroupName: string, getOptions: 
 
 export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions) {
   const { platform = getPlatform(), versionId = '', isLib } = innerOptions;
-  // 不传递的话，保持和 hel-micro-core 里一致的设定，hel-micro-core 默认是 true
-  const strictMatchVer = innerOptions.strictMatchVer ?? getPlatformConfig(platform).strictMatchVer;
+  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', innerOptions.strictMatchVer);
   const newGetOptions = { ...innerOptions, strictMatchVer };
 
   let targetName = appName;
@@ -89,8 +87,8 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
   }
 
   const appMeta = getAppMeta(targetName, platform);
-  // unpkg 平台的 appMeta 里记录的 online_version 不可靠，这里要结合 __setByLatest 一起判断后才决定是否采用 lib
-  if (platform === PLAT_UNPKG && !versionId && appMeta && appMeta.__setByLatest !== true) {
+  // 语义化版本服务采用cdn架构存储元数据，它返回的 appMeta 里记录的 online_version 不可靠，这里要结合 __setByLatest 一起判断后才决定是否采用 lib
+  if (innerOptions.semverApi && !versionId && appMeta && appMeta.__setByLatest !== true) {
     return null;
   }
 

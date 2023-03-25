@@ -1,5 +1,5 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from './deps/helMicroCore';
-import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from './deps/helTypes';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IOriginInitOptions } from 'hel-micro-core';
+import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -11,6 +11,20 @@ export type CssAppendType = 'static' | 'build';
 export type AnyRecord = Record<string, any>;
 
 export type VersionId = string;
+
+/**
+ * default: true
+ * 是否走语义化版本 api 请求
+ * 为true时，生成的请求链接格式形如：{apiPrefix}/{name}@{version}/hel_dist/hel-meta.json
+ * 例子：https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
+ * 为false时，生成的请求链接格式形如：{apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersion?name={name}&version={version}
+ */
+export type SemverApi = boolean;
+
+export interface IHelMeta {
+  app: ISubApp;
+  version: ISubAppVersion;
+}
 
 export interface IGroupedStyleList {
   static: string[];
@@ -166,6 +180,7 @@ export interface IPreFetchOptionsBase {
    */
   storageType?: 'localStorage' | 'indexedDB';
   apiMode?: ApiMode;
+  semverApi?: SemverApi;
   /**
    * preFetchLib指定的请求域名前缀，会覆盖掉init里指定的（如有指定）
    */
@@ -228,4 +243,9 @@ export type BatchAppNames =
   | [string, string, string, string, string, string, string]
   | [string, string, string, string, string, string, string, string];
 
-export interface IIncetanceOptions {}
+export interface ICreateInstanceOptions extends IOriginInitOptions {
+  /**
+   * 是否触发语义化api调用元数据获取接口，具体含义点击 SemverApi 查看
+   */
+  semverApi?: SemverApi;
+}

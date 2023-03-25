@@ -1,4 +1,4 @@
-import { getGlobalThis } from '../deps/helMicroCore';
+import { getGlobalThis } from 'hel-micro-core';
 
 function injectDefault(externalItem: any) {
   if (externalItem && !externalItem.default) {
