@@ -1,12 +1,11 @@
-import { getHelSingletonHost } from './utilBase';
 import { isNull } from './commonUtil';
+import { getHelSingletonHost } from './utilBase';
 
 /** @type {import('../index').IHelMicroDebug} */
 let helMicroDebug = {};
 try {
   helMicroDebug = getHelSingletonHost().__HEL_MICRO_DEBUG__;
-} catch (err) { }
-
+} catch (err) {}
 
 /**
  * @returns {import('../index').IHelMicroDebug}
@@ -32,7 +31,7 @@ function ensureHelMicroDebug() {
   helMicroDebug = makeHelMicroDebug();
   try {
     getHelSingletonHost().__HEL_MICRO_DEBUG__ = helMicroDebug;
-  } catch (err) { }
+  } catch (err) {}
 }
 
 ensureHelMicroDebug();

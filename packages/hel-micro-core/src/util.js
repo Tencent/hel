@@ -3,7 +3,7 @@ import { getGlobalThis } from './utilBase';
 
 try {
   initMicroDebug();
-} catch (err) { }
+} catch (err) {}
 
 function initMicroDebug() {
   if (getHelMicroDebug().isInit) {
