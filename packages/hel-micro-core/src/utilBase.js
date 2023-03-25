@@ -24,9 +24,11 @@ export function getGlobalThis() {
     if (typeof window !== 'undefined') {
       return window;
     }
+    // eslint-disable-next-line
+    const workerSelf = self;
     // for worker env
-    if (typeof self !== 'undefined') {
-      return self;
+    if (typeof workerSelf !== 'undefined') {
+      return workerSelf;
     }
     // for nodejs env
     if (typeof global !== 'undefined') {

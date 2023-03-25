@@ -1,8 +1,8 @@
-import * as diffBase from './diff/base';
-
-export const { VER } = diffBase;
+export const VER = '4.0.0-alpha.0';
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
+
+export const DEFAULT_USER_LS_KEY = 'HelUserRtxName';
 
 /** 第一个载入的版本号，后续接口未指定版本时，总是优先载入一个载入的版本号对应的模块，确保优先使用全局已存在的模块 */
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
@@ -12,8 +12,6 @@ export const UNPKG_PREFIX = 'https://unpkg.com';
 export const PLAT_UNPKG = 'unpkg';
 
 export const PLAT_HEL = 'hel';
-
-export const DEFAULT_PLAT = diffBase.PACK_MODE === 'inner' ? PLAT_HEL : PLAT_UNPKG;
 
 export const HEL_EVENTS = {
   // renderApp 发射的是 SUB_APP_LOADED

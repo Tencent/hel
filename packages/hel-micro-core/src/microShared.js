@@ -1,16 +1,30 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
-import { DEFAULT_API_URL, DEFAULT_PLAT, PLAT_HEL, PLAT_UNPKG } from './consts';
-import * as diffBase from './diff/base';
+import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from './consts';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 import { getHelSingletonHost } from './utilBase';
+
+function makeOrigin() {
+  return {
+    apiMode: 'get',
+    apiPrefix: '',
+    apiSuffix: '',
+    apiPathOfApp: DEFAULT_API_URL,
+    apiPathOfAppVersion: '',
+    getSubAppAndItsVersionFn: null,
+    onFetchMetaFailed: null,
+    strictMatchVer: true,
+    getUserName: null,
+    userLsKey: DEFAULT_USER_LS_KEY,
+    shouldUseGray: null,
+  };
+}
 
 export function makeCacheNode(platform) {
   /** @type {import('../index').SharedCache} */
   const cacheNode = {
     isConfigOverwrite: false,
     platform,
-    initPack: diffBase.PACK_MODE,
     appName2Comp: {},
     appName2Lib: {},
     appName2isLibAssigned: {},
@@ -26,7 +40,7 @@ export function makeCacheNode(platform) {
     appName2appVersion: {},
     appName2styleStr: {},
     appGroupName2firstVer: {},
-    isP0InitCalled: false,
+    isOriginInitCalled: false,
     // below properties can be overwrite for user custom platform
     apiPrefix: '', // 必须
     strictMatchVer: true,
@@ -36,10 +50,11 @@ export function makeCacheNode(platform) {
     apiPathOfAppVersion: '',
     getApiPrefix: null,
     getSubAppAndItsVersionFn: null,
-    userLsKey: '',
+    userLsKey: DEFAULT_USER_LS_KEY,
     getUserName: null,
     onFetchMetaFailed: null,
     shouldUseGray: null,
+    origin: makeOrigin(),
   };
   return cacheNode;
 }
@@ -84,7 +99,7 @@ function makeHelMicroShared() {
   const unpkgCache = makeCacheNode(PLAT_UNPKG);
   const cacheRoot = {
     /** 默认的平台值 */
-    platform: DEFAULT_PLAT,
+    platform: PLAT_UNPKG,
     /** 1.4+ 新增，用于记录 preFetchLib 时显示传递了 platform 值，供 hel-lib-proxy 使用，
      * 方便多平台共同加载包体场景下， exposeLib 接口如果未显式的传递平台值，能尽量正确推测出应用对应的 platform 值
      * 但是这里依然推荐用户 exposeLib 传递具体的平台值，避免推测错误
@@ -130,6 +145,7 @@ export function ensureHelMicroShared() {
       const cacheNode = caches[key];
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
+      safeGetMap(cacheNode, 'origin', makeOrigin());
     });
 
     // 补齐老包缺失的 userEventBus 对象

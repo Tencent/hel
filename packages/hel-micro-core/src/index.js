@@ -2,7 +2,6 @@
 /** @typedef {import('../index').IPlatformConfigFull} IPlatformConfigFull */
 /** @typedef {import('../index').SharedCache} SharedCache */
 import * as consts from './consts';
-import * as diff from './diff/index';
 import * as helper from './helper';
 import * as isSubMod from './isSubApp';
 import * as debugMod from './microDebug';
@@ -11,6 +10,8 @@ import * as util from './util';
 import * as utilBase from './utilBase';
 
 util.log(`hel-micro-core ver ${consts.VER}`);
+
+export const { isSubApp, trySetMasterAppLoadedSignal } = isSubMod;
 
 export function resetGlobalThis(globalThis) {
   if (globalThis) {
@@ -182,14 +183,11 @@ export function appReady(appGroupName, Comp, emitOptions = {}) {
 }
 
 export function getPlatformHost(iPlatform) {
-  const platform = iPlatform || getPlatform();
-  const { apiPrefix } = getSharedCache(platform);
+  const platform = iPlatform || consts.PLAT_UNPKG;
+  const { apiPrefix, getApiPrefix, origin } = getSharedCache(platform);
 
-  if (apiPrefix) {
-    return apiPrefix;
-  }
-
-  return diff.getDefaultApiPrefix(platform);
+  const prefix = getApiPrefix?.() || apiPrefix || origin.getApiPrefix?.() || origin.apiPrefix || consts.UNPKG_PREFIX;
+  return prefix;
 }
 
 /**
@@ -209,9 +207,9 @@ function getPureConfig(mayCache) {
     strictMatchVer,
     getUserName,
     userLsKey,
-    platform,
     shouldUseGray,
     getApiPrefix,
+    platform,
   } = mayCache;
   return {
     apiMode,
@@ -224,9 +222,9 @@ function getPureConfig(mayCache) {
     strictMatchVer,
     getUserName,
     userLsKey,
-    platform,
     shouldUseGray,
     getApiPrefix,
+    platform,
   };
 }
 
@@ -493,27 +491,30 @@ export function setAppStyleStr(appName, str, options) {
   util.setSubMapValue(appName2verStyleFetched, appName, versionId, helLoadStatus.LOADED);
 }
 
-/**
- * 此函数服务于基于 hel-micro 二次封装发布的定制包，当 p0Init 调用后，依然还能允许调用一次 init 重新一些平台参数
- * 但如果先调用了 init 那么 p0Init 是不能被调用的，所以定制包可以调用 p0Init 注入自己的平台相关参数后，
- * 在暴露 init 出去给用户一次额外的机会定义或覆盖此平台的相关参数
- */
-export function p0Init() {
-  const cache = helper.getPlatformSharedCache(iPlatform);
-  const pureConfig = getPureConfig(config);
-  if (cache.isP0InitCalled) {
+export function originInit(platform, options) {
+  const cache = helper.getPlatformSharedCache(platform);
+  const commonTip = '[[ core:originInit ]] invalid call, it can only been called';
+  if (cache.isConfigOverwrite) {
+    log(`${commonTip} before init`);
+    return;
+  }
+  if (cache.isOriginInitCalled) {
+    log(`${commonTip} one time`);
     // 对应平台的 initPlatformConfig 只接受一次调用
     return;
   }
-  cache.isP0InitCalled = true;
-  util.safeAssign(cache, pureConfig);
+  const pureConfig = getPureConfig(options);
+  cache.isOriginInitCalled = true;
+  util.safeAssign(cache.origin, pureConfig);
 }
 
-export default {
+const toExport = {
   DEFAULT_ONLINE_VER,
   helLoadStatus,
   helEvents,
   isSubApp,
+  trySetMasterAppLoadedSignal,
+  originInit,
   getHelEventBus,
   getUserEventBus,
   getHelDebug,
@@ -558,3 +559,5 @@ export default {
   setGlobalThis,
   resetGlobalThis,
 };
+
+export default toExport;

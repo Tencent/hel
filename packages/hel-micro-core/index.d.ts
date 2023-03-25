@@ -30,6 +30,20 @@ export function getHelEventBus(): EventBus;
 
 export function getUserEventBus(): EventBus;
 
+export type Origin = {
+  apiMode: string;
+  apiPrefix: string;
+  apiSuffix: string;
+  apiPathOfApp: string;
+  apiPathOfAppVersion: string;
+  getApiPrefix: IGetApiPrefix;
+  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
+  userLsKey: string;
+  getUserName?: IGetUserName;
+  onFetchMetaFailed?: IOnFetchMetaFailed;
+  shouldUseGray?: IShouldUseGray;
+};
+
 export interface IHelMicroDebug {
   /** 0: 不打印，1: log, 2: trace */
   logMode: number;
@@ -95,7 +109,6 @@ export interface SharedCache {
    * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
    */
   appGroupName2firstVer: Record<string, string>;
-  isP0InitCalled: boolean;
   apiPrefix: ''; // 必须
   /** 是否严格匹配版本 */
   strictMatchVer: true;
@@ -103,12 +116,14 @@ export interface SharedCache {
   apiSuffix: '';
   apiPathOfApp: string;
   apiPathOfAppVersion: '';
-  getApiPrefix: null;
-  getSubAppAndItsVersionFn: null;
+  getApiPrefix: IGetApiPrefix;
+  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
   userLsKey: '';
-  getUserName: null;
-  onFetchMetaFailed: null;
-  shouldUseGray: null;
+  getUserName?: IGetUserName;
+  onFetchMetaFailed?: IOnFetchMetaFailed;
+  shouldUseGray?: IShouldUseGray;
+  isOriginInitCalled: boolean;
+  origin: Origin;
 }
 
 /**
@@ -139,6 +154,9 @@ export function libReady(appGroupName: string, appProperties: any, options?: ILi
 
 export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOptions): void;
 
+/**
+ * 获取内置的平台默认值，现为 'unpkg'，如是来自 createInstace 实例调用，则返回的是对应的自定义平台
+ */
 export function getPlatform(): Platform;
 
 /**
@@ -156,6 +174,10 @@ export interface IAppAndVer {
  * 定义获取 app 和 version 数据的函数，修改 hel-micro 的默认请求行为，可根据自己的实际需求来实现此函数逻辑
  * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
  * @see https://tnfe.github.io/hel/docs/api/hel-micro/prefetch-lib#%E9%87%8D%E7%BD%AE%E5%85%83%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3
+ * 优先级依次是：
+ * 1 oirginInitOptions.getSubAppAndItsVersionFn
+ * 2 platformConfig.getSubAppAndItsVersionFn
+ * 3 unpkgConfig.getSubAppAndItsVersionFn
  */
 export interface IGetSubAppAndItsVersionFn {
   (passCtx: {
@@ -172,6 +194,21 @@ export interface IGetSubAppAndItsVersionFn {
 export interface IOnFetchMetaFailed {
   (params: { appName: string }): Promise<IAppAndVer> | IAppAndVer | void;
 }
+
+/**
+ * 采用 apiPrefix 优先级：
+ * originInitOptions.getApiPrefix() --> platformConfig.apiPrefix  --> unpkgConfig.getApiPrefix() --> unpkgConfig.apiPrefix
+ */
+export type IGetApiPrefix = () => string;
+
+/**
+ * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
+ * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
+ */
+export type IShouldUseGray = (passCtx: { appName: string }) => boolean | null;
+
+/** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
+export type IGetUserName = (passCtx: { platform: string; appName: string; userLsKey: string }) => string;
 
 export interface IPlatformConfigFull {
   /**
@@ -211,23 +248,26 @@ export interface IPlatformConfigFull {
    * 以便让后台知道请求者是谁从而觉得是否要下发灰度版本（如存在灰度版本）
    */
   userLsKey: string;
-  /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
-  getUserName: (passCtx: { platform: string; appName: string }) => string;
+  getUserName: IGetUserName;
   onFetchMetaFailed?: IOnFetchMetaFailed;
-  /**
-   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
-   * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
-   */
-  shouldUseGray: () => boolean | null;
+  shouldUseGray: IShouldUseGray;
+  origin: Origin;
 }
 
-export type IPlatformConfig = Partial<IPlatformConfigFull>;
+export type IPlatformConfigFullForInit = Omit<IPlatformConfigFull, 'origin'>;
+
+export type IPlatformConfig = Partial<IPlatformConfigFullForInit>;
 
 export function initPlatformConfig(config: IPlatformConfig, platform?: Platform): void;
 
 export function getPlatformConfig(platform?: Platform): IPlatformConfigFull;
 
 export function isSubApp(): boolean;
+
+/**
+ * @deprecated
+ */
+export function trySetMasterAppLoadedSignal(): void;
 
 export function getVerApp(appName: string, options?: IGetOptions): IEmitAppInfo | null;
 
@@ -311,6 +351,21 @@ export function getAppPlatform(appGroupName: string): Platform;
  */
 export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
 
+export interface IOriginInitOptions {
+  getApiPrefix?: IGetApiPrefix;
+  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
+  getUserName?: IGetUserName;
+}
+
+/**
+ * 此函数服务于基于 hel-micro 二次封装后发布的定制包，供 createInstance 调用
+ * 当 originInit 调用后，依然还能允许调用一次 init（initPlatformConfig） 重新一些平台参数
+ * 但如果先调用了 init 那么 originInit 是不能被调用的，
+ * 而 createInstance 内部逻辑会先调用 originInit 注入自己的平台相关参数后，再返回 apis 实例集合供上层用户使用，
+ * apis.init 就给用户一次额外的机会定义或覆盖此平台的相关参数
+ */
+export function originInit(platform: Platform, options?: IOriginInitOptions): void;
+
 declare type DefaultExport = {
   DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
   helEvents: typeof helEvents;
@@ -325,7 +380,9 @@ declare type DefaultExport = {
   getPlatformHost: typeof getPlatformHost;
   getPlatformConfig: typeof getPlatformConfig;
   initPlatformConfig: typeof initPlatformConfig;
+  originInit: typeof originInit;
   isSubApp: typeof isSubApp;
+  trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal;
   // 应用Comp get set
   getVerApp: typeof getVerApp;
   setEmitApp: typeof setEmitApp;
