@@ -4,7 +4,7 @@ import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from './co
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 import { getHelSingletonHost } from './utilBase';
 
-function makeOrigin() {
+function makeCanBeOverwriteProps() {
   return {
     apiMode: 'get',
     apiPrefix: '',
@@ -17,6 +17,7 @@ function makeOrigin() {
     getUserName: null,
     userLsKey: DEFAULT_USER_LS_KEY,
     shouldUseGray: null,
+    trustAppNames: [],
   };
 }
 
@@ -42,19 +43,8 @@ export function makeCacheNode(platform) {
     appGroupName2firstVer: {},
     isOriginInitCalled: false,
     // below properties can be overwrite for user custom platform
-    apiPrefix: '', // 必须
-    strictMatchVer: true,
-    apiMode: 'jsonp',
-    apiSuffix: '',
-    apiPathOfApp: DEFAULT_API_URL,
-    apiPathOfAppVersion: '',
-    getApiPrefix: null,
-    getSubAppAndItsVersionFn: null,
-    userLsKey: DEFAULT_USER_LS_KEY,
-    getUserName: null,
-    onFetchMetaFailed: null,
-    shouldUseGray: null,
-    origin: makeOrigin(),
+    ...makeCanBeOverwriteProps(),
+    origin: makeCanBeOverwriteProps(), // originInit 写入到此对象下
   };
   return cacheNode;
 }
@@ -145,7 +135,7 @@ export function ensureHelMicroShared() {
       const cacheNode = caches[key];
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
-      safeGetMap(cacheNode, 'origin', makeOrigin());
+      safeGetMap(cacheNode, 'origin', makeCanBeOverwriteProps());
     });
 
     // 补齐老包缺失的 userEventBus 对象

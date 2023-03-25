@@ -195,7 +195,7 @@ export function getPlatformHost(iPlatform) {
  * @param {SharedCache} mayCache
  * @returns {IPlatformConfigFull}
  */
-function getPureConfig(mayCache) {
+function getPureConfig(mayCache, needOrigin) {
   const {
     apiMode,
     apiPrefix,
@@ -209,9 +209,11 @@ function getPureConfig(mayCache) {
     userLsKey,
     shouldUseGray,
     getApiPrefix,
+    trustAppNames,
     platform,
+    origin,
   } = mayCache;
-  return {
+  let toReturn = {
     apiMode,
     apiPrefix,
     apiSuffix,
@@ -224,8 +226,13 @@ function getPureConfig(mayCache) {
     userLsKey,
     shouldUseGray,
     getApiPrefix,
+    trustAppNames,
     platform,
   };
+  if (needOrigin) {
+    toReturn.origin = origin;
+  }
+  return toReturn;
 }
 
 /**
@@ -247,7 +254,7 @@ export function initPlatformConfig(/** @type {import('../index').IPlatformConfig
 
 export function getPlatformConfig(iPlatform) {
   const cache = helper.getPlatformSharedCache(iPlatform);
-  return getPureConfig(cache);
+  return getPureConfig(cache, true);
 }
 
 export function setEmitApp(appName, /** @type {import('hel-types').IEmitAppInfo} */ emitApp) {

@@ -1,4 +1,4 @@
-export const VER = '4.0.0-alpha.0';
+export const VER = '4.0.0-alpha.1';
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 

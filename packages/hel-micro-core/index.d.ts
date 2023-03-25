@@ -30,100 +30,21 @@ export function getHelEventBus(): EventBus;
 
 export function getUserEventBus(): EventBus;
 
-export type Origin = {
-  apiMode: string;
-  apiPrefix: string;
-  apiSuffix: string;
-  apiPathOfApp: string;
-  apiPathOfAppVersion: string;
-  getApiPrefix: IGetApiPrefix;
-  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
-  userLsKey: string;
-  getUserName?: IGetUserName;
-  onFetchMetaFailed?: IOnFetchMetaFailed;
-  shouldUseGray?: IShouldUseGray;
-};
+/**
+ * 信任的应用名单，当使用方拿到获取模块的 emitInfo 后，其他条件均满足目标模块特征，
+ * 但因平台名字不同会被 judgeAppReady 判断失败而过滤掉，如果此时我们相信这个模块的确是我们想要的模块，
+ * 可将模块名加入信任名单，这样可以让 preFetchLib 把模块正常返回给上层调用者
+ * ----------- 注：平台名不同可能有多种原因 -----------
+ * 1 历史包发射模块时未正常平台名
+ * 2 基于同一个仓库的包体做了迁移，改到了另一个平台上
+ */
+type TrustAppNames = string[];
 
 export interface IHelMicroDebug {
   /** 0: 不打印，1: log, 2: trace */
   logMode: number;
   logFilter: '';
   isInit: boolean;
-}
-
-export interface SharedCache {
-  isConfigOverwrite: boolean;
-  initPack: 'inner' | 'out';
-  platform: Platform;
-  /**
-   * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
-   */
-  appName2Lib: Record<string, Record<string, any>>;
-  /**
-   * 记录第一个载入的 Comp
-   */
-  appName2Comp: Record<string, any>;
-  /**
-   * 记录 lib 是否已分配到 appName2Lib 的 libMap 里
-   */
-  appName2isLibAssigned: Record<string, boolean>;
-  /**
-   * 记录第一个载入的 emitApp
-   */
-  appName2EmitApp: Record<string, IEmitAppInfo>;
-  /** 应用各个版本对应的lib */
-  appName2verEmitLib: Record<string, Record<string, Record<string, any>>>;
-  /** 应用各个版本对应的appInfo */
-  appName2verEmitApp: Record<string, Record<string, IEmitAppInfo>>;
-  /** 应用各个版本的load状态，用于控制loadApp或loadAppAssets是否要再次执行 0:未加载 1:加载中 2:加载结束  */
-  appName2verLoadStatus: Record<string, Record<string, HelLoadStatusEnum>>;
-  /**
-   * 应用各个版本对应的样式字符串
-   */
-  appName2verStyleStr: Record<string, Record<string, string>>;
-  /**
-   * 应用各个版本对应的样式字符串是否已获取过
-   */
-  appName2verStyleFetched: Record<string, Record<string, HelLoadStatusEnum>>;
-  /**
-   * 应用各个版本对应的额外样式列表（由sdk注入）
-   */
-  appName2verExtraCssList: Record<string, Record<string, HelLoadStatusEnum>>;
-  /**
-   * 应用各个版本对应的版本数据
-   */
-  appName2verAppVersion: Record<string, Record<string, ISubAppVersion>>;
-  /**
-   * 记录第一个载入的app数据
-   */
-  appName2app: Record<string, ISubApp>;
-  /**
-   * 记录第一个载入的版本数据
-   */
-  appName2appVersion: Record<string, ISubAppVersion>;
-  /**
-   * 记录第一个载入的样式字符串
-   */
-  appName2styleStr: Record<string, string>;
-  /**
-   * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
-   */
-  appGroupName2firstVer: Record<string, string>;
-  apiPrefix: ''; // 必须
-  /** 是否严格匹配版本 */
-  strictMatchVer: true;
-  apiMode: 'jsonp';
-  apiSuffix: '';
-  apiPathOfApp: string;
-  apiPathOfAppVersion: '';
-  getApiPrefix: IGetApiPrefix;
-  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
-  userLsKey: '';
-  getUserName?: IGetUserName;
-  onFetchMetaFailed?: IOnFetchMetaFailed;
-  shouldUseGray?: IShouldUseGray;
-  isOriginInitCalled: boolean;
-  origin: Origin;
 }
 
 /**
@@ -208,9 +129,9 @@ export type IGetApiPrefix = () => string;
 export type IShouldUseGray = (passCtx: { appName: string }) => boolean | null;
 
 /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
-export type IGetUserName = (passCtx: { platform: string; appName: string; userLsKey: string }) => string;
+export type IGetUserName = (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
 
-export interface IPlatformConfigFull {
+export interface IPlatformConfigInitFull {
   /**
    * 是否严格匹配版本，默认 true
    * 如存在有老包体未发射版本号的情况，这里可以置为 false，让系统能够正常运行
@@ -224,6 +145,7 @@ export interface IPlatformConfigFull {
    * 未指定 apiPrefix 的情况下，会根据 platform 值决定请求那个域名的接口
    */
   apiPrefix: string;
+  getApiPrefix: IGetApiPrefix;
   /**
    * 设定了 apiSuffix，则请求一定会带上设定的后缀
    */
@@ -251,12 +173,73 @@ export interface IPlatformConfigFull {
   getUserName: IGetUserName;
   onFetchMetaFailed?: IOnFetchMetaFailed;
   shouldUseGray: IShouldUseGray;
-  origin: Origin;
+  trustAppNames: TrustAppNames;
 }
 
-export type IPlatformConfigFullForInit = Omit<IPlatformConfigFull, 'origin'>;
+export type IPlatformConfig = Partial<IPlatformConfigInitFull>;
 
-export type IPlatformConfig = Partial<IPlatformConfigFullForInit>;
+export interface IPlatformConfigFull extends IPlatformConfigInitFull {
+  origin: IPlatformConfig;
+}
+
+export interface SharedCache extends IPlatformConfigFull{
+  isConfigOverwrite: boolean;
+  platform: Platform;
+  /**
+   * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
+   */
+  appName2Lib: Record<string, Record<string, any>>;
+  /**
+   * 记录第一个载入的 Comp
+   */
+  appName2Comp: Record<string, any>;
+  /**
+   * 记录 lib 是否已分配到 appName2Lib 的 libMap 里
+   */
+  appName2isLibAssigned: Record<string, boolean>;
+  /**
+   * 记录第一个载入的 emitApp
+   */
+  appName2EmitApp: Record<string, IEmitAppInfo>;
+  /** 应用各个版本对应的lib */
+  appName2verEmitLib: Record<string, Record<string, Record<string, any>>>;
+  /** 应用各个版本对应的appInfo */
+  appName2verEmitApp: Record<string, Record<string, IEmitAppInfo>>;
+  /** 应用各个版本的load状态，用于控制loadApp或loadAppAssets是否要再次执行 0:未加载 1:加载中 2:加载结束  */
+  appName2verLoadStatus: Record<string, Record<string, HelLoadStatusEnum>>;
+  /**
+   * 应用各个版本对应的样式字符串
+   */
+  appName2verStyleStr: Record<string, Record<string, string>>;
+  /**
+   * 应用各个版本对应的样式字符串是否已获取过
+   */
+  appName2verStyleFetched: Record<string, Record<string, HelLoadStatusEnum>>;
+  /**
+   * 应用各个版本对应的额外样式列表（由sdk注入）
+   */
+  appName2verExtraCssList: Record<string, Record<string, HelLoadStatusEnum>>;
+  /**
+   * 应用各个版本对应的版本数据
+   */
+  appName2verAppVersion: Record<string, Record<string, ISubAppVersion>>;
+  /**
+   * 记录第一个载入的app数据
+   */
+  appName2app: Record<string, ISubApp>;
+  /**
+   * 记录第一个载入的版本数据
+   */
+  appName2appVersion: Record<string, ISubAppVersion>;
+  /**
+   * 记录第一个载入的样式字符串
+   */
+  appName2styleStr: Record<string, string>;
+  /**
+   * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
+   */
+  appGroupName2firstVer: Record<string, string>;
+}
 
 export function initPlatformConfig(config: IPlatformConfig, platform?: Platform): void;
 
@@ -351,12 +334,6 @@ export function getAppPlatform(appGroupName: string): Platform;
  */
 export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
 
-export interface IOriginInitOptions {
-  getApiPrefix?: IGetApiPrefix;
-  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
-  getUserName?: IGetUserName;
-}
-
 /**
  * 此函数服务于基于 hel-micro 二次封装后发布的定制包，供 createInstance 调用
  * 当 originInit 调用后，依然还能允许调用一次 init（initPlatformConfig） 重新一些平台参数
@@ -364,7 +341,7 @@ export interface IOriginInitOptions {
  * 而 createInstance 内部逻辑会先调用 originInit 注入自己的平台相关参数后，再返回 apis 实例集合供上层用户使用，
  * apis.init 就给用户一次额外的机会定义或覆盖此平台的相关参数
  */
-export function originInit(platform: Platform, options?: IOriginInitOptions): void;
+export function originInit(platform: Platform, options?: IPlatformConfig): void;
 
 declare type DefaultExport = {
   DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
