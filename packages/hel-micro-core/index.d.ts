@@ -7,6 +7,8 @@ export interface EventBus {
 
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
+export const DEFAULT_PLAT = 'unpkg';
+
 export const helEvents: {
   // renderApp 发射的是 SUB_APP_LOADED
   SUB_APP_LOADED: 'subAppLoaded';
@@ -29,16 +31,6 @@ export type HelLoadStatusEnum = HelLoadStatus[keyof HelLoadStatus];
 export function getHelEventBus(): EventBus;
 
 export function getUserEventBus(): EventBus;
-
-/**
- * 信任的应用名单，当使用方拿到获取模块的 emitInfo 后，其他条件均满足目标模块特征，
- * 但因平台名字不同会被 judgeAppReady 判断失败而过滤掉，如果此时我们相信这个模块的确是我们想要的模块，
- * 可将模块名加入信任名单，这样可以让 preFetchLib 把模块正常返回给上层调用者
- * ----------- 注：平台名不同可能有多种原因 -----------
- * 1 历史包发射模块时未正常平台名
- * 2 基于同一个仓库的包体做了迁移，改到了另一个平台上
- */
-type TrustAppNames = string[];
 
 export interface IHelMicroDebug {
   /** 0: 不打印，1: log, 2: trace */
@@ -122,12 +114,6 @@ export interface IOnFetchMetaFailed {
  */
 export type IGetApiPrefix = () => string;
 
-/**
- * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
- * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
- */
-export type IShouldUseGray = (passCtx: { appName: string }) => boolean | null;
-
 /** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
 export type IGetUserName = (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
 
@@ -171,10 +157,25 @@ export interface IPlatformConfigInitFull {
    */
   userLsKey: string;
   getUserName: IGetUserName;
-  onFetchMetaFailed?: IOnFetchMetaFailed;
-  shouldUseGray: IShouldUseGray;
-  trustAppNames: TrustAppNames;
+  onFetchMetaFailed: IOnFetchMetaFailed;
+  /**
+   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
+   * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
+   */
+  shouldUseGray: (passCtx: { appName: string }) => boolean | null;
+  /**
+   * 信任的应用名单，当使用方拿到获取模块的 emitInfo 后，其他条件均满足目标模块特征，
+   * 但因平台名字不同会被 judgeAppReady 判断失败而过滤掉，如果此时我们相信这个模块的确是我们想要的模块，
+   * 可将模块名加入信任名单，这样可以让 preFetchLib 把模块正常返回给上层调用者
+   * ----------- 注：平台名不同可能有多种原因 -----------
+   * 1 历史包发射模块时未正常平台名
+   * 2 基于同一个仓库的包体做了迁移，改到了另一个平台上
+   */
+  trustAppNames: string[];
 }
+
+/** 暂时兼容上层库不报错 */
+export type IShouldUseGray = IPlatformConfigInitFull['shouldUseGray'];
 
 export type IPlatformConfig = Partial<IPlatformConfigInitFull>;
 
@@ -343,8 +344,26 @@ export function setAppPlatform(appGroupName: string, platform?: Platform): Platf
  */
 export function originInit(platform: Platform, options?: IPlatformConfig): void;
 
+interface NullDef {
+  nullValues?: any[];
+  /** {} 算不算空，true算空 */
+  emptyObjIsNull?: boolean;
+  emptyArrIsNull?: boolean;
+}
+
+export type ObjUtil = {
+  noDupPush: (list: any[], item: any) => void;
+  merge2List: (list1: string[], list2: string[]) => string[];
+  okeys: (map: any) => string[];
+  purify: (obj: Record<string, any>, isValueValid?: (val: any) => boolean) => Record<string, any>;
+  getObjsVal: <T extends any = any>(objs: any[], key: string, backupVal?: any) => T;
+  isNull: (value: any, nullDef?: NullDef) => boolean;
+  safeParse: <T extends any = any>(jsonStr: any, defaultValue: T, errMsg?: string) => T;
+};
+
 declare type DefaultExport = {
   DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
+  DEFAULT_PLAT: typeof DEFAULT_PLAT;
   helEvents: typeof helEvents;
   helLoadStatus: typeof helLoadStatus;
   getHelEventBus: typeof getHelEventBus;
@@ -394,6 +413,7 @@ declare type DefaultExport = {
   getGlobalThis: typeof getGlobalThis;
   setGlobalThis: typeof setGlobalThis;
   resetGlobalThis: typeof resetGlobalThis;
+  objUtil: ObjUtil,
 };
 
 declare let defaultExport: DefaultExport;

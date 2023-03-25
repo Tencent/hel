@@ -13,9 +13,9 @@ import {
   setVersion,
 } from 'hel-micro-core';
 import type { IEmitAppInfo, Platform } from 'hel-types';
+import * as alt from '../alternative';
 import emitApp from '../process/emitApp';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import * as alt from '../alternative';
 import type { IInnerPreFetchOptions } from '../types';
 import { isCustomValid } from './custom';
 

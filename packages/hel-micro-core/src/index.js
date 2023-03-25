@@ -8,10 +8,15 @@ import * as debugMod from './microDebug';
 import { ensureHelMicroShared, getHelMicroShared } from './microShared';
 import * as util from './util';
 import * as utilBase from './utilBase';
+import * as objUtilMod from './objUtil';
+
+export const objUtil = objUtilMod;
 
 util.log(`hel-micro-core ver ${consts.VER}`);
 
 export const { isSubApp, trySetMasterAppLoadedSignal } = isSubMod;
+
+export const { DEFAULT_PLAT } = consts;
 
 export function resetGlobalThis(globalThis) {
   if (globalThis) {
@@ -516,6 +521,7 @@ export function originInit(platform, options) {
 }
 
 const toExport = {
+  DEFAULT_PLAT,
   DEFAULT_ONLINE_VER,
   helLoadStatus,
   helEvents,
@@ -565,6 +571,7 @@ const toExport = {
   getGlobalThis,
   setGlobalThis,
   resetGlobalThis,
+  objUtil,
 };
 
 export default toExport;

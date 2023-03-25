@@ -1,4 +1,4 @@
-export const VER = '4.0.0-alpha.1';
+export const VER = '4.0.0-alpha.2';
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
 
@@ -12,6 +12,8 @@ export const UNPKG_PREFIX = 'https://unpkg.com';
 export const PLAT_UNPKG = 'unpkg';
 
 export const PLAT_HEL = 'hel';
+
+export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const HEL_EVENTS = {
   // renderApp 发射的是 SUB_APP_LOADED
