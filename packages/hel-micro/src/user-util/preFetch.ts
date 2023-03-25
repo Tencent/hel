@@ -139,8 +139,8 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
  */
 export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | VersionId) {
   const targetOpts = makePreFetchOptions(false, options);
-  const appInfo = await innerPreFetch(appName, targetOpts);
-  return appInfo;
+  const result = await innerPreFetch(appName, targetOpts);
+  return result.emitApp;
 }
 
 interface IBatchPreFetchLibCommon {
