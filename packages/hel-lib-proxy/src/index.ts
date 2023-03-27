@@ -7,9 +7,9 @@
 import type { IAppReadyOptions, IGetOptions } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
+import { VER } from './consts';
 import * as share from './share';
 import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
-import { VER } from './consts';
 export * from './typings';
 
 core.log(`hel-lib-proxy ver ${VER}`);

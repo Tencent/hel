@@ -9,4 +9,3 @@ export function setAppMeta(/** @type {import('hel-types').ISubApp}*/ appMeta, pl
   const { appName2app } = getSharedCache(platform);
   appName2app[appMeta.name] = appMeta;
 }
-

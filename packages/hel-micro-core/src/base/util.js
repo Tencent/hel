@@ -1,9 +1,9 @@
-import { getHelMicroDebug } from './microDebug';
 import { getGlobalThis } from './globalRef';
+import { getHelMicroDebug } from './microDebug';
 
 try {
   initMicroDebug();
-} catch (err) { }
+} catch (err) {}
 
 function initMicroDebug() {
   if (getHelMicroDebug().isInit) {

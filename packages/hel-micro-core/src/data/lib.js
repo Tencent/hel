@@ -1,6 +1,5 @@
-
+import { log, safeGetMap, setSubMapValue } from '../base/util';
 import { getSharedCache } from '../wrap/cache';
-import { safeGetMap, setSubMapValue, log } from '../base/util';
 import inner from './util';
 
 export function getVerLib(appName, inputOptions) {

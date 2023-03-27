@@ -1,7 +1,7 @@
-import { getSharedCache } from '../wrap/cache';
-import { safeGetMap, log, setSubMapValue } from '../base/util';
-import inner from './util';
+import { log, safeGetMap, setSubMapValue } from '../base/util';
 import { DEFAULT_ONLINE_VER } from '../consts';
+import { getSharedCache } from '../wrap/cache';
+import inner from './util';
 
 export function getVerApp(appName, inputOptions) {
   const options = inputOptions || {};

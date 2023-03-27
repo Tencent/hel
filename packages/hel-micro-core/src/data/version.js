@@ -1,7 +1,7 @@
-import { getSharedCache } from '../wrap/cache';
 import { safeGetMap, setSubMapValue } from '../base/util';
-import inner from './util';
 import { DEFAULT_ONLINE_VER } from '../consts';
+import { getSharedCache } from '../wrap/cache';
+import inner from './util';
 
 export function getVersion(appName, options) {
   const { platform, versionId } = options || {};

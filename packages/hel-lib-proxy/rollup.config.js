@@ -1,6 +1,6 @@
-import tsMod from 'typescript';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript';
+import tsMod from 'typescript';
 // 如需要一起打包引用的模块，使用此插件，解决 Unresolved dependencies
 // 因本项目不需要打包 hel-micro-core 依赖，所以不需要此插件
 // import resolve from 'rollup-plugin-node-resolve';

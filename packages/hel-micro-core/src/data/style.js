@@ -1,6 +1,6 @@
+import { log, safeGetMap, setSubMapValue } from '../base/util';
+import { DEFAULT_ONLINE_VER, HEL_LOAD_STATUS } from '../consts';
 import { getSharedCache } from '../wrap/cache';
-import { setSubMapValue, safeGetMap, log } from '../base/util';
-import { HEL_LOAD_STATUS, DEFAULT_ONLINE_VER } from '../consts';
 
 export function getAppStyleStr(appName, options) {
   const { platform, versionId } = options || {};

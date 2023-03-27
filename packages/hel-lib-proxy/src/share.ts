@@ -1,4 +1,4 @@
-import { getAppPlatform, getSharedCache, log, helConsts } from 'hel-micro-core';
+import { getAppPlatform, getSharedCache, helConsts, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import type { IOptions, LibProperties } from './typings';
 

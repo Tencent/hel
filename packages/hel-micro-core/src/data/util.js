@@ -1,5 +1,5 @@
-import { getSharedCache } from '../wrap/cache';
 import { DEFAULT_ONLINE_VER, HEL_LOAD_STATUS } from '../consts';
+import { getSharedCache } from '../wrap/cache';
 
 const innerUtil = {
   getAppMeta(appName, platform) {

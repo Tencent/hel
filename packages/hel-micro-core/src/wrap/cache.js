@@ -1,5 +1,5 @@
-import { DEFAULT_PLAT } from '../consts';
 import { getHelMicroShared, makeCacheNode } from '../base/microShared';
+import { DEFAULT_PLAT } from '../consts';
 
 /**
  * 获取默认的平台值

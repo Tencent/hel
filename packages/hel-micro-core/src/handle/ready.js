@@ -1,11 +1,11 @@
-import { tryGetVersion, tryGetAppName } from './guess';
-import { setEmitLib } from '../data/lib';
-import { setEmitApp } from '../data/app';
-import { setVerLoadStatus } from '../data/status';
-import { getAppPlatform } from '../data/conf';
-import { getAppMeta } from '../data/meta';
-import { getHelEventBus } from '../data/event';
 import { HEL_EVENTS } from '../consts';
+import { setEmitApp } from '../data/app';
+import { getAppPlatform } from '../data/conf';
+import { getHelEventBus } from '../data/event';
+import { setEmitLib } from '../data/lib';
+import { getAppMeta } from '../data/meta';
+import { setVerLoadStatus } from '../data/status';
+import { tryGetAppName, tryGetVersion } from './guess';
 
 export function libReady(appGroupName, appProperties, options = {}) {
   const platform = options.platform || getAppPlatform(appGroupName);

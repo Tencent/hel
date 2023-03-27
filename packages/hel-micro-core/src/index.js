@@ -2,23 +2,23 @@
 /** @typedef {import('../index').IPlatformConfigFull} IPlatformConfigFull */
 /** @typedef {import('../index').SharedCache} SharedCache */
 import * as commonUtilMod from './base/commonUtil';
+import * as globalRef from './base/globalRef';
 import * as debugMod from './base/microDebug';
 import { ensureHelMicroShared } from './base/microShared';
-import * as globalRef from './base/globalRef';
 import * as util from './base/util';
+import * as consts from './consts';
 import * as app from './data/app';
-import * as lib from './data/lib';
-import * as meta from './data/meta';
-import * as version from './data/version';
-import * as status from './data/status';
-import * as style from './data/style';
 import * as conf from './data/conf';
 import * as event from './data/event';
+import * as lib from './data/lib';
+import * as meta from './data/meta';
+import * as status from './data/status';
+import * as style from './data/style';
+import * as version from './data/version';
 import * as guess from './handle/guess';
-import * as ready from './handle/ready';
-import * as consts from './consts';
-import * as cacheWrap from './wrap/cache';
 import * as iso from './handle/iso';
+import * as ready from './handle/ready';
+import * as cacheWrap from './wrap/cache';
 
 const { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, PLAT_UNPKG } = consts;
 

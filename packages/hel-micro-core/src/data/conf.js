@@ -1,7 +1,7 @@
 /** @typedef {import('../../index').IPlatformConfigFull} IPlatformConfigFull */
 /** @typedef {import('../../index').SharedCache} SharedCache */
-import { getSharedCache, getCacheRoot, getPlatform } from '../wrap/cache';
-import { safeAssign, log } from '../base/util';
+import { log, safeAssign } from '../base/util';
+import { getCacheRoot, getPlatform, getSharedCache } from '../wrap/cache';
 
 /**
  * 提取无其他杂项的配置对象

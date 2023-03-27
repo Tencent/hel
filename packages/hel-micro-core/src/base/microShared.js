@@ -1,8 +1,8 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
 import { DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY } from '../consts';
-import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 import { getHelSingletonHost } from './globalRef';
+import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 
 function makeCanBeOverwriteProps() {
   return {

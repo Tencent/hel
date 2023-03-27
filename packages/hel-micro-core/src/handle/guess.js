@@ -1,6 +1,6 @@
 import { getJsRunLocation, log } from '../base/util';
+import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
 import { getSharedCache } from '../wrap/cache';
-import { DEFAULT_PLAT, DEFAULT_ONLINE_VER } from '../consts';
 
 export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
