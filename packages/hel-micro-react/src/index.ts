@@ -1,5 +1,5 @@
 import * as apis from './apis';
-import createInstance from './createInstance';
+import { createInstance } from './ins';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 export type {
   GetSubVal,

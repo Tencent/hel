@@ -163,7 +163,7 @@ importers:
       rollup-plugin-terser: ^7.0.2
       rollup-plugin-typescript: ^1.0.1
     dependencies:
-      hel-micro-core: link:../hel-micro-core
+      hel-micro-core: 4.0.0-alpha.8_laenxhp5hmrzqcp2wf5ectaila
       hel-types: link:../hel-types
     devDependencies:
       '@babel/eslint-parser': 7.21.3
@@ -201,7 +201,7 @@ importers:
       rollup-plugin-typescript: ^1.0.1
       rollup-plugin-uglify: ^6.0.4
     dependencies:
-      hel-micro-core: link:../hel-micro-core
+      hel-micro-core: 4.0.0-alpha.8_laenxhp5hmrzqcp2wf5ectaila
       hel-types: link:../hel-types
     devDependencies:
       '@babel/core': 7.21.3
@@ -263,8 +263,8 @@ importers:
       '@types/react-dom': <18.0.0
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
-      hel-micro: 4.0.0-alpha.7
-      hel-micro-core: 4.0.0-alpha.6
+      hel-micro: 4.0.0-alpha.8
+      hel-micro-core: 4.0.0-alpha.9
       hel-types: '>=3.8.0'
       react: '>=16.10.2'
       react-dom: '>=16.10.2'
@@ -281,8 +281,8 @@ importers:
     dependencies:
       '@types/react': 17.0.53
       '@types/react-dom': 17.0.19
-      hel-micro: 4.0.0-alpha.7_upp3pgb6ercnb53q6wf4asbbvy
-      hel-micro-core: 4.0.0-alpha.6_laenxhp5hmrzqcp2wf5ectaila
+      hel-micro: link:../hel-micro
+      hel-micro-core: link:../hel-micro-core
       hel-types: link:../hel-types
       react: 16.14.0
       react-dom: 16.14.0_react@16.14.0
@@ -15233,21 +15233,11 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  /hel-micro-core/4.0.0-alpha.6_laenxhp5hmrzqcp2wf5ectaila:
-    resolution: {integrity: sha512-YclEOPGpEA1Eet2lntqYtIp7Qwe903uJGJvNdkzsS7L06mQx7ylGgz3VliHobGm9rO7pJHmdtdIEuAyaDsj87Q==}
+  /hel-micro-core/4.0.0-alpha.8_laenxhp5hmrzqcp2wf5ectaila:
+    resolution: {integrity: sha512-T+xJBCX4OFdKjU9C+TWkn0a8X4RLfE8aB+7Y0Qj/7MJowa96jXi/5evmDfQ07+uXARVlQHSD8wFHf1M4/qhbdw==}
     peerDependencies:
       hel-types: '>=3.7.0'
     dependencies:
-      hel-types: link:packages/hel-types
-    dev: false
-
-  /hel-micro/4.0.0-alpha.7_upp3pgb6ercnb53q6wf4asbbvy:
-    resolution: {integrity: sha512-DmmN8WjCjqv8Dnl8cbhgjp30D4J+5XnMINN2Nmgbyp/ITyICVNhjzrpxdgxuR9WoBYPfm4OI4ZjXyLfLRtVyug==}
-    peerDependencies:
-      hel-micro-core: 4.0.0-alpha.6
-      hel-types: '>=3.8.2'
-    dependencies:
-      hel-micro-core: 4.0.0-alpha.6_laenxhp5hmrzqcp2wf5ectaila
       hel-types: link:packages/hel-types
     dev: false
 
