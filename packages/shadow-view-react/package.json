@@ -43,8 +43,7 @@
     "dn-middleware-shell": "^1.1.0",
     "dn-middleware-tslint": "^1.1.3",
     "dn-middleware-typescript": "^2.0.8",
-    "dn-middleware-webpack": "^1.11.5",
-    "typescript": ">=3.5.3"
+    "dn-middleware-webpack": "^1.11.5"
   },
   "peerDependencies": {
     "@types/react": ">=16.8.0",

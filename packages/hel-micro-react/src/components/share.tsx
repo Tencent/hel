@@ -1,10 +1,8 @@
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import core from 'hel-micro-core';
+import { helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
-
-const { helLoadStatus } = core;
 
 export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const ensuredProps = { ...props };

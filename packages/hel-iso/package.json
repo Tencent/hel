@@ -1,7 +1,7 @@
 {
-  "name": "hel-micro-core",
-  "version": "4.0.0-alpha.9",
-  "description": "hel micro core",
+  "name": "hel-iso",
+  "version": "4.0.0",
+  "description": "this pack can only be bundeld with project, using it with external will make mistake",
   "repository": {
     "type": "git",
     "url": "https://github.com/tnfe/hel.git",

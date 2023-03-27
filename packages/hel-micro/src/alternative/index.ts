@@ -1,4 +1,4 @@
-import type { IPlatformConfigInitFull } from 'hel-micro-core';
+import type { IControlPreFetchOptions, IPlatformConfigInitFull } from 'hel-micro-core';
 import { commonUtil, getPlatformConfig } from 'hel-micro-core';
 import type { IInnerPreFetchOptions } from '../types';
 import * as builtinFns from './builtin';
@@ -6,6 +6,7 @@ import * as builtinFns from './builtin';
 const { isNull } = commonUtil;
 
 export type KeyName = keyof IPlatformConfigInitFull;
+export type PreFetchKey = keyof IControlPreFetchOptions;
 
 export function getFn(platform: string | undefined, fnName: KeyName, userFn?: any): any {
   const conf = getPlatformConfig(platform);
@@ -52,8 +53,8 @@ export function getVal<T extends any = any>(platform: string | undefined, key: K
  * @param loadOptions
  * @returns
  */
-export function genApiPrefix(platform: string, loadOptions?: IInnerPreFetchOptions) {
-  let prefix = '';
+export function genApiPrefix(platform: string | undefined, loadOptions?: IInnerPreFetchOptions) {
+  let prefix: any = '';
   if (loadOptions) {
     prefix = loadOptions.getApiPrefix?.() || loadOptions.apiPrefix;
   }

@@ -1,6 +1,6 @@
 import { commonUtil, helConsts } from 'hel-micro-core';
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
-import type { KeyName } from '../alternative';
+import type { PreFetchKey } from '../alternative';
 import * as alt from '../alternative';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
@@ -172,10 +172,10 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   }
 
   // 按 preFetchOptions.{key} --> platInitOptions.{key} --> originInitOptions.{key} --> innerDefault 取值的函数
-  const getVal = (key: KeyName, defaultVal?: any) => {
+  const getVal = (key: PreFetchKey, defaultVal?: any) => {
     return alt.getVal(platform, key, loadOptions[key]) || defaultVal;
   };
-  const getFnVal = (fnName: KeyName, fnParams?: any) => {
+  const getFnVal = (fnName: PreFetchKey, fnParams?: any) => {
     return alt.callFn(platform, fnName, fnParams, loadOptions[fnName]);
   };
 
@@ -305,7 +305,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
 export interface IGetVerOptions {
   apiMode: ApiMode;
   appName: string;
-  semverApi?: boolean | null;
+  semverApi?: boolean;
   platform?: Platform;
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
