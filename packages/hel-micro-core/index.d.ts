@@ -148,7 +148,7 @@ export interface IControlPreFetchOptions {
    * 3 originInitOptions.apiPathOfApp
    * 4 内部兜底值 '/openapi/v1/app/info'
    * ```
-  */
+   */
   apiPathOfApp: string;
   /**
    * default: '/openapi/v1/app/info'，请求应用应用版本的主路径，仅当 semverApi 为 false 时，设置此值才会有效

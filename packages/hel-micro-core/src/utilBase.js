@@ -57,7 +57,7 @@ export function setGlobalThis(specGlobalThis, merge = false) {
     prevShared = globalThisRef.__HEL_MICRO_SHARED__;
   }
   if (merge) {
-    globalThisRef = { ...globalThisRef, ...specGlobalThis }
+    globalThisRef = { ...globalThisRef, ...specGlobalThis };
   } else {
     globalThisRef = specGlobalThis;
   }

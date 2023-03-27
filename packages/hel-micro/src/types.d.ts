@@ -1,5 +1,5 @@
-import type { IPlatformConfigInitFull, IPlatformConfig, IControlPreFetchOptions } from 'hel-micro-core';
-import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import type { IControlPreFetchOptions } from 'hel-micro-core';
+import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -120,7 +120,7 @@ export interface IChangeAttrs {
   (el: HTMLLinkElement | HTMLScriptElement, fnCtx: IChangeAttrsFnCtx): void;
 }
 
-export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions>{
+export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /**
    * 指定拉取的版本号
    * 版本号可到 hel pack 服务或 unpkg 服务查看

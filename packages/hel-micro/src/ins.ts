@@ -1,4 +1,4 @@
-import { commonUtil, originInit, IControlPreFetchOptions, IPlatformConfigInitFull } from 'hel-micro-core';
+import { commonUtil, IControlPreFetchOptions, IPlatformConfigInitFull, originInit } from 'hel-micro-core';
 import * as apis from './apis';
 
 const { purify } = commonUtil;
@@ -60,7 +60,7 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
         const common = mergePlatObj(arg1Var.common);
         args[1] = { ...arg1Var, common };
       } else if (preFetchFns.includes(fnName)) {
-        let toMerge = purify(typeof arg1 === 'string' ? { versionId: arg1 } : (arg1 || {}));
+        let toMerge = purify(typeof arg1 === 'string' ? { versionId: arg1 } : arg1 || {});
         // 继续处理来自 createInstance 的预设参数
         toMerge = purify({ ...preFetchOptions, ...toMerge });
         args[1] = { platform, ...toMerge };
@@ -75,7 +75,6 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
     return fn.apply(this, args);
   };
 }
-
 
 interface ITryOptions {
   preFetchOptions?: Partial<IControlPreFetchOptions>;
@@ -112,7 +111,7 @@ function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions
 type Apis = typeof apis;
 type CreateInstance = (platform: string, options?: Partial<IControlPreFetchOptions>) => InsApis;
 type CreateOriginInstance = (platform: string, options?: Partial<IPlatformConfigInitFull>) => InsApis;
-type InsApis = Apis & { createInstance: CreateInstance, createOriginInstance: CreateOriginInstance };
+type InsApis = Apis & { createInstance: CreateInstance; createOriginInstance: CreateOriginInstance };
 
 export function createInstance(platform: string, preFetchOptions?: Partial<IControlPreFetchOptions>): InsApis {
   const insApis = tryInectPlatForMethods(platform, apis, { preFetchOptions });
