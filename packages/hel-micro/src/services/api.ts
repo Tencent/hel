@@ -1,5 +1,6 @@
-import { commonUtil } from 'hel-micro-core';
+import { commonUtil, helConsts } from 'hel-micro-core';
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import type { KeyName } from '../alternative';
 import * as alt from '../alternative';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
@@ -21,7 +22,7 @@ export interface IHelGetOptionsBase {
   isFullVersion?: boolean;
   /** 默认 false，只需要版本数据 */
   onlyVersion?: boolean;
-  semverApi?: boolean | null;
+  semverApi?: boolean;
 }
 
 export interface IHelGetOptions extends IHelGetOptionsBase {
@@ -153,7 +154,7 @@ async function getSemverUrl(apiHost: string, appName: string, versionId: string,
  * 生成请求的自定义平台的请求信息
  */
 export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], getOptions: IHelGetOptions) {
-  const { versionId, projectId, apiMode, isFullVersion = false, versionIdList = [], projectIdList = [], loadOptions } = getOptions;
+  const { versionId, projectId, apiMode, isFullVersion = false, versionIdList = [], projectIdList = [], loadOptions = {} } = getOptions;
   const platform = getPlatform(getOptions.platform);
 
   // trust me, appName will be reassign later
@@ -170,19 +171,27 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
     isBatch = true;
   }
 
-  const userLsKey = alt.getVal(platform, 'userLsKey');
-  const userName = alt.callFn(platform, 'getUserName', { platform, appName, userLsKey });
-  const apiHost = alt.getVal(platform, 'apiPrefix', loadOptions?.apiPrefix);
-  const grayResult = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions?.shouldUseGray);
-  const apiSuffix = alt.getVal(platform, 'apiSuffix');
-  const apiPathOfApp = alt.getVal(platform, 'apiPathOfApp', apiSrvConst.API_PATH_PREFIX);
+  // 按 preFetchOptions.{key} --> platInitOptions.{key} --> originInitOptions.{key} --> innerDefault 取值的函数
+  const getVal = (key: KeyName, defaultVal?: any) => {
+    return alt.getVal(platform, key, loadOptions[key]) || defaultVal;
+  };
+  const getFnVal = (fnName: KeyName, fnParams?: any) => {
+    return alt.callFn(platform, fnName, fnParams, loadOptions[fnName]);
+  };
+
+  const userLsKey = getVal('userLsKey', helConsts.DEFAULT_USER_LS_KEY);
+  const userName = getFnVal('getUserName', { platform, appName, userLsKey });
+  const grayResult = getFnVal('shouldUseGray', { appName });
+  const apiSuffix = getVal('apiSuffix');
+  const apiPathOfApp = getVal('apiPathOfApp', helConsts.DEFAULT_API_URL);
+  const apiHost = alt.genApiPrefix(platform, loadOptions);
 
   let grayVar = '';
   if (typeof grayResult === 'boolean') {
     grayVar = grayResult ? '1' : '0';
   }
 
-  // 为 hel pack 模块管理台拼接请求链接
+  // 为自定义模块管理台拼接请求链接
   const jsonpMark = apiMode === API_NORMAL_GET ? '' : JSONP_MARK;
   let interfaceName = '';
   if (!isBatch) {
@@ -254,7 +263,7 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
     const interfaceName = !isFullVersion ? apiSrvConst.GET_APP_VER : apiSrvConst.GET_APP_FULL_VER;
     const finalInterfaceName = `${interfaceName}${jsonpMark}`;
 
-    const finalApiPath = apiPathOfAppVersion || apiPathOfApp || apiSrvConst.API_PATH_PREFIX;
+    const finalApiPath = apiPathOfAppVersion || apiPathOfApp || helConsts.DEFAULT_API_URL;
     url = `${apiHost}${finalApiPath}/${finalInterfaceName}?ver=${versionId}`;
     url = inner.appendSearchKV(url, 'name', appName);
     url = inner.appendSuffix(url, apiSuffix);

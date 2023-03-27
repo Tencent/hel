@@ -13,7 +13,7 @@ export interface IGetMetaDataUrlOptions {
   protocol?: 'http' | 'https';
   projectId?: string;
   /** default: true */
-  semverApi?: boolean | null;
+  semverApi?: boolean;
 }
 
 /**
@@ -27,8 +27,8 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
 /**
  * 获取应用自身描述和构建版本数据
  */
-export async function getSubAppMeta(versionId: string, options?: IHelGetOptions): Promise<IHelMeta> {
-  const meta = await innerApiSrv.getSubAppAndItsVersion(versionId, options || {});
+export async function getSubAppMeta(appName: string, options?: IHelGetOptions): Promise<IHelMeta> {
+  const meta = await innerApiSrv.getSubAppAndItsVersion(appName, options || {});
   return meta;
 }
 

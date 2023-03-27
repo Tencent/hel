@@ -23,6 +23,8 @@ const coreRules = {
 };
 // 这些函数共2个参数，第2位参数是包含平台值的对象或版本号，且需要注入 semverApi 值
 const preFetchFns = ['preFetchLib', 'preFetchApp'];
+// 这些函数共2个参数，第2位参数需要注入 semverApi 值
+const injectSemverApiFns = ['getSubAppMeta', 'getMetaDataUrl'];
 // 这些函数第1位参数是平台值对象
 const arg1PlatObjFns = ['emitApp', 'init'];
 
@@ -66,6 +68,9 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
           toMerge = purify({ ...preFetchOptions, ...toMerge });
         }
         args[1] = { platform, ...toMerge };
+      } else if (injectSemverApiFns.includes(fnName)) {
+        const { semverApi = true } = preFetchOptions || {};
+        args[1] = mergePlatObj({ semverApi, ...purify(arg1 || {}) });
       } else if (arg1PlatObjFns.includes(fnName)) {
         args[0] = mergePlatObj(arg0);
       } else {

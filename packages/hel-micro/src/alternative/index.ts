@@ -5,9 +5,9 @@ import * as builtinFns from './builtin';
 
 const { isNull } = commonUtil;
 
-type PropName = keyof IPlatformConfigInitFull;
+export type KeyName = keyof IPlatformConfigInitFull;
 
-export function getFn(platform: string | undefined, fnName: PropName, userFn?: any): any {
+export function getFn(platform: string | undefined, fnName: KeyName, userFn?: any): any {
   const conf = getPlatformConfig(platform);
   const { origin } = conf;
   const confFn = conf[fnName];
@@ -16,16 +16,17 @@ export function getFn(platform: string | undefined, fnName: PropName, userFn?: a
   return userFn || confFn || originFn;
 }
 
-export function callFn(platform: string | undefined, fnName: PropName, params: any, userFn?: any): any {
+export function callFn(platform: string | undefined, fnName: KeyName, params: any, userFn?: any): any {
   const fn = getFn(platform, fnName, userFn);
   if (fn) {
     return fn(params);
   }
   // @ts-ignore
-  return builtinFns[fnName]?.(params);
+  const builtinFn = builtinFns[fnName] || (() => null);
+  return builtinFn(params);
 }
 
-export function getVal<T extends any = any>(platform: string | undefined, key: PropName, userVal?: any): T {
+export function getVal<T extends any = any>(platform: string | undefined, key: KeyName, userVal?: any): T {
   if (!isNull(userVal)) {
     return userVal;
   }

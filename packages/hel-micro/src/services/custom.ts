@@ -1,7 +1,8 @@
-import { commonUtil, DEFAULT_ONLINE_VER, log } from 'hel-micro-core';
+import { commonUtil, helConsts, log } from 'hel-micro-core';
 import type { ICustom, IInnerPreFetchOptions } from '../types';
 import { requestGet } from '../util';
 
+const { DEFAULT_ONLINE_VER } = helConsts;
 const type2conf = {
   js: {
     endMark: '.js',
