@@ -10,7 +10,7 @@ describe('test appParamSrv', () => {
 
   test('getGroupedStyleList', async () => {
     util.mockLoadModule({ platform: 'hel' });
-    await preFetchLib('remote-vue-comps-tpl', { platform: 'hel' });
+    await preFetchLib('remote-vue-comps-tpl', { platform: 'hel', semverApi: false });
     const map = await appParamSrv.getGroupedStyleList('remote-vue-comps-tpl', { platform: 'hel' });
     expect(map.static.length).toBe(0);
     expect(map.build.length).toBe(2);

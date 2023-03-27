@@ -77,7 +77,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', preFetchOptions.strictMatchVer);
     // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
     fixedInnerOptions.storageType = preFetchOptions.storageType || 'indexedDB';
-    fixedInnerOptions.semverApi = preFetchOptions.semverApi ?? true;
+    fixedInnerOptions.semverApi = alt.getVal(platform, 'semverApi', preFetchOptions.semverApi);
 
     emitApp = logicSrv.getLibOrApp(appName, fixedInnerOptions);
     if (emitApp) {

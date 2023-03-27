@@ -2,6 +2,8 @@ import type { IPlatformConfigInitFull } from 'hel-micro-core';
 import { commonUtil, getPlatformConfig } from 'hel-micro-core';
 import * as builtinFns from './builtin';
 
+const { isNull } = commonUtil;
+
 type PropName = keyof IPlatformConfigInitFull;
 
 export function getFn(platform: string | undefined, fnName: PropName, userFn?: any): any {
@@ -23,17 +25,20 @@ export function callFn(platform: string | undefined, fnName: PropName, params: a
 }
 
 export function getVal<T extends any = any>(platform: string | undefined, key: PropName, userVal?: any): T {
-  if (!commonUtil.isNull(userVal)) {
+  if (!isNull(userVal)) {
     return userVal;
   }
   const conf = getPlatformConfig(platform);
   const { origin } = conf;
+
+  // 优先返回 platInitOptions
   const confVal: any = conf[key];
-  // @ts-ignore
-  const originVal: any = origin[key];
-  if (!commonUtil.isNull(confVal)) {
+  if (!isNull(confVal)) {
     return confVal;
   }
 
+  // 最后返回 originInitOptions
+  // @ts-ignore
+  const originVal: any = origin[key];
   return originVal;
 }

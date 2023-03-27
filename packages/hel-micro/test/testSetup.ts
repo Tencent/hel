@@ -6,11 +6,8 @@ import { setGlobalThis } from 'hel-micro-core';
 import * as qs from 'qs';
 import * as mockData from './mockData';
 
-console.log('------------------------- run testSetup --------------------------');
-
 // prettier-ignore
 const noop = () => { };
-const nativeConsole = console;
 const localStorageCache: Record<string, string> = {};
 
 function guessNameAndVer(url: string) {
@@ -46,12 +43,16 @@ setGlobalThis({
         const app = mockData.makeApp({ app: { name, build_version: ver } });
         const version = mockData.makeVersion({ versionId: ver });
 
+        // 走
         if (url.includes('/getSubAppVersion') || url.includes('/getSubAppFullVersion')) {
           return { data: version, code: 0 };
         }
         if (url.includes('/getSubAppAndItsVersion') || url.includes('/getSubAppAndItsFullVersion')) {
           return { data: { app, version }, code: 0 };
         }
+
+        // semverApi 直接返回 { app, version }
+        // see https://unpkg.com/browse/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
         return { app, version };
       },
       text() {
@@ -63,6 +64,8 @@ setGlobalThis({
         }
         return '';
       },
+      status: 200,
+      url,
     };
   },
   document: {
@@ -87,5 +90,4 @@ setGlobalThis({
     },
   },
   indexedDB,
-  console: nativeConsole,
-});
+}, true);

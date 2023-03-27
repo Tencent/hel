@@ -12,6 +12,8 @@ export interface IGetMetaDataUrlOptions {
   /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
   protocol?: 'http' | 'https';
   projectId?: string;
+  /** default: true */
+  semverApi?: boolean;
 }
 
 /**
@@ -37,8 +39,8 @@ export async function getSubAppMeta(versionId: string, options?: IHelGetOptions)
  * @returns
  */
 export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions): string {
-  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId } = options || {};
-  let { url } = innerApiSrv.prepareCustomPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
+  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId, semverApi = true } = options || {};
+  let { url } = innerApiSrv.prepareCustomPlatRequestInfo(appName, { platform, versionId, apiMode, projectId, semverApi });
   if (protocol === 'http') {
     url = url.replace('https:', 'http:');
   }

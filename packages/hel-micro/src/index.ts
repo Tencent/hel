@@ -1,7 +1,6 @@
 import * as apis from './apis';
-import createInstance from './createInstance';
+import * as ins from './ins';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase } from './types';
-export { createInstance };
 
 export const {
   preFetchLib,
@@ -23,6 +22,7 @@ export const {
   core,
 } = apis;
 export const { resetGlobalThis } = apis.core;
+export const { createInstance, createOriginInstance } = ins;
 export const eventBus = apis.core.getUserEventBus();
 
 const toExport = {
@@ -46,6 +46,7 @@ const toExport = {
   resetGlobalThis,
   core: apis.core,
   createInstance,
+  createOriginInstance,
 };
 
 export default toExport;

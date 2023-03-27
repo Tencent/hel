@@ -9,50 +9,61 @@
 |--------------------------------------------------------------------------
 */
 
-let mockGlobalThis = null;
+let globalThisRef = null;
+
+function assignRef() {
+  try {
+    // for browser env
+    if (typeof window !== 'undefined') {
+      globalThisRef = window;
+      return;
+    }
+    // eslint-disable-next-line
+    const workerSelf = self;
+    // for worker env
+    if (typeof workerSelf !== 'undefined') {
+      globalThisRef = workerSelf;
+    } else if (typeof global !== 'undefined') {
+      // for nodejs env
+      globalThisRef = global;
+    }
+    if (!globalThisRef) {
+      throw new Error('opps');
+    }
+  } catch (err) {
+    // below error occurred in jest node env node
+    // ReferenceError: self is not defined
+    if (!global) {
+      throw new Error('unable to locate global object');
+    }
+    globalThisRef = global;
+  }
+}
 
 /**
  *
  * @returns {typeof globalThis}
  */
 export function getGlobalThis() {
-  if (mockGlobalThis) {
-    return mockGlobalThis;
+  if (!globalThisRef) {
+    return assignRef();
   }
-  try {
-    // for browser env
-    if (typeof window !== 'undefined') {
-      return window;
-    }
-    // eslint-disable-next-line
-    const workerSelf = self;
-    // for worker env
-    if (typeof workerSelf !== 'undefined') {
-      return workerSelf;
-    }
-    // for nodejs env
-    if (typeof global !== 'undefined') {
-      return global;
-    }
-    // throw new Error('opps');
-    return {}; // for jest test case
-  } catch (err) {
-    console.log(err);
-    // throw new Error('unable to locate global object');
-    return {}; // for jest test case
-  }
+  return globalThisRef;
 }
 
-export function setGlobalThis(specGlobalThis) {
-  console.log('------------>> setGlobalThis', specGlobalThis);
+export function setGlobalThis(specGlobalThis, merge = false) {
   let prevShared = null;
-  if (mockGlobalThis?.__HEL_MICRO_SHARED__) {
-    prevShared = mockGlobalThis.__HEL_MICRO_SHARED__;
+  if (globalThisRef?.__HEL_MICRO_SHARED__) {
+    prevShared = globalThisRef.__HEL_MICRO_SHARED__;
   }
-  mockGlobalThis = specGlobalThis;
+  if (merge) {
+    globalThisRef = { ...globalThisRef, ...specGlobalThis }
+  } else {
+    globalThisRef = specGlobalThis;
+  }
   // 避免 resetGlobalThis 被用户调用后，共享数据丢失
   if (prevShared) {
-    mockGlobalThis.__HEL_MICRO_SHARED__ = prevShared;
+    globalThisRef.__HEL_MICRO_SHARED__ = prevShared;
   }
 }
 

@@ -83,86 +83,132 @@ export interface IAppAndVer {
   version: ISubAppVersion;
 }
 
-/**
- * 定义获取 app 和 version 数据的函数，修改 hel-micro 的默认请求行为，可根据自己的实际需求来实现此函数逻辑
- * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
- * @see https://tnfe.github.io/hel/docs/api/hel-micro/prefetch-lib#%E9%87%8D%E7%BD%AE%E5%85%83%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3
- * 优先级依次是：
- * 1 oirginInitOptions.getSubAppAndItsVersionFn
- * 2 platformConfig.getSubAppAndItsVersionFn
- * 3 unpkgConfig.getSubAppAndItsVersionFn
- */
-export interface IGetSubAppAndItsVersionFn {
-  (passCtx: {
+export interface IControlPreFetchOptions {
+  platform: Platform;
+  /**
+   * default: null（ 内部兜底值：true ）
+   * null 表示不设定，不设定的话最终会匹配到内部的默认兜底值 true，匹配路径如下
+   * preFetchOptions.semverApi --> platInitOptions.semverApi --> originInitOptions.semverApi  --> true
+   * 表示是否走语义化版本 api 请求
+   * 为 true ，生成的请求链接格式形如：{apiPrefix}/{name}@{version}/hel_dist/hel-meta.json
+   * 例子：https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
+   * 为 false ，生成的请求链接格式形如：{apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersion?name={name}&version={version}
+   */
+  semverApi: null | boolean;
+  /**
+   * default: null（ 内部兜底值：true ）
+   * null 表示不设定，不设定的话最终会匹配到内部的默认兜底值 true，匹配路径如下
+   * preFetchOptions.strictMatchVer --> platInitOptions.strictMatchVer --> originInitOptions.strictMatchVer  --> true
+   * 表示是否严格匹配版本
+   * 如存在有老包体未发射版本号的情况，这里可以置为 false，让sdk能够正常获取到模块
+   */
+  strictMatchVer: boolean;
+  /**
+   * default：'get'
+   * semverApi 为 true 时，设置此值无效，一定会发起 get 请求
+   * 仅当 semverApi 为 false 时，设置此值才会有效
+   * - 设置为 get 会发起如下格式的 get 请求
+   * {apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersion?name={name}&version={version}
+   * - 设置为 jsonp 会发起如下格式的 jsonp 请求
+   * {apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersionJsonp?name={name}&version={version}
+   */
+  apiMode: ApiMode;
+  /**
+   * default: '', 内部兜底值（ https://unpkg.com ）
+   * 请求接口的域名前缀，匹配规则见 getApiPrefix 描述
+   */
+  apiPrefix: string;
+  /**
+   * default: '', 内部兜底值（ https://unpkg.com ）
+   * 生成 apiPrefix 的函数，同一个 option 层级下 getApiPrefix 返回值优先级会高于 apiPrefix 传值
+   * ```
+   * // 按以下优先级依次获取
+   * 1 preFetchOptions.getApiPrefix()
+   * 2 preFetchOptions.apiPrefix
+   * 3 platInitOptions.getApiPrefix()
+   * 4 platInitOptions.apiPrefix
+   * 5 originInitOptions.getApiPrefix()
+   * 6 originInitOptions.apiPrefix
+   * 7 内部兜底值 'https://unpkg.com'
+   * ```
+   */
+  getApiPrefix: () => string;
+  /**
+   * default: ''
+   * 设定了 apiSuffix，则请求一定会带上设定的后缀值
+   */
+  apiSuffix: string;
+  /**
+   * default: '/openapi/v1/app/info'，请求应用元数据的主路径，仅当 semverApi 为 false 时，设置此值才会有效
+   * 内部会结合 apiMode 来决定拼成请求路由 ${apiPathOfApp}/getSubAppAndItsVersion 或 ${apiPathOfApp}/getSubAppAndItsVersionJsonp
+   * ```
+   * // 按以下优先级依次获取
+   * 1 preFetchOptions.apiPathOfApp
+   * 2 platInitOptions.apiPathOfApp
+   * 3 originInitOptions.apiPathOfApp
+   * 4 内部兜底值 '/openapi/v1/app/info'
+   * ```
+  */
+  apiPathOfApp: string;
+  /**
+   * default: '/openapi/v1/app/info'，请求应用应用版本的主路径，仅当 semverApi 为 false 时，设置此值才会有效
+   * 内部会结合 apiMode 来决定拼成请求路由 ${apiPathOfAppVersion}/getSubAppVersion 或 ${apiPathOfAppVersion}/getSubAppVersionJsonp
+   * ```
+   * // 按以下优先级依次获取
+   * 1 preFetchOptions.apiPathOfAppVersion
+   * 2 platInitOptions.apiPathOfAppVersion
+   * 3 originInitOptions.apiPathOfAppVersion
+   * 4 内部兜底值 '/openapi/v1/app/info'
+   * ```
+   */
+  apiPathOfAppVersion: string;
+  /**
+   * default: null
+   * 定义获取 app 和 version 数据的函数，修改 hel-micro 的默认请求行为，可根据自己的实际需求来实现此函数逻辑
+   * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
+   * @see https://tnfe.github.io/hel/docs/api/hel-micro/prefetch-lib#%E9%87%8D%E7%BD%AE%E5%85%83%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3
+   * ```
+   * // 优先级依次是：
+   * 1 preFetchOptions.getSubAppAndItsVersionFn
+   * 2 platInitOptions.getSubAppAndItsVersionFn
+   * 3 originInitOptions.getSubAppAndItsVersionFn
+   * 4 内部请求行为
+   * ```
+   */
+  getSubAppAndItsVersionFn: (passCtx: {
     platform: string;
     appName: string;
     userName: string;
     versionId: string | undefined;
     url: string;
+    /** 内部请求句柄 */
     innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer>;
-  }): Promise<IAppAndVer> | IAppAndVer;
-}
-
-/** 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据 */
-export interface IOnFetchMetaFailed {
-  (params: { appName: string }): Promise<IAppAndVer> | IAppAndVer | void;
-}
-
-/**
- * 采用 apiPrefix 优先级：
- * originInitOptions.getApiPrefix() --> platformConfig.apiPrefix  --> unpkgConfig.getApiPrefix() --> unpkgConfig.apiPrefix
- */
-export type IGetApiPrefix = () => string;
-
-/** 自定义的获取用户名函数，如用户定义了此函数，则 userLsKey 定义无效 */
-export type IGetUserName = (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
-
-export interface IPlatformConfigInitFull {
+  }) => Promise<IAppAndVer> | IAppAndVer;
   /**
-   * 是否严格匹配版本，默认 true
-   * 如存在有老包体未发射版本号的情况，这里可以置为 false，让系统能够正常运行
-   */
-  strictMatchVer: boolean;
-  /**
-   * api 请求模式，支持 'get' 和 'jsonp'，对于 'unpkg' 平台，默认是 'get'，对于 'hel' 平台，默认是 'jsonp'
-   */
-  apiMode: ApiMode;
-  /**
-   * 未指定 apiPrefix 的情况下，会根据 platform 值决定请求那个域名的接口
-   */
-  apiPrefix: string;
-  getApiPrefix: IGetApiPrefix;
-  /**
-   * 设定了 apiSuffix，则请求一定会带上设定的后缀
-   */
-  apiSuffix: string;
-  /**
-   * default: /openapi/v1/app/info
-   * 此设定仅针对 hel 平台有效
-   * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppAndItsVersion 或 /openapi/v1/app/info/getSubAppAndItsVersionJsonp
-   */
-  apiPathOfApp: string;
-  /**
-   * default: 如果未指定，则和 apiPathOfApp 值保持一致
-   * 此设定仅针对 hel 平台有效
-   * 最终会根据 apiMode 来决定拼成 /openapi/v1/app/info/getSubAppVersion 或 /openapi/v1/app/info/getSubAppVersionJsonp
-   */
-  apiPathOfAppVersion: string;
-  platform: Platform;
-  getSubAppAndItsVersionFn: IGetSubAppAndItsVersionFn;
-  /**
-   * 默认 'HelUserRtxName'，hel请求时，尝试重 localStorage 的 {userLsKey} 下获取用户名，
-   * 如获取不到会继续尝试从  cookie 的 {userLsKey} 下获取用户名，
-   * 以便让后台知道请求者是谁从而觉得是否要下发灰度版本（如存在灰度版本）
+   * default: 'HelUserRtxName'，仅当 semverApi 为 false 时，设置此值才会有效
+   * 发起自定义平台请求时，尝试从 localStorage 的 {userLsKey} 下获取用户名，
+   * 如获取不到会继续尝试从 cookie 的 {userLsKey} 下获取用户名，
+   * 以便让后台知道请求者是谁从而决定是否要下发灰度版本（如存在灰度版本）
    */
   userLsKey: string;
-  getUserName: IGetUserName;
-  onFetchMetaFailed: IOnFetchMetaFailed;
   /**
+   * default: null，仅当 semverApi 为 false 时，设置此值才会有效
+   * 自定义获取用户名的函数，如用户定义了此函数，则获取优先级会高于 userLsKey 定义对应的获取逻辑
+   */
+  getUserName: (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
+  /**s
+   * 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据
+   */
+  onFetchMetaFailed: (params: { appName: string }) => Promise<IAppAndVer> | IAppAndVer | void;
+  /**
+   * default: null，仅当 semverApi 为 false 时，设置此值才会有效
    * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
    * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
   shouldUseGray: (passCtx: { appName: string }) => boolean | null;
+}
+
+export interface IPlatformConfigInitFull extends IControlPreFetchOptions {
   /**
    * 信任的应用名单，当使用方拿到获取模块的 emitInfo 后，其他条件均满足目标模块特征，
    * 但因平台名字不同会被 judgeAppReady 判断失败而过滤掉，如果此时我们相信这个模块的确是我们想要的模块，
@@ -171,7 +217,7 @@ export interface IPlatformConfigInitFull {
    * 1 历史包发射模块时未正常平台名
    * 2 基于同一个仓库的包体做了迁移，改到了另一个平台上
    */
-  trustAppNames: string[];
+  trustAppNames: null | string[];
 }
 
 /** 暂时兼容上层库不报错 */
@@ -317,7 +363,7 @@ export function getGlobalThis(): typeof globalThis;
 /**
  * 辅助测试之用，正常情况下不需要调用此函数
  */
-export function setGlobalThis(mockGlobalThis: any);
+export function setGlobalThis(mockGlobalThis: any, merge?: boolean);
 
 /**
  * 重置 globalThis，帮助一些微前端框架的子应用运行 hel-micro 时能够正常获取子模块

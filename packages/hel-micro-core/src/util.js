@@ -10,6 +10,7 @@ function initMicroDebug() {
     return;
   }
 
+
   getHelMicroDebug().isInit = true;
   const searchObj = getSearchObj();
   const { hellog, hellogf } = searchObj;

@@ -13,8 +13,9 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test/testSetup.ts'],
   // 运行测试文件的目录规则，在src的同级目录test下，或者src目录下的__tests__目录下，或者src目录下spec,test后缀的文件
   testMatch: ['<rootDir>/test/api/*.ts'],
-  // testMatch: ['<rootDir>/test/api/preFetchApp.ts'],
+  // testMatch: ['<rootDir>/test/api/appParamSrv.ts'],
   testEnvironment: 'node',
+  // testEnvironment: 'jsdom',
   transform: {
     // '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/config/jest/babelTransform.js',
     // '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',

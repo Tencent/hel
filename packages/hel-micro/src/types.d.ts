@@ -1,4 +1,4 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IPlatformConfig } from 'hel-micro-core';
+import type { IPlatformConfigInitFull, IPlatformConfig, IControlPreFetchOptions } from 'hel-micro-core';
 import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 
 export interface IGetOptionsLoose {
@@ -120,12 +120,7 @@ export interface IChangeAttrs {
   (el: HTMLLinkElement | HTMLScriptElement, fnCtx: IChangeAttrsFnCtx): void;
 }
 
-export interface IPreFetchOptionsBase {
-  /**
-   * 是否严格匹配版本，未配置的话默认走 平台配置默认值 true
-   */
-  strictMatchVer?: boolean;
-  platform?: Platform;
+export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions>{
   /**
    * 指定拉取的版本号
    * 版本号可到 hel pack 服务或 unpkg 服务查看
@@ -179,16 +174,7 @@ export interface IPreFetchOptionsBase {
    * 选择本地缓存的类型是 localStorage 还是 indexedDB
    */
   storageType?: 'localStorage' | 'indexedDB';
-  apiMode?: ApiMode;
-  semverApi?: SemverApi;
-  /**
-   * preFetchLib指定的请求域名前缀，会覆盖掉init里指定的（如有指定）
-   */
-  apiPrefix?: string;
-  // TODO 抽象 metaHooks
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
-  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
-  onFetchMetaFailed?: IOnFetchMetaFailed;
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;
@@ -208,12 +194,6 @@ export interface IPreFetchOptionsBase {
    * 如需查看更多信息，可查看第二位参数 fnCtx ( 可查类型 IChangeAttrsFnCtx )
    */
   changeAttrs?: IChangeAttrs;
-  /**
-   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
-   * true：强制返回灰度版本，false：强制返回线上版本
-   * 定义了此函数，返回true或false都会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
-   */
-  shouldUseGray?: () => boolean | null;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {
@@ -242,10 +222,3 @@ export type BatchAppNames =
   | [string, string, string, string, string, string]
   | [string, string, string, string, string, string, string]
   | [string, string, string, string, string, string, string, string];
-
-export interface ICreateInstanceOptions extends IPlatformConfig {
-  /**
-   * 是否触发语义化api调用元数据获取接口，具体含义点击 SemverApi 查看
-   */
-  semverApi?: SemverApi;
-}

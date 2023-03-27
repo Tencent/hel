@@ -1,9 +1,12 @@
-import { commonUtil, originInit } from 'hel-micro-core';
+import { commonUtil, originInit, IControlPreFetchOptions, IPlatformConfigInitFull } from 'hel-micro-core';
 import * as apis from './apis';
-import type { ICreateInstanceOptions } from './types';
+
+const { purify } = commonUtil;
 
 interface IInjectOptions {
-  semverApi: boolean;
+  fnName: string;
+  fn: any;
+  preFetchOptions: Partial<IControlPreFetchOptions>;
   isCore?: boolean;
 }
 
@@ -23,10 +26,10 @@ const preFetchFns = ['preFetchLib', 'preFetchApp'];
 // 这些函数第1位参数是平台值对象
 const arg1PlatObjFns = ['emitApp', 'init'];
 
-function injectPlat(platform: string, fnName: string, fn: any, options: IInjectOptions) {
-  const { semverApi, isCore } = options;
+function injectPlat(platform: string, injectOptions: IInjectOptions) {
+  const { fnName, fn, isCore, preFetchOptions } = injectOptions;
   return (...args: any[]) => {
-    const mergePlatObj = (obj: any) => ({ platform, ...commonUtil.purify(obj || {}) });
+    const mergePlatObj = (obj: any) => ({ platform, ...purify(obj || {}) });
     const [arg0, arg1, arg2] = args;
 
     if (isCore) {
@@ -57,7 +60,10 @@ function injectPlat(platform: string, fnName: string, fn: any, options: IInjectO
         const common = mergePlatObj(arg1Var.common);
         args[1] = { ...arg1Var, common };
       } else if (preFetchFns.includes(fnName)) {
-        args[1] = { platform, semverApi, ...(typeof arg1 === 'string' ? { versionId: arg1 } : arg1 || {}) };
+        let toMerge = purify(typeof arg1 === 'string' ? { versionId: arg1 } : (arg1 || {}));
+        // 继续处理来自 createInstance 的预设参数
+        toMerge = purify({ ...preFetchOptions, ...toMerge });
+        args[1] = { platform, ...toMerge };
       } else if (arg1PlatObjFns.includes(fnName)) {
         args[0] = mergePlatObj(arg0);
       } else {
@@ -70,9 +76,15 @@ function injectPlat(platform: string, fnName: string, fn: any, options: IInjectO
   };
 }
 
-function tryInectPlatForMethods(platform: string, obj: any, options: IInjectOptions) {
+
+interface ITryOptions {
+  preFetchOptions?: Partial<IControlPreFetchOptions>;
+  isCore?: boolean;
+}
+
+function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions) {
+  const { preFetchOptions, isCore } = options;
   const newObj: any = {};
-  const { semverApi } = options;
   Object.keys(obj).forEach((mayFnName) => {
     // @ts-ignore
     const mayFn = apis[mayFnName];
@@ -82,11 +94,13 @@ function tryInectPlatForMethods(platform: string, obj: any, options: IInjectOpti
     }
     const valueType = typeof mayFn;
     if (valueType === 'function') {
-      newObj[mayFnName] = injectPlat(platform, mayFnName, mayFn, options);
+      const injectOptions: IInjectOptions = { fnName: mayFnName, fn: mayFn, isCore, preFetchOptions };
+      newObj[mayFnName] = injectPlat(platform, injectOptions);
       return;
     }
     if (mayFn && valueType === 'object') {
-      newObj[mayFnName] = tryInectPlatForMethods(platform, mayFn, { semverApi, isCore: mayFnName === 'core' });
+      const tryOptions = { ...options, isCore: mayFnName === 'core' };
+      newObj[mayFnName] = tryInectPlatForMethods(platform, mayFn, tryOptions);
       return;
     }
     newObj[mayFnName] = mayFn;
@@ -96,13 +110,19 @@ function tryInectPlatForMethods(platform: string, obj: any, options: IInjectOpti
 }
 
 type Apis = typeof apis;
-type CreateInstance = (platform: string, options?: ICreateInstanceOptions) => AllApis;
-type AllApis = Apis & { createInstance: CreateInstance };
+type CreateInstance = (platform: string, options?: Partial<IControlPreFetchOptions>) => InsApis;
+type CreateOriginInstance = (platform: string, options?: Partial<IPlatformConfigInitFull>) => InsApis;
+type InsApis = Apis & { createInstance: CreateInstance, createOriginInstance: CreateOriginInstance };
 
-export default function createInstance(platform: string, options?: ICreateInstanceOptions): AllApis {
-  const { semverApi = true, ...originInitOptions } = options || {};
-  originInit(platform, originInitOptions);
-  const newApis = tryInectPlatForMethods(platform, apis, { semverApi });
-  newApis.createInstance = createInstance;
-  return newApis;
+export function createInstance(platform: string, preFetchOptions?: Partial<IControlPreFetchOptions>): InsApis {
+  const insApis = tryInectPlatForMethods(platform, apis, { preFetchOptions });
+  insApis.createInstance = createInstance;
+  insApis.createOriginInstance = createOriginInstance;
+  return insApis;
+}
+
+export function createOriginInstance(platform: string, originOptions?: Partial<IPlatformConfigInitFull>): InsApis {
+  const { trustAppNames, ...preFetchOptions } = originOptions || {};
+  originInit(platform, originOptions);
+  return createInstance(platform, preFetchOptions);
 }

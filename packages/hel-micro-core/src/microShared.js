@@ -18,6 +18,7 @@ function makeCanBeOverwriteProps() {
     userLsKey: DEFAULT_USER_LS_KEY,
     shouldUseGray: null,
     trustAppNames: [],
+    semverApi: null,
   };
 }
 
@@ -151,5 +152,6 @@ export function ensureHelMicroShared() {
 
 /** @return {ReturnType<typeof makeHelMicroShared>} */
 export function getHelMicroShared() {
-  return getHelSingletonHost().__HEL_MICRO_SHARED__ || {};
+  var microShared = getHelSingletonHost().__HEL_MICRO_SHARED__;
+  return microShared;
 }

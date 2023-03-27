@@ -16,6 +16,7 @@ describe('test appMetaSrv', () => {
 
   test('getMetaDataUrl options.protocol=https', async () => {
     const str = appMetaSrv.getMetaDataUrl('remote-vue-comps-tpl', { protocol: 'https' });
+    console.log('getMetaDataUrl str is ', str);
     expect(str.startsWith('https')).toBeTruthy();
   });
 

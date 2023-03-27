@@ -3,7 +3,7 @@ import type { IEmitAppInfo, ISubApp } from 'hel-types';
 import * as mockData from './mockData';
 
 const eventBus = getHelEventBus();
-getHelDebug().logMode = 1;
+// getHelDebug().logMode = 1;
 
 /** 模拟模块获取到并发射的行为 */
 export function mockLoadModule(options?: { app?: Partial<ISubApp>; platform?: string }) {
