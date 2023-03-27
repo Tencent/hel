@@ -21,7 +21,7 @@ export interface IHelGetOptionsBase {
   isFullVersion?: boolean;
   /** 默认 false，只需要版本数据 */
   onlyVersion?: boolean;
-  semverApi?: boolean;
+  semverApi?: boolean | null;
 }
 
 export interface IHelGetOptions extends IHelGetOptionsBase {
@@ -296,7 +296,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
 export interface IGetVerOptions {
   apiMode: ApiMode;
   appName: string;
-  semverApi?: boolean;
+  semverApi?: boolean | null;
   platform?: Platform;
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;

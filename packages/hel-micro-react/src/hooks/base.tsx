@@ -6,7 +6,6 @@ import RemoteCompRender from '../components/RemoteCompRender';
 import { tryTriggerOnStyleFetched } from '../components/share';
 import defaults from '../consts/defaults';
 import type { GetSubVal, IInnerRemoteModuleProps, IInnerUseRemoteCompOptions, IUseRemoteLibCompOptions } from '../types';
-import { getDefaultPlatform } from '../_diff/index';
 import { delay, useForceUpdate } from './share';
 
 const { H1_STYLE } = defaults;
@@ -17,7 +16,7 @@ const { H1_STYLE } = defaults;
  */
 export function useRemoteCompLogic(name: string, compName: string, options: IInnerUseRemoteCompOptions) {
   const passProps: IInnerRemoteModuleProps = { ...(options || {}), name, compName, isLib: true };
-  passProps.platform = getDefaultPlatform(passProps.platform);
+  passProps.platform = passProps.platform || 'unpkg';
 
   const { needMemo = true } = passProps;
   const factory = () => {
@@ -35,9 +34,10 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
     subCompNames.forEach((name) => (vals[name] = getSubVal(name, waitVal)));
     return vals;
   };
+  const MemoComp = useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]);
 
   return {
-    Comp: needMemo ? useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]) : factory(),
+    Comp: needMemo ? MemoComp : factory(),
     getSubVal,
     getSubVals,
   };
@@ -52,7 +52,7 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
  */
 export function useRemoteLibCompLogic(name: string, compName: string, options: IUseRemoteLibCompOptions) {
   const { Skeleton, Error, ...restOptions } = options;
-  restOptions.platform = getDefaultPlatform(restOptions.platform);
+  restOptions.platform = restOptions.platform || 'unpkg';
   const forceUpdate = useForceUpdate();
   const isFetchExecuteRef = React.useRef(false);
   const compRef = React.useRef((Skeleton || BuildInSkeleton) as any);

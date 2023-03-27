@@ -13,7 +13,7 @@ export interface IGetMetaDataUrlOptions {
   protocol?: 'http' | 'https';
   projectId?: string;
   /** default: true */
-  semverApi?: boolean;
+  semverApi?: boolean | null;
 }
 
 /**

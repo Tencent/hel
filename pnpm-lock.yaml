@@ -22,6 +22,7 @@ importers:
       hel-lib-proxy: workspace:*
       hel-micro: workspace:*
       hel-micro-core: workspace:*
+      hel-micro-react: workspace:*
       hel-types: workspace:*
       husky: ^8.0.1
       jest: 28.1.3
@@ -46,6 +47,7 @@ importers:
       hel-lib-proxy: link:packages/hel-lib-proxy
       hel-micro: link:packages/hel-micro
       hel-micro-core: link:packages/hel-micro-core
+      hel-micro-react: link:packages/hel-micro-react
       hel-types: link:packages/hel-types
       react: 16.14.0
       react-dom: 16.14.0_react@16.14.0
@@ -249,8 +251,8 @@ importers:
       '@types/react-dom': <18.0.0
       babel-cli: ^6.26.0
       cross-env: ^7.0.2
-      hel-micro: '>=3.10.0'
-      hel-micro-core: '>=3.10.0'
+      hel-micro: 4.0.0-alpha.6
+      hel-micro-core: 4.0.0-alpha.6
       hel-types: '>=3.8.0'
       react: '>=16.10.2'
       react-dom: '>=16.10.2'
@@ -267,8 +269,8 @@ importers:
     dependencies:
       '@types/react': 17.0.53
       '@types/react-dom': 17.0.19
-      hel-micro: 3.13.17_uk6qtf6cv6bisqdvczeyl2z24y
-      hel-micro-core: 3.13.8_laenxhp5hmrzqcp2wf5ectaila
+      hel-micro: link:../hel-micro
+      hel-micro-core: link:../hel-micro-core
       hel-types: link:../hel-types
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -15643,16 +15645,6 @@ packages:
     peerDependencies:
       hel-types: '>=3.7.0'
     dependencies:
-      hel-types: link:packages/hel-types
-    dev: false
-
-  /hel-micro/3.13.17_uk6qtf6cv6bisqdvczeyl2z24y:
-    resolution: {integrity: sha512-bSn7GizqAPUiVg37YT0q0A8ZWoUyrMDm0SWmExBEQOkkuP3gXAidYq1uFftrkNNk52oZKdt81LR8NTmtGCv9jg==}
-    peerDependencies:
-      hel-micro-core: '>=3.13.8'
-      hel-types: '>=3.8.2'
-    dependencies:
-      hel-micro-core: 3.13.8_laenxhp5hmrzqcp2wf5ectaila
       hel-types: link:packages/hel-types
     dev: false
 

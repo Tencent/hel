@@ -3,14 +3,13 @@ import core from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
-import { getDefaultPlatform } from '../_diff';
 
 const { helLoadStatus } = core;
 
 export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const ensuredProps = { ...props };
 
-  ensuredProps.platform = getDefaultPlatform(props.platform);
+  ensuredProps.platform = props.platform || 'unpkg';
   ensuredProps.extraCssUrlList = props.extraCssUrlList || [];
   ensuredProps.isLib = props.isLib ?? false;
   ensuredProps.shadow = props.shadow ?? defaults.SHADOW;

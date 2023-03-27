@@ -1,13 +1,5 @@
-import { core } from 'hel-micro';
-import ShadowView from 'shadow-view-react';
-import BuildInSkeleton from './components/BuildInSkeleton';
-import { LocalComp, MicroApp, MicroAppLegacy, MicroAppLegacyMemo } from './components/MicroApp';
-import ShadowBody from './components/ShadowBody';
-import * as hooks from './hooks';
-import { useExecuteCallbackOnce, useForceUpdate } from './hooks/share';
-import renderApp from './process/renderApp';
-import { VER } from './_diff';
-
+import * as apis from './apis';
+import createInstance from './createInstance';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 export type {
   GetSubVal,
@@ -19,8 +11,8 @@ export type {
   IUseRemoteCompOptions,
   IUseRemoteLibCompOptions,
 } from './types';
-// 支持语法 import * as helMicroReact from 'hel-micro-react';
-export {
+
+export const {
   ShadowView,
   ShadowBody,
   MicroApp,
@@ -38,29 +30,18 @@ export {
   useRemoteLibComp,
   useRemotePureLibComp,
   useRemoteLegacyComp,
-};
+} = apis;
 
-core.log(`hel-micro-react ${VER}`);
+export { createInstance };
 
-const {
-  useRemoteComp,
-  useRemoteCompAndSubVal,
-  useRemotePureComp,
-  useRemote2Comps,
-  useRemoteLibComp,
-  useRemotePureLibComp,
-  useRemoteLegacyComp,
-} = hooks;
-
-// 支持语法 import helMicroReact from 'hel-micro-react';
-export default {
+const toExport = {
   ShadowView,
   ShadowBody,
   MicroApp,
   MicroAppLegacy,
   MicroAppLegacyMemo,
-  BuildInSkeleton,
   LocalComp,
+  BuildInSkeleton,
   renderApp,
   useExecuteCallbackOnce,
   useForceUpdate,
@@ -71,4 +52,7 @@ export default {
   useRemoteLibComp,
   useRemotePureLibComp,
   useRemoteLegacyComp,
+  createInstance,
 };
+
+export default toExport;

@@ -12,15 +12,6 @@ export type AnyRecord = Record<string, any>;
 
 export type VersionId = string;
 
-/**
- * default: true
- * 是否走语义化版本 api 请求
- * 为true时，生成的请求链接格式形如：{apiPrefix}/{name}@{version}/hel_dist/hel-meta.json
- * 例子：https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
- * 为false时，生成的请求链接格式形如：{apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersion?name={name}&version={version}
- */
-export type SemverApi = boolean;
-
 export interface IHelMeta {
   app: ISubApp;
   version: ISubAppVersion;

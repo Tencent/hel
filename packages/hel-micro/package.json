@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "v4.0.0-alpha.5",
+  "version": "4.0.0-alpha.7",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "keywords": [
     "hel",

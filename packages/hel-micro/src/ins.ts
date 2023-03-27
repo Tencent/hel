@@ -6,7 +6,7 @@ const { purify } = commonUtil;
 interface IInjectOptions {
   fnName: string;
   fn: any;
-  preFetchOptions: Partial<IControlPreFetchOptions>;
+  preFetchOptions?: Partial<IControlPreFetchOptions>;
   isCore?: boolean;
 }
 
@@ -62,7 +62,9 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
       } else if (preFetchFns.includes(fnName)) {
         let toMerge = purify(typeof arg1 === 'string' ? { versionId: arg1 } : arg1 || {});
         // 继续处理来自 createInstance 的预设参数
-        toMerge = purify({ ...preFetchOptions, ...toMerge });
+        if (preFetchOptions) {
+          toMerge = purify({ ...preFetchOptions, ...toMerge });
+        }
         args[1] = { platform, ...toMerge };
       } else if (arg1PlatObjFns.includes(fnName)) {
         args[0] = mergePlatObj(arg0);

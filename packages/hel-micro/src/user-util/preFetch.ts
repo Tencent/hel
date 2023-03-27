@@ -15,7 +15,6 @@ import type {
   IInnerPreFetchOptions,
   IPreFetchAppOptions,
   IPreFetchLibOptions,
-  SemverApi,
   VersionId,
 } from '../types';
 
@@ -153,7 +152,7 @@ export async function preFetchApp(appName: string, options?: IPreFetchAppOptions
 interface IBatchOptionsCommon {
   batchGetFn?: BatchGetFn;
   platform?: string;
-  semverApi?: SemverApi;
+  semverApi?: IBatchPreFetchLibOptions['semverApi'];
   enableDiskCache?: IBatchPreFetchLibOptions['enableDiskCache'];
   enableSyncMeta?: IBatchPreFetchLibOptions['enableSyncMeta'];
   storageType?: IBatchPreFetchLibOptions['storageType'];
