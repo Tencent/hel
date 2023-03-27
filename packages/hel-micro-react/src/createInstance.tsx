@@ -1,6 +1,5 @@
-import React from 'react';
 import { commonUtil, DEFAULT_PLAT } from 'hel-micro-core';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import * as apis from './apis';
 
 const { purify } = commonUtil;
@@ -14,7 +13,7 @@ const arg1PlatObjFns = ['renderApp'];
 function injectCompPlat(Comp: any, platform?: string) {
   return forwardRef((props: any, reactRef) => {
     const plat = props.platform || platform || DEFAULT_PLAT;
-    const newProps: any = { ...props, platform: plat, };
+    const newProps: any = { ...props, platform: plat };
     return <Comp ref={reactRef} {...newProps} />;
   });
 }

@@ -1,5 +1,3 @@
-
-
 const toExport = {
   SHADOW: true,
   SET_STYLE_AS_STRING: true,

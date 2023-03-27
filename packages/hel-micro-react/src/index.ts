@@ -11,6 +11,7 @@ export type {
   IUseRemoteCompOptions,
   IUseRemoteLibCompOptions,
 } from './types';
+export { createInstance };
 
 export const {
   ShadowView,
@@ -31,8 +32,6 @@ export const {
   useRemotePureLibComp,
   useRemoteLegacyComp,
 } = apis;
-
-export { createInstance };
 
 const toExport = {
   ShadowView,
