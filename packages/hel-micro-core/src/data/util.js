@@ -1,3 +1,4 @@
+import { setSubMapValue } from '../base/util';
 import { DEFAULT_ONLINE_VER, HEL_LOAD_STATUS } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
@@ -6,11 +7,12 @@ const innerUtil = {
     const { appName2app } = getSharedCache(platform);
     return appName2app[appName];
   },
+
   setVerLoadStatus(appName, loadStatus, statusMapKey, options) {
     const { versionId, platform } = options || {};
     const appVerLoadStatus = getSharedCache(platform)[statusMapKey];
     const versionIdVar = versionId || DEFAULT_ONLINE_VER;
-    util.setSubMapValue(appVerLoadStatus, appName, versionIdVar, loadStatus);
+    setSubMapValue(appVerLoadStatus, appName, versionIdVar, loadStatus);
   },
 
   getVerLoadStatus(appName, statusMapKey, options) {

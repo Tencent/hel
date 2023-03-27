@@ -1,6 +1,6 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
-import { DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY } from '../consts';
+import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from '../consts';
 import { getHelSingletonHost } from './globalRef';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 
@@ -86,10 +86,11 @@ function makeEventBus() {
 }
 
 function makeHelMicroShared() {
-  const unpkgCache = makeCacheNode(DEFAULT_PLAT);
+  const unpkgCache = makeCacheNode(PLAT_UNPKG);
+  const helCache = makeCacheNode(PLAT_HEL);
   const cacheRoot = {
     /** 默认的平台值 */
-    platform: DEFAULT_PLAT,
+    platform: PLAT_UNPKG,
     /** 1.4+ 新增，用于记录 preFetchLib 时显示传递了 platform 值，供 hel-lib-proxy 使用，
      * 方便多平台共同加载包体场景下， exposeLib 接口如果未显式的传递平台值，能尽量正确推测出应用对应的 platform 值
      * 但是这里依然推荐用户 exposeLib 传递具体的平台值，避免推测错误
@@ -99,7 +100,7 @@ function makeHelMicroShared() {
     appGroupName2platform: {},
     /** @type {Record<string, ReturnType<typeof makeCacheNode>>} */
     caches: {
-      [DEFAULT_PLAT]: unpkgCache,
+      [PLAT_UNPKG]: unpkgCache,
     },
   };
 

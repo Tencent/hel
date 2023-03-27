@@ -1,4 +1,4 @@
-export const VER = '4.0.0-alpha.8';
+export const VER = '4.0.0-alpha.9';
 
 export const DEFAULT_API_PREFIX = 'https://unpkg.com';
 
@@ -8,6 +8,8 @@ export const DEFAULT_API_URL = '/openapi/v1/app/info';
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
 export const DEFAULT_USER_LS_KEY = 'HelUserRtxName';
+
+export const PLAT_HEL = 'hel';
 
 export const PLAT_UNPKG = 'unpkg';
 

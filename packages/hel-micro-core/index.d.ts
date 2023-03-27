@@ -12,6 +12,7 @@ export const helConsts: {
   DEFAULT_USER_LS_KEY: 'HelUserRtxName';
   DEFAULT_PLAT: 'unpkg';
   PLAT_UNPKG: 'unpkg';
+  PLAT_HEL: 'hel';
 };
 
 export const helEvents: {

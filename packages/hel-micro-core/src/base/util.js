@@ -126,14 +126,6 @@ export function safeGetMap(rootObj, key, defaultMap = {}) {
   return subMap;
 }
 
-export function helScriptId(appName) {
-  return `helScript_${appName}`;
-}
-
-export function helLinkId(appName) {
-  return `helLink_${appName}`;
-}
-
 export function safeAssign(assignTo, assignFrom) {
   Object.keys(assignFrom).forEach((key) => {
     const val = assignFrom[key];

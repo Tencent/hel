@@ -21,7 +21,7 @@ export function getVerApp(appName, inputOptions) {
   // 指定了版本严格匹配的话，兜底模块置为空
   const fallbackApp = targetStrictMatchVer ? null : appName2EmitApp[appName] || legacyWriteVerApp;
   const result = verApp || fallbackApp || null;
-  util.log('[[ core:getVerApp ]] appName,options,result:', appName, options, result);
+  log('[[ core:getVerApp ]] appName,options,result:', appName, options, result);
   return result;
 }
 
