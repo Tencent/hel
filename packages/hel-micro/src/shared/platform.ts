@@ -8,7 +8,3 @@ export function getPlatform(platform?: Platform): Platform {
 export function getPlatformConfig(platform?: Platform) {
   return core.getPlatformConfig(platform);
 }
-
-export function getPlatformHost(platform?: Platform) {
-  return core.getPlatformHost(platform);
-}

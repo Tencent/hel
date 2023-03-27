@@ -1,5 +1,6 @@
 import type { IPlatformConfigInitFull } from 'hel-micro-core';
 import { commonUtil, getPlatformConfig } from 'hel-micro-core';
+import type { IInnerPreFetchOptions } from '../types';
 import * as builtinFns from './builtin';
 
 const { isNull } = commonUtil;
@@ -41,4 +42,29 @@ export function getVal<T extends any = any>(platform: string | undefined, key: P
   // @ts-ignore
   const originVal: any = origin[key];
   return originVal;
+}
+
+/**
+ * 按下面 'getApiPrefix' 链接里描述的生成规则生成api域名前缀
+ * @type {import('hel-micro-core').IControlPreFetchOptions['getApiPrefix']}
+ * @param platform
+ * @param loadOptions
+ * @returns
+ */
+export function genApiPrefix(platform: string, loadOptions?: IInnerPreFetchOptions) {
+  let prefix = '';
+  if (loadOptions) {
+    prefix = loadOptions.getApiPrefix?.() || loadOptions.apiPrefix;
+  }
+  if (prefix) {
+    return prefix;
+  }
+  const conf = getPlatformConfig(platform);
+  prefix = conf.getApiPrefix?.() || conf.apiPrefix;
+  if (prefix) {
+    return prefix;
+  }
+  const { origin } = conf;
+  prefix = origin.getApiPrefix?.() || origin.apiPrefix;
+  return prefix;
 }

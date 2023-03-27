@@ -1,17 +1,15 @@
-export const VER = '4.0.0-alpha.6';
+export const VER = '4.0.0-alpha.7';
+
+export const DEFAULT_API_PREFIX = 'https://unpkg.com';
 
 export const DEFAULT_API_URL = '/openapi/v1/app/info';
-
-export const DEFAULT_USER_LS_KEY = 'HelUserRtxName';
 
 /** 第一个载入的版本号，后续接口未指定版本时，总是优先载入一个载入的版本号对应的模块，确保优先使用全局已存在的模块 */
 export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 
-export const UNPKG_PREFIX = 'https://unpkg.com';
+export const DEFAULT_USER_LS_KEY = 'HelUserRtxName';
 
 export const PLAT_UNPKG = 'unpkg';
-
-export const PLAT_HEL = 'hel';
 
 export const DEFAULT_PLAT = PLAT_UNPKG;
 

@@ -10,13 +10,15 @@ import { ensureHelMicroShared, getHelMicroShared } from './microShared';
 import * as util from './util';
 import * as utilBase from './utilBase';
 
+const { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, PLAT_UNPKG } = consts;
+
+export const helConsts = { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, PLAT_UNPKG };
+
 export const commonUtil = commonUtilMod;
 
 util.log(`hel-micro-core ver ${consts.VER}`);
 
 export const { isSubApp, trySetMasterAppLoadedSignal } = isSubMod;
-
-export const { DEFAULT_PLAT } = consts;
 
 export function resetGlobalThis(globalThis) {
   if (globalThis) {
@@ -106,7 +108,7 @@ export function tryGetVersion(appGroupName, platform) {
 
     // 优先判断可能包含的版本特征
     if (callerSpecifiedVer) {
-      if (platform === consts.PLAT_UNPKG && strList.some((item) => item.includes(callerSpecifiedVer))) {
+      if (platform === consts.DEFAULT_PLAT && strList.some((item) => item.includes(callerSpecifiedVer))) {
         return callerSpecifiedVer;
       }
       if (strList.includes(callerSpecifiedVer)) {
@@ -119,7 +121,7 @@ export function tryGetVersion(appGroupName, platform) {
     }
 
     // [ 'unpkg.com' , 'hel-lodash@1.1.0' , ... ]
-    if (platform === consts.PLAT_UNPKG) {
+    if (platform === consts.DEFAULT_PLAT) {
       return strList[1].split('@')[1] || callerSpecifiedVer;
     }
 
@@ -185,14 +187,6 @@ export function appReady(appGroupName, Comp, emitOptions = {}) {
   setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
   eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);
-}
-
-export function getPlatformHost(iPlatform) {
-  const platform = iPlatform || consts.PLAT_UNPKG;
-  const { apiPrefix, getApiPrefix, origin } = getSharedCache(platform);
-
-  const prefix = getApiPrefix?.() || apiPrefix || origin.getApiPrefix?.() || origin.apiPrefix || consts.UNPKG_PREFIX;
-  return prefix;
 }
 
 /**
@@ -521,8 +515,7 @@ export function originInit(platform, options) {
 }
 
 const toExport = {
-  DEFAULT_PLAT,
-  DEFAULT_ONLINE_VER,
+  helConsts,
   helLoadStatus,
   helEvents,
   isSubApp,
@@ -533,7 +526,6 @@ const toExport = {
   getHelDebug,
   getSharedCache,
   getPlatform,
-  getPlatformHost,
   getPlatformConfig,
   getAppPlatform,
   setAppPlatform,

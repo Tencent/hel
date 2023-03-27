@@ -5,9 +5,14 @@ export interface EventBus {
   off: (name: string, cb: (...args: any[]) => void) => void;
 }
 
-export const DEFAULT_ONLINE_VER = '__default_online_ver__';
-
-export const DEFAULT_PLAT = 'unpkg';
+export const helConsts: {
+  DEFAULT_API_URL: '/openapi/v1/app/info';
+  DEFAULT_API_PREFIX: 'https://unpkg.com';
+  DEFAULT_ONLINE_VER: '__default_online_ver__';
+  DEFAULT_USER_LS_KEY: 'HelUserRtxName';
+  DEFAULT_PLAT: 'unpkg';
+  PLAT_UNPKG: 'unpkg';
+};
 
 export const helEvents: {
   // renderApp 发射的是 SUB_APP_LOADED
@@ -72,12 +77,6 @@ export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOpt
  */
 export function getPlatform(): Platform;
 
-/**
- *
- * @param platform
- */
-export function getPlatformHost(platform?: Platform): string;
-
 export interface IAppAndVer {
   app: ISubApp;
   version: ISubAppVersion;
@@ -86,20 +85,25 @@ export interface IAppAndVer {
 export interface IControlPreFetchOptions {
   platform: Platform;
   /**
-   * default: null（ 内部兜底值：true ）
-   * null 表示不设定，不设定的话最终会匹配到内部的默认兜底值 true，匹配路径如下
+   * default: true
+   * 表示是否走语义化版本 api 请求，不设定此项的话最终会匹配到兜底值 true，匹配路径如下
+   * ```
    * preFetchOptions.semverApi --> platInitOptions.semverApi --> originInitOptions.semverApi  --> true
+   * ```
    * 表示是否走语义化版本 api 请求
+   * ```
    * 为 true ，生成的请求链接格式形如：{apiPrefix}/{name}@{version}/hel_dist/hel-meta.json
    * 例子：https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/hel-meta.json
    * 为 false ，生成的请求链接格式形如：{apiPrefix}/openapi/v1/app/info/getSubAppAndItsFullVersion?name={name}&version={version}
+   * ```
    */
-  semverApi: null | boolean;
+  semverApi: boolean;
   /**
-   * default: null（ 内部兜底值：true ）
-   * null 表示不设定，不设定的话最终会匹配到内部的默认兜底值 true，匹配路径如下
+   * default: true
+   * 表示是否严格匹配版本，不设定此项的话最终会匹配到兜底值 true，匹配路径如下
+   * ```
    * preFetchOptions.strictMatchVer --> platInitOptions.strictMatchVer --> originInitOptions.strictMatchVer  --> true
-   * 表示是否严格匹配版本
+   * ```
    * 如存在有老包体未发射版本号的情况，这里可以置为 false，让sdk能够正常获取到模块
    */
   strictMatchVer: boolean;
@@ -114,12 +118,12 @@ export interface IControlPreFetchOptions {
    */
   apiMode: ApiMode;
   /**
-   * default: '', 内部兜底值（ https://unpkg.com ）
+   * default: 'https://unpkg.com'
    * 请求接口的域名前缀，匹配规则见 getApiPrefix 描述
    */
   apiPrefix: string;
   /**
-   * default: '', 内部兜底值（ https://unpkg.com ）
+   * default: null
    * 生成 apiPrefix 的函数，同一个 option 层级下 getApiPrefix 返回值优先级会高于 apiPrefix 传值
    * ```
    * // 按以下优先级依次获取
@@ -192,16 +196,16 @@ export interface IControlPreFetchOptions {
    */
   userLsKey: string;
   /**
-   * default: null，仅当 semverApi 为 false 时，设置此值才会有效
+   * default: null ，仅当 semverApi 为 false 时，设置此值才会有效
    * 自定义获取用户名的函数，如用户定义了此函数，则获取优先级会高于 userLsKey 定义对应的获取逻辑
    */
   getUserName: (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
-  /**s
+  /**
    * 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据
    */
   onFetchMetaFailed: (params: { appName: string }) => Promise<IAppAndVer> | IAppAndVer | void;
   /**
-   * default: null，仅当 semverApi 为 false 时，设置此值才会有效
+   * default: null ，仅当 semverApi 为 false 时，设置此值才会有效
    * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
    * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
@@ -411,8 +415,7 @@ export type CommonUtil = {
 export const commonUtil: CommonUtil;
 
 declare type DefaultExport = {
-  DEFAULT_ONLINE_VER: typeof DEFAULT_ONLINE_VER;
-  DEFAULT_PLAT: typeof DEFAULT_PLAT;
+  helConsts: typeof helConsts;
   helEvents: typeof helEvents;
   helLoadStatus: typeof helLoadStatus;
   getHelEventBus: typeof getHelEventBus;
@@ -422,7 +425,6 @@ declare type DefaultExport = {
   libReady: typeof libReady;
   appReady: typeof appReady;
   getPlatform: typeof getPlatform;
-  getPlatformHost: typeof getPlatformHost;
   getPlatformConfig: typeof getPlatformConfig;
   initPlatformConfig: typeof initPlatformConfig;
   originInit: typeof originInit;

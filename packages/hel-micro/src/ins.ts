@@ -17,7 +17,7 @@ const coreRules = {
   // 不需要处理的
   ignoreFns: ['tryGetAppName', 'log', 'commonUtil'],
   // 这些函数仅1个参数，第1位参数是平台值
-  arg1PlatFns: ['getPlatformConfig', 'getPlatformHost', 'getSharedCache'],
+  arg1PlatFns: ['getPlatformConfig', 'getSharedCache'],
   // 这些函数共2个参数，第2位参数是平台值
   arg2PlatFns: ['initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'],
 };

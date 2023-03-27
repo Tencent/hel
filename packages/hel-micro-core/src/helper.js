@@ -1,4 +1,4 @@
-import { PLAT_UNPKG } from './consts';
+import { DEFAULT_PLAT } from './consts';
 import { getHelMicroShared, makeCacheNode } from './microShared';
 
 /**
@@ -7,7 +7,7 @@ import { getHelMicroShared, makeCacheNode } from './microShared';
  */
 export function getPlatform() {
   // 已不再支持重置平台默认值，上层可用 helMicro.createInstace 接口来定义出自动拉取对应平台的相关接口
-  return getHelMicroShared().cacheRoot.platform || PLAT_UNPKG;
+  return getHelMicroShared().cacheRoot.platform || DEFAULT_PLAT;
 }
 
 /**

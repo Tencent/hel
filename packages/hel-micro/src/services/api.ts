@@ -3,7 +3,7 @@ import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import * as alt from '../alternative';
 import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
-import { getPlatform, getPlatformHost } from '../shared/platform';
+import { getPlatform } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
 import { getSemverLatestVer, perfEnd, perfStart, requestGet } from '../util';
 
@@ -208,7 +208,7 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
  */
 export async function prepareSemverRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, loadOptions } = getOptions;
-  const apiHost = loadOptions?.apiPrefix || getPlatformHost(platform);
+  const apiHost = alt.genApiPrefix(platform, loadOptions);
   const url = await getSemverUrl(apiHost, appName, versionId || '', loadOptions?.skip404Sniff);
   return url;
 }
