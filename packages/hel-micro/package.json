@@ -44,7 +44,7 @@
     "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
   "dependencies": {
-    "hel-micro-core": "4.0.0-alpha.7",
+    "hel-micro-core": "4.0.0-alpha.8",
     "hel-types": ">=3.8.2"
   },
   "devDependencies": {
@@ -70,7 +70,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "hel-micro-core": "4.0.0-alpha.7",
+    "hel-micro-core": "4.0.0-alpha.8",
     "hel-types": ">=3.8.2"
   },
   "bundleDependencies": [],

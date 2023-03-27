@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-core",
-  "version": "4.0.0-alpha.7",
+  "version": "4.0.0-alpha.8",
   "description": "hel micro core",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "hel-types": ">=3.7.0"
+    "hel-types": ">=3.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -47,7 +47,7 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "hel-types": ">=3.7.0"
+    "hel-types": ">=3.8.0"
   },
   "bundleDependencies": false,
   "deprecated": false

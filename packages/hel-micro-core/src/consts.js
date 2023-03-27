@@ -1,4 +1,4 @@
-export const VER = '4.0.0-alpha.7';
+export const VER = '4.0.0-alpha.8';
 
 export const DEFAULT_API_PREFIX = 'https://unpkg.com';
 

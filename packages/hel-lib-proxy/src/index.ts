@@ -5,16 +5,16 @@
  * @since 2021-06-06
  */
 import type { IAppReadyOptions, IGetOptions } from 'hel-micro-core';
-import core from 'hel-micro-core';
+import * as core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as share from './share';
 import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
-import * as diff from './_diff';
+import { VER } from './consts';
 export * from './typings';
 
-core.log(`hel-lib-proxy ver ${diff.VER}`);
+core.log(`hel-lib-proxy ver ${VER}`);
 
-const { getUserEventBus } = core;
+const { getUserEventBus, helConsts } = core;
 
 /**
  * // 发射事件
@@ -34,7 +34,7 @@ export const eventBus = getUserEventBus();
  */
 export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions): T | null {
   const filledOptions = { ...(getOptions || {}) };
-  filledOptions.platform = diff.getDefaultPlatform();
+  filledOptions.platform = helConsts.DEFAULT_PLAT;
   return core.getVerLib(libName, filledOptions) as T;
 }
 
@@ -62,7 +62,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
       asProxy = options.asProxy ?? true;
     }
   }
-  platform = platform || diff.getDefaultPlatform();
+  platform = platform || helConsts.DEFAULT_PLAT;
 
   let libObj = share.getLibObj<L>(libName, platform);
   if (typeof Proxy === 'function' && asProxy) {

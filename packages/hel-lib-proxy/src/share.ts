@@ -1,12 +1,11 @@
-import { getAppPlatform, getSharedCache, log } from 'hel-micro-core';
+import { getAppPlatform, getSharedCache, log, helConsts } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import type { IOptions, LibProperties } from './typings';
-import * as diff from './_diff';
 
 export function getMergedOptions(options?: IOptions) {
   const defaultOptions = {
     allowDup: false, // TODO，此参数目前是多余的，后续考虑移除或实现
-    platform: diff.getDefaultPlatform(),
+    platform: helConsts.DEFAULT_PLAT,
   };
   return { ...defaultOptions, ...(options || {}) };
 }

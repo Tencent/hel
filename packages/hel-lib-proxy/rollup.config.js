@@ -1,3 +1,4 @@
+import tsMod from 'typescript';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript';
 // 如需要一起打包引用的模块，使用此插件，解决 Unresolved dependencies
@@ -10,7 +11,7 @@ const plugins = [
   // resolve(),
   typescript({
     exclude: 'node_modules/**',
-    typescript: require('typescript'),
+    typescript: tsMod,
   }),
 ];
 const umdOutput = {
@@ -22,12 +23,13 @@ const umdOutput = {
   },
 };
 
+// eslint-disable-next-line
 if (process.env.MIN === 'true') {
   plugins.push(terser());
   umdOutput.file = 'dist/hel-lib-proxy.min.js';
 }
 
-module.exports = {
+export default {
   input: 'src/index.ts',
   plugins,
   output: umdOutput,

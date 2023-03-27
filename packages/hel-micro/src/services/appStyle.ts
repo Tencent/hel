@@ -26,7 +26,7 @@ const inner = {
   isStyleStatusMatch(appName: string, judeStatus: HelLoadStatusEnum, options: IGetOptionsLoose) {
     const { platform, versionId } = getPlatAndVer(appName, options);
     const { appName2verStyleFetched } = core.getSharedCache(platform);
-    const ver = versionId || core.DEFAULT_ONLINE_VER;
+    const ver = versionId || core.helConsts.DEFAULT_ONLINE_VER;
     return appName2verStyleFetched[appName]?.[ver] === judeStatus;
   },
 

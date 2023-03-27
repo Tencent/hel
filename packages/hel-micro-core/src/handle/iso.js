@@ -1,4 +1,4 @@
-import { getGlobalThis } from './utilBase';
+import { getGlobalThis } from '../base/globalRef';
 
 // !!! 注：如果hel-micro hel-micro-core相关包体设置到externals里时，此机制不再有效，所以后续可能会移出此逻辑
 // 建议用户自己维护（例如通过 process.env来判断） 是否是子应用

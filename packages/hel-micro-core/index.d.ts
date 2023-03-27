@@ -235,6 +235,7 @@ export interface IPlatformConfigFull extends IPlatformConfigInitFull {
 
 export interface SharedCache extends IPlatformConfigFull {
   isConfigOverwrite: boolean;
+  isOriginInitCalled: boolean;
   platform: Platform;
   /**
    * hel-lib-proxy.exposeLib 生成的代理对象会指向此对象
@@ -413,59 +414,3 @@ export type CommonUtil = {
 };
 
 export const commonUtil: CommonUtil;
-
-declare type DefaultExport = {
-  helConsts: typeof helConsts;
-  helEvents: typeof helEvents;
-  helLoadStatus: typeof helLoadStatus;
-  getHelEventBus: typeof getHelEventBus;
-  getUserEventBus: typeof getUserEventBus;
-  getHelDebug: typeof getHelDebug;
-  getSharedCache: typeof getSharedCache;
-  libReady: typeof libReady;
-  appReady: typeof appReady;
-  getPlatform: typeof getPlatform;
-  getPlatformConfig: typeof getPlatformConfig;
-  initPlatformConfig: typeof initPlatformConfig;
-  originInit: typeof originInit;
-  isSubApp: typeof isSubApp;
-  trySetMasterAppLoadedSignal: typeof trySetMasterAppLoadedSignal;
-  // 应用Comp get set
-  getVerApp: typeof getVerApp;
-  setEmitApp: typeof setEmitApp;
-  // 应用lib get set del
-  getVerLib: typeof getVerLib;
-  setEmitLib: typeof setEmitLib;
-  // 应用元数据 get set
-  getAppMeta: typeof getAppMeta;
-  setAppMeta: typeof setAppMeta;
-  // 版本元数据 get set
-  getVersion: typeof getVersion;
-  setVersion: typeof setVersion;
-  // 应用的所有样式字符串 get set
-  getAppStyleStr: typeof getAppStyleStr;
-  setAppStyleStr: typeof setAppStyleStr;
-  // 版本获取状态 get set
-  setVerLoadStatus: typeof setVerLoadStatus;
-  getVerLoadStatus: typeof getVerLoadStatus;
-  // 样式字符串获取状态 get set
-  getVerStyleStrStatus: typeof getVerStyleStrStatus;
-  setVerStyleStrStatus: typeof setVerStyleStrStatus;
-  // sdk注入的额外样式列表 get set
-  getVerExtraCssList: typeof getVerExtraCssList;
-  setVerExtraCssList: typeof setVerExtraCssList;
-
-  getAppPlatform: typeof getAppPlatform;
-  setAppPlatform: typeof setAppPlatform;
-  tryGetVersion: typeof tryGetVersion;
-  tryGetAppName: typeof tryGetAppName;
-  log: typeof log;
-  allowLog: typeof allowLog;
-  getGlobalThis: typeof getGlobalThis;
-  setGlobalThis: typeof setGlobalThis;
-  resetGlobalThis: typeof resetGlobalThis;
-  commonUtil: CommonUtil;
-};
-
-declare let defaultExport: DefaultExport;
-export default defaultExport;

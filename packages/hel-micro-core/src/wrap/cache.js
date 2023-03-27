@@ -1,5 +1,5 @@
-import { DEFAULT_PLAT } from './consts';
-import { getHelMicroShared, makeCacheNode } from './microShared';
+import { DEFAULT_PLAT } from '../consts';
+import { getHelMicroShared, makeCacheNode } from '../base/microShared';
 
 /**
  * 获取默认的平台值
@@ -13,7 +13,7 @@ export function getPlatform() {
 /**
  * @param {string} platform
  */
-export function getPlatformSharedCache(platform) {
+export function getSharedCache(platform) {
   const p = platform || getPlatform();
   const cacheRoot = getCacheRoot();
   let cacheNode = cacheRoot.caches[p];
