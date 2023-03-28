@@ -2,6 +2,7 @@ import { commonUtil, IControlPreFetchOptions, IPlatformConfigInitFull, originIni
 import * as apis from './apis';
 
 const { purify } = commonUtil;
+const eventBus = apis.core.getUserEventBus();
 
 interface IInjectOptions {
   fnName: string;
@@ -11,7 +12,7 @@ interface IInjectOptions {
 }
 
 // 无需处理的 key
-const ignoreKeys = ['eventBus', 'getExtraData', 'setExtraData', 'bindExternals', 'bindVueRuntime', 'bindReactRuntime'];
+const ignoreKeys = ['eventBus', 'getExtraData', 'setExtraData', 'bindExternals', 'bindVueRuntime', 'bindReactRuntime', 'isSubApp'];
 // core 层面函数处理规则
 const coreRules = {
   // 不需要处理的
@@ -93,7 +94,7 @@ function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions
   const newObj: any = {};
   Object.keys(obj).forEach((mayFnName) => {
     // @ts-ignore
-    const mayFn = apis[mayFnName];
+    const mayFn = obj[mayFnName];
     if (ignoreKeys.includes(mayFnName)) {
       newObj[mayFnName] = mayFn;
       return;
@@ -118,15 +119,48 @@ function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions
 type Apis = typeof apis;
 type CreateInstance = (platform: string, options?: Partial<IControlPreFetchOptions>) => InsApis;
 type CreateOriginInstance = (platform: string, options?: Partial<IPlatformConfigInitFull>) => InsApis;
-type InsApis = Apis & { createInstance: CreateInstance; createOriginInstance: CreateOriginInstance };
+type InsApis = Apis & {
+  createInstance: CreateInstance;
+  createOriginInstance: CreateOriginInstance;
+  resetGlobalThis: typeof apis.core.resetGlobalThis;
+  eventBus: typeof eventBus;
+  default: InsApis;
+};
 
+/**
+ * 预设获取参数自定义api实例，之后调用的api实例将总是自动带上用户的预设参数作为兜底参数
+ * @param platform
+ * @param preFetchOptions
+ * @returns
+ */
 export function createInstance(platform: string, preFetchOptions?: Partial<IControlPreFetchOptions>): InsApis {
   const insApis = tryInectPlatForMethods(platform, apis, { preFetchOptions });
   insApis.createInstance = createInstance;
   insApis.createOriginInstance = createOriginInstance;
+  insApis.resetGlobalThis = apis.core.resetGlobalThis;
+  insApis.eventBus = eventBus;
+  insApis.default = insApis;
   return insApis;
 }
 
+/**
+ * 预设获取参数自定义api实例，同时将预设参数参数写入 origin 配置，这样用户使用原始 api 时也能够复用预设参数
+ * ```
+ * // 原始 api 指从 hel-micro 里直接导入的接口，例如下面的 preFetchLib 是原始 api
+ * import { preFetchLib, createOriginInstance } from 'hel-micro';
+ * // 预设 origin 配置
+ * createOriginInstance('myplat', { apiPrefix: 'https://myplat.com', semverApi: false });
+ * // 此后采用 preFetchLib 调用时将自动读取到对应平台预设的 origin 配置
+ * preFetchLib('xx', {platform:'myplat'});
+ * ```
+ * 此方法通常用户用户基于 hel-micro 定制自己平台参数后再次发包到npm，别人使用此包体可自动获取对应平台的模块，例如
+ * ```
+ * // 发布此代码包体 hel-micro-cutom 到 npm
+ * import { preFetchLib, createOriginInstance } from 'hel-micro';
+ * const ins = createOriginInstance(...);
+ * export default ins;
+ * ```
+ */
 export function createOriginInstance(platform: string, originOptions?: Partial<IPlatformConfigInitFull>): InsApis {
   const { trustAppNames, ...preFetchOptions } = originOptions || {};
   originInit(platform, originOptions);

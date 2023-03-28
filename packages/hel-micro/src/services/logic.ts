@@ -86,7 +86,7 @@ function fixAppAssociateData(appName: string, appGroupName: string, fixOptions: 
 
 export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions) {
   const { platform = getPlatform(), versionId = '', isLib } = innerOptions;
-  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', innerOptions.strictMatchVer);
+  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', [innerOptions.strictMatchVer]);
   const newGetOptions = { ...innerOptions, strictMatchVer };
 
   let targetName = appName;
@@ -183,7 +183,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
     return logStillWait();
   }
 
-  const trustAppNames = alt.getVal<string[]>(inputPlatform, 'trustAppNames') || [];
+  const trustAppNames = alt.getVal<string[]>(inputPlatform, 'trustAppNames', [null, []], { emptyArrIsNull: false });
   if (inputPlatform !== emitPlatform && trustAppNames.includes(appName)) {
     const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform });
     if (!shouldNext) {

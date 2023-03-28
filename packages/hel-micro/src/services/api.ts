@@ -173,7 +173,7 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
 
   // 按 preFetchOptions.{key} --> platInitOptions.{key} --> originInitOptions.{key} --> innerDefault 取值的函数
   const getVal = (key: PreFetchKey, defaultVal?: any) => {
-    return alt.getVal(platform, key, loadOptions[key]) || defaultVal;
+    return alt.getVal(platform, key, [loadOptions[key], defaultVal]);
   };
   const getFnVal = (fnName: PreFetchKey, fnParams?: any) => {
     return alt.callFn(platform, fnName, fnParams, loadOptions[fnName]);

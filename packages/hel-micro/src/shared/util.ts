@@ -16,7 +16,7 @@ interface IVerMatchOptions {
 export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOptions) {
   const fnMark = '[[ isEmitVerMatchInputVer ]]';
   const { platform, emitVer, inputVer, projectId } = options;
-  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', options.strictMatchVer);
+  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', [options.strictMatchVer]);
 
   const appMeta = getAppMeta(appName, platform);
   if (strictMatchVer === false) {

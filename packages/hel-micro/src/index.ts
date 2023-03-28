@@ -25,7 +25,7 @@ export const { resetGlobalThis } = apis.core;
 export const { createInstance, createOriginInstance } = ins;
 export const eventBus = apis.core.getUserEventBus();
 
-const toExport = {
+export default {
   preFetchLib,
   preFetchApp,
   batchPreFetchLib,
@@ -48,5 +48,3 @@ const toExport = {
   createInstance,
   createOriginInstance,
 };
-
-export default toExport;

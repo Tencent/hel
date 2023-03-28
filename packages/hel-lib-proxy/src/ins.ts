@@ -36,7 +36,7 @@ function tryInectPlat(obj: any, platform: string) {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
     // @ts-ignore
-    const val = apis[key];
+    const val = obj[key];
     if (ignoreKeys.includes(key)) {
       newObj[key] = val;
       return;

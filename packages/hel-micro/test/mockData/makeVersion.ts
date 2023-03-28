@@ -4,15 +4,16 @@ interface IMakeVersionOptions {
   versionId?: string;
   name?: string;
   platform?: string;
+  semverApi?: boolean;
 }
 
 export default function makeVersion(options?: IMakeVersionOptions) {
-  const { name = 'remote-vue-comps-tpl', platform = 'hel' } = options || {};
+  const { name = 'remote-vue-comps-tpl', platform = 'hel', semverApi = true } = options || {};
   let { versionId } = options || {};
   if (!versionId) {
-    versionId = platform === 'hel' ? `${name}_20220602022833` : '1.1.3';
+    versionId = semverApi ? '1.1.3' : `${name}_20220602022833`;
   }
-  const versionDesc = platform === 'hel' ? `${name}_20220602022833` : `${name}@${versionId}`;
+  const versionDesc = semverApi ? `${name}@${versionId}` : `${name}_20220602022833`;
 
   let webDirPath = `https://xx.cdn.com/hel/${versionDesc}`;
   let htmlIndexSrc = `https://xx.cdn.com/hel/${versionDesc}/index.html`;

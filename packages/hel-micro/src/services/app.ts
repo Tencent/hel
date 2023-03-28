@@ -5,7 +5,7 @@ import { loadAppAssets } from '../browser';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
 import storageKeys from '../consts/storageKeys';
-import { getPlatform, getPlatformConfig } from '../shared/platform';
+import { getPlatform } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
@@ -34,7 +34,7 @@ function getFallbackHook(options: IInnerPreFetchOptions) {
  * 如果用户未指定 apiMode，或许将来node 环境则一定是 get
  */
 function computeApiMode(platform?: Platform, specifiedApiMode?: ApiMode) {
-  const { apiMode } = getPlatformConfig(platform);
+  const { apiMode } = core.getPlatformConfig(platform);
   if (specifiedApiMode) {
     return specifiedApiMode;
   }

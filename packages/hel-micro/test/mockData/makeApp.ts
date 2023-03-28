@@ -1,16 +1,15 @@
-import { getPlatform } from 'hel-micro-core';
 import { ISubApp } from 'hel-types';
 
 const FALSE = 0 as const;
 const TRUE = 1 as const;
 
-export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: string }) {
-  const { app = {}, platform = getPlatform() } = options || {};
+export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: string, semverApi?: boolean }) {
+  const { app = {}, semverApi = true } = options || {};
 
   const { name = app.name || 'remote-vue-comps-tpl', app_group_name: appGroupName = app.app_group_name || 'remote-vue-comps-tpl' } = app;
   let { build_version: buildVer } = app;
   if (!buildVer) {
-    buildVer = platform === 'hel' ? `${name}_20220602022833` : '1.1.3';
+    buildVer = semverApi ? '1.1.3' : `${name}_20220602022833`;
   }
 
   const appDemo = {

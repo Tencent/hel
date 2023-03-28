@@ -4,7 +4,7 @@ import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from '../c
 import { getHelSingletonHost } from './globalRef';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 
-function makeCanBeOverwriteProps() {
+function makeOriginOptions() {
   return {
     apiMode: 'get',
     apiPrefix: '',
@@ -17,7 +17,7 @@ function makeCanBeOverwriteProps() {
     getUserName: null,
     userLsKey: DEFAULT_USER_LS_KEY,
     shouldUseGray: null,
-    trustAppNames: [],
+    trustAppNames: null,
     semverApi: null,
   };
 }
@@ -44,8 +44,8 @@ export function makeCacheNode(platform) {
     appGroupName2firstVer: {},
     isOriginInitCalled: false,
     // below properties can be overwrite for user custom platform
-    ...makeCanBeOverwriteProps(),
-    origin: makeCanBeOverwriteProps(), // originInit 写入到此对象下
+    ...makeOriginOptions(),
+    origin: makeOriginOptions(), // originInit 写入到此对象下
   };
   return cacheNode;
 }
@@ -135,7 +135,7 @@ export function ensureHelMicroShared() {
       const cacheNode = caches[key];
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
-      safeGetMap(cacheNode, 'origin', makeCanBeOverwriteProps());
+      safeGetMap(cacheNode, 'origin', makeOriginOptions());
     });
 
     // 补齐老包缺失的 userEventBus 对象

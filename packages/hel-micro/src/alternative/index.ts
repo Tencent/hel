@@ -1,4 +1,4 @@
-import type { IControlPreFetchOptions, IPlatformConfigInitFull } from 'hel-micro-core';
+import type { IControlPreFetchOptions, IPlatformConfigInitFull, NullDef } from 'hel-micro-core';
 import { commonUtil, getPlatformConfig } from 'hel-micro-core';
 import type { IInnerPreFetchOptions } from '../types';
 import * as builtinFns from './builtin';
@@ -27,8 +27,11 @@ export function callFn(platform: string | undefined, fnName: KeyName, params: an
   return builtinFn(params);
 }
 
-export function getVal<T extends any = any>(platform: string | undefined, key: KeyName, userVal?: any): T {
-  if (!isNull(userVal)) {
+export function getVal<T extends any = any>(
+  platform: string | undefined, key: KeyName, valPair?: any[], nullDef?: NullDef
+): T {
+  const [userVal, defautVal] = valPair || [];
+  if (!isNull(userVal, nullDef)) {
     return userVal;
   }
   const conf = getPlatformConfig(platform);
@@ -36,14 +39,18 @@ export function getVal<T extends any = any>(platform: string | undefined, key: K
 
   // 优先返回 platInitOptions
   const confVal: any = conf[key];
-  if (!isNull(confVal)) {
+  if (!isNull(confVal, nullDef)) {
     return confVal;
   }
 
   // 最后返回 originInitOptions
   // @ts-ignore
   const originVal: any = origin[key];
-  return originVal;
+  if (!isNull(originVal, nullDef)) {
+    return originVal;
+  }
+
+  return defautVal;
 }
 
 /**

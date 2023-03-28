@@ -68,15 +68,15 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
  */
 async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOptions) {
   let emitApp: null | IEmitAppInfo = null;
-  const { versionId, platform, isLib } = preFetchOptions;
+  const { versionId, platform, isLib, strictMatchVer, semverApi } = preFetchOptions;
   const fixedInnerOptions = { ...preFetchOptions };
   const fnName = isLib ? 'preFetchLib' : 'preFetchApp';
   try {
     // 用户未传的话走平台默认值 true
-    fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', preFetchOptions.strictMatchVer);
+    fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', [strictMatchVer]);
     // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
     fixedInnerOptions.storageType = preFetchOptions.storageType || 'indexedDB';
-    fixedInnerOptions.semverApi = alt.getVal(platform, 'semverApi', preFetchOptions.semverApi);
+    fixedInnerOptions.semverApi = alt.getVal(platform, 'semverApi', [semverApi]);
 
     emitApp = logicSrv.getLibOrApp(appName, fixedInnerOptions);
     if (emitApp) {

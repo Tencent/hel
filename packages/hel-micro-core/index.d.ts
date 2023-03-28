@@ -215,11 +215,12 @@ export interface IControlPreFetchOptions {
 
 export interface IPlatformConfigInitFull extends IControlPreFetchOptions {
   /**
+   * default: null
    * 信任的应用名单，当使用方拿到获取模块的 emitInfo 后，其他条件均满足目标模块特征，
    * 但因平台名字不同会被 judgeAppReady 判断失败而过滤掉，如果此时我们相信这个模块的确是我们想要的模块，
    * 可将模块名加入信任名单，这样可以让 preFetchLib 把模块正常返回给上层调用者
    * ----------- 注：平台名不同可能有多种原因 -----------
-   * 1 历史包发射模块时未正常平台名
+   * 1 历史包发射模块时未正常设置平台名
    * 2 基于同一个仓库的包体做了迁移，改到了另一个平台上
    */
   trustAppNames: null | string[];
@@ -298,6 +299,12 @@ export function initPlatformConfig(config: IPlatformConfig, platform?: Platform)
 
 export function getPlatformConfig(platform?: Platform): IPlatformConfigFull;
 
+/**
+ * 此方法已不鼓励使用，请尽快替换为 hel-iso 包体里的 isSubApp
+ * 因为当 hel-micro/hel-lib-proxy 提升到 webpack external 里时，此方法将返回错误结果
+ * 此处保留是为了让老用户升级到最新版本时，如未使用 hel-micro/hel-lib-proxy external 模式依然能够编译通过并正常运行
+ * @deprecated
+ */
 export function isSubApp(): boolean;
 
 /**
@@ -396,10 +403,12 @@ export function setAppPlatform(appGroupName: string, platform?: Platform): Platf
  */
 export function originInit(platform: Platform, options?: IPlatformConfig): void;
 
-interface NullDef {
+export interface NullDef {
+  /** default: [null, undefined, ''], 空值范围 */
   nullValues?: any[];
-  /** {} 算不算空，true算空 */
+  /** default: true, {} 算不算空，true 算空，false 不算空 */
   emptyObjIsNull?: boolean;
+  /** default: true, [] 算不算空，true 算空，false 不算空 */
   emptyArrIsNull?: boolean;
 }
 
