@@ -6,7 +6,7 @@ const eventBus = getHelEventBus();
 // getHelDebug().logMode = 1;
 
 /** 模拟模块获取到并发射的行为 */
-export function mockEmitModule(options?: { app?: Partial<ISubApp>; platform?: string, semverApi?: boolean }) {
+export function mockEmitModule(options?: { app?: Partial<ISubApp>; platform?: string; semverApi?: boolean }) {
   const { platform = getPlatform(), semverApi } = options || {};
   const app = mockData.makeApp(options);
   const version = mockData.makeVersion({ name: app.name, platform, versionId: app.build_version, semverApi });
@@ -30,7 +30,7 @@ export function mockEmitModule(options?: { app?: Partial<ISubApp>; platform?: st
 }
 
 /** 模拟应用根组件获取到并发射的行为 */
-export function mockEmitAppRootComponent(options?: { app?: Partial<ISubApp>; platform?: string, semverApi?: boolean }) {
+export function mockEmitAppRootComponent(options?: { app?: Partial<ISubApp>; platform?: string; semverApi?: boolean }) {
   const { platform = getPlatform(), semverApi } = options || {};
   const app = mockData.makeApp(options);
   const version = mockData.makeVersion({ name: app.name, platform, versionId: app.online_version, semverApi });

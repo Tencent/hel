@@ -15,5 +15,4 @@ runTest(({ api, describe, util }) => {
       expect(getGlobalThis().mod1.fn() === 'mod1').toBeTruthy();
     });
   });
-
 });

@@ -3,7 +3,7 @@ import { ISubApp } from 'hel-types';
 const FALSE = 0 as const;
 const TRUE = 1 as const;
 
-export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: string, semverApi?: boolean }) {
+export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: string; semverApi?: boolean }) {
   const { app = {}, semverApi = true } = options || {};
 
   const { name = app.name || 'remote-vue-comps-tpl', app_group_name: appGroupName = app.app_group_name || 'remote-vue-comps-tpl' } = app;

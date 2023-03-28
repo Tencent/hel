@@ -43,7 +43,7 @@ var isMasterApp = isMasterApp$1,
   isSubApp = isSubApp$1;
 var index = {
   isSubApp: isSubApp,
-  isMasterApp: isMasterApp
+  isMasterApp: isMasterApp,
 };
 
 export { index as default, isMasterApp, isSubApp };

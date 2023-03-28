@@ -24,8 +24,8 @@ function makeTestKitContext(api: Api, platform: string, semverApi: boolean) {
       describe(`${mark}: ${label}`, describeCb);
     },
     util,
-  }
-};
+  };
+}
 
 export function runTest(cb: (kitCtx: ReturnType<typeof makeTestKitContext>) => void) {
   cb(makeTestKitContext(ins, platform, semverApi));

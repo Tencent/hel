@@ -27,9 +27,7 @@ export function callFn(platform: string | undefined, fnName: KeyName, params: an
   return builtinFn(params);
 }
 
-export function getVal<T extends any = any>(
-  platform: string | undefined, key: KeyName, valPair?: any[], nullDef?: NullDef
-): T {
+export function getVal<T extends any = any>(platform: string | undefined, key: KeyName, valPair?: any[], nullDef?: NullDef): T {
   const [userVal, defautVal] = valPair || [];
   if (!isNull(userVal, nullDef)) {
     return userVal;
