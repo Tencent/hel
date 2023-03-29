@@ -176,19 +176,17 @@ function MayShadowComp(props: IMayShadowProps) {
         可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
         为性能考虑，默认是false，让用户优先考虑使用 staticShadowBody
        */}
-        {props.mountShadowBodyForRef
-          && (
-            <ShadowBody
-              id={name}
-              tagName={SHADOW_BODY_NAME + shadowMode}
-              onShadowRootReady={onShadowBodyRootReady}
-              delegatesFocus={true}
-              styleSheets={finalStyleUrlList}
-              styleContent={finalStyleStr}
-              shadowMode={shadowMode}
-            />
-          )
-        }
+        {props.mountShadowBodyForRef && (
+          <ShadowBody
+            id={name}
+            tagName={SHADOW_BODY_NAME + shadowMode}
+            onShadowRootReady={onShadowBodyRootReady}
+            delegatesFocus={true}
+            styleSheets={finalStyleUrlList}
+            styleContent={finalStyleStr}
+            shadowMode={shadowMode}
+          />
+        )}
       </>
     );
   }
