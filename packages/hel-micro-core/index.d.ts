@@ -403,7 +403,6 @@ export function getAppPlatform(appGroupName: string): Platform;
  */
 export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
 
-
 export interface IGetCustomDataOptions {
   customKey: string;
   platform?: string;
