@@ -35,9 +35,10 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
     subCompNames.forEach((name) => (vals[name] = getSubVal(name, waitVal)));
     return vals;
   };
+  const MemoComp = useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]);
 
   return {
-    Comp: needMemo ? useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]) : factory(),
+    Comp: needMemo ? MemoComp : factory(),
     getSubVal,
     getSubVals,
   };

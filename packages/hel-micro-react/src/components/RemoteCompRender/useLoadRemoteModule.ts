@@ -49,7 +49,7 @@ function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCt
 
 export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
   const appName = props.name;
-  const forceUpdate = baseShareHooks.useForceUpdate();
+  const forceUpdate = baseShareHooks.useForceUpdate(true);
   const [errMsg, setErrMsg] = React.useState('');
   const isLoadAppDataExecutingRef = React.useRef(false);
   const isLoadAppStyleExecutingRef = React.useRef(false);

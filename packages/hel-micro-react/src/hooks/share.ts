@@ -23,9 +23,22 @@ export function isEqual(param: any, toDiffParam: any) {
   return !isNotEqualByShallowDiff(param, toDiffParam);
 }
 
-export function useForceUpdate() {
+export function useForceUpdate(needJudgeUnmout = false) {
   const [, update] = React.useState({});
-  return React.useCallback(() => update({}), []);
+  const isHookUnmoutRef = React.useRef(false);
+  React.useEffect(() => {
+    return () => {
+      isHookUnmoutRef.current = true;
+    };
+  }, []);
+  return React.useCallback(() => {
+    if (!needJudgeUnmout) {
+      return update({});
+    }
+
+    const isUnmout = isHookUnmoutRef.current;
+    if (!isUnmout) update({});
+  }, [needJudgeUnmout]);
 }
 
 export function useExecuteCallbackOnce(logicCb: (...args: any[]) => any) {

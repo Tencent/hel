@@ -1,5 +1,5 @@
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import core from 'hel-micro-core';
+import * as core from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
@@ -25,7 +25,7 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   ensuredProps.compProps = props.compProps || {};
   ensuredProps.children = ensuredProps.compProps.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
-  ensuredProps.shadowMode = props.shadowMode || 'v1';
+  ensuredProps.shadowMode = props.shadowMode || defaults.SHADOW_MODE;
   ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
 
   return ensuredProps;

@@ -2,9 +2,11 @@ import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ShadowView from 'shadow-view-react';
+import defaults from '../consts/defaults';
+import ShadowViewV2 from './ShadowViewV2';
 
-const COMP_NAME = 'hel-shadow-body';
-const STATIC_COMP_NAME = 'hel-static-shadow-body';
+const { STATIC_SHADOW_BODY_NAME } = defaults;
+
 const bus = getHelEventBus();
 
 function makeBodyMountNode(name: string, prefix: string) {
@@ -17,7 +19,7 @@ function makeBodyMountNode(name: string, prefix: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string }> {
+class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
@@ -35,9 +37,9 @@ class ShadowBody extends React.Component<{ id: string }> {
     const { node, props } = this;
     // 正常情况下，这句话的判断不会成立，此处为了让 tsc 编译通过
     if (!node) return <h1>node not ready</h1>;
-
+    const ShadoeViewComp = props.shadowMode === 'v1' ? ShadowView : ShadowViewV2;
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
-    return ReactDOM.createPortal(<ShadowView {...{ tagName: COMP_NAME, ...props }} />, node);
+    return ReactDOM.createPortal(<ShadoeViewComp {...props} />, node);
   }
 }
 
@@ -53,7 +55,7 @@ export function getShadowBodyReadyEvName(name: string) {
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, createRoot: any) {
+export function tryMountStaticShadowBody(props: any, createRoot: any, shadowMode: 'v1' | 'v2') {
   const name = props.id;
   if (getStaticShadowBodyRef(name)) {
     return;
@@ -65,13 +67,13 @@ export function tryMountStaticShadowBody(props: any, createRoot: any) {
 
   const mountNode = makeBodyMountNode(name, 'staticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name);
-
+  const ShadoeViewComp = shadowMode === 'v1' ? ShadowView : ShadowViewV2;
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
-    <ShadowView
+    <ShadoeViewComp
       {...{
-        tagName: STATIC_COMP_NAME,
         ...props,
+        tagName: STATIC_SHADOW_BODY_NAME + shadowMode,
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
           staticShadowBodyRefs[name] = bodyRef;
           bus.emit(evName);

@@ -7,7 +7,6 @@ import * as hooks from './hooks';
 import { useExecuteCallbackOnce, useForceUpdate } from './hooks/share';
 import renderApp from './process/renderApp';
 import { VER } from './_diff';
-
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 export type {
   GetSubVal,
