@@ -38,6 +38,7 @@ export function makeCacheNode(platform) {
     appName2verStyleFetched: {},
     appName2verExtraCssList: {},
     appName2verAppVersion: {},
+    appName2verCustomData: {},
     appName2app: {},
     appName2appVersion: {},
     appName2styleStr: {},
@@ -135,6 +136,7 @@ export function ensureHelMicroShared() {
       const cacheNode = caches[key];
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
+      safeGetMap(cacheNode, 'appName2verCustomData');
       safeGetMap(cacheNode, 'origin', makeOriginOptions());
     });
 

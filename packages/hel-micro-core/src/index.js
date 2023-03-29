@@ -15,6 +15,7 @@ import * as meta from './data/meta';
 import * as status from './data/status';
 import * as style from './data/style';
 import * as version from './data/version';
+import * as custom from './data/custom';
 import * as guess from './handle/guess';
 import * as iso from './handle/iso';
 import * as ready from './handle/ready';
@@ -76,6 +77,9 @@ export const { getAppMeta, setAppMeta } = meta;
 
 // 版本数据 get set
 export const { getVersion, setVersion } = version;
+
+// 自定义数据 get set
+export const { getCustomData, setCustomData } = custom;
 
 // 版本获取状态 get set，样式字符串获取状态 get set
 export const { getVerLoadStatus, setVerLoadStatus, getVerStyleStrStatus, setVerStyleStrStatus } = status;

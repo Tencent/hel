@@ -2,11 +2,14 @@
 import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import ShadowView from 'shadow-view-react';
+import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
 import type { AnyComp, AnyCompOrNull, IHelContext, IsLegacy, IUseRemoteCompOptions } from '../types';
 import BuildInSkeleton from './BuildInSkeleton';
 import ShadowBody, { getShadowBodyReadyEvName, getStaticShadowBodyRef, tryMountStaticShadowBody } from './ShadowBody';
 import ShadowViewV2 from './ShadowViewV2';
+
+const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
 
 const bus = getHelEventBus();
 
@@ -106,7 +109,7 @@ function MayShadowComp(props: IMayShadowProps) {
       bus.on(evName, evCb);
 
       const renderProps = { id: name, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, props.createRoot);
+      tryMountStaticShadowBody(renderProps, props.createRoot, shadowMode);
       return () => {
         bus.off(evName, evCb);
       };
@@ -114,10 +117,6 @@ function MayShadowComp(props: IMayShadowProps) {
   }, []);
 
   const isShadowRefsReady = () => {
-    if (shadowMode === 'v2') {
-      // v2 暂无 ShadowAppRoot 结构
-      return true;
-    }
     const staticRef = getStaticShadowBodyRef(name);
     return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
@@ -157,40 +156,34 @@ function MayShadowComp(props: IMayShadowProps) {
       finalStyleUrlList = [];
     }
 
+    const ShadoeViewComp = shadowMode === 'v1' ? ShadowView : ShadowViewV2;
     return (
       <>
-        {shadowMode === 'v1' && (
-          <ShadowView
-            tagName="hel-shadow-app"
-            id={name}
-            delegatesFocus={true}
-            shadowDelay={shadowDelay}
-            style={shadowWrapStyle}
-            styleSheets={finalStyleUrlList}
-            styleContent={finalStyleStr}
-            onShadowRootReady={onShadowAppRootReady}
-          >
-            <TargetComp {...allProps}>{children}</TargetComp>
-          </ShadowView>
-        )}
-        {shadowMode === 'v2' && (
-          <ShadowViewV2 styleWrap={shadowWrapStyle} styleSheets={finalStyleUrlList} styleContent={finalStyleStr} shadowDelay={shadowDelay}>
-            <TargetComp {...allProps}>{children}</TargetComp>
-          </ShadowViewV2>
-        )}
+        <ShadoeViewComp
+          id={name}
+          tagName={SHADOW_HOST_NAME + shadowMode}
+          delegatesFocus={true}
+          style={shadowWrapStyle}
+          styleSheets={finalStyleUrlList}
+          styleContent={finalStyleStr}
+          shadowDelay={shadowDelay}
+          onShadowRootReady={onShadowAppRootReady}
+        >
+          <TargetComp {...allProps}>{children}</TargetComp>
+        </ShadoeViewComp>
         {/*
         在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
         可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
        */}
-        {props.mountShadowBodyForRef && (
-          <ShadowBody
-            id={name}
-            onShadowRootReady={onShadowBodyRootReady}
-            delegatesFocus={true}
-            styleSheets={finalStyleUrlList}
-            styleContent={finalStyleStr}
-          />
-        )}
+        <ShadowBody
+          id={name}
+          tagName={SHADOW_BODY_NAME + shadowMode}
+          onShadowRootReady={onShadowBodyRootReady}
+          delegatesFocus={true}
+          styleSheets={finalStyleUrlList}
+          styleContent={finalStyleStr}
+          shadowMode={shadowMode}
+        />
       </>
     );
   }

@@ -155,7 +155,7 @@ export function createInstance(platform: string, preFetchOptions?: Partial<ICont
  * ```
  * 此方法通常用户用户基于 hel-micro 定制自己平台参数后再次发包到npm，别人使用此包体可自动获取对应平台的模块，例如
  * ```
- * // 发布此代码包体 hel-micro-cutom 到 npm
+ * // 发布此代码包体 custom-hel-micro 到 npm
  * import { preFetchLib, createOriginInstance } from 'hel-micro';
  * const ins = createOriginInstance(...);
  * export default ins;

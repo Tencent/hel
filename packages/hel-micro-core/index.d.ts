@@ -1,4 +1,9 @@
 import { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+
+type AppNameKey = string;
+type CustomKey = string;
+type VerKey = string;
+
 export interface EventBus {
   on: (name: string, cb: (...args: any[]) => void) => void;
   emit: (name: string, ...args: any[]) => void;
@@ -278,6 +283,10 @@ export interface SharedCache extends IPlatformConfigFull {
    */
   appName2verAppVersion: Record<string, Record<string, ISubAppVersion>>;
   /**
+   * 应用各个版本对应的自定义数据
+   */
+  appName2verCustomData: Record<AppNameKey, Record<CustomKey, Record<VerKey, any>>>;
+  /**
    * 记录第一个载入的app数据
    */
   appName2app: Record<string, ISubApp>;
@@ -393,6 +402,27 @@ export function getAppPlatform(appGroupName: string): Platform;
  * 记录完就返回应用的所属平台值
  */
 export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
+
+
+export interface IGetCustomDataOptions {
+  customKey: string;
+  platform?: string;
+  versionId?: string;
+}
+
+export interface ISetCustomDataOptions<T extends any = any> extends IGetCustomDataOptions {
+  customValue: T;
+}
+
+/**
+ * 获取自定义数据
+ */
+export function getCustomData<T extends any = any>(appName: string, options: IGetCustomDataOptions): T;
+
+/**
+ * 设置自定义数据
+ */
+export function setCustomData(appName: string, options: ISetCustomDataOptions): void;
 
 /**
  * 此函数服务于基于 hel-micro 二次封装后发布的定制包，供 createInstance 调用

@@ -8,7 +8,7 @@ function ShadowContent(props: any) {
 }
 
 export default function ShadowViewV2(props: any) {
-  const { styleWrap, styleContent, styleSheets, shadowDelay, children } = props;
+  const { style = {}, styleContent, styleSheets, shadowDelay, children, tagName } = props;
   const shadowHostRef = React.useRef<HTMLDivElement | null>(null);
   const shadowRootRef = React.useRef<{ root: ShadowRoot | null }>({ root: null });
   const isDelayCalledRef = React.useRef<{ called: boolean }>({ called: false });
@@ -23,6 +23,7 @@ export default function ShadowViewV2(props: any) {
 
     // 拿到 div 实例后对其添加 shadow 节点
     const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+    props.onShadowRootReady(shadowRoot);
     shadowRootRef.current.root = shadowRoot;
     forceUpdate();
 
@@ -32,14 +33,16 @@ export default function ShadowViewV2(props: any) {
         forceUpdate();
       }, shadowDelay);
     }
+    // here trust my code, ban react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   const shadowRoot = shadowRootRef.current.root;
   const isDelayCalled = isDelayCalledRef.current.called;
   const compContent = !shadowDelay || isDelayCalled ? children : '';
 
-  return (
-    <div ref={shadowHostRef} style={styleWrap}>
+  const uiContent = (
+    <>
       {/* shadowRoot 节点准备就绪才开始调用 createPortal 渲染孩子节点 */}
       {shadowRoot && (
         <ShadowContent root={shadowRoot}>
@@ -52,6 +55,8 @@ export default function ShadowViewV2(props: any) {
           {compContent}
         </ShadowContent>
       )}
-    </div>
+    </>
   );
+
+  return React.createElement(tagName, { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style } }, uiContent);
 }
