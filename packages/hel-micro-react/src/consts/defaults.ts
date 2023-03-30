@@ -1,4 +1,3 @@
-
 export default {
   SHADOW_HOST_NAME: 'hel-shadow-app',
   SHADOW_BODY_NAME: 'hel-shadow-body',

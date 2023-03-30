@@ -1,4 +1,4 @@
-import { getCustomData, setCustomData, IGetVerOptions } from 'hel-micro-core';
+import { getCustomData, IGetVerOptions, setCustomData } from 'hel-micro-core';
 import defaults from '../consts/defaults';
 
 const { REACT_SHADOW_BODY, REACT_SHADOW_BODY_STATUS } = defaults;
@@ -17,4 +17,4 @@ export function getStaticShadowBodyStatus(name: string, options?: IGetVerOptions
 
 export function setStaticShadowBodyStatus(name: string, customValue: any, options?: IGetVerOptions) {
   setCustomData(name, { customKey: REACT_SHADOW_BODY_STATUS, customValue, ...(options || {}) });
-}  
+}

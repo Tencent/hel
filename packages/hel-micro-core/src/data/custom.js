@@ -11,7 +11,7 @@ function getDataMap() {
 export function getCustomData(appName, options) {
   const dataMap = getDataMap(appName, options);
   const result = dataMap[options.versionId || DEFAULT_ONLINE_VER];
-  return result !==undefined ? result : null;
+  return result !== undefined ? result : null;
 }
 
 export function setCustomData(appName, options) {

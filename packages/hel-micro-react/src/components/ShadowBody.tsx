@@ -1,8 +1,8 @@
 import { getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as wrap from '../wrap';
 import defaults from '../consts/defaults';
+import * as wrap from '../wrap';
 import ShadowViewV2 from './ShadowViewV2';
 
 const { STATIC_SHADOW_BODY_NAME } = defaults;
@@ -19,7 +19,7 @@ function makeBodyMountNode(name: string, prefix: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
+class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
