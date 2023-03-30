@@ -75,7 +75,6 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * default: true
    */
   shadow?: boolean;
-  shadowMode?: 'v1' | 'v2';
   /** 改参数只对 v2 生效 */
   shadowWrapStyle?: React.CSSProperties;
   /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */
@@ -210,7 +209,6 @@ export interface ILocalCompProps {
    * default: true
    */
   shadow?: boolean;
-  shadowMode?: 'v1' | 'v2';
   /** 改参数只对 v2 生效 */
   shadowWrapStyle?: React.CSSProperties;
   /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */

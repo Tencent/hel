@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
-import ShadowView from 'shadow-view-react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
+import { getStaticShadowBodyRef } from '../wrap';
 import type { AnyComp, AnyCompOrNull, IHelContext, IsLegacy, IUseRemoteCompOptions } from '../types';
 import BuildInSkeleton from './BuildInSkeleton';
-import ShadowBody, { getShadowBodyReadyEvName, getStaticShadowBodyRef, tryMountStaticShadowBody } from './ShadowBody';
+import ShadowBody, { getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
 import ShadowViewV2 from './ShadowViewV2';
 
 const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
@@ -26,7 +26,6 @@ export interface IMayShadowProps {
   styleUrlList?: string[];
   isLegacy?: IsLegacy;
   shadow?: boolean;
-  shadowMode?: 'v1' | 'v2';
   shadowWrapStyle?: any;
   shadowDelay?: number;
   errMsg?: string;
@@ -81,25 +80,27 @@ function MayShadowComp(props: IMayShadowProps) {
   const {
     errMsg,
     name,
+    platform,
+    versionId,
     shadow,
     styleUrlList = [],
     styleStr,
     Comp,
     children,
     Skeleton,
-    shadowMode = 'v1',
     shadowWrapStyle = {},
     shadowDelay,
     reactRef, // 透传用户可能传递下来的 ref
     setStyleAsString,
     handleStyleStr,
   } = props;
+  const platAndVer = { platform, versionId };
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
   const forceUpdate = useForceUpdate();
 
   React.useEffect(() => {
-    const staticRef = getStaticShadowBodyRef(name);
+    const staticRef = getStaticShadowBodyRef(name, platAndVer);
     if (shadow && !staticRef) {
       const evName = getShadowBodyReadyEvName(name);
       const evCb = () => {
@@ -109,7 +110,7 @@ function MayShadowComp(props: IMayShadowProps) {
       bus.on(evName, evCb);
 
       const renderProps = { id: name, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, props.createRoot, shadowMode);
+      tryMountStaticShadowBody(renderProps, props.createRoot, platAndVer);
       return () => {
         bus.off(evName, evCb);
       };
@@ -117,7 +118,7 @@ function MayShadowComp(props: IMayShadowProps) {
   }, []);
 
   const isShadowRefsReady = () => {
-    const staticRef = getStaticShadowBodyRef(name);
+    const staticRef = getStaticShadowBodyRef(name, platAndVer);
     return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
@@ -132,7 +133,7 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowBodyRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name));
+  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name, platAndVer));
 
   if (errMsg) {
     return React.createElement(Comp, passedProps);
@@ -156,12 +157,11 @@ function MayShadowComp(props: IMayShadowProps) {
       finalStyleUrlList = [];
     }
 
-    const ShadoeViewComp = shadowMode === 'v1' ? ShadowView : ShadowViewV2;
     return (
       <>
-        <ShadoeViewComp
+        <ShadowViewV2
           id={name}
-          tagName={SHADOW_HOST_NAME + shadowMode}
+          tagName={SHADOW_HOST_NAME}
           delegatesFocus={true}
           style={shadowWrapStyle}
           styleSheets={finalStyleUrlList}
@@ -170,19 +170,18 @@ function MayShadowComp(props: IMayShadowProps) {
           onShadowRootReady={onShadowAppRootReady}
         >
           <TargetComp {...allProps}>{children}</TargetComp>
-        </ShadoeViewComp>
+        </ShadowViewV2>
         {/*
         在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
         可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
        */}
         <ShadowBody
           id={name}
-          tagName={SHADOW_BODY_NAME + shadowMode}
+          tagName={SHADOW_BODY_NAME}
           onShadowRootReady={onShadowBodyRootReady}
           delegatesFocus={true}
           styleSheets={finalStyleUrlList}
           styleContent={finalStyleStr}
-          shadowMode={shadowMode}
         />
       </>
     );

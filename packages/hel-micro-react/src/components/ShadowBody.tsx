@@ -1,10 +1,12 @@
-import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
+import { getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ShadowView from 'shadow-view-react';
+import * as wrap from '../wrap';
+import defaults from '../consts/defaults';
+import ShadowViewV2 from './ShadowViewV2';
 
-const COMP_NAME = 'hel-shadow-body';
-const STATIC_COMP_NAME = 'hel-static-shadow-body';
+const { STATIC_SHADOW_BODY_NAME } = defaults;
+
 const bus = getHelEventBus();
 
 function makeBodyMountNode(name: string, prefix: string) {
@@ -17,7 +19,7 @@ function makeBodyMountNode(name: string, prefix: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string }> {
+class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
@@ -35,17 +37,9 @@ class ShadowBody extends React.Component<{ id: string }> {
     const { node, props } = this;
     // 正常情况下，这句话的判断不会成立，此处为了让 tsc 编译通过
     if (!node) return <h1>node not ready</h1>;
-
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
-    return ReactDOM.createPortal(<ShadowView {...{ tagName: COMP_NAME, ...props }} />, node);
+    return ReactDOM.createPortal(<ShadowViewV2 {...props} />, node);
   }
-}
-
-const staticShadowBodyRefs: Record<string, any> = {};
-const staticShadowBodyRefRenderingMap: Record<string, boolean> = {};
-
-export function getStaticShadowBodyRef(name: string) {
-  return staticShadowBodyRefs[name] || null;
 }
 
 export function getShadowBodyReadyEvName(name: string) {
@@ -53,27 +47,26 @@ export function getShadowBodyReadyEvName(name: string) {
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, createRoot: any) {
+export function tryMountStaticShadowBody(props: any, createRoot: any, options: IGetVerOptions) {
   const name = props.id;
-  if (getStaticShadowBodyRef(name)) {
+  if (wrap.getStaticShadowBodyRef(name, options)) {
     return;
   }
-  if (staticShadowBodyRefRenderingMap[name]) {
+  if (wrap.getStaticShadowBodyStatus(name, options)) {
     return;
   }
-  staticShadowBodyRefRenderingMap[name] = true;
+  wrap.setStaticShadowBodyStatus(name, 1, options);
 
-  const mountNode = makeBodyMountNode(name, 'staticShadowBodyBox');
+  const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name);
-
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
-    <ShadowView
+    <ShadowViewV2
       {...{
-        tagName: STATIC_COMP_NAME,
         ...props,
+        tagName: STATIC_SHADOW_BODY_NAME,
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
-          staticShadowBodyRefs[name] = bodyRef;
+          wrap.setStaticShadowBodyRef(name, bodyRef, options);
           bus.emit(evName);
         },
       }}

@@ -416,7 +416,7 @@ export interface ISetCustomDataOptions<T extends any = any> extends IGetCustomDa
 /**
  * 获取自定义数据
  */
-export function getCustomData<T extends any = any>(appName: string, options: IGetCustomDataOptions): T;
+export function getCustomData<T extends any = any>(appName: string, options: IGetCustomDataOptions): T | null;
 
 /**
  * 设置自定义数据

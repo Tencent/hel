@@ -22,7 +22,6 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   ensuredProps.compProps = props.compProps || {};
   ensuredProps.children = ensuredProps.compProps.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
-  ensuredProps.shadowMode = props.shadowMode || 'v1';
   ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
 
   return ensuredProps;

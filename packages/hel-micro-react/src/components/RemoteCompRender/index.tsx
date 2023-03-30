@@ -11,7 +11,7 @@ import useLoadRemoteModule from './useLoadRemoteModule';
  */
 export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
   const ensuredProps = ensurePropsDefaults(props);
-  const { compProps, name, children, handleStyleStr, shadow, shadowMode, shadowWrapStyle } = ensuredProps;
+  const { compProps, name, children, handleStyleStr, shadow, shadowWrapStyle } = ensuredProps;
   const { platform, versionId } = appParamSrv.getPlatAndVer(name, ensuredProps);
 
   const { errMsg, getModule } = useLoadRemoteModule(ensuredProps);
@@ -46,7 +46,6 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
     createRoot: props.createRoot,
     ignoreHelContext: props.ignoreHelContext,
     shadow,
-    shadowMode,
     shadowWrapStyle,
     shadowDelay: props.shadowDelay,
     setStyleAsString: ensuredProps.setStyleAsString,
