@@ -58,5 +58,6 @@ export default function ShadowViewV2(props: any) {
     </>
   );
 
-  return React.createElement(tagName, { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style } }, uiContent);
+  const elProps = { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style }, data: 'see-data' };
+  return React.createElement(tagName, elProps, uiContent);
 }

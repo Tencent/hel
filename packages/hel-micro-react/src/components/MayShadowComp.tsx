@@ -115,6 +115,8 @@ function MayShadowComp(props: IMayShadowProps) {
         bus.off(evName, evCb);
       };
     }
+    // here trust my code, ban react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   const isShadowRefsReady = () => {

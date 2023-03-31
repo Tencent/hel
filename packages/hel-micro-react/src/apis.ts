@@ -1,7 +1,8 @@
-export { default as ShadowView } from 'components/ShadowViewV2';
+export { default as ShadowView } from './components/ShadowViewV2';
 export { default as BuildInSkeleton } from './components/BuildInSkeleton';
 export { LocalComp, MicroApp, MicroAppLegacy, MicroAppLegacyMemo } from './components/MicroApp';
 export { default as ShadowBody } from './components/ShadowBody';
+export { getMayStaticShadowNode } from './wrap';
 export { VER } from './consts/ver';
 export {
   useRemote2Comps,

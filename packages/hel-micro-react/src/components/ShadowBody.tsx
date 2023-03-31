@@ -19,12 +19,12 @@ function makeBodyMountNode(name: string, prefix: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
+class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
     super(props);
-    this.node = makeBodyMountNode(this.props.id, 'shadowBodyBox');
+    this.node = makeBodyMountNode(this.props.id, 'ShadowBodyBox');
   }
 
   componentWillUnmount() {
@@ -57,6 +57,11 @@ export function tryMountStaticShadowBody(props: any, createRoot: any, options: I
   }
   wrap.setStaticShadowBodyStatus(name, 1, options);
 
+  // mounting to body directly will lead the error below:
+  // Rendering components directly into document.body is discouraged, 
+  // since its children are often manipulated by third-party scripts and browser extensions. 
+  // This may lead to subtle reconciliation issues. Try rendering into a container element created for your app.
+  // so we create a mount node manually
   const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name);
   const uiShadowView = (

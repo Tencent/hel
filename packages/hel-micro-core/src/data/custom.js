@@ -1,6 +1,8 @@
 import { safeGetMap } from '../base/util';
+import { getSharedCache } from '../wrap/cache';
+import { DEFAULT_ONLINE_VER } from '../consts';
 
-function getDataMap() {
+function getDataMap(appName, options) {
   const { customKey, platform } = options;
   const { appName2verCustomData } = getSharedCache(platform);
   const customMap = safeGetMap(appName2verCustomData, appName);

@@ -6,6 +6,6 @@ export default {
   SET_STYLE_AS_STRING: true,
   ENABLE_APPEND_CSS: true,
   H1_STYLE: { color: 'red' },
-  REACT_SHADOW_BODY: 'ReactShadowBody',
-  REACT_SHADOW_BODY_STATUS: 'ReactShadowBodyStatus',
+  SHADOW_BODY: 'ShadowBody',
+  SHADOW_BODY_STATUS: 'ShadowBodyStatus',
 } as const;

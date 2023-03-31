@@ -1,13 +1,14 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
-import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from '../consts';
+import { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX } from '../consts';
 import { getHelSingletonHost } from './globalRef';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 
-function makeOriginOptions() {
+function makeOriginOptions(presetOptions) {
+  const { apiPrefix } = presetOptions || {};
   return {
     apiMode: 'get',
-    apiPrefix: '',
+    apiPrefix,
     apiSuffix: '',
     apiPathOfApp: DEFAULT_API_URL,
     apiPathOfAppVersion: '',
@@ -46,7 +47,7 @@ export function makeCacheNode(platform) {
     isOriginInitCalled: false,
     // below properties can be overwrite for user custom platform
     ...makeOriginOptions(),
-    origin: makeOriginOptions(), // originInit 写入到此对象下
+    origin: makeOriginOptions({apiPrefix: DEFAULT_API_PREFIX}), // originInit 写入到此对象下
   };
   return cacheNode;
 }

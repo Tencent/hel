@@ -12,6 +12,7 @@ import { getPlatAndVer } from './appParam';
 const { LOADED, LOADING } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
+const { DEFAULT_ONLINE_VER } = core.helConsts;
 /** 缓存拉去过的字符串, TODO: 下沉到 core */
 const cssUrlMap: Record<string, string> = {};
 export interface IFetchStyleOptions extends IGetOptionsLoose {
@@ -26,7 +27,7 @@ const inner = {
   isStyleStatusMatch(appName: string, judeStatus: HelLoadStatusEnum, options: IGetOptionsLoose) {
     const { platform, versionId } = getPlatAndVer(appName, options);
     const { appName2verStyleFetched } = core.getSharedCache(platform);
-    const ver = versionId || core.helConsts.DEFAULT_ONLINE_VER;
+    const ver = versionId || DEFAULT_ONLINE_VER;
     return appName2verStyleFetched[appName]?.[ver] === judeStatus;
   },
 

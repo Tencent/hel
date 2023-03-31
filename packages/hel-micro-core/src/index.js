@@ -23,13 +23,14 @@ import * as cacheWrap from './wrap/cache';
 
 util.log(`hel-micro-core ver ${consts.VER}`);
 
-const { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, PLAT_UNPKG, PLAT_HEL } = consts;
+const { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, DEFAULT_ONLINE_VER, PLAT_UNPKG, PLAT_HEL } = consts;
 
 export const helConsts = {
   DEFAULT_API_PREFIX,
   DEFAULT_API_URL,
   DEFAULT_PLAT,
   DEFAULT_USER_LS_KEY,
+  DEFAULT_ONLINE_VER,
   PLAT_UNPKG,
   PLAT_HEL,
 };

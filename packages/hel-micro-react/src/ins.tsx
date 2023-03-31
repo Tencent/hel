@@ -8,7 +8,7 @@ const { purify } = commonUtil;
 const ignoreKeys = ['BuildInSkeleton', 'ShadowBody', 'ShadowView', 'LocalComp', 'useExecuteCallbackOnce', 'useForceUpdate'];
 const compKeys = ['MicroApp', 'MicroAppLegacy', 'MicroAppLegacyMemo'];
 // 这些函数第1位参数是平台值对象
-const arg1PlatObjFns = ['renderApp'];
+const arg1PlatObjFns = ['renderApp', 'getMayStaticShadowNode'];
 
 function injectCompPlat(Comp: any, platform: string) {
   return forwardRef((props: any, reactRef) => {
