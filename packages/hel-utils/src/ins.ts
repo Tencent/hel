@@ -8,7 +8,6 @@ interface IInjectOptions {
   fn: any;
 }
 
-
 function injectPlat(platform: string, injectOptions: IInjectOptions) {
   const { fn } = injectOptions;
   return (...args: any[]) => {

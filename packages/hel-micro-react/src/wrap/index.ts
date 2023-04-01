@@ -1,4 +1,4 @@
-import { getCustomData, IGetVerOptions, setCustomData, getGlobalThis } from 'hel-micro-core';
+import { getCustomData, getGlobalThis, IGetVerOptions, setCustomData } from 'hel-micro-core';
 import defaults from '../consts/defaults';
 
 const { SHADOW_BODY, SHADOW_BODY_STATUS } = defaults;
