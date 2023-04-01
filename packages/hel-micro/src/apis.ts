@@ -1,10 +1,10 @@
 export * as core from 'hel-micro-core';
+export { VER } from './consts/ver';
 export { default as emitApp } from './process/emitApp';
 export * as appMetaSrv from './services/appMeta';
 export * as appParamSrv from './services/appParam';
 export * as appStyleSrv from './services/appStyle';
 export * as logicSrv from './services/logic';
-export { VER } from './consts/ver';
 export { init } from './shared/helMicro';
 export { isSubApp } from './shared/signal';
 export { bindExternals, bindReactRuntime, bindVueRuntime } from './user-util/bindExternals';

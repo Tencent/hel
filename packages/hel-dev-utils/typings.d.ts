@@ -149,7 +149,7 @@ export interface IUserExtractOptions {
 
 export interface IInnerSubAppOptions {
   /** 历史原因，保留 vue3 vue3，目前他们的external配置一样 */
-  frameworkType: 'react' | 'vue2' | 'vue3' | 'vue', 'lib';
+  frameworkType: 'react' | 'vue2' | 'vue3' | 'vue' | 'lib';
 }
 
 export interface ICreateSubAppOptions {

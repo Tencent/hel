@@ -5,6 +5,7 @@ function injectDefault(externalItem: any) {
     try {
       // eslint-disable-next-line
       externalItem.default = externalItem;
+      // prettier-ignore
     } catch (err: any) { }
   }
   return externalItem;

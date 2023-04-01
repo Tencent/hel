@@ -24,7 +24,7 @@ const inner = {
   isSrcMatchHost(src: string, host: string) {
     // 支持 custom 设定 localhost 或 127 时，能相互匹配
     if (host.startsWith(LOCAL_STR) || host.startsWith(LOCAL_127)) {
-      return src.startsWith(LOCAL_STR) || src.startsWith(LOCAL_127)
+      return src.startsWith(LOCAL_STR) || src.startsWith(LOCAL_127);
     }
     return src.startsWith(host);
   },
