@@ -37,10 +37,11 @@ export function tryMarkFlag(clearSignals) {
  * @returns
  */
 export function isSubApp() {
-  let tip = 'WARNING: calling isSubApp from hel-micro/hel-lib-proxy is unsafe,\n';
-  tip += 'cause it will return wrong result when they were lift up to webpack externals,\n';
-  tip += `${tip}please install hel-iso and call its isSubApp instead`;
-  console.error(tip);
+  // calling isSubApp is unsafe, cause it will return wrong result when they were lift up to webpack
+  // externals, please install hel-iso and call its isSubApp instead
+  let tip = 'WARNING: calling isSubApp is unsafe, use hel-iso.isSubApp instead,\n';
+  tip += 'more details see: https://tnfe.github.io/hel/docs/tutorial/attention-is-subapp';
+  console.log(`%c${tip}`, 'color:red;');
   // __MASTER_APP_LOADED__ 是当前应用写入的，代表当前应用是主应用
   if (isMeMarkTrue) {
     return false;
