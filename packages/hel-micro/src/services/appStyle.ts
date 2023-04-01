@@ -4,13 +4,14 @@
 import type { HelLoadStatusEnum } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
+import defaults from '../consts/defaults';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
 import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 
-const { KEY_CSS_STR } = core.helConsts;
-const { LOADED, LOADING } = core.helLoadStatus;
+const { KEY_CSS_STR } = defaults;
+const { LOADED, LOADING, NOT_LOAD } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
 
@@ -94,36 +95,35 @@ const inner = {
 
   async fetchAndCacheAppStyleStr(appName: string, options: IFetchStyleOptions) {
     const platAndVer = getPlatAndVer(appName, options);
-    const cachedStr = core.getAppStyleStr(appName, platAndVer);
-    if (cachedStr) {
-      return cachedStr;
-    }
-
-    if (inner.isStyleStatusMatch(appName, LOADED, options)) {
-      return ''; // 确实是抓取过了，但没有拉到样式字符串
-    }
+    const { extraCssList = [], getExcludeCssList } = options;
+    // 为应用预设的样式列表
+    const presetCssList = inner.getStyleUrlList(appName, options);
+    const status = core.getVerStyleStrStatus(appName, platAndVer);
+    let presetStyleStr = '';
 
     // 有其他上层调用已经触发样式获取逻辑，这里调用 waitStyleReady 等待样式获取动作完成即可
-    if (inner.isStyleStatusMatch(appName, LOADING, options)) {
+    if (status === LOADING) {
       await inner.waitStyleReady(appName, { ...platAndVer, strictMatchVer: options.strictMatchVer });
-      const cachedStr = core.getAppStyleStr(appName, platAndVer);
-      return cachedStr;
+      presetStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
+    } else if (status === NOT_LOAD) {
+      core.setVerStyleStrStatus(appName, LOADING, platAndVer);
+      presetStyleStr = await inner.fetchStyleStr(presetCssList);
+      core.setAppStyleStr(appName, presetStyleStr, platAndVer);
+      core.setVerStyleStrStatus(appName, LOADED, platAndVer);
+      eventBus.emit(STYLE_STR_FETCHED, { appName, ...platAndVer }); // 预设的样式列表转换为字符串完毕
+    } else {
+      presetStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
     }
 
-    core.setVerStyleStrStatus(appName, LOADING, platAndVer);
-    const { extraCssList = [] } = options;
-    let styleList = inner.getStyleUrlList(appName, options);
-    // 拼上透传的额外样式
-    styleList = core.commonUtil.merge2List(styleList, extraCssList);
-    // 获得用户需要排除的所有样式列表
-    const excludeCssList = options.getExcludeCssList?.(styleList, { version: core.getVersion(appName, platAndVer) }) || [];
-    // 过滤 styleList，去掉未排除的样式得到最终需要转化为字符串的样式列表
-    const finalStyleList = styleList.filter((item) => !excludeCssList.includes(item));
+    const allCssList = core.commonUtil.merge2List(presetCssList, extraCssList);
+    const excludeCssList = getExcludeCssList?.(allCssList, { version: core.getVersion(appName, platAndVer) }) || [];
+    if (!excludeCssList.length && !extraCssList.length) {
+      return presetStyleStr;
+    }
 
+    // 过滤 allCssList ，去掉未排除的样式得到最终需要转化为字符串的样式列表
+    const finalStyleList = allCssList.filter((item) => !excludeCssList.includes(item));
     const styleStr = await inner.fetchStyleStr(finalStyleList);
-    core.setAppStyleStr(appName, styleStr, platAndVer);
-    core.setVerStyleStrStatus(appName, LOADED, platAndVer);
-    eventBus.emit(STYLE_STR_FETCHED, { appName, ...platAndVer });
     return styleStr;
   },
 };
@@ -143,7 +143,7 @@ export async function fetchStyleByUrlList(cssUrlList: string[]) {
 }
 
 /**
- * 获取应用缓存的所有样式字符串（构建动态产生，页面静态引用的）
+ * 获取应用预设的样式字符串（构建动态产生，页面静态引用的、preFetch 时追加的 extraCssList）
  * 调用者需自己确保样式字符串已拉取，即 fetchStyleStr 已调用
  */
 export function getStyleStr(appName: string, options?: IGetOptionsLoose) {
@@ -153,7 +153,7 @@ export function getStyleStr(appName: string, options?: IGetOptionsLoose) {
 }
 
 /**
- * 获取应用的所有样式列表（构建动态产生，页面静态引用的）
+ * 获取应用预设的样式列表（构建动态产生，页面静态引用的、preFetch 时追加的 extraCssList ）
  * 调用者需自己确保版本数据已获取，即 preFetchApp 或 preFetchLib 已调用
  * @returns {string[]}
  */

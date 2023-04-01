@@ -3,7 +3,7 @@ export default {
   SHADOW_BODY_NAME: 'hel-shadow-body',
   STATIC_SHADOW_BODY_NAME: 'hel-static-shadow-body',
   SHADOW: true,
-  SET_STYLE_AS_STRING: true,
+  CSS_LIST_TO_STR: true,
   ENABLE_APPEND_CSS: true,
   H1_STYLE: { color: 'red' },
   SHADOW_BODY: 'ShadowBody',

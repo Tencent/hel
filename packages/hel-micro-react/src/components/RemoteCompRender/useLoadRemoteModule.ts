@@ -1,18 +1,11 @@
-import { appStyleSrv, logicSrv } from 'hel-micro';
+import { core, logicSrv } from 'hel-micro';
 import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
 import type { IInnerRemoteModuleProps } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
 import * as share from '../share';
 
-function judgeFetchStyleStr(appName: string, props: IInnerRemoteModuleProps) {
-  const styleStr = appStyleSrv.getStyleStr(appName, props);
-  const isStyleFetched = appStyleSrv.isStyleFetched(appName, props);
-  // 设置了需要设置样式为字符串格式 且 无样式字符串 且 样式字符串还未异步抓取到
-  // 则需要异步获取样式字符串串
-  const shouldFetchStyle = (props.setStyleAsString || props.needStyleStr) && !styleStr && !isStyleFetched;
-  return shouldFetchStyle;
-}
+const { merge2List } = core.commonUtil;
 
 function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
   return {
@@ -21,6 +14,21 @@ function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
     styleUrlList: [],
     moduleReady: false,
   };
+}
+
+function getStyleList(props: IInnerRemoteModuleProps) {
+  let list: string[] = [];
+  const { shadow, extraCssList, cssListToStr, extraShadowCssList, extraShadowCssListToStr } = props;
+  if (!shadow) {
+    return list;
+  }
+  if (!cssListToStr && extraCssList) {
+    list = merge2List(list, extraCssList);
+  }
+  if (!extraShadowCssListToStr && extraShadowCssList) {
+    list = merge2List(list, extraShadowCssList);
+  }
+  return list;
 }
 
 function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCtx: { [key: string]: any }) {
@@ -39,7 +47,7 @@ function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCt
     }
     const libComp = libRoot[compName];
     if (!libComp) {
-      passCtx.setErrMsg(`comp [${compName}] not exist`);
+      passCtx.setState({ errMsg: `comp [${compName}] not exist` });
     }
     return libComp;
   }
@@ -48,16 +56,17 @@ function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCt
 }
 
 export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
-  const appName = props.name;
+  const { name: appName, extraShadowStyleStr = '' } = props;
   const forceUpdate = baseShareHooks.useForceUpdate();
-  const [errMsg, setErrMsg] = React.useState('');
+  const [state, setState] = baseShareHooks.useObject({ errMsg: '', shadowStyleStr: '', isShadowStyleStrFetched: false });
   const isLoadAppDataExecutingRef = React.useRef(false);
   const isLoadAppStyleExecutingRef = React.useRef(false);
+  const { errMsg, shadowStyleStr, isShadowStyleStrFetched } = state;
 
   return {
     getModule: () => {
       const SkeletonView = props.Skeleton || BuildInSkeleton;
-      const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setErrMsg, SkeletonView, forceUpdate };
+      const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView, forceUpdate };
 
       // 存在自定义组件
       if (props.Component) {
@@ -75,15 +84,14 @@ export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
         return share.fetchRemoteModule(props, passCtx);
       }
 
-      // 组件已获取完毕，如需获取样式字符串，则继续执行 fetchRemoteAppStyle
-      const shouldFetchStyleStr = judgeFetchStyleStr(appName, props);
-      if (shouldFetchStyleStr) {
+      // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle
+      if (props.shadow && !isShadowStyleStrFetched && (props.cssListToStr || props.extraShadowCssListToStr)) {
         return share.fetchRemoteModuleStyle(props, passCtx);
       }
 
-      // 设置了需要附加 css 列表，则返回对象里包含具体的 styleUrlList
-      const styleUrlList = appStyleSrv.getStyleUrlList(appName, props);
-      const styleStr = appStyleSrv.getStyleStr(appName, props);
+      // 提取可注入到shadow 的样式列表
+      const styleUrlList = getStyleList(props);
+      const styleStr = `${shadowStyleStr}${extraShadowStyleStr}`;
       return { RemoteModule, styleStr, styleUrlList, moduleReady: true };
     },
     errMsg,

@@ -54,11 +54,10 @@ export function useRemoteCompAndSubVal<T extends any = React.ForwardRefExoticCom
 export function useRemotePureComp<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
   name: string,
   compName: string,
-  options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow' | 'needStyleStr'>,
+  options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow'>,
 ) {
   const targetOptions: IUseRemoteCompOptions = {
     ...(options || {}),
-    needStyleStr: true,
     shadow: false,
     appendCss: false,
   };

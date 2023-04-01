@@ -245,8 +245,10 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     if (!scripts) return;
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
-      if (scriptUrl.endsWith('.css') && appendCss && !excludeCssList.includes(scriptUrl)) {
-        createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+      if (scriptUrl.endsWith('.css')) {
+        if (appendCss && !excludeCssList.includes(scriptUrl)) {
+          createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+        }
       } else {
         createScriptElement(name, { appGroupName, appendToBody, attrs: { src: scriptUrl }, changeAttrs });
       }

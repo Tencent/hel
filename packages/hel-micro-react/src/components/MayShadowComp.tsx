@@ -20,7 +20,6 @@ export interface IMayShadowProps {
   styleStr: string;
   compProps: any;
   Comp: AnyComp;
-  setStyleAsString?: boolean;
   handleStyleStr?: (mayFetchedStr: string) => string;
   Skeleton?: AnyCompOrNull;
   styleUrlList?: string[];
@@ -91,7 +90,6 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowWrapStyle = {},
     shadowDelay,
     reactRef, // 透传用户可能传递下来的 ref
-    setStyleAsString,
     handleStyleStr,
   } = props;
   const platAndVer = { platform, versionId };
@@ -102,7 +100,7 @@ function MayShadowComp(props: IMayShadowProps) {
   React.useEffect(() => {
     const staticRef = getStaticShadowBodyRef(name, platAndVer);
     if (shadow && !staticRef) {
-      const evName = getShadowBodyReadyEvName(name);
+      const evName = getShadowBodyReadyEvName(name, platAndVer);
       const evCb = () => {
         bus.off(evName, evCb);
         tryForceUpdate();
@@ -151,13 +149,7 @@ function MayShadowComp(props: IMayShadowProps) {
       // 避免警告: Attempts to access this ref will fail
       allProps = {};
     }
-
-    let finalStyleStr = '';
-    let finalStyleUrlList = styleUrlList;
-    if (setStyleAsString) {
-      finalStyleStr = handleStyleStr?.(styleStr) || styleStr;
-      finalStyleUrlList = [];
-    }
+    const styleContent = handleStyleStr?.(styleStr) || styleStr;
 
     return (
       <>
@@ -166,8 +158,8 @@ function MayShadowComp(props: IMayShadowProps) {
           tagName={SHADOW_HOST_NAME}
           delegatesFocus={true}
           style={shadowWrapStyle}
-          styleSheets={finalStyleUrlList}
-          styleContent={finalStyleStr}
+          styleSheets={styleUrlList}
+          styleContent={styleContent}
           shadowDelay={shadowDelay}
           onShadowRootReady={onShadowAppRootReady}
         >
@@ -185,7 +177,7 @@ function MayShadowComp(props: IMayShadowProps) {
             tagName={SHADOW_BODY_NAME}
             onShadowRootReady={onShadowBodyRootReady}
             delegatesFocus={true}
-            styleSheets={finalStyleUrlList}
+            styleSheets={styleContent}
             styleContent={finalStyleStr}
           />
         )}

@@ -18,6 +18,8 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
   React.useEffect(() => {
     const isStyleFetched = appStyleSrv.isStyleFetched(props.name, props);
     isStyleFetched && tryTriggerOnStyleFetched(props);
+    // here trust my code
+    // eslint-disable-next-line
   }, []);
 
   const { RemoteModule, styleStr, styleUrlList, moduleReady } = getModule();
@@ -48,7 +50,6 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
     shadow,
     shadowWrapStyle,
     shadowDelay: props.shadowDelay,
-    setStyleAsString: ensuredProps.setStyleAsString,
   };
   return <MayShadowComp {...wrapProps} />;
 }

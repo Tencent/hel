@@ -37,10 +37,7 @@ const config = {
     ...env2outputConf[env],
     exports: 'named',
     globals: {
-      // react: 'react',
-      // 'react-dom': 'react-dom',
-      react: 'LEAH_React',
-      'react-dom': 'LEAH_ReactDOM',
+      'hel-micro-core': 'HelMicroCore',
     },
   },
   plugins: [

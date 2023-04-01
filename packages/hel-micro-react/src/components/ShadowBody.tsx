@@ -12,7 +12,7 @@ const bus = getHelEventBus();
 function makeBodyMountNode(name: string, prefix: string) {
   const doc = getGlobalThis().document;
   const div = doc.createElement('div');
-  div.id = `${prefix}_${name || ''}`;
+  div.id = `${prefix}/${name || ''}`;
   // avoid read only warning: div.style = ''
   div.setAttribute('style', 'position: absolute; top: 0px; left: 0px; width: 100%;');
   doc.body.appendChild(div);
@@ -42,8 +42,9 @@ class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
   }
 }
 
-export function getShadowBodyReadyEvName(name: string) {
-  const evName = `ReactShadowBody_${name}`;
+export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) {
+  const { platform, versionId } = options;
+  const evName = `ReactShadowBody/${platform}/${name}/${versionId}`;
   return evName;
 }
 
@@ -63,7 +64,7 @@ export function tryMountStaticShadowBody(props: any, createRoot: any, options: I
   // This may lead to subtle reconciliation issues. Try rendering into a container element created for your app.
   // so we create a mount node manually
   const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
-  const evName = getShadowBodyReadyEvName(name);
+  const evName = getShadowBodyReadyEvName(name, options);
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
     <ShadowViewV2
