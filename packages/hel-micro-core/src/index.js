@@ -3,10 +3,10 @@
 /** @typedef {import('../index').SharedCache} SharedCache */
 import * as commonUtilMod from './base/commonUtil';
 import * as globalRef from './base/globalRef';
+import * as inject from './base/inject';
 import * as debugMod from './base/microDebug';
 import { ensureHelMicroShared } from './base/microShared';
 import * as util from './base/util';
-import * as inject from './base/inject';
 import * as consts from './consts';
 import * as app from './data/app';
 import * as common from './data/common';

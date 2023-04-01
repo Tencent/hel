@@ -7,9 +7,9 @@ function injectPlat(platform, injectOptions) {
   return (...args) => {
     const mergePlatObj = (obj) => ({ platform, ...purify(obj || {}) });
     const [arg1, arg2] = args;
-    if(handleArg1){
+    if (handleArg1) {
       args[0] = mergePlatObj(arg1);
-    }else{
+    } else {
       args[1] = mergePlatObj(arg2);
     }
     // @ts-ignore
@@ -18,10 +18,10 @@ function injectPlat(platform, injectOptions) {
 }
 
 export function inectPlatToMod(platform, mod, options) {
-  const { ignoreKeys = [], arg1PlatObjFnKeys = []  } = options || {};
+  const { ignoreKeys = [], arg1PlatObjFnKeys = [] } = options || {};
   const newObj = {};
   Object.keys(obj).forEach((mayFnName) => {
-    if(ignoreKeys.includes(mayFnName)){
+    if (ignoreKeys.includes(mayFnName)) {
       newObj[mayFnName] = mayFn;
       return;
     }
@@ -29,7 +29,7 @@ export function inectPlatToMod(platform, mod, options) {
     const mayFn = mod[mayFnName];
     const valueType = typeof mayFn;
 
-    if(valueType && valueType === 'object'){
+    if (valueType && valueType === 'object') {
       newObj[mayFnName] = inectPlatToMod(platform, mayFn, options);
       return;
     }

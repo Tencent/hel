@@ -461,7 +461,6 @@ export type CommonUtil = {
 
 export const commonUtil: CommonUtil;
 
-
 export interface IInjectPlatOptions {
   /** 不处理的名称 */
   ignoreKeys?: string[];
@@ -474,5 +473,7 @@ export interface IInjectPlatOptions {
  * @returns {Record<string, any>} - newMod
  */
 export function inectPlatToMod<T extends Record<string, any> = Record<string, any>>(
-  platform: string, mod: T, options?: IInjectPlatOptions,
+  platform: string,
+  mod: T,
+  options?: IInjectPlatOptions,
 ): T;
