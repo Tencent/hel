@@ -3,6 +3,7 @@ import * as ins from './ins';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase } from './types';
 
 export const {
+  VER,
   preFetchLib,
   preFetchApp,
   batchPreFetchLib,
@@ -25,7 +26,10 @@ export const { resetGlobalThis } = apis.core;
 export const { createInstance, createOriginInstance } = ins;
 export const eventBus = apis.core.getUserEventBus();
 
+core.log(`hel-micro ver ${VER}`);
+
 export default {
+  VER,
   preFetchLib,
   preFetchApp,
   batchPreFetchLib,

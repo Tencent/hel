@@ -9,9 +9,10 @@ import { createInstance } from './ins';
 export * from './typings';
 export { createInstance };
 
-export const { libReady, exposeLib, getLib, isSubApp, isMasterApp, eventBus, appReady, exposeApp } = apis;
+export const { VER, libReady, exposeLib, getLib, isSubApp, isMasterApp, eventBus, appReady, exposeApp } = apis;
 
 export default {
+  VER,
   libReady,
   exposeLib,
   getLib,

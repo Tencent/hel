@@ -37,7 +37,7 @@ export type IsLegacy = boolean;
  * 用户调用 MicroApp 需要传递的类型描述
  */
 export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
-  /** 如果指定了 Component，则 name 无效 */
+  /** 如果指定了 Component，表示复用 name 对应的预设应用样式，但使用用户透传的组件渲染 */
   Component?: AnyCompOrNull;
   /**
    * 处理默认解析出来的字符串，返回的新字符串会替代掉默认字符串

@@ -17,8 +17,17 @@ const type2conf = {
     attrKey: 'href',
   },
 };
+const LOCAL_STR = 'http://localhost';
+const LOCAL_127 = 'http://127.0.0.1';
 
 const inner = {
+  isSrcMatchHost(src: string, host: string) {
+    // 支持 custom 设定 localhost 或 127 时，能相互匹配
+    if (host.startsWith(LOCAL_STR) || host.startsWith(LOCAL_127)) {
+      return src.startsWith(LOCAL_STR) || src.startsWith(LOCAL_127)
+    }
+    return src.startsWith(host);
+  },
   extractAssetList(htmlText: string, options: { host: string; type: 'js' | 'css' }) {
     // TODO: 分析 script style 内部文本（现阶段暂不支持内部文本）
     // const arr = Array.from(htmlText.matchAll(new RegExp('(?<=\<script\>).*?(?=(\</script\>|$))', 'g')));
@@ -34,7 +43,7 @@ const inner = {
     const targetList: any[] = [];
 
     rawList.forEach((v) => {
-      if (!v.startsWith(host)) return;
+      if (!inner.isSrcMatchHost(v, host)) return;
       if (!v.endsWith(endMark)) return;
       targetList.push({ tag, attrs: { [attrKey]: v } });
     });

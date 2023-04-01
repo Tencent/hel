@@ -7,15 +7,6 @@ import * as share from '../share';
 
 const { merge2List } = core.commonUtil;
 
-function getUserCustomizedComp(props: IInnerRemoteModuleProps) {
-  return {
-    RemoteModule: props.Component,
-    styleStr: props.handleStyleStr?.('') || '',
-    styleUrlList: [],
-    moduleReady: false,
-  };
-}
-
 function getStyleList(props: IInnerRemoteModuleProps) {
   let list: string[] = [];
   const { shadow, extraCssList, cssListToStr, extraShadowCssList, extraShadowCssListToStr } = props;
@@ -68,18 +59,13 @@ export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
       const SkeletonView = props.Skeleton || BuildInSkeleton;
       const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView, forceUpdate };
 
-      // 存在自定义组件
-      if (props.Component) {
-        return getUserCustomizedComp(props);
-      }
-
       // 拉取模块过程中产生错误
       if (errMsg) {
         return share.getErrResult(props, errMsg);
       }
 
       // 模块还未缓存，是首次获取
-      const RemoteModule = getRemoteModule(appName, props, passCtx);
+      let RemoteModule = getRemoteModule(appName, props, passCtx);
       if (!RemoteModule) {
         return share.fetchRemoteModule(props, passCtx);
       }
@@ -91,7 +77,10 @@ export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
 
       // 提取可注入到shadow 的样式列表
       const styleUrlList = getStyleList(props);
+      // 拼接上用户额外透传的样式字符串
       const styleStr = `${shadowStyleStr}${extraShadowStyleStr}`;
+      // 如用户透传了具体组件，表示复用 name 对应的预设应用样式，使用用户透传的组件渲染
+      RemoteModule = props.Component || RemoteModule;
       return { RemoteModule, styleStr, styleUrlList, moduleReady: true };
     },
     errMsg,

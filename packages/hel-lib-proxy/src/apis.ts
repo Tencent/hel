@@ -3,17 +3,18 @@
  * 考虑到用户可能只是想暴露模块，而非使用 hel-micro 里其他功能，这样可以减少打包体积，且能够更独立的维护包代理逻辑
  * @author fatasticsoul
  * @since 2021-06-06
- */
+*/
 import type { IAppReadyOptions, IGetOptions } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { Platform } from 'hel-types';
-import { VER } from './consts';
+import * as consts from './consts';
 import * as share from './share';
 import type { IExposeLibOptions, IOptions, LibName, LibProperties } from './typings';
 export * from './typings';
 
-core.log(`hel-lib-proxy ver ${VER}`);
+export const { VER } = consts;
 
+core.log(`hel-lib-proxy ver ${VER}`);
 const { getUserEventBus, helConsts } = core;
 
 /**

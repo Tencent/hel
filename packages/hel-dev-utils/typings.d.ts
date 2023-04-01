@@ -116,8 +116,9 @@ export interface ISubAppBuildDesc {
   platform: string;
   homePage: string;
   npmCdnType: string;
-  groupName: string;
   name: string;
+  groupName: string;
+  semverApi: boolean;
   externals: Record<string, any>;
   /** return merged externals */
   getExternals: (userExternals?: Record<string, any>) => Record<string, any>;
@@ -147,7 +148,8 @@ export interface IUserExtractOptions {
 }
 
 export interface IInnerSubAppOptions {
-  frameworkType: 'react' | 'vue2' | 'vue3' | 'lib';
+  /** 历史原因，保留 vue3 vue3，目前他们的external配置一样 */
+  frameworkType: 'react' | 'vue2' | 'vue3' | 'vue', 'lib';
 }
 
 export interface ICreateSubAppOptions {
@@ -163,12 +165,17 @@ export interface ICreateSubAppOptions {
    */
   handleHomePage?: boolean;
   /**
-   * default: hel-micro 包为 unpkg, @tencent/hel-micro 包为 hel
+   * default: 'unpkg'
    */
-  platform?: 'unpkg' | 'hel';
-  /** default: unpkg ，当 platform 为 unpkg 时，此参数才有效
+  platform?: string;
+  /** default: 'unpkg' ，当 platform 为 unpkg 时，此参数才有效
    * 需要发布到npm cdn托管元数据时（支持语义化版本资源请求链接）可设定此值，
    * 目前支持 unpkg、jsdelivr，后期支持其他 cdn 类型
    */
   npmCdnType?: 'unpkg' | 'jsdelivr';
+  /**
+   * default: true
+   * 是否是语义化api格式的cdn链接
+   */
+  semverApi?: boolean;
 }

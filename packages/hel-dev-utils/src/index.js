@@ -1,28 +1,31 @@
-import * as baseUtilsMod from './base-utils/index';
-import checkMod from './check';
-import cstMod from './configs/consts';
-import extractHelMetaJsonMod from './meta-extractor/index';
-import createLibSubAppMod from './sub-app/createLibSubApp';
-import createReactSubAppMod from './sub-app/createReactSubApp';
-import createVue2SubAppMod from './sub-app/createVue2SubApp';
-import createVue3SubAppMod from './sub-app/createVue3SubApp';
+import * as baseUtils from './base-utils/index';
+import check from './check';
+import cst from './configs/consts';
+import extractHelMetaJson from './meta-extractor/index';
+import createLibSubApp from './sub-app/createLibSubApp';
+import createReactSubApp from './sub-app/createReactSubApp';
+import { createVue2SubApp, createVue3SubApp, createVueSubApp } from './sub-app/createVueSubApp';
 
-export const check = checkMod;
-export const cst = cstMod;
-export const baseUtils = baseUtilsMod;
-export const createReactSubApp = createReactSubAppMod;
-export const createVue3SubApp = createVue3SubAppMod;
-export const createVue2SubApp = createVue2SubAppMod;
-export const createLibSubApp = createLibSubAppMod;
-export const extractHelMetaJson = extractHelMetaJsonMod;
+export {
+  check,
+  cst,
+  baseUtils,
+  createReactSubApp,
+  createVue2SubApp,
+  createVue3SubApp,
+  createVueSubApp,
+  createLibSubApp,
+  extractHelMetaJson,
+};
 
 export default {
   cst,
   check,
   baseUtils,
   createReactSubApp,
-  createVue3SubApp,
   createVue2SubApp,
+  createVue3SubApp,
+  createVueSubApp,
   createLibSubApp,
   extractHelMetaJson,
 };

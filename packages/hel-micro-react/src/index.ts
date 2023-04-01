@@ -1,3 +1,4 @@
+import * as core from 'hel-micro-core';
 import * as apis from './apis';
 import { createInstance } from './ins';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
@@ -14,6 +15,7 @@ export type {
 export { createInstance };
 
 export const {
+  VER,
   ShadowView,
   ShadowBody,
   MicroApp,
@@ -34,7 +36,10 @@ export const {
   useRemoteLegacyComp,
 } = apis;
 
+core.log(`hel-micro-react ver ${VER}`);
+
 const toExport = {
+  VER,
   ShadowView,
   ShadowBody,
   MicroApp,
