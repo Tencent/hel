@@ -460,3 +460,19 @@ export type CommonUtil = {
 };
 
 export const commonUtil: CommonUtil;
+
+
+export interface IInjectPlatOptions {
+  /** 不处理的名称 */
+  ignoreKeys?: string[];
+  /** 把第一位实参作为包含平台值对象处理的函数名称列表（默认把第一位实参当做包含平台值的对象） */
+  arg1PlatObjFnKeys?: string[];
+}
+
+/**
+ * 对函数注入平台值参数，辅助上层模块生成 ins 对象
+ * @returns {Record<string, any>} - newMod
+ */
+export function inectPlatToMod<T extends Record<string, any> = Record<string, any>>(
+  platform: string, mod: T, options?: IInjectPlatOptions,
+): T;

@@ -6,6 +6,7 @@ import * as globalRef from './base/globalRef';
 import * as debugMod from './base/microDebug';
 import { ensureHelMicroShared } from './base/microShared';
 import * as util from './base/util';
+import * as inject from './base/inject';
 import * as consts from './consts';
 import * as app from './data/app';
 import * as common from './data/common';
@@ -25,6 +26,8 @@ import * as cacheWrap from './wrap/cache';
 util.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
 
 export const { helEvents, helLoadStatus, helConsts } = consts;
+
+export const { inectPlatToMod } = inject;
 
 export const commonUtil = commonUtilMod;
 

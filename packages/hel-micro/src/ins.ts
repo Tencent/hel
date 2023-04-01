@@ -16,7 +16,7 @@ const ignoreKeys = ['eventBus', 'getExtraData', 'setExtraData', 'bindExternals',
 // core 层面函数处理规则
 const coreRules = {
   // 不需要处理的
-  ignoreFns: ['tryGetAppName', 'log', 'commonUtil'],
+  ignoreFns: ['tryGetAppName', 'log', 'commonUtil', 'getCommonData', 'setCommonData', 'setGlobalThis'],
   // 这些函数仅1个参数，第1位参数是平台值
   arg1PlatFns: ['getPlatformConfig', 'getSharedCache'],
   // 这些函数共2个参数，第2位参数是平台值
