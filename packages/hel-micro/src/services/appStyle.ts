@@ -4,13 +4,12 @@
 import type { HelLoadStatusEnum } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
-import defaults from '../consts/defaults';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
 import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 
-const { KEY_CSS_STR } = defaults;
+const { KEY_CSS_STR } = core.helConsts;
 const { LOADED, LOADING } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;

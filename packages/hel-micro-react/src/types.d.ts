@@ -50,7 +50,7 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
   handleStyleStr?: (mayFetchedStr: string) => string;
   /**
    * default: false
-   * 当显示配置 shadow 为 false，appendCss 为 false 时，
+   * 当显式配置 shadow 为 false，appendCss 为 false 时，
    * 需要上层能够同步的拿到样式字符串，则可配置此项为 true
    */
   needStyleStr?: boolean;
