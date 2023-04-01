@@ -96,9 +96,10 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
   }
 
   isLoadAppStyleExecutingRef.current = true;
+  const { platform, versionId } = props;
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleStr(props.name, props)
+    .fetchStyleStr(props.name, { platform, versionId })
     .then(() => {
       isLoadAppStyleExecutingRef.current = false;
       tryTriggerOnStyleFetched(props);

@@ -1,4 +1,4 @@
-import { HEL_EVENTS, HEL_LOAD_STATUS } from '../consts';
+import { helEvents, helLoadStatus } from '../consts';
 import { setEmitApp } from '../data/app';
 import { getAppPlatform } from '../data/conf';
 import { getHelEventBus } from '../data/event';
@@ -30,9 +30,9 @@ export function libReady(appGroupName, appProperties, options = {}) {
     lifecycle: {},
   };
   setEmitLib(appName, emitLib, { appGroupName, platform });
-  setVerLoadStatus(appName, HEL_LOAD_STATUS.LOADED, { versionId, platform });
+  setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
-  eventBus.emit(HEL_EVENTS.SUB_LIB_LOADED, emitLib);
+  eventBus.emit(helEvents.SUB_LIB_LOADED, emitLib);
 }
 
 export function appReady(appGroupName, Comp, emitOptions = {}) {
@@ -42,7 +42,7 @@ export function appReady(appGroupName, Comp, emitOptions = {}) {
   const appName = emitOptions.appName || tryGetAppName(versionId, appGroupName);
   const emitApp = { Comp, appName, appGroupName, lifecycle, platform, versionId, isLib: false };
   setEmitApp(appName, emitApp);
-  setVerLoadStatus(appName, HEL_LOAD_STATUS.LOADED, { versionId, platform });
+  setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
-  eventBus.emit(HEL_EVENTS.SUB_APP_LOADED, emitApp);
+  eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);
 }

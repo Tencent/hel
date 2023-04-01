@@ -72,18 +72,11 @@ export async function requestGet(url: string, asJson = true) {
 export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
   const { extraCssList = [], custom } = loadOptions;
   if (custom) {
-    const { extraCssList: custCssList = [], cssStrategy = 'only_cust', enable = true } = custom;
-    if (!enable) {
-      return extraCssList;
+    const { extraCssList: custCssList = [], enable = true } = custom;
+    if (enable) {
+      const mergedList: string[] = commonUtil.merge2List(extraCssList, custCssList);
+      return mergedList;
     }
-    if (cssStrategy === 'only_cust') {
-      return custCssList;
-    }
-    if (cssStrategy === 'only_out') {
-      return extraCssList;
-    }
-    const mergedList: string[] = commonUtil.merge2List(extraCssList, custCssList);
-    return mergedList;
   }
   return extraCssList;
 }

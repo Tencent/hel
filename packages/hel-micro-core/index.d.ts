@@ -11,6 +11,7 @@ export interface EventBus {
 }
 
 export const helConsts: {
+  CORE_VER: string;
   DEFAULT_API_URL: '/openapi/v1/app/info';
   DEFAULT_API_PREFIX: 'https://unpkg.com';
   DEFAULT_ONLINE_VER: '__default_online_ver__';
@@ -18,6 +19,7 @@ export const helConsts: {
   DEFAULT_PLAT: 'unpkg';
   PLAT_UNPKG: 'unpkg';
   PLAT_HEL: 'hel';
+  KEY_CSS_STR: 'CSS_STR';
 };
 
 export const helEvents: {
@@ -316,11 +318,6 @@ export function getPlatformConfig(platform?: Platform): IPlatformConfigFull;
  */
 export function isSubApp(): boolean;
 
-/**
- * @deprecated
- */
-export function trySetMasterAppLoadedSignal(): void;
-
 export function getVerApp(appName: string, options?: IGetOptions): IEmitAppInfo | null;
 
 export function setEmitApp(appName: string, emitApp: IEmitAppInfo): void;
@@ -414,14 +411,24 @@ export interface ISetCustomDataOptions<T extends any = any> extends IGetCustomDa
 }
 
 /**
- * 获取自定义数据
+ * 获取应用的自定义数据
  */
 export function getCustomData<T extends any = any>(appName: string, options: IGetCustomDataOptions): T | null;
 
 /**
- * 设置自定义数据
+ * 设置应用的自定义数据
  */
 export function setCustomData(appName: string, options: ISetCustomDataOptions): void;
+
+/**
+ * 获取通用自定义数据
+ */
+export function getCommonData<T extends any = any>(customKey: string, dataKey: string): T | null;
+
+/**
+ * 设置通用自定义数据
+ */
+export function setCommonData(customKey: string, dataKey: string, data: any): void;
 
 /**
  * 此函数服务于基于 hel-micro 二次封装后发布的定制包，供 createInstance 调用

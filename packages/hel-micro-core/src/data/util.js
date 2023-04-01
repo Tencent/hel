@@ -1,5 +1,5 @@
 import { safeGetMap, setSubMapValue } from '../base/util';
-import { DEFAULT_ONLINE_VER, HEL_LOAD_STATUS } from '../consts';
+import { DEFAULT_ONLINE_VER, helLoadStatus } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 const innerUtil = {
@@ -27,7 +27,7 @@ const innerUtil = {
     const { versionId, platform } = options || {};
     const appVerLoadStatus = getSharedCache(platform)[statusMapKey];
     const versionIdVar = versionId || DEFAULT_ONLINE_VER;
-    return appVerLoadStatus[appName]?.[versionIdVar] || HEL_LOAD_STATUS.NOT_LOAD;
+    return appVerLoadStatus[appName]?.[versionIdVar] || helLoadStatus.NOT_LOAD;
   },
 
   // 预防一些未升级的老模块未写 DEFAULT_ONLINE_VER 的值到 libOrAppMap 里

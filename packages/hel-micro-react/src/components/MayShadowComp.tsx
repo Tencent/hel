@@ -176,15 +176,19 @@ function MayShadowComp(props: IMayShadowProps) {
         {/*
         在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
         可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
+        为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
+        推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
-        <ShadowBody
-          id={name}
-          tagName={SHADOW_BODY_NAME}
-          onShadowRootReady={onShadowBodyRootReady}
-          delegatesFocus={true}
-          styleSheets={finalStyleUrlList}
-          styleContent={finalStyleStr}
-        />
+        {props.mountShadowBodyForRef && (
+          <ShadowBody
+            id={name}
+            tagName={SHADOW_BODY_NAME}
+            onShadowRootReady={onShadowBodyRootReady}
+            delegatesFocus={true}
+            styleSheets={finalStyleUrlList}
+            styleContent={finalStyleStr}
+          />
+        )}
       </>
     );
   }

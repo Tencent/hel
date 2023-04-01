@@ -1,8 +1,10 @@
 /** @typedef {typeof import('./consts').HEL_LOAD_STATUS} HelLoadStatusType */
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
-import { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG } from '../consts';
+import { helConsts } from '../consts';
 import { getHelSingletonHost } from './globalRef';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
+
+const { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX } = helConsts;
 
 function makeOriginOptions(presetOptions) {
   const { apiPrefix } = presetOptions || {};
@@ -104,6 +106,8 @@ function makeHelMicroShared() {
     caches: {
       [PLAT_UNPKG]: unpkgCache,
     },
+    /** @type {Record<string,Record<string, any>>} 和应用无关的通用缓存池 */
+    common: {},
   };
 
   const innerEventBus = makeEventBus();
@@ -130,6 +134,7 @@ export function ensureHelMicroShared() {
   if (helMicroShared) {
     const cacheRoot = helMicroShared.cacheRoot;
     safeGetMap(cacheRoot, 'appGroupName2platform');
+    safeGetMap(cacheRoot, 'common');
 
     // 兼容线上老版本包，遍历 caches 做检测子节点数据结构并补齐
     const caches = cacheRoot.caches;

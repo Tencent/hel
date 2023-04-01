@@ -8,6 +8,7 @@ import { ensureHelMicroShared } from './base/microShared';
 import * as util from './base/util';
 import * as consts from './consts';
 import * as app from './data/app';
+import * as common from './data/common';
 import * as conf from './data/conf';
 import * as custom from './data/custom';
 import * as event from './data/event';
@@ -21,30 +22,20 @@ import * as iso from './handle/iso';
 import * as ready from './handle/ready';
 import * as cacheWrap from './wrap/cache';
 
-util.log(`hel-micro-core ver ${consts.VER}`);
+util.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
 
-const { DEFAULT_API_PREFIX, DEFAULT_API_URL, DEFAULT_PLAT, DEFAULT_USER_LS_KEY, DEFAULT_ONLINE_VER, PLAT_UNPKG, PLAT_HEL } = consts;
-
-export const helConsts = {
-  DEFAULT_API_PREFIX,
-  DEFAULT_API_URL,
-  DEFAULT_PLAT,
-  DEFAULT_USER_LS_KEY,
-  DEFAULT_ONLINE_VER,
-  PLAT_UNPKG,
-  PLAT_HEL,
-};
+export const { helEvents, helLoadStatus, helConsts } = consts;
 
 export const commonUtil = commonUtilMod;
 
-export const { isSubApp, trySetMasterAppLoadedSignal } = iso;
+export const { isSubApp } = iso;
 
 export function resetGlobalThis(globalThis) {
   if (globalThis) {
     setGlobalThis(globalThis);
   }
   // 载入此包就尝试设置 masterApp 锁，以推断自己是不是父应用
-  iso.trySetMasterAppLoadedSignal(!!globalThis);
+  iso.tryMarkFlag(!!globalThis);
   // 确保 __HEL_MICRO_SHARED__ 存在
   ensureHelMicroShared();
 }
@@ -56,10 +47,6 @@ resetGlobalThis();
  * @returns
  */
 export const { getPlatform, getSharedCache } = cacheWrap;
-
-export const helEvents = consts.HEL_EVENTS;
-
-export const helLoadStatus = consts.HEL_LOAD_STATUS;
 
 export const { allowLog, log } = util;
 
@@ -79,8 +66,11 @@ export const { getAppMeta, setAppMeta } = meta;
 // 版本数据 get set
 export const { getVersion, setVersion } = version;
 
-// 自定义数据 get set
+// 应用相关的自定义数据 get set
 export const { getCustomData, setCustomData } = custom;
+
+// 通用的自定义数据 get set
+export const { getCommonData, setCommonData } = common;
 
 // 版本获取状态 get set，样式字符串获取状态 get set
 export const { getVerLoadStatus, setVerLoadStatus, getVerStyleStrStatus, setVerStyleStrStatus } = status;

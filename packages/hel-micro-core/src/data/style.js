@@ -1,5 +1,5 @@
 import { log, safeGetMap, setSubMapValue } from '../base/util';
-import { DEFAULT_ONLINE_VER, HEL_LOAD_STATUS } from '../consts';
+import { DEFAULT_ONLINE_VER, helLoadStatus } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 export function getAppStyleStr(appName, options) {
@@ -26,7 +26,7 @@ export function setAppStyleStr(appName, str, options) {
   }
 
   setSubMapValue(appName2verStyleStr, appName, versionId, str);
-  setSubMapValue(appName2verStyleFetched, appName, versionId, HEL_LOAD_STATUS.LOADED);
+  setSubMapValue(appName2verStyleFetched, appName, versionId, helLoadStatus.LOADED);
 }
 
 export function setVerExtraCssList(appName, cssList, inputOptions) {

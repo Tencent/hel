@@ -48,18 +48,6 @@ export interface ICustom {
   /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
   extraCssList?: string[];
   /**
-   * default: 'only_cust'，仅在 enable=true 时此配置才有效
-   *
-   * IPreFetchOptionsBase.extraCssList: outCss,
-   * IPreFetchOptionsBase.custom.extraCssList: custCss
-   *
-   * 配置了 outCss 时，如何处理 custCss 和 outCss 的关系
-   * merge: custCss 和 outCss 合并
-   * only_cust: 保留 custCss，丢弃 outCss
-   * only_out: 丢弃 custCss，保留 outCss
-   */
-  cssStrategy?: 'merge' | 'only_cust' | 'only_out';
-  /**
    * defaut: false
    * 是否跳过获取 hel-meta.json 的获取步骤，true：跳过，false：不跳过
    * 当用户设定 custom.host 配置时，hel-micro 采取总是相信该 host 存在一个 hel-meta.json 文件并尝试去获取
