@@ -151,7 +151,6 @@ function MayShadowComp(props: IMayShadowProps) {
     }
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
 
-    const ShadoeViewComp = shadowMode === 'v1' ? ShadowView : ShadowViewV2;
     return (
       <>
         <ShadowViewV2

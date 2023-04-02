@@ -36,6 +36,12 @@ function tryMarkFlag() {
  * @returns
  */
 function isMasterApp$1() {
+  var globalThis = getGlobalThis();
+  // 未使用 hel-iso 的主应用写入的是 __MASTER_APP_LOADED__，这里做一下兼容判断
+  if (globalThis.__MASTER_APP_LOADED__ === true) {
+    return false;
+  }
+
   // __HEL_ISO_FLAG__ 是当前包写入的，表示为主应用，反之则是子应用
   return isMeMarkTrue;
 }
