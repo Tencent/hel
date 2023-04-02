@@ -4,31 +4,75 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /*
 |--------------------------------------------------------------------------
-| WARNING:
-| 此包只能被每个应用独立安装，使用 externals 方式将会导致此判断失效
-| 确保此包在入口文件第一行引入，才能让 isSubApp 逻辑执行正确
+| ATTENTION:
+| 此包只能被每个应用独立安装，将此包提升到 external 将会导致 isSubApp 失效
+| 同时确保此包在入口文件第一行引入，才能让 isSubApp 逻辑执行正确
 |--------------------------------------------------------------------------
 */
 
-var isMeMarkTrue = false;
+// iso 模块加载信息
+var info = getIsoInfo();
+var cachedIsMaster = null;
 tryMarkFlag();
 
 /**
- *
  * @returns {typeof globalThis}
  */
 function getGlobalThis() {
   return window || global;
 }
+function getIsoInfo() {
+  var _getGlobalThis = getGlobalThis(),
+    __HEL_ISO_FLAG__ = _getGlobalThis.__HEL_ISO_FLAG__,
+    __MASTER_APP_LOADED__ = _getGlobalThis.__MASTER_APP_LOADED__;
+  return {
+    /** 是否是第一个载入 hel-iso 模块 */
+    isFirstMod: __HEL_ISO_FLAG__ === undefined,
+    /** 是否是在 hel-micro-core 之前载入的 */
+    isBeforeCore: __MASTER_APP_LOADED__ === undefined
+  };
+}
 function tryMarkFlag() {
   var globalThis = getGlobalThis();
-
   // 启用新的名称 __HEL_ISO_FLAG__ 替代 hel-micro-core 里的 __MASTER_APP_LOADED__
-  // 确保 hel-iso 被引入时能够正确推断是否主应用
+  // 确保 hel-iso 在被并调用 isMasterApp 时能够正确推断是否主应用
   if (globalThis.__HEL_ISO_FLAG__ === undefined) {
-    globalThis.__HEL_ISO_FLAG__ = true;
-    isMeMarkTrue = true;
+    globalThis.__HEL_ISO_FLAG__ = 1;
   }
+}
+function getIsMaster() {
+  var globalThis = getGlobalThis();
+  var HelMicroCore = globalThis.HelMicroCore,
+    masterFlag = globalThis.__MASTER_APP_LOADED__,
+    microShared = globalThis.__HEL_MICRO_SHARED__;
+  var isFirstMod = info.isFirstMod,
+    isBeforeCore = info.isBeforeCore;
+  if (!isFirstMod) {
+    return false;
+  }
+  // 以下逻辑开始，当前 iso 模式是【第一个载入的】，按道理可以返回 true 表示前应用是主应用了
+  // 但为了兼容 iso 和 core 共存时，依然能正确判断当前应用是否是主应用，所以继续加入其他判断条件
+  // -----------------------------------------------------------------------------
+  // 在 core 之前加载
+  if (isBeforeCore) {
+    return true;
+  }
+  // 处于 core 之后加载，core 已提升为 external
+  // 此时假定所用应用均接入 hel-iso 并再也未使用 external core 的 isMasterApp 判断
+  if (HelMicroCore) {
+    return true;
+  }
+  // 分析 microShared 数据做最后的兜底
+  if (microShared) {
+    var map = microShared.cacheRoot.appGroupName2platform;
+    if (Object.keys(map).length) {
+      // 已存在相关子模块数据，确认为非主应用
+      return false;
+    }
+  }
+  // 处于 core 之后加载，core 未提升，走老规则判断
+  // 因 iso 处于 core 之后加载，注意此时 masterFlag 一定已设为了布尔值
+  return masterFlag;
 }
 
 /**
@@ -36,14 +80,10 @@ function tryMarkFlag() {
  * @returns
  */
 function isMasterApp$1() {
-  var globalThis = getGlobalThis();
-  // 未使用 hel-iso 的主应用写入的是 __MASTER_APP_LOADED__，这里做一下兼容判断
-  if (globalThis.__MASTER_APP_LOADED__ === true) {
-    return false;
+  if (cachedIsMaster === null) {
+    cachedIsMaster = getIsMaster();
   }
-
-  // __HEL_ISO_FLAG__ 是当前包写入的，表示为主应用，反之则是子应用
-  return isMeMarkTrue;
+  return cachedIsMaster;
 }
 function isSubApp$1() {
   return !isMasterApp$1();
@@ -53,9 +93,9 @@ var isMasterApp = isMasterApp$1,
   isSubApp = isSubApp$1;
 var index = {
   isSubApp: isSubApp,
-  isMasterApp: isMasterApp,
+  isMasterApp: isMasterApp
 };
 
-exports['default'] = index;
+exports["default"] = index;
 exports.isMasterApp = isMasterApp;
 exports.isSubApp = isSubApp;

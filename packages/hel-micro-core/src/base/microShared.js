@@ -105,6 +105,7 @@ function makeHelMicroShared() {
     /** @type {Record<string, ReturnType<typeof makeCacheNode>>} */
     caches: {
       [PLAT_UNPKG]: unpkgCache,
+      [PLAT_HEL]: helCache,
     },
     /** @type {Record<string,Record<string, any>>} 和应用无关的通用缓存池 */
     common: {},
