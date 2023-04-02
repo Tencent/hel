@@ -1,17 +1,34 @@
+import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 import { API_NORMAL_GET } from '../consts/logic';
-import type { IAppAndVer } from '../deps/helMicroCore';
-import type { ApiMode, Platform } from '../deps/helTypes';
+import type { IHelMeta } from '../types';
 import type { IGetVerOptions, IHelGetOptions } from './api';
 import * as innerApiSrv from './api';
 import * as innerAppSrv from './app';
 
-export async function getSubAppVersion(versionId: string, options: IGetVerOptions) {
+export interface IGetMetaDataUrlOptions {
+  versionId?: string;
+  platform?: Platform;
+  apiMode?: ApiMode;
+  /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
+  protocol?: 'http' | 'https';
+  projectId?: string;
+  /** default: true */
+  semverApi?: boolean;
+}
+
+/**
+ * 获取应用构建版本数据
+ */
+export async function getSubAppVersion(versionId: string, options: IGetVerOptions): Promise<ISubAppVersion> {
   const versionData = await innerApiSrv.getSubAppVersion(versionId, options);
   return versionData;
 }
 
-export async function getSubAppMeta(versionId: string, options?: IHelGetOptions): Promise<IAppAndVer> {
-  const meta = await innerApiSrv.getSubAppAndItsVersion(versionId, options || {});
+/**
+ * 获取应用自身描述和构建版本数据
+ */
+export async function getSubAppMeta(appName: string, options?: IHelGetOptions): Promise<IHelMeta> {
+  const meta = await innerApiSrv.getSubAppAndItsVersion(appName, options || {});
   return meta;
 }
 
@@ -21,19 +38,9 @@ export async function getSubAppMeta(versionId: string, options?: IHelGetOptions)
  * @param options
  * @returns
  */
-export function getMetaDataUrl(
-  appName: string,
-  options?: {
-    versionId?: string;
-    platform?: Platform;
-    apiMode?: ApiMode;
-    /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
-    protocol?: 'http' | 'https';
-    projectId?: string;
-  },
-): string {
-  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId } = options || {};
-  let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
+export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions): string {
+  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId, semverApi = true } = options || {};
+  let { url } = innerApiSrv.prepareCustomPlatRequestInfo(appName, { platform, versionId, apiMode, projectId, semverApi });
   if (protocol === 'http') {
     url = url.replace('https:', 'http:');
   }

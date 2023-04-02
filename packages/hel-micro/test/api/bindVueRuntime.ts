@@ -1,13 +1,17 @@
-import { getGlobalThis } from 'hel-micro-core';
-import { bindVueRuntime } from 'index';
+import { runTest } from '../testKit';
 
-describe('test bindVueRuntime', () => {
-  test('bindVueRuntime should be function', () => {
-    expect(bindVueRuntime).toBeInstanceOf(Function);
-  });
+runTest(({ api, describe }) => {
+  const { bindVueRuntime, core } = api;
+  const { getGlobalThis } = core;
 
-  test('bindVueRuntime should work', () => {
-    bindVueRuntime({ Vue: { tip: 'fake Vue' } });
-    expect(getGlobalThis().LEAH_Vue).toBeTruthy();
+  describe('test bindVueRuntime', () => {
+    test('bindVueRuntime should be function', () => {
+      expect(bindVueRuntime).toBeInstanceOf(Function);
+    });
+
+    test('bindVueRuntime should work', () => {
+      bindVueRuntime({ Vue: { tip: 'fake Vue' } });
+      expect(getGlobalThis().LEAH_Vue).toBeTruthy();
+    });
   });
 });

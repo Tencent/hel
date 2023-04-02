@@ -1,24 +1,28 @@
-import { getFakeHelContext } from 'index';
+import { runTest } from '../testKit';
 
-describe('test getFakeHelContext', () => {
-  test('getFakeHelContext should be function', () => {
-    expect(getFakeHelContext).toBeInstanceOf(Function);
-  });
+runTest(({ api, describe }) => {
+  const { getFakeHelContext } = api;
 
-  test('getFakeHelContext should work', () => {
-    const fakeCtx = getFakeHelContext('app1');
-    expect(fakeCtx.name).toBe('app1');
-  });
+  describe('test getFakeHelContext', () => {
+    test('getFakeHelContext should be function', () => {
+      expect(getFakeHelContext).toBeInstanceOf(Function);
+    });
 
-  test('getFakeHelContext pass platform', () => {
-    const fakeCtx = getFakeHelContext('app1', { platform: 'tnews' });
-    expect(fakeCtx.name).toBe('app1');
-    expect(fakeCtx.platform).toBe('tnews');
-  });
+    test('getFakeHelContext should work', () => {
+      const fakeCtx = getFakeHelContext('app1');
+      expect(fakeCtx.name).toBe('app1');
+    });
 
-  test('getFakeHelContext pass versionId', () => {
-    const fakeCtx = getFakeHelContext('app1', { versionId: 'ver_1' });
-    expect(fakeCtx.name).toBe('app1');
-    expect(fakeCtx.versionId).toBe('ver_1');
+    test('getFakeHelContext pass platform', () => {
+      const fakeCtx = getFakeHelContext('app1', { platform: 'tnews' });
+      expect(fakeCtx.name).toBe('app1');
+      expect(fakeCtx.platform).toBe('tnews');
+    });
+
+    test('getFakeHelContext pass versionId', () => {
+      const fakeCtx = getFakeHelContext('app1', { versionId: 'ver_1' });
+      expect(fakeCtx.name).toBe('app1');
+      expect(fakeCtx.versionId).toBe('ver_1');
+    });
   });
 });

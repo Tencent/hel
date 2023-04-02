@@ -53,7 +53,7 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
   const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
-  const { homePage, groupName, name: appName, platform } = subApp;
+  const { homePage, groupName, name: appName, semverApi } = subApp;
 
   /**
    *  构建版本号，当指定了 homePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
@@ -64,7 +64,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
   let version = userExtractOptions.buildVer;
   const packVer = packageJson.version;
   if (!version) {
-    if (platform === 'unpkg') {
+    if (semverApi) {
       version = packVer;
     } else {
       try {

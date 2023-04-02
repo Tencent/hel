@@ -89,55 +89,34 @@ export function getPublicPathOrUrl(homePage, needsSlash = true) {
 
 /**
  * 返回 react 相关的包体 externals 映射对象
- * 16.14.0
- * https://tnfe.gtimg.com/hel-runtime/level1/16.14.0-react.js
- * https://tnfe.gtimg.com/hel-runtime/level1/16.14.0-react.dev.js
  * @returns
  */
 export function getReactExternals() {
   return {
-    react: 'LEAH_React',
-    'react-dom': 'LEAH_ReactDOM',
-    'react-reconciler': 'LEAH_ReactReconciler',
-    'react-is': 'LEAH_ReactIs',
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    'react-reconciler': 'ReactReconciler',
+    'react-is': 'ReactIs',
   };
 }
 
 /**
  * 返回 vue3 相关的包体 externals 映射对象，目前已有以下版本
  * ```
- * - 3.2.33
- * https://tnfe.gtimg.com/hel-runtime/level1/3.2.33-vue.js
- * https://tnfe.gtimg.com/hel-runtime/level1/3.2.33-vue.dev.js
- *
- * ```
  * @returns
  */
 export function getVue3Externals() {
   return {
-    vue: 'LEAH_Vue',
-    '@vue/compiler-dom': 'LEAH_VueCompilerDom',
-    '@vue/compiler-sfc': 'LEAH_VueCompilerSfc',
-    '@vue/runtime-core': 'LEAH_VueRunTimeCore',
-    '@vue/runtime-dom': 'LEAH_VueRunTimeDom',
-    '@vue/server-renderer': 'LEAH_VueServerRenderer',
-    '@vue/shared': 'LEAH_VueShared',
-    '@vue/reactivity': 'LEAH_VueReactivity',
+    vue: 'Vue',
   };
 }
 
 /**
  * 返回 vue2 相关的包体 externals 映射对象，目前已有以下版本
- * ```
- * - 2.6.14
- * https://tnfe.gtimg.com/hel-runtime/level1/2.6.14-vue.js
- * https://tnfe.gtimg.com/hel-runtime/level1/2.6.14-vue.dev.js
- *
- * ```
  * @returns
  */
 export function getVue2Externals() {
   return {
-    vue: 'LEAH_Vue',
+    vue: 'Vue',
   };
 }

@@ -1,5 +1,5 @@
-import { appReady } from '../deps/helMicroCore';
-import { IEmitAppInfo } from '../deps/helTypes';
+import { appReady } from 'hel-micro-core';
+import { IEmitAppInfo } from 'hel-types';
 
 interface IEmitAppOptions {
   appGroupName: string;

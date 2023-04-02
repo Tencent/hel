@@ -1,14 +1,14 @@
+import * as core from 'hel-micro-core';
+import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
+import * as alt from '../alternative';
 import { loadAppAssets } from '../browser';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
-import { PLAT_UNPKG } from '../consts/logic';
 import storageKeys from '../consts/storageKeys';
-import * as core from '../deps/helMicroCore';
-import type { ApiMode, ISubApp, ISubAppVersion, Platform } from '../deps/helTypes';
-import { getPlatform, getPlatformConfig } from '../shared/platform';
+import { getPlatform } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
-import { getAllExtraCssList, noop, safeParse } from '../util';
+import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
 import { getCustomMeta, isCustomValid } from './custom';
@@ -26,8 +26,7 @@ interface ICacheData {
 }
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
-  const conf = core.getPlatformConfig(options.platform);
-  const fallbackHook = options.onFetchMetaFailed || conf.onFetchMetaFailed;
+  const fallbackHook = alt.getFn(options.platform, 'onFetchMetaFailed', options.onFetchMetaFailed);
   return fallbackHook;
 }
 
@@ -35,7 +34,7 @@ function getFallbackHook(options: IInnerPreFetchOptions) {
  * 如果用户未指定 apiMode，或许将来node 环境则一定是 get
  */
 function computeApiMode(platform?: Platform, specifiedApiMode?: ApiMode) {
-  const { apiMode } = getPlatformConfig(platform);
+  const { apiMode } = core.getPlatformConfig(platform);
   if (specifiedApiMode) {
     return specifiedApiMode;
   }
@@ -61,7 +60,7 @@ async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions)
     }
   }
   const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
-  return safeParse(appCacheStr || '', null);
+  return core.commonUtil.safeParse(appCacheStr || '', null);
 }
 
 export async function clearDiskCachedApp(appName: string) {
@@ -86,6 +85,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     projectId = '',
     custom,
     strictMatchVer,
+    semverApi,
   } = options;
   const { callRemote = true } = fnOptions || {};
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
@@ -100,9 +100,9 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   const memApp = core.getAppMeta(appName, platform);
   const memAppVersion = core.getVersion(appName, { platform, versionId });
 
-  // 优先从内存获取
+  // 优先从内存获取（非语义化api获取的 memAppVersion 才是有意义的，可进入此逻辑做判断）
   if (
-    platform !== PLAT_UNPKG
+    !semverApi
     && memApp
     && memAppVersion
     && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
@@ -135,7 +135,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
         // 将硬盘缓存数据写回到内存
         cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
         // 异步缓存一份最新的数据
-        tryGetFromRemote(enableSyncMeta).catch((err: any) => noop(err));
+        tryGetFromRemote(enableSyncMeta).catch((err: any) => core.commonUtil.noop(err));
       }
     }
 
@@ -221,7 +221,7 @@ export function cacheApp(
   }
 
   // 写 mem app
-  if (platform === PLAT_UNPKG) {
+  if (loadOptions.semverApi) {
     const meta = core.getAppMeta(appName, platform);
     // @ts-ignore, inject __setByLatest
     if (meta?.__setByLatest !== true) {

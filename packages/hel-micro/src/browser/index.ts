@@ -1,7 +1,9 @@
-import { getGlobalThis } from '../deps/helMicroCore';
-import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from '../deps/helTypes';
+import { commonUtil, getGlobalThis } from 'hel-micro-core';
+import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
 import type { CssAppendType, IChangeAttrs, IInnerPreFetchOptions, ILinkInfo, IScriptInfo } from '../types';
-import { getAllExtraCssList, helLinkId, helScriptId, merge2List, noop } from '../util';
+import { getAllExtraCssList, helLinkId, helScriptId } from '../util';
+
+const { noop } = commonUtil;
 
 /**
  * 做一下净化处理
@@ -236,15 +238,17 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     getExcludeCssList,
   } = loadOptions;
   const allExtraCssList = getAllExtraCssList(loadOptions);
-  const allCssList = merge2List(allExtraCssList, chunkCssSrcList);
+  const allCssList = commonUtil.merge2List(allExtraCssList, chunkCssSrcList);
   const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
 
   const createAdditionalScripts = (scripts?: string[], appendToBody?: boolean) => {
     if (!scripts) return;
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
-      if (scriptUrl.endsWith('.css') && appendCss && !excludeCssList.includes(scriptUrl)) {
-        createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+      if (scriptUrl.endsWith('.css')) {
+        if (appendCss && !excludeCssList.includes(scriptUrl)) {
+          createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+        }
       } else {
         createScriptElement(name, { appGroupName, appendToBody, attrs: { src: scriptUrl }, changeAttrs });
       }

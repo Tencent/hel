@@ -1,10 +1,11 @@
-import { getGlobalThis } from '../deps/helMicroCore';
+import { getGlobalThis } from 'hel-micro-core';
 
 function injectDefault(externalItem: any) {
   if (externalItem && !externalItem.default) {
     try {
       // eslint-disable-next-line
       externalItem.default = externalItem;
+      // prettier-ignore
     } catch (err: any) {}
   }
   return externalItem;
@@ -49,6 +50,7 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
   const reactReconcilerMod = reactRuntimeObj.ReactReconciler || null;
 
   const externalObj = {
+    // 让一些采用了旧映射模式的包也能够正常加载
     LEAH_React: reactMod,
     LEAH_ReactDOM: reactDomMod,
     LEAH_ReactIs: reactIsMod,
@@ -69,7 +71,9 @@ export function bindReactRuntime(reactRuntimeObj: IReactRuntimeObj) {
 export function bindVueRuntime(vueRuntimeObj: { Vue: any }) {
   const vueMod = injectDefault(vueRuntimeObj.Vue);
   const externalObj = {
+    // 让一些采用了旧映射模式的包也能够正常加载
     LEAH_Vue: vueMod,
+    // 对齐社区的挂载 key 名称
     Vue: vueMod,
   };
   bindExternals(externalObj);

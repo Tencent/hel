@@ -1,8 +1,7 @@
 /**
  * 本代码实现参考localforage库：https://localforage.github.io/localForage/#localforage
  */
-import { getGlobalThis } from '../deps/helMicroCore';
-import { purify } from '../util';
+import { commonUtil, getGlobalThis } from 'hel-micro-core';
 
 interface IOptions {
   name: string;
@@ -67,7 +66,7 @@ export class IndexedDBStorage {
     const { dbInfo } = this;
     if (options) {
       const { name, storeName, version } = options;
-      Object.assign(dbInfo, purify({ name, storeName, version }));
+      Object.assign(dbInfo, commonUtil.purify({ name, storeName, version }));
     }
     let dbContext = dbContexts[dbInfo.name];
     if (!dbContext) {

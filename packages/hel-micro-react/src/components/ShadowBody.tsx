@@ -1,8 +1,8 @@
-import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
+import { getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ShadowView from 'shadow-view-react';
 import defaults from '../consts/defaults';
+import * as wrap from '../wrap';
 import ShadowViewV2 from './ShadowViewV2';
 
 const { STATIC_SHADOW_BODY_NAME } = defaults;
@@ -12,7 +12,7 @@ const bus = getHelEventBus();
 function makeBodyMountNode(name: string, prefix: string) {
   const doc = getGlobalThis().document;
   const div = doc.createElement('div');
-  div.id = `${prefix}_${name || ''}`;
+  div.id = `${prefix}/${name || ''}`;
   // avoid read only warning: div.style = ''
   div.setAttribute('style', 'position: absolute; top: 0px; left: 0px; width: 100%;');
   doc.body.appendChild(div);
@@ -24,7 +24,7 @@ class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
 
   constructor(props: any) {
     super(props);
-    this.node = makeBodyMountNode(this.props.id, 'shadowBodyBox');
+    this.node = makeBodyMountNode(this.props.id, 'ShadowBodyBox');
   }
 
   componentWillUnmount() {
@@ -37,45 +37,42 @@ class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
     const { node, props } = this;
     // 正常情况下，这句话的判断不会成立，此处为了让 tsc 编译通过
     if (!node) return <h1>node not ready</h1>;
-    const ShadoeViewComp = props.shadowMode === 'v1' ? ShadowView : ShadowViewV2;
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
-    return ReactDOM.createPortal(<ShadoeViewComp {...props} />, node);
+    return ReactDOM.createPortal(<ShadowViewV2 {...props} />, node);
   }
 }
 
-const staticShadowBodyRefs: Record<string, any> = {};
-const staticShadowBodyRefRenderingMap: Record<string, boolean> = {};
-
-export function getStaticShadowBodyRef(name: string) {
-  return staticShadowBodyRefs[name] || null;
-}
-
-export function getShadowBodyReadyEvName(name: string) {
-  const evName = `ReactShadowBody_${name}`;
+export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) {
+  const { platform, versionId } = options;
+  const evName = `ReactShadowBody/${platform}/${name}/${versionId}`;
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, createRoot: any, shadowMode: 'v1' | 'v2') {
+export function tryMountStaticShadowBody(props: any, createRoot: any, options: IGetVerOptions) {
   const name = props.id;
-  if (getStaticShadowBodyRef(name)) {
+  if (wrap.getStaticShadowBodyRef(name, options)) {
     return;
   }
-  if (staticShadowBodyRefRenderingMap[name]) {
+  if (wrap.getStaticShadowBodyStatus(name, options)) {
     return;
   }
-  staticShadowBodyRefRenderingMap[name] = true;
+  wrap.setStaticShadowBodyStatus(name, 1, options);
 
-  const mountNode = makeBodyMountNode(name, 'staticShadowBodyBox');
-  const evName = getShadowBodyReadyEvName(name);
-  const ShadoeViewComp = shadowMode === 'v1' ? ShadowView : ShadowViewV2;
+  // mounting to body directly will lead the error below:
+  // Rendering components directly into document.body is discouraged,
+  // since its children are often manipulated by third-party scripts and browser extensions.
+  // This may lead to subtle reconciliation issues. Try rendering into a container element created for your app.
+  // so we create a mount node manually
+  const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
+  const evName = getShadowBodyReadyEvName(name, options);
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
-    <ShadoeViewComp
+    <ShadowViewV2
       {...{
         ...props,
-        tagName: STATIC_SHADOW_BODY_NAME + shadowMode,
+        tagName: STATIC_SHADOW_BODY_NAME,
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
-          staticShadowBodyRefs[name] = bodyRef;
+          wrap.setStaticShadowBodyRef(name, bodyRef, options);
           bus.emit(evName);
         },
       }}

@@ -37,7 +37,7 @@ export type IsLegacy = boolean;
  * 用户调用 MicroApp 需要传递的类型描述
  */
 export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
-  /** 如果指定了 Component，则 name 无效 */
+  /** 如果指定了 Component，表示复用 name 对应的预设应用样式，但使用用户透传的组件渲染 */
   Component?: AnyCompOrNull;
   /**
    * 处理默认解析出来的字符串，返回的新字符串会替代掉默认字符串
@@ -48,12 +48,6 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * 或者组件使用方处于某种目的，想强制重新设置样式字符串
    */
   handleStyleStr?: (mayFetchedStr: string) => string;
-  /**
-   * default: false
-   * 当显示配置 shadow 为 false，appendCss 为 false 时，
-   * 需要上层能够同步的拿到样式字符串，则可配置此项为 true
-   */
-  needStyleStr?: boolean;
   /**
    * default: true
    * 远程组件默认是 memo 起来的，设置为 false 关闭 memo 功能
@@ -75,33 +69,46 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * default: true
    */
   shadow?: boolean;
-  shadowMode?: 'v1' | 'v2';
-  /** 改参数只对 v2 生效 */
+  /**
+   * default: undefined，该属性仅在 shadow 为 true 时有意义
+   * 表示包裹shadowRoot节点的div节点的额外样式
+   */
   shadowWrapStyle?: React.CSSProperties;
-  /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */
+  /**
+   * default: undefined，该属性仅在 shadow 为 true 时有意义
+   * 表示构建 shadow-dom 的延迟时间
+   */
   shadowDelay?: number;
   /**
    * default: false [when shadow is true], true [when shadow is false]
-   * 未显式设置 appendCss 时，它的默认受设置 shadow 影响，
-   * 表示是否向 document 或 shadow-root 上附加样式外联样式标签
-   * shadow 为 true 时，appendCss 表示是否附加外连样式标签到 shadow-root
-   * shadow 为 false 时，appendCss 表示是否附加外连样式标签到 document.body
+   * 未显式设置 appendCss 时，它的默认受设置 shadow 影响，大多数时候应该走此规则，不需要人为设置
+   * 表示是否向 document 上附加样式外联样式标签
    */
   appendCss?: boolean;
   /**
-   * default: []
-   * 额外的样式字符串列表，通常作用于
+   * default: true，该属性仅在 shadow 为 true 时有意义
+   * 是否把 IPreFetchOptionsBase.extraCssList 和应用自身的构建产物里的样式列表转为字符串后再注入到 shadowdom 里
+   * 默认 true 值，避免 shadowdom 组件渲染时出现抖动情况
+   */
+  cssListToStr?: boolean;
+  /**
+   * default: []，该属性仅在 shadow 为 true 时有意义
+   * 以 shadowdom 模式渲染时，额外追加到 shadowdom 里的样式列表，通常作用于
    * 1 目标组件以shadow模式渲染，让用户有机会自己注入额外的样式
    * 2 目标组件以shadow模式渲染，想覆盖组件的已有样式
    */
-  extraCssUrlList?: string[];
+  extraShadowCssList?: string[];
   /**
-   * default: true
-   * 是否为 shadow-dom 设置样式为字符串，该属性仅在 shadow 为 true 时有意义
-   * 需注意如果 shadow 为 true 时，同时也设置了 appendCss 为 true，
-   * 那建议设置 setStyleAsString 为 false，避免 shadow-root 里既有外联样式列表，又有样式字符串
+   * default: true，该属性仅在 shadow 为 true 时有意义
+   * 是否把 extraShadowCssList 里的样式转为字符串后再注入到 shadowdom 里
+   * 默认 true 值，避免 shadowdom 组件渲染时出现抖动情况
    */
-  setStyleAsString?: boolean;
+  extraShadowCssListToStr?: boolean;
+  /**
+   * default: undefined，该属性仅在 shadow 为 true 时有意义
+   * 额外注入到shadowdom 里的样式字符串
+   */
+  extraShadowStyleStr?: string;
   /**
    * 在shadow模式下，默认使用 ReactDOM.render 挂载 shadowBody 到 body 下,
    * 18版本react推荐使用 react-dom/client.createRoot 方法替代 ReactDOM.render
@@ -184,16 +191,16 @@ export interface ILocalCompProps {
   /** 目标组件的属性 */
   compProps?: AnyRecord;
   /** 目标组件的样式列表 */
-  styleUrlList?: string[];
+  cssList?: string[];
   /**
    * default: true
-   * 是否将 styleUrlList 转为 string，可避免初次加载样式抖动问题
+   * 是否将 cssList 转为 string，可避免初次加载样式抖动问题
    */
-  setStyleAsString?: boolean;
+  cssListToStr?: boolean;
   /**
    * 额外的样式字符串
    */
-  styleStr?: boolean;
+  extraShadowStyleStr?: string;
   /**
    * default: 'LocalComp'
    * shadow节点宿主 web-component id
@@ -210,10 +217,9 @@ export interface ILocalCompProps {
    * default: true
    */
   shadow?: boolean;
-  shadowMode?: 'v1' | 'v2';
-  /** 改参数只对 v2 生效 */
+  /** 包裹shadowRoot节点的div节点的额外样式 */
   shadowWrapStyle?: React.CSSProperties;
-  /** 改参数只对 v2 生效，构建 shadow-dom的延迟时间 */
+  /** 构建 shadow-dom的延迟时间 */
   shadowDelay?: number;
 }
 

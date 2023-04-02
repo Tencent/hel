@@ -1,5 +1,5 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IShouldUseGray } from './deps/helMicroCore';
-import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from './deps/helTypes';
+import type { IControlPreFetchOptions, IShouldUseGray } from 'hel-micro-core';
+import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -11,6 +11,11 @@ export type CssAppendType = 'static' | 'build';
 export type AnyRecord = Record<string, any>;
 
 export type VersionId = string;
+
+export interface IHelMeta {
+  app: ISubApp;
+  version: ISubAppVersion;
+}
 
 export interface IGroupedStyleList {
   static: string[];
@@ -42,18 +47,6 @@ export interface ICustom {
   trust?: boolean;
   /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
   extraCssList?: string[];
-  /**
-   * default: 'only_cust'，仅在 enable=true 时此配置才有效
-   *
-   * IPreFetchOptionsBase.extraCssList: outCss,
-   * IPreFetchOptionsBase.custom.extraCssList: custCss
-   *
-   * 配置了 outCss 时，如何处理 custCss 和 outCss 的关系
-   * merge: custCss 和 outCss 合并
-   * only_cust: 保留 custCss，丢弃 outCss
-   * only_out: 丢弃 custCss，保留 outCss
-   */
-  cssStrategy?: 'merge' | 'only_cust' | 'only_out';
   /**
    * defaut: false
    * 是否跳过获取 hel-meta.json 的获取步骤，true：跳过，false：不跳过
@@ -106,12 +99,7 @@ export interface IChangeAttrs {
   (el: HTMLLinkElement | HTMLScriptElement, fnCtx: IChangeAttrsFnCtx): void;
 }
 
-export interface IPreFetchOptionsBase {
-  /**
-   * 是否严格匹配版本，未配置的话默认走 平台配置默认值 true
-   */
-  strictMatchVer?: boolean;
-  platform?: Platform;
+export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /**
    * 指定拉取的版本号
    * 版本号可到 hel pack 服务或 unpkg 服务查看
@@ -165,15 +153,7 @@ export interface IPreFetchOptionsBase {
    * 选择本地缓存的类型是 localStorage 还是 indexedDB
    */
   storageType?: 'localStorage' | 'indexedDB';
-  apiMode?: ApiMode;
-  /**
-   * preFetchLib指定的请求域名前缀，会覆盖掉init里指定的（如有指定）
-   */
-  apiPrefix?: string;
-  // TODO 抽象 metaHooks
   onAppVersionFetched?: (versionData: ISubAppVersion) => void;
-  getSubAppAndItsVersionFn?: IGetSubAppAndItsVersionFn;
-  onFetchMetaFailed?: IOnFetchMetaFailed;
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;

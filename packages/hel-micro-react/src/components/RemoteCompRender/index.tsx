@@ -11,13 +11,15 @@ import useLoadRemoteModule from './useLoadRemoteModule';
  */
 export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
   const ensuredProps = ensurePropsDefaults(props);
-  const { compProps, name, children, handleStyleStr, shadow, shadowMode, shadowWrapStyle } = ensuredProps;
+  const { compProps, name, children, handleStyleStr, shadow, shadowWrapStyle } = ensuredProps;
   const { platform, versionId } = appParamSrv.getPlatAndVer(name, ensuredProps);
 
   const { errMsg, getModule } = useLoadRemoteModule(ensuredProps);
   React.useEffect(() => {
     const isStyleFetched = appStyleSrv.isStyleFetched(props.name, props);
     isStyleFetched && tryTriggerOnStyleFetched(props);
+    // here trust my code
+    // eslint-disable-next-line
   }, []);
 
   const { RemoteModule, styleStr, styleUrlList, moduleReady } = getModule();
@@ -46,10 +48,8 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
     createRoot: props.createRoot,
     ignoreHelContext: props.ignoreHelContext,
     shadow,
-    shadowMode,
     shadowWrapStyle,
     shadowDelay: props.shadowDelay,
-    setStyleAsString: ensuredProps.setStyleAsString,
   };
   return <MayShadowComp {...wrapProps} />;
 }

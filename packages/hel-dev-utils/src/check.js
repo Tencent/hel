@@ -8,18 +8,18 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import consts from './configs/consts';
 import { verbose } from './inner-utils/index';
-import { DEFAULT_GUESS_SUB_APP_CONF_PATH } from './_diff/index';
+
+const { DEFAULT_GUESS_SUB_APP_CONF_PATH } = consts;
 
 /**
  *
  * @param {Record<string, any>} pkg - 用户模块的 package.json 文件
  * @param {string | {fileFullPath?:string, checkEnv?:boolean}} [fileFullPathOrOptions] - 文件全路径名字，可带或不带后缀（.ts, .js）
  * 不传递 fileFullPath 的话，会按照下面的路径去猜测：
- * 内，执行的代码位于：<projectDir>/node_modules/@tencent/hel-dev-utils/lib/index.js
- * 推测路径：path.join(__dirname, '../../../../src/configs/subApp')
  *
- * 外，执行的代码位于：<projectDir>/node_modules/hel-dev-utils/lib/index.js
+ * 执行的代码位于：<projectDir>/node_modules/hel-dev-utils/lib/index.js
  * 推测路径：path.join(__dirname, '../../../src/configs/subApp')
  *
  * 因通常 check 都是在 <projectDir>/scripts/check.js 里执行，如要传递可写为

@@ -1,8 +1,10 @@
-import * as apiIndex from 'index';
+import { runTest } from '../testKit';
 
-describe('test apiIndex', () => {
-  test('expose 17 apis', () => {
-    expect(apiIndex).toBeTruthy();
-    expect(Object.keys(apiIndex).filter((apiName) => apiName !== 'default').length).toBe(17);
+runTest(({ api, describe }) => {
+  describe('test apiIndex', () => {
+    test('expose 22 apis', () => {
+      expect(api).toBeTruthy();
+      expect(Object.keys(api).filter((apiName) => apiName !== 'default').length).toBe(22);
+    });
   });
 });

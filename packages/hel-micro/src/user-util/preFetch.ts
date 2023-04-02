@@ -1,27 +1,32 @@
+import { commonUtil, getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus } from 'hel-micro-core';
+import type { IEmitAppInfo } from 'hel-types';
+import * as alt from '../alternative';
 import defaults from '../consts/defaults';
-import { PLAT_UNPKG } from '../consts/logic';
-import { getHelEventBus, getPlatformConfig, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus } from '../deps/helMicroCore';
-import type { IEmitAppInfo } from '../deps/helTypes';
-import { getDefaultPlatform } from '../deps/plat';
 import type { BatchGetFn } from '../services/api';
 import * as apiSrv from '../services/api';
 import { cacheApp, getAppFromRemoteOrLocal, loadApp } from '../services/app';
 import * as logicSrv from '../services/logic';
+import { getPlatform } from '../shared/platform';
 import type {
   AnyRecord,
   BatchAppNames,
   IBatchPreFetchLibOptions,
+  IHelMeta,
   IInnerPreFetchOptions,
   IPreFetchAppOptions,
   IPreFetchLibOptions,
   VersionId,
 } from '../types';
 
+const { getObjsVal } = commonUtil;
+
+const { ENABLE_DISK_CACHE, ENABLE_SYNC_META, STORAGE_TYPE } = defaults;
+
 type LoadAssetsStarter = (() => void) | null;
 
 function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | VersionId) {
   const optionsVar: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
-  optionsVar.platform = getDefaultPlatform(optionsVar.platform);
+  optionsVar.platform = getPlatform(optionsVar.platform);
   optionsVar.isLib = isLib;
   return optionsVar;
 }
@@ -63,15 +68,15 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
  */
 async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOptions) {
   let emitApp: null | IEmitAppInfo = null;
-  const { versionId, platform, isLib } = preFetchOptions;
+  const { versionId, platform, isLib, strictMatchVer, semverApi } = preFetchOptions;
   const fixedInnerOptions = { ...preFetchOptions };
   const fnName = isLib ? 'preFetchLib' : 'preFetchApp';
   try {
-    const conf = getPlatformConfig(platform);
     // 用户未传的话走平台默认值 true
-    fixedInnerOptions.strictMatchVer = preFetchOptions.strictMatchVer ?? conf.strictMatchVer;
+    fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', [strictMatchVer]);
     // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
     fixedInnerOptions.storageType = preFetchOptions.storageType || 'indexedDB';
+    fixedInnerOptions.semverApi = alt.getVal(platform, 'semverApi', [semverApi]);
 
     emitApp = logicSrv.getLibOrApp(appName, fixedInnerOptions);
     if (emitApp) {
@@ -102,6 +107,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
     return { emitApp, msg: '' };
   } catch (err: any) {
+    console.error(err);
     return { emitApp, msg: err.message };
   }
 }
@@ -139,18 +145,25 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
  */
 export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | VersionId) {
   const targetOpts = makePreFetchOptions(false, options);
-  const result = await innerPreFetch(appName, targetOpts);
-  return result.emitApp;
+  const appInfo = await innerPreFetch(appName, targetOpts);
+  return appInfo?.emitApp || null;
 }
 
-interface IBatchPreFetchLibCommon {
+interface IBatchOptionsCommon {
   batchGetFn?: BatchGetFn;
   platform?: string;
+  semverApi?: IBatchPreFetchLibOptions['semverApi'];
   enableDiskCache?: IBatchPreFetchLibOptions['enableDiskCache'];
   enableSyncMeta?: IBatchPreFetchLibOptions['enableSyncMeta'];
   storageType?: IBatchPreFetchLibOptions['storageType'];
   versionIdList?: string[];
   projectIdList?: string[];
+}
+
+interface IBatchOptions {
+  /** 针对单个应用的设置 */
+  preFetchConfigs?: Record<string, IBatchPreFetchLibOptions | VersionId>;
+  common?: IBatchOptionsCommon;
 }
 
 /**
@@ -160,41 +173,34 @@ interface IBatchPreFetchLibCommon {
  */
 export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
   appNames: BatchAppNames,
-  batchOptions?: {
-    /** 针对单个应用的设置 */
-    preFetchConfigs?: Record<string, IBatchPreFetchLibOptions | VersionId>;
-    /** 批量获取的通用设置 */
-    common?: IBatchPreFetchLibCommon;
-  },
+  batchOptions?: IBatchOptions,
 ): Promise<T> {
   const versionIdList: string[] = [];
   const projectIdList: string[] = [];
   const optionsMap = batchOptions?.preFetchConfigs || {};
-  const getOptions: IBatchPreFetchLibCommon = { ...(batchOptions?.common || {}) };
-  const platform = getDefaultPlatform(getOptions.platform);
+  const getOptions: IBatchOptionsCommon = { ...(batchOptions?.common || {}) };
+  const platform = getPlatform(getOptions.platform);
 
-  if (platform === PLAT_UNPKG) {
-    throw new Error('only support platform hel!');
-  }
   if (appNames.length > 8) {
-    throw new Error('only support 8 appName at most!'); // 平台默认只支持最多拉8个
+    throw new Error('only support 8 appName at most!'); // 当前最多只支持最多拉8个
   }
 
+  let appDataList: IHelMeta[] = [];
   const shouldFetchAppNames: string[] = [];
   const ensuredOptionsMap: Record<string, IBatchPreFetchLibOptions> = {};
   for (const name of appNames) {
     const oriOptions = optionsMap[name];
-    let options: IPreFetchLibOptions = {};
+    let options: IPreFetchLibOptions = { platform };
     if (!oriOptions || typeof oriOptions === 'string') {
       options.versionId = (oriOptions as string) || '';
     } else if (oriOptions) {
-      options = { ...oriOptions };
+      options = { ...oriOptions, ...options };
     }
     ensuredOptionsMap[name] = options;
 
-    options.enableDiskCache = options.enableDiskCache ?? getOptions.enableDiskCache ?? defaults.ENABLE_DISK_CACHE;
-    options.enableSyncMeta = options.enableSyncMeta ?? getOptions.enableSyncMeta ?? defaults.ENABLE_SYNC_META;
-    options.storageType = options.storageType ?? getOptions.storageType ?? defaults.STORAGE_TYPE;
+    options.enableDiskCache = getObjsVal([options, getOptions], 'enableDiskCache', ENABLE_DISK_CACHE);
+    options.enableSyncMeta = getObjsVal([options, getOptions], 'enableSyncMeta', ENABLE_SYNC_META);
+    options.storageType = getObjsVal([options, getOptions], 'storageType', STORAGE_TYPE);
     const appData = await getAppFromRemoteOrLocal(name, options, { callRemote: false });
 
     if (!appData) {
@@ -203,11 +209,15 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
       shouldFetchAppNames.push(name);
     }
   }
-
   getOptions.versionIdList = versionIdList;
   getOptions.projectIdList = projectIdList;
 
-  const appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, getOptions);
+  if (getOptions.semverApi) {
+    appDataList = await Promise.all(shouldFetchAppNames.map((name) => apiSrv.getSubAppAndItsVersion(name, ensuredOptionsMap[name])));
+  } else {
+    appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, getOptions);
+  }
+
   // 设置到内存里，方便后续 preFetchLib 执行时可以跳过请求阶段
   appDataList.forEach(({ app, version }) => {
     const loadOptions = ensuredOptionsMap[app.name] || {};

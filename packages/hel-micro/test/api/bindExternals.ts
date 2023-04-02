@@ -1,14 +1,18 @@
-import { getGlobalThis } from 'hel-micro-core';
-import { bindExternals } from 'index';
+import { runTest } from '../testKit';
 
-describe('test bindExternals', () => {
-  test('bindExternals should be function', () => {
-    expect(bindExternals).toBeInstanceOf(Function);
-  });
+runTest(({ api, describe, util }) => {
+  const { bindExternals, core } = api;
+  const { getGlobalThis } = core;
 
-  test('bindExternals should work', () => {
-    bindExternals({ mod1: { fn: () => 'mod1' } });
-    expect(getGlobalThis().mod1).toBeTruthy();
-    expect(getGlobalThis().mod1.fn() === 'mod1').toBeTruthy();
+  describe('test bindExternals', () => {
+    test('bindExternals should be function', () => {
+      expect(bindExternals).toBeInstanceOf(Function);
+    });
+
+    test('bindExternals should work', () => {
+      bindExternals({ mod1: { fn: () => 'mod1' } });
+      expect(getGlobalThis().mod1).toBeTruthy();
+      expect(getGlobalThis().mod1.fn() === 'mod1').toBeTruthy();
+    });
   });
 });

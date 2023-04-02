@@ -1,0 +1,64 @@
+{
+  "name": "hel-utils",
+  "version": "4.0.1",
+  "description": "common util fns for hel-micro-core.",
+  "keywords": [
+    "hel",
+    "hel-micro",
+    "module federation",
+    "module federation sdk"
+  ],
+  "bugs": "https://github.com/tnfe/hel/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel.git",
+    "directory": "packages/hel-micro"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "lib/index.js",
+  "unpkg": "dist/hel-micro.min.js",
+  "module": "es/index.js",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "rollup -c --environment BUILD_ENV:commonjs",
+    "build:es": "rollup -c --environment BUILD_ENV:es",
+    "build:umd": "rollup -c --environment BUILD_ENV:development",
+    "build:umd:min": "rollup -c --environment BUILD_ENV:production",
+    "lint": "eslint ./src --ext ts,tsx",
+    "lint_fix": "eslint ./src --ext ts,tsx --fix",
+    "lint_test": "eslint ./test --ext ts,tsx",
+    "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
+    "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
+  },
+  "dependencies": {
+    "hel-micro-core": "^4.0.2",
+    "hel-types": ">=3.8.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@types/qs": "^6.9.7",
+    "babel-cli": "^6.26.0",
+    "fake-indexeddb": "^4.0.1",
+    "qs": "^6.11.0",
+    "rollup": "^2.23.0"
+  },
+  "peerDependencies": {
+    "hel-micro-core": "^4.0.2",
+    "hel-types": ">=3.8.2"
+  },
+  "bundleDependencies": [],
+  "deprecated": false
+}

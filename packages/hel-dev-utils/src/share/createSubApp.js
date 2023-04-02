@@ -2,13 +2,7 @@
 /** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import * as base from '../base-utils/index';
 import cst from '../configs/consts';
-
-const presetExternals = {
-  react: base.getReactExternals(),
-  vue2: base.getVue2Externals(),
-  vue3: base.getVue3Externals(),
-  lib: {},
-};
+import presetExternal from '../configs/presetExternal';
 
 /**
  *
@@ -24,11 +18,12 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
       platform: cst.DEFAULT_PLAT,
       npmCdnType: cst.DEFAULT_NPM_CDN_TYPE,
       handleHomePage: true,
+      semverApi: true,
     },
     userOptions || {},
   );
   const envParams = base.getHelEnvParams(pkg, optionsVar);
-  const externals = optionsVar.externals || presetExternals[frameworkType];
+  const externals = Object.assign({}, optionsVar.externals || {}, presetExternal[frameworkType] || {});
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 
   return {

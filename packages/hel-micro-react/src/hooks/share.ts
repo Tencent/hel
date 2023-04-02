@@ -48,3 +48,22 @@ export function useExecuteCallbackOnce(logicCb: (...args: any[]) => any) {
     logicCb();
   }
 }
+
+export function useObject<T extends Record<string, any> = Record<string, any>>(initialState: T): [T, (partialState: Partial<T>) => void] {
+  const [state, setFullState] = React.useState(initialState);
+  const unmountRef = React.useRef(false);
+  React.useEffect(
+    () => () => {
+      unmountRef.current = true;
+    },
+    [],
+  );
+  return [
+    state,
+    (partialState: Partial<T>) => {
+      if (!unmountRef.current) {
+        setFullState((state) => ({ ...state, ...partialState }));
+      }
+    },
+  ];
+}

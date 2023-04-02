@@ -1,7 +1,4 @@
-import { VER } from '../deps/plat';
-
 const toExport = {
-  VER,
   SHADOW: true,
   SET_STYLE_AS_STRING: true,
   ENABLE_DISK_CACHE: false,
@@ -10,6 +7,7 @@ const toExport = {
   ENABLE_APPEND_CSS: true,
   API_MODE: 'get',
   EXTRA_DATA_PREFIX: 'HelExtraData',
+  KEY_CSS_STR: 'CSS_STR',
 } as const;
 
 export default toExport;

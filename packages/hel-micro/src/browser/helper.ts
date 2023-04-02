@@ -1,5 +1,5 @@
+import { getGlobalThis } from 'hel-micro-core';
 import storageKeys from '../consts/storageKeys';
-import { getGlobalThis } from '../deps/helMicroCore';
 import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 
 export function getIndexedDB() {

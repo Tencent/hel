@@ -1,8 +1,6 @@
-import { PLAT_UNPKG } from '../consts/logic';
 import {
   getAppMeta,
   getPlatform,
-  getPlatformConfig,
   getVerApp,
   getVerExtraCssList,
   getVerLib,
@@ -13,41 +11,49 @@ import {
   setAppMeta,
   setVerExtraCssList,
   setVersion,
-} from '../deps/helMicroCore';
-import type { IEmitAppInfo, Platform } from '../deps/helTypes';
+} from 'hel-micro-core';
+import type { IEmitAppInfo, Platform } from 'hel-types';
+import * as alt from '../alternative';
 import emitApp from '../process/emitApp';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
 import { isCustomValid } from './custom';
 
-function tryFixAssociateData(appName: string, appGroupName: string, getOptions: IGetOptions) {
-  const { platform } = getOptions;
+interface IFixOptions extends IGetOptions {
+  emitPlatform?: string;
+}
+
+function tryFixAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
+  const { platform } = fixOptions;
   const oriMeta = getAppMeta(appGroupName, platform);
   if (oriMeta) {
     return;
   }
 
   // 因 appName 对应的 appMeta、version、extraCssList 数据由 micro 写入
-  // trust 模式下是没有这些数据的，需为 appGroupName 补上这些数据
+  // trust 模式下是没有这些数据的，需补上 appGroupName 相关数据
   const custMeta = getAppMeta(appName, platform);
-  const custVer = getVersion(appName, getOptions);
+  const custVer = getVersion(appName, fixOptions);
   if (custMeta && custVer) {
     setAppMeta({ ...custMeta, name: appGroupName, __addedByTrust: true }, platform);
     setVersion(appGroupName, { ...custVer, sub_app_name: appGroupName, __addedByTrust: true }, { platform });
-    const cssList = getVerExtraCssList(appName, getOptions);
-    setVerExtraCssList(appGroupName, cssList, getOptions);
+    const cssList = getVerExtraCssList(appName, fixOptions);
+    setVerExtraCssList(appGroupName, cssList, fixOptions);
   }
 }
 
 /**
  * @returns {boolean} - shouldNext
  */
-function fixLibAssociateData(appName: string, appGroupName: string, getOptions: IGetOptions) {
-  const { platform } = getOptions;
-  const lib = getVerLib(appName, getOptions);
+function fixLibAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
+  const { platform, emitPlatform, versionId } = fixOptions;
+  const lib = getVerLib(appName, fixOptions);
   if (!lib) {
-    tryFixAssociateData(appName, appGroupName, getOptions);
-    const originalLib = getVerLib(appGroupName, getOptions); // appGroupName 对应 lib 由 core 写入，此处可获取到
+    tryFixAssociateData(appName, appGroupName, fixOptions);
+    let originalLib = getVerLib(appGroupName, { platform, versionId }); // appGroupName 对应 lib 由 core 写入，此处可获取到
+    if (!originalLib && emitPlatform) {
+      originalLib = getVerLib(appGroupName, { platform: emitPlatform, versionId, strictMatchVer: false });
+    }
     if (!originalLib) {
       throw new Error(`seems ${appGroupName} emit null lib`);
     }
@@ -60,12 +66,15 @@ function fixLibAssociateData(appName: string, appGroupName: string, getOptions: 
 /**
  * @returns {boolean} - shouldNext
  */
-function fixAppAssociateData(appName: string, appGroupName: string, getOptions: IGetOptions) {
-  const { versionId } = getOptions;
-  const emittedApp = getVerApp(appName, getOptions);
+function fixAppAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
+  const { platform, emitPlatform, versionId } = fixOptions;
+  const emittedApp = getVerApp(appName, fixOptions);
   if (!emittedApp) {
-    tryFixAssociateData(appName, appGroupName, getOptions);
-    const oriEmittedApp = getVerApp(appGroupName, getOptions);
+    tryFixAssociateData(appName, appGroupName, fixOptions);
+    let oriEmittedApp = getVerApp(appGroupName, { platform, versionId });
+    if (!oriEmittedApp && emitPlatform) {
+      oriEmittedApp = getVerApp(appGroupName, { platform: emitPlatform, versionId, strictMatchVer: false });
+    }
     if (!oriEmittedApp) {
       throw new Error(`seems ${appGroupName} emit null app`);
     }
@@ -77,8 +86,7 @@ function fixAppAssociateData(appName: string, appGroupName: string, getOptions: 
 
 export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions) {
   const { platform = getPlatform(), versionId = '', isLib } = innerOptions;
-  // 不传递的话，保持和 hel-micro-core 里一致的设定，hel-micro-core 默认是 true
-  const strictMatchVer = innerOptions.strictMatchVer ?? getPlatformConfig(platform).strictMatchVer;
+  const strictMatchVer = alt.getVal(platform, 'strictMatchVer', [innerOptions.strictMatchVer]);
   const newGetOptions = { ...innerOptions, strictMatchVer };
 
   let targetName = appName;
@@ -89,8 +97,8 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
   }
 
   const appMeta = getAppMeta(targetName, platform);
-  // unpkg 平台的 appMeta 里记录的 online_version 不可靠，这里要结合 __setByLatest 一起判断后才决定是否采用 lib
-  if (platform === PLAT_UNPKG && !versionId && appMeta && appMeta.__setByLatest !== true) {
+  // 语义化版本服务采用cdn架构存储元数据，它返回的 appMeta 里记录的 online_version 不可靠，这里要结合 __setByLatest 一起判断后才决定是否采用 lib
+  if (innerOptions.semverApi && !versionId && appMeta && appMeta.__setByLatest !== true) {
     return null;
   }
 
@@ -123,7 +131,8 @@ interface IJudgeOptions {
   projectId?: string;
 }
 export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, preFetchOptions: IInnerPreFetchOptions) {
-  log('[[ judgeAppReady ]] receive emitApp(appInfo):', appInfo);
+  const fnMark = '[[ judgeAppReady ]]';
+  log(`${fnMark} receive emitApp(appInfo):`, appInfo);
   const { versionId: inputVer = '', projectId, appName, platform, next, error, isLib, strictMatchVer } = options;
   const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
@@ -131,6 +140,18 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   const inputPlatform = platform || getPlatform();
 
   const { custom } = preFetchOptions;
+  const fixData = (fixOptions: IFixOptions) => {
+    try {
+      const shouldNext = isLib
+        ? fixLibAssociateData(appName, appGroupName, fixOptions)
+        : fixAppAssociateData(appName, appGroupName, fixOptions);
+      return shouldNext;
+    } catch (err: any) {
+      error(err);
+      return false;
+    }
+  };
+
   if (custom) {
     const { enable = true, host, appGroupName: customAppGroupName, trust = false } = custom;
     // 额外判断 appGroupName 是否存在，防止 appGroupName 是 undefined
@@ -143,30 +164,32 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
       }
 
       // trust 模式会强行复制远程模块为当前调用所需要模块，同时会为远程补齐缺失数据，开发者需要知道并承担其危险后果！
-      const getOptions = { versionId: inputVer, platform: inputPlatform };
-      try {
-        const shouldNext = isLib
-          ? fixLibAssociateData(appName, appGroupName, getOptions)
-          : fixAppAssociateData(appName, appGroupName, getOptions);
-        shouldNext && next();
-      } catch (err: any) {
-        error(err.message);
-      }
+      const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform });
+      shouldNext && next();
       return;
     }
   }
 
   // 非严格版本匹配模式，只需要应用组名和平台值匹配即可，满足一些用户copy了资源到自己的项目目录下也想要正常加载的场景
   if (strictMatchVer === false && appGroupName && appMeta?.app_group_name === appGroupName && inputPlatform === emitPlatform) {
-    log('[[ judgeAppReady ]] treat emitApp as wanted when strictMatchVer is false(appInfo):', appInfo);
+    log(`${fnMark} treat emitApp as wanted when strictMatchVer is false (appInfo):`, appInfo);
     return next();
   }
 
+  const logStillWait = () => log(`${fnMark} still wait ${appPathDesc} emitted (appInfo,toMatch):`, appInfo, toMatch);
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
   const toMatch = { platform, emitVer, inputVer, projectId, strictMatchVer };
-  if (appName !== emitAppName || inputPlatform !== emitPlatform || !isEmitVerMatchInputVer(appName, toMatch)) {
-    log(`still wait ${appPathDesc} emitted (appInfo,toMatch):`, appInfo, toMatch);
-    return;
+  if (appName !== emitAppName || !isEmitVerMatchInputVer(appName, toMatch)) {
+    return logStillWait();
+  }
+
+  const trustAppNames = alt.getVal<string[]>(inputPlatform, 'trustAppNames', [null, []], { emptyArrIsNull: false });
+  if (inputPlatform !== emitPlatform && trustAppNames.includes(appName)) {
+    const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform });
+    if (!shouldNext) {
+      log(`${fnMark} transfer ${emitPlatform} app [${appName}] to ${inputPlatform} plat due to being in trustAppNames`);
+      return logStillWait();
+    }
   }
 
   next();
