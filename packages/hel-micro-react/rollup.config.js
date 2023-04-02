@@ -37,6 +37,8 @@ const config = {
     ...env2outputConf[env],
     exports: 'named',
     globals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
       'hel-micro': 'HelMicro',
       'hel-micro-core': 'HelMicroCore',
     },
