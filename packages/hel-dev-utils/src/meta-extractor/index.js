@@ -15,11 +15,12 @@ export default async function extractHelMetaJson(userExtractOptions) {
   if (!appInfoVar) {
     throw new Error('appInfo should be supplied in ver 3.0+ hel-dev-utils: extractHelMetaJson({appInfo, ...})');
   }
+  const options = { ...userExtractOptions, appInfo: appInfoVar };
 
   verbose(`start extractHelMetaJson, appHomePage is ${appInfoVar.homePage}`);
 
-  const parsedRet = await parseIndexHtml(userExtractOptions);
-  fillAssetListByDist(parsedRet, userExtractOptions);
+  const parsedRet = await parseIndexHtml(options);
+  fillAssetListByDist(parsedRet, options);
 
   // 有替换内容生成，则将 index.html 内容重写，让后续上传 cdn 步骤上传的是替换后的文件内容
   if (parsedRet.replaceContentListOfHead.length > 0) {
@@ -27,7 +28,7 @@ export default async function extractHelMetaJson(userExtractOptions) {
     fs.writeFileSync(htmlFilePath, parsedRet.htmlContent, { encoding: 'utf-8' });
   }
 
-  const helMeta = makeHelMetaJson(userExtractOptions, parsedRet);
+  const helMeta = makeHelMetaJson(options, parsedRet);
   if (writeMetaJsonToDist) {
     const helMetaJsonFile = `${buildDirFullPath}/hel-meta.json`;
     fs.writeFileSync(helMetaJsonFile, JSON.stringify(helMeta, null, 2));

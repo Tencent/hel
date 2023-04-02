@@ -52,8 +52,8 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
  * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
-  const { homePage, groupName, name: appName, semverApi } = subApp;
+  const { packageJson, extractMode = 'build', appInfo } = userExtractOptions;
+  const { homePage, groupName, name: appName, semverApi } = appInfo;
 
   /**
    *  构建版本号，当指定了 homePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值

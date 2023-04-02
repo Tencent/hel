@@ -172,8 +172,8 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function fillAssetListByDist(parsedRet, extractOptions) {
-  const { buildDirFullPath, subApp } = extractOptions;
-  const { homePage } = subApp;
+  const { buildDirFullPath, appInfo } = extractOptions;
+  const { homePage } = appInfo;
   const { srcMap } = parsedRet;
   const fileFullPathList = getAllFilePath(buildDirFullPath);
   verbose('filePathList', fileFullPathList);

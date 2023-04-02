@@ -13,8 +13,8 @@ const { JSDOM } = jsdom;
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
-  const { subApp, extractMode = 'build', buildDirFullPath } = extractOptions;
-  const { homePage: appHomePage, name: appName } = subApp;
+  const { appInfo, extractMode = 'build', buildDirFullPath } = extractOptions;
+  const { homePage: appHomePage, name: appName } = appInfo;
   verbose(`homePage [${appHomePage}]`);
   verbose(`start to parse ${appName} index.html file`);
 
