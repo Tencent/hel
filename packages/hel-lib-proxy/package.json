@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.13.2",
+  "version": "3.13.3",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -37,8 +37,8 @@
     ]
   },
   "dependencies": {
-    "hel-micro-core": ">=3.13.1",
-    "hel-types": ">=3.8.2"
+    "hel-micro-core": "^3.13.8",
+    "hel-types": ">=3.8.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
@@ -53,8 +53,8 @@
     "rollup-plugin-typescript": "^1.0.1"
   },
   "peerDependencies": {
-    "hel-micro-core": ">=3.13.1",
-    "hel-types": ">=3.8.2"
+    "hel-micro-core": "^3.13.8",
+    "hel-types": ">=3.8.0"
   },
   "bundleDependencies": false,
   "deprecated": false,
