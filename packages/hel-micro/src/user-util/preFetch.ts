@@ -134,7 +134,7 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
   }
   if (!appProperties) {
     const details = msg ? ` details : ${msg}` : '';
-    throw new Error(`preFetchLib ${appName} fail, it may be an invalid module!${details}`);
+    throw new Error(`preFetchLib ${appName} fail from ${targetOpts.platform}, it may be an invalid module!${details}`);
   }
   return appProperties as unknown as T;
 }

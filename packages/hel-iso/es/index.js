@@ -25,7 +25,7 @@ function getIsoInfo() {
     /** 是否是第一个载入 hel-iso 模块 */
     isFirstMod: __HEL_ISO_FLAG__ === undefined,
     /** 是否是在 hel-micro-core 之前载入的 */
-    isBeforeCore: __MASTER_APP_LOADED__ === undefined
+    isBeforeCore: __MASTER_APP_LOADED__ === undefined,
   };
 }
 function tryMarkFlag() {
@@ -89,7 +89,7 @@ var isMasterApp = isMasterApp$1,
   isSubApp = isSubApp$1;
 var index = {
   isSubApp: isSubApp,
-  isMasterApp: isMasterApp
+  isMasterApp: isMasterApp,
 };
 
 export { index as default, isMasterApp, isSubApp };

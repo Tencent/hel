@@ -131,7 +131,15 @@ export interface ISubAppBuildDesc {
 export interface IUserExtractOptions {
   buildDirFullPath: string;
   packageJson: Record<string, any>;
+  /**
+   * @deprecated
+   * 应用信息，保留此属性是为了让老用户升级后不报错，内部优先取 appInfo 再取 subApp
+   */
   subApp: ISubAppBuildDesc;
+  /**
+   * 应用信息
+   */
+  appInfo: ISubAppBuildDesc;
   /**
    *  构建版本号，当指定了 appHomePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
    *  默认生成规则：

@@ -4,7 +4,7 @@ import { helConsts } from '../consts';
 import { getHelSingletonHost } from './globalRef';
 import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
 
-const { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX } = helConsts;
+const { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX, CORE_VER } = helConsts;
 
 function makeOriginOptions(presetOptions) {
   const { apiPrefix } = presetOptions || {};
@@ -114,6 +114,7 @@ function makeHelMicroShared() {
   const innerEventBus = makeEventBus();
   const userEventBus = makeEventBus();
   return {
+    ver: CORE_VER,
     createFeature: getJsRunLocation(),
     eventBus: innerEventBus,
     userEventBus,

@@ -9,13 +9,14 @@ import { makeHelMetaJson } from './utils';
  * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export default async function extractHelMetaJson(userExtractOptions) {
-  const { buildDirFullPath, writeMetaJsonToDist = true, subApp } = userExtractOptions;
+  const { buildDirFullPath, writeMetaJsonToDist = true, subApp, appInfo } = userExtractOptions;
+  const appInfoVar = appInfo || subApp;
 
-  if (!subApp) {
-    throw new Error('subApp should be supplied in ver 3.0+ hel-dev-utils: extractHelMetaJson({subApp, ...})');
+  if (!appInfoVar) {
+    throw new Error('appInfo should be supplied in ver 3.0+ hel-dev-utils: extractHelMetaJson({appInfo, ...})');
   }
 
-  verbose(`start extractHelMetaJson, appHomePage is ${subApp.homePage}`);
+  verbose(`start extractHelMetaJson, appHomePage is ${appInfoVar.homePage}`);
 
   const parsedRet = await parseIndexHtml(userExtractOptions);
   fillAssetListByDist(parsedRet, userExtractOptions);
