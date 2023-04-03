@@ -8,11 +8,10 @@ function ShadowContent(props: any) {
 }
 
 export default function ShadowViewV2(props: any) {
-  const { style = {}, styleContent, styleSheets, shadowDelay, children, tagName } = props;
+  const { style = {}, styleContent, delegatesFocus = true, styleSheets, shadowDelay, children, tagName, hostData = '' } = props;
   const shadowHostRef = React.useRef<HTMLDivElement | null>(null);
   const shadowRootRef = React.useRef<{ root: ShadowRoot | null }>({ root: null });
   const isDelayCalledRef = React.useRef<{ called: boolean }>({ called: false });
-  const sectionIdRef = React.useRef(`HelStyleSection_${Date.now()}`);
   const forceUpdate = useForceUpdate();
 
   React.useEffect(() => {
@@ -22,7 +21,7 @@ export default function ShadowViewV2(props: any) {
     }
 
     // 拿到 div 实例后对其添加 shadow 节点
-    const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open', delegatesFocus });
     props.onShadowRootReady(shadowRoot);
     shadowRootRef.current.root = shadowRoot;
     forceUpdate();
@@ -46,7 +45,7 @@ export default function ShadowViewV2(props: any) {
       {/* shadowRoot 节点准备就绪才开始调用 createPortal 渲染孩子节点 */}
       {shadowRoot && (
         <ShadowContent root={shadowRoot}>
-          <section id={sectionIdRef.current}>
+          <section id="HelStyleSection">
             {styleSheets.map((url: string, idx: number) => (
               <link key={idx} type="text/css" rel="stylesheet" href={url}></link>
             ))}
@@ -58,6 +57,6 @@ export default function ShadowViewV2(props: any) {
     </>
   );
 
-  const elProps = { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style }, data: 'see-data' };
+  const elProps = { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style }, data: hostData };
   return React.createElement(tagName, elProps, uiContent);
 }

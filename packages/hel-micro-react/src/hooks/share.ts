@@ -23,7 +23,7 @@ export function isEqual(param: any, toDiffParam: any) {
   return !isNotEqualByShallowDiff(param, toDiffParam);
 }
 
-export function useForceUpdate(needJudgeUnmout = false) {
+export function useForceUpdate(needJudgeUnmout = true) {
   const [, update] = React.useState({});
   const isHookUnmoutRef = React.useRef(false);
   React.useEffect(() => {

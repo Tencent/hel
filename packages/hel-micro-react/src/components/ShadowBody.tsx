@@ -42,9 +42,14 @@ class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
   }
 }
 
-export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) {
+export function getHostData(name: string, options: IGetVerOptions) {
   const { platform, versionId } = options;
-  const evName = `ReactShadowBody/${platform}/${name}/${versionId}`;
+  const data = `${platform}/${name}/${versionId}`;
+  return data;
+}
+
+export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) {
+  const evName = `ReactShadowBody/${getHostData(name, options)}`;
   return evName;
 }
 
@@ -71,6 +76,7 @@ export function tryMountStaticShadowBody(props: any, createRoot: any, options: I
       {...{
         ...props,
         tagName: STATIC_SHADOW_BODY_NAME,
+        hostData: getHostData(name, options),
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
           wrap.setStaticShadowBodyRef(name, bodyRef, options);
           bus.emit(evName);

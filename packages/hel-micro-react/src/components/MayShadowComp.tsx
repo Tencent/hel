@@ -6,7 +6,7 @@ import { useForceUpdate } from '../hooks/share';
 import type { AnyComp, AnyCompOrNull, IHelContext, IsLegacy, IUseRemoteCompOptions } from '../types';
 import { getStaticShadowBodyRef } from '../wrap';
 import BuildInSkeleton from './BuildInSkeleton';
-import ShadowBody, { getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
+import ShadowBody, { getHostData, getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
 import ShadowViewV2 from './ShadowViewV2';
 
 const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
@@ -156,7 +156,7 @@ function MayShadowComp(props: IMayShadowProps) {
         <ShadowViewV2
           id={name}
           tagName={SHADOW_HOST_NAME}
-          delegatesFocus={true}
+          hostData={getHostData(name, platAndVer)}
           style={shadowWrapStyle}
           styleSheets={styleUrlList}
           styleContent={styleContent}
@@ -176,7 +176,6 @@ function MayShadowComp(props: IMayShadowProps) {
             id={name}
             tagName={SHADOW_BODY_NAME}
             onShadowRootReady={onShadowBodyRootReady}
-            delegatesFocus={true}
             styleSheets={styleContent}
             styleContent={finalStyleStr}
             shadowMode={shadowMode}
