@@ -22,6 +22,7 @@ function makeOriginOptions(presetOptions) {
     shouldUseGray: null,
     trustAppNames: null,
     semverApi: null,
+    hook: {},
   };
 }
 
@@ -107,7 +108,7 @@ function makeHelMicroShared() {
       [PLAT_UNPKG]: unpkgCache,
       [PLAT_HEL]: helCache,
     },
-    /** @type {Record<string,Record<string, any>>} 和应用无关的通用缓存池 */
+    /** @type {Record<string, Record<string, any>>} 和应用无关的通用缓存池 */
     common: {},
   };
 
@@ -115,6 +116,8 @@ function makeHelMicroShared() {
   const userEventBus = makeEventBus();
   return {
     ver: CORE_VER,
+    nativeHeadAppend: null,
+    nativeBodyAppend: null,
     createFeature: getJsRunLocation(),
     eventBus: innerEventBus,
     userEventBus,
@@ -145,7 +148,9 @@ export function ensureHelMicroShared() {
       safeGetMap(cacheNode, 'appGroupName2firstVer');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
       safeGetMap(cacheNode, 'appName2verCustomData');
+      safeGetMap(cacheNode, 'hook');
       safeGetMap(cacheNode, 'origin', makeOriginOptions());
+      safeGetMap(cacheNode.origin, 'hook');
     });
 
     // 补齐老包缺失的 userEventBus 对象

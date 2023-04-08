@@ -13,6 +13,9 @@ import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
 import { getCustomMeta, isCustomValid } from './custom';
 
+const { commonUtil, helConsts } = core;
+const { KEY_ASSET_CTX } = helConsts;
+
 interface ISrvInnerOptions {
   platform: Platform;
   apiMode: ApiMode;
@@ -24,6 +27,40 @@ interface ICacheData {
   appInfo: ISubApp;
   appVersion: ISubAppVersion;
 }
+
+const inner = {
+  recordAssetCtx(appInfo: ISubApp, appVersion: ISubAppVersion, options: IInnerPreFetchOptions) {
+    const { name, app_group_name } = appInfo;
+    const { chunkCssSrcList = [], chunkJsSrcList = [] } = appVersion.src_map;
+    const fn = alt.getHookFn(options, 'beforeAppendAssetNode');
+    const assetList = chunkCssSrcList.concat(chunkJsSrcList);
+    const { appendCss, platform } = options;
+
+    // 记录资源映射的 配置上下文数据，方便以下作用
+    // 1 记录 beforeAppendAssetNode 句柄引用，方便 patchAppendChild 逻辑里做追加的资源替换
+    // 2 记录资源不能加载情况，方便 patchAppendChild 逻辑里，不追加资源到 document，用于拦截 webpack 异步加载的资源（目前只对css有效）
+    assetList.forEach((url) => {
+      const urlData = core.getCommonData(KEY_ASSET_CTX, url) || {};
+      if (!urlData.marked) {
+        Object.assign(urlData, {
+          marked: true,
+          platform,
+          name,
+          groupName: app_group_name,
+          beforeAppend: fn,
+          append: appendCss,
+        });
+        core.setCommonData(KEY_ASSET_CTX, url, urlData);
+      }
+    });
+  },
+
+  tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
+    if (typeof options.onAppVersionFetched === 'function') {
+      options.onAppVersionFetched(appVersion);
+    }
+  },
+};
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
   const fallbackHook = alt.getFn(options.platform, 'onFetchMetaFailed', options.onFetchMetaFailed);
@@ -60,7 +97,7 @@ async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions)
     }
   }
   const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
-  return core.commonUtil.safeParse(appCacheStr || '', null);
+  return commonUtil.safeParse(appCacheStr || '', null);
 }
 
 export async function clearDiskCachedApp(appName: string) {
@@ -69,12 +106,6 @@ export async function clearDiskCachedApp(appName: string) {
     await indexedDBStorage.removeItem(getAppCacheKey(appName));
   }
   getLocalStorage().removeItem(getAppCacheKey(appName));
-}
-
-function tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
-  if (appVersion && typeof options.onAppVersionFetched === 'function') {
-    options.onAppVersionFetched(appVersion);
-  }
 }
 
 export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions, fnOptions?: { callRemote?: boolean }) {
@@ -101,6 +132,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   const memAppVersion = core.getVersion(appName, { platform, versionId });
 
   // 优先从内存获取（非语义化api获取的 memAppVersion 才是有意义的，可进入此逻辑做判断）
+  // TODO : semverApi 下沉到 isEmitVerMatchInputVer 里面
   if (
     !semverApi
     && memApp
@@ -135,7 +167,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
         // 将硬盘缓存数据写回到内存
         cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
         // 异步缓存一份最新的数据
-        tryGetFromRemote(enableSyncMeta).catch((err: any) => core.commonUtil.noop(err));
+        tryGetFromRemote(enableSyncMeta).catch((err: any) => commonUtil.noop(err));
       }
     }
 
@@ -155,7 +187,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   return mayCachedApp;
 }
 
-async function getAppFromRemoteOrLocalWithFallback(appName: string, options: IInnerPreFetchOptions) {
+async function getAppWithFallback(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
   const { isFirstCall = true } = options;
   try {
     const mayCachedApp = await getAppFromRemoteOrLocal(appName, options);
@@ -167,13 +199,18 @@ async function getAppFromRemoteOrLocalWithFallback(appName: string, options: IIn
     }
     // 有指定 fallbackHook，返回空结果，让上层触发兜底函数
     if (getFallbackHook(options)) {
-      return { appInfo: null, appVersion: null };
+      return null;
     }
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
     const mayCachedApp = await getDiskCachedApp(appName, options);
     if (!mayCachedApp) {
       throw err;
     }
+
+    commonUtil.nbalert(`
+      ${err.message}, hel-micro will use cached data to keep your app works well,
+      please check your network if this behavior is not as you expected!
+    `);
     return mayCachedApp;
   }
 }
@@ -189,11 +226,14 @@ export async function getAppAndVersion(appName: string, options: IHelGetOptions)
 }
 
 export function cacheApp(
-  appInfo: ISubApp,
-  options: { appVersion: ISubAppVersion; platform: Platform; toDisk?: boolean; loadOptions: IInnerPreFetchOptions },
+  appInfo: ISubApp | undefined,
+  options: { appVersion?: ISubAppVersion; platform: Platform; toDisk?: boolean; loadOptions: IInnerPreFetchOptions },
 ) {
   // toDisk 默认是 true
   const { appVersion, platform, toDisk = true, loadOptions } = options;
+  if (!appInfo || !appVersion) {
+    return;
+  }
   let appMeta = appInfo;
   const appName = appMeta.name;
   // 写 disk
@@ -256,7 +296,7 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
   const { isFirstCall = true, controlLoadAssets = false } = options;
 
   try {
-    const appData = await getAppFromRemoteOrLocalWithFallback(appName, options);
+    const appData = await getAppWithFallback(appName, options);
     let { appInfo, appVersion } = appData || {};
     const noMeta = !appInfo || !appVersion;
 
@@ -279,10 +319,11 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
     if (!appVersion) {
       throw new Error(`app[${appName}]'s version[${options.versionId}] not exist`);
     }
-    tryTriggerOnAppVersionFetched(appVersion, options);
+    inner.tryTriggerOnAppVersionFetched(appVersion, options);
+    inner.recordAssetCtx(appInfo, appVersion, options);
 
     const startLoad = () => {
-      loadAppAssets(appInfo, appVersion, options);
+      loadAppAssets(appInfo as ISubApp, appVersion as ISubAppVersion, options);
     };
 
     // !!! 需要人工控制开始加载资源的时机

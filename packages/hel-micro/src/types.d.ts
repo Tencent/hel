@@ -1,4 +1,4 @@
-import type { IControlPreFetchOptions, IShouldUseGray } from 'hel-micro-core';
+import type { IControlPreFetchOptions } from 'hel-micro-core';
 import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface IGetOptionsLoose {
@@ -33,8 +33,14 @@ export interface IWaitStyleReadyOptions extends IPlatAndVer {
   strictMatchVer?: boolean;
 }
 
+type HostOrHelMetaUrl = string;
+
 export interface ICustom {
-  host: string;
+  /**
+   * 自定义的请求站点域名，用于本地联调时设定：http://locahost:3000
+   * 也可以写为一个具体的 hel-meta.json 地址：https://unpkg.com/hel-lodash/hel_dist/hel-meta.json
+   */
+  host: HostOrHelMetaUrl;
   /** default: true */
   enable?: boolean;
   /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
@@ -45,7 +51,7 @@ export interface ICustom {
    * hel-micro 会跳过一切检查，将对应地址的远程模块返回给调用方，可能会造成模块不符合预期结果的危险后果
    */
   trust?: boolean;
-  /** 额外附加的样式列表，方便基于web-dev-server调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
+  /** 额外附加的样式列表，方便基于 web-dev-server 调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
   extraCssList?: string[];
   /**
    * defaut: false
@@ -95,18 +101,14 @@ export interface IChangeAttrsFnCtx {
   isLink: IIsLink;
 }
 
-export interface IChangeAttrs {
-  (el: HTMLLinkElement | HTMLScriptElement, fnCtx: IChangeAttrsFnCtx): void;
-}
-
 export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /**
    * 指定拉取的版本号
-   * 版本号可到 hel pack 服务或 unpkg 服务查看
+   * 版本号可到 helpack 服务或 unpkg 服务查看
    */
   versionId?: string;
   /**
-   * 该配置仅针对 hel-pack 平台有效（hel-pack对其做了实现）
+   * 该配置仅针对 helpack 平台有效（hel-pack对其做了实现）
    *
    */
   projectId?: string;
@@ -163,22 +165,6 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * 请求形如：https://unpkg.com/hel-lodash/xxxxx-not-found
    */
   skip404Sniff?: boolean;
-  /**
-   * 直接操作回调参数 el 添加属性即可，例如
-   * ```ts
-   *  el.setAttribute('crossorigin', 'anonymous');
-   *  // or
-   *  el.crossOrigin = 'anonymous'; // 不推荐此方法，推荐使用 setAttribute 修改属性
-   * ```
-   * 如需查看更多信息，可查看第二位参数 fnCtx ( 可查类型 IChangeAttrsFnCtx )
-   */
-  changeAttrs?: IChangeAttrs;
-  /**
-   * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
-   * true：强制返回灰度版本，false：强制返回线上版本
-   * 定义了此函数，返回true或false都会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
-   */
-  shouldUseGray?: IShouldUseGray;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {

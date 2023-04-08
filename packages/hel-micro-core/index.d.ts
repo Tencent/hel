@@ -19,7 +19,10 @@ export const helConsts: {
   DEFAULT_PLAT: 'unpkg';
   PLAT_UNPKG: 'unpkg';
   PLAT_HEL: 'hel';
+  /** commonData.CSS_STR，存放样式字符串 map */
   KEY_CSS_STR: 'CSS_STR';
+  /** commonData.ASSET_CTX，资源对应的具体上下文 */
+  KEY_ASSET_CTX: 'ASSET_CTX';
 };
 
 export const helEvents: {
@@ -218,6 +221,18 @@ export interface IControlPreFetchOptions {
    * 定义了此函数，返回true或false则会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
   shouldUseGray: (passCtx: { appName: string }) => boolean | null;
+  hook: {
+    beforeAppendAssetNode?: (passCtx: {
+      /** link 元素或 script 元素 */
+      el: HTMLLinkElement | HTMLScriptElement;
+      /** 元素的样式 */
+      url: string;
+      /** 元素节点类型，辅助用户自己去收窄 el 具体类型 */
+      tagName: 'LINK' | 'SCRIPT';
+      nativeAppend: Node['appendChild'];
+      setAssetUrl: (url: string) => void;
+    }) => HTMLElement | void;
+  };
 }
 
 export interface IPlatformConfigInitFull extends IControlPreFetchOptions {
@@ -460,6 +475,17 @@ export type CommonUtil = {
   isNull: (value: any, nullDef?: NullDef) => boolean;
   safeParse: <T extends any = any>(jsonStr: any, defaultValue: T, errMsg?: string) => T;
   noop: (...args: any[]) => any[];
+  /**
+   * for friendly print mulit line when use \`...\`
+   */
+  nbstr: (mayLineBreakStr: string) => string;
+  /**
+   * pass mayLineBreakStr to nbstr then alert it
+   * @param {boolean} alertInDev - default: true, on alert string in development environment,
+   * if set false, it will always alert
+   */
+  nbalert: (mayLineBreakStr: string, alertInDev?: boolean) => string;
+  setDataset: (el: HTMLElement, key: string, val: string) => void;
 };
 
 export const commonUtil: CommonUtil;
@@ -480,3 +506,5 @@ export function inectPlatToMod<T extends Record<string, any> = Record<string, an
   mod: T,
   options?: IInjectPlatOptions,
 ): T;
+
+export function markElFeature(el: HTMLElement, platform: string, appGroupName: string, appName: string): void;

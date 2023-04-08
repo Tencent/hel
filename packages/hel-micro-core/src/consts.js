@@ -12,7 +12,7 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const helConsts = {
-  CORE_VER: '4.0.6',
+  CORE_VER: '4.1.1',
   DEFAULT_API_PREFIX: 'https://unpkg.com',
   DEFAULT_API_URL: '/openapi/v1/app/info',
   DEFAULT_ONLINE_VER,
@@ -20,8 +20,10 @@ export const helConsts = {
   DEFAULT_PLAT,
   PLAT_HEL,
   PLAT_UNPKG,
-  /** cacheRoot.common 里专用于存放样式字符串的 map key，服务于 hel-micro/appStyleSrv 模块 */
+  /** commonData.CSS_STR，存放样式字符串 map */
   KEY_CSS_STR: 'CSS_STR',
+  /** commonData.ASSET_CTX，资源对应的具体上下文 */
+  KEY_ASSET_CTX: 'ASSET_CTX',
 };
 
 export const helEvents = {

@@ -248,7 +248,7 @@ export interface IRenderAppOptions {
   appGroupName: string;
   hostNodeId?: string;
   /** 是否自渲染，大多数情况下不需要传入，让子应用自己通过内部维护的 signal 去做判断 */
-  renderSelf?: string;
+  renderSelf?: boolean;
   /**
    * 当 renderSelf 为 true 时，如果用户传递了定制的 renderSelfFn 函数（例如react18的新渲染方式），
    * 则会执行此函数，否则默认按 ReactDom.render 来执行自渲染
@@ -261,7 +261,7 @@ export interface IRenderAppOptions {
     unmount: () => void;
   };
   /**
-   * default：'hel'
+   * default：'unpkg'
    */
   platform?: Platform;
 }

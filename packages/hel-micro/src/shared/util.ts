@@ -30,6 +30,8 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
     return true;
   }
 
+  // TODO: semver === true 时，!inputVer && emitVer
+
   // 用在线版本或灰度版本比较
   if (!inputVer && appMeta) {
     const { online_version, build_version } = appMeta;

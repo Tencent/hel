@@ -107,11 +107,11 @@ export class IndexedDBStorage {
         } catch (err: any) {
           // storeName 可能重复
           if (err.name === 'ConstraintError') {
-            console.warn(
-              `The database "${dbInfo.name}"`
-                + ` has been upgraded from version ${e.oldVersion} to version ${e.newVersion}, `
-                + `but the storage "${dbInfo.storeName}" already exists.`,
-            );
+            const tip = commonUtil.nbstr(`
+              The database "${dbInfo.name}"
+              has been upgraded from version ${e.oldVersion} to version ${e.newVersion},
+              but the storage "${dbInfo.storeName}" already exists.`);
+            console.warn(tip);
           } else {
             throw err;
           }

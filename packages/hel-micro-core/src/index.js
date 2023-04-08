@@ -18,8 +18,10 @@ import * as meta from './data/meta';
 import * as status from './data/status';
 import * as style from './data/style';
 import * as version from './data/version';
+import * as feature from './handle/feature';
 import * as guess from './handle/guess';
 import * as iso from './handle/iso';
+import * as patch from './handle/patch';
 import * as ready from './handle/ready';
 import * as cacheWrap from './wrap/cache';
 
@@ -41,6 +43,7 @@ export function resetGlobalThis(globalThis) {
   iso.tryMarkFlag(!!globalThis);
   // 确保 __HEL_MICRO_SHARED__ 存在
   ensureHelMicroShared();
+  patch.patchAppendChild();
 }
 
 resetGlobalThis();
@@ -88,3 +91,5 @@ export const { getPlatformConfig, getAppPlatform, setAppPlatform, initPlatformCo
 export const { getHelEventBus, getUserEventBus } = event;
 
 export const { libReady, appReady } = ready;
+
+export const { markElFeature } = feature;

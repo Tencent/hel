@@ -25,6 +25,7 @@ export function getPureConfig(mayCache, needOrigin) {
     trustAppNames,
     platform,
     origin,
+    hook,
   } = mayCache;
   let toReturn = {
     apiMode,
@@ -40,6 +41,7 @@ export function getPureConfig(mayCache, needOrigin) {
     shouldUseGray,
     getApiPrefix,
     trustAppNames,
+    hook,
     platform,
   };
   if (needOrigin) {

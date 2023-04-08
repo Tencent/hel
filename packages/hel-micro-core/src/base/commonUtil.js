@@ -5,6 +5,7 @@
 |
 |-----------------------------------------------------------------------------------
 */
+import { getGlobalThis } from './globalRef';
 
 export function noop(...args) {
   return args;
@@ -85,4 +86,28 @@ export function getObjsVal(objs, key, backupVal) {
     }
   }
   return val;
+}
+
+export function nbstr(mayLineBreakStr) {
+  const lines = mayLineBreakStr.split('\n');
+  return lines.map((line) => line.trimStart?.() || line).join('');
+}
+
+export function nbalert(mayLineBreakStr, alertInDev = true) {
+  const g = getGlobalThis();
+  const str = nbstr(mayLineBreakStr);
+  const alert = g.alert || noop;
+  if (alertInDev) {
+    g.location.port && alert(str);
+    return;
+  }
+  alert(str);
+}
+
+export function setDataset(el, key, val) {
+  if (el.dataset) {
+    el.dataset[key] = val;
+  } else {
+    el.setAttribute(`data-${key}`, val);
+  }
 }

@@ -1,129 +1,44 @@
-import { commonUtil, getGlobalThis } from 'hel-micro-core';
+import { commonUtil, getGlobalThis, markElFeature } from 'hel-micro-core';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
-import type { CssAppendType, IChangeAttrs, IInnerPreFetchOptions, ILinkInfo, IScriptInfo } from '../types';
-import { getAllExtraCssList, helLinkId, helScriptId } from '../util';
+import type { CssAppendType, IInnerPreFetchOptions } from '../types';
+import { getAllExtraCssList } from '../util';
 
 const { noop } = commonUtil;
 
-/**
- * 做一下净化处理
- * @param domBaseURI - http://localhost:3000/ or http://localhost:3000/xx/yy/copyright
- * @returns
- */
-function pureDomBaseURI(domBaseURI: string) {
-  // http://localhost:3000/xx/yy/copyright --> localhost:3000/xx/yy/copyright
-  const [protocolStr, restStr] = domBaseURI.split('//');
-
-  const arr = restStr.split('/'); // arr2[0]---> localhost:3000
-  // 'http:' + '//' + 'localhost:3000' + '/';
-  return `${protocolStr}//${arr[0]}/`;
-}
-
-/**
- *
- * @param dom
- * @param src - /xx/yy/static/js/runtime-main.fe4e0898.js
- * @returns
- */
-function isDomSrcEqualSrc(dom: HTMLScriptElement, src: string) {
-  /**
-    if same origin
-    dom.src http://localhost:3000/xx/yy/static/js/runtime-main.fe4e0898.js
-    dom.baseURI http://localhost:3000/
-
-    if different origin
-    dom.src https://xxx.cdn.com/js/libs/lib-name/lib-bundle-v1.0.0.min.js
-    dom.baseURI http://localhost:3000/
-   *
-   */
-  const domSrc = dom.src;
-  const domBaseURI = pureDomBaseURI(dom.baseURI);
-
-  let toCompareSrc = domSrc;
-  if (domSrc.startsWith(domBaseURI)) {
-    // if no length - 1:  toCompareSrc will be "xx/yy/static/js/runtime-main.fe4e0898.js"
-    // but src is "/xx/yy/static/js/runtime-main.fe4e0898.js"
-    toCompareSrc = domSrc.substring(domBaseURI.length - 1);
-  }
-  return toCompareSrc === src;
-}
-
-function isScriptExisted(scriptId: string, src: string) {
-  // avoid error: '#helScript_@xxx/yyy' is not a valid selector.
-  const doc = getGlobalThis()?.document;
-  let result = false;
-  if (!doc) {
-    return result;
-  }
-
+function isAssetExisted(domType: string, src: string) {
   try {
-    // 为跳过其他错误干扰正常运行，此处不适合单独 try querySelectorAll
-    const doms = doc.querySelectorAll(`#${scriptId}`);
-    const len = doms.length;
-    for (let i = 0; i < len; i++) {
-      const dom = doms[i];
-      if (dom.nodeName === 'SCRIPT' && isDomSrcEqualSrc(dom as HTMLScriptElement, src)) {
-        result = true;
-        break;
-      }
-    }
-
-    return result;
+    const doc = getGlobalThis()?.document;
+    const el = doc.querySelector(`${domType}[src="${src}"]`);
+    return !!el;
   } catch (err: any) {
-    return result;
-  }
-}
-
-function tryCallChangeAttrs(
-  tag: 'link' | 'script',
-  tryOptions: {
-    appName: string;
-    appGroupName: string;
-    el: HTMLLinkElement | HTMLScriptElement;
-    attrs: ILinkAttrs | IScriptAttrs;
-    changeAttrs?: IChangeAttrs;
-  },
-) {
-  const { changeAttrs } = tryOptions;
-  if (changeAttrs) {
-    const { appName, appGroupName, el, attrs } = tryOptions;
-    const isLink = <Tag extends 'link' | 'script'>(
-      tag: Tag,
-      info: { el: HTMLLinkElement | HTMLScriptElement; attrs: ILinkAttrs | IScriptAttrs },
-    ): info is Tag extends 'link' ? ILinkInfo : IScriptInfo => {
-      noop(info);
-      return tag === 'link';
-    };
-    changeAttrs(el, { appName, appGroupName, attrs, tag, isLink });
+    return false;
   }
 }
 
 interface ICreateScriptOptions {
+  platform: string;
   attrs: IScriptAttrs;
   appGroupName: string;
   appendToBody?: boolean;
-  changeAttrs?: IChangeAttrs;
   onloadCb?: () => void;
 }
 
 function createScriptElement(appName: string, options: ICreateScriptOptions) {
-  const { attrs, appendToBody = true, appGroupName, onloadCb, changeAttrs } = options;
+  const { platform, attrs, appendToBody = true, appGroupName, onloadCb } = options;
   const { src } = attrs;
   if (!src) {
     return false;
   }
 
   const doc = getGlobalThis().document;
-  const scriptId = helScriptId(appName);
-  if (isScriptExisted(scriptId, src)) {
+  if (isAssetExisted('script', src)) {
     return false;
   }
 
   const scriptDom = doc.createElement('script');
-  scriptDom.id = scriptId;
   scriptDom.src = src;
+  markElFeature(scriptDom, platform, appGroupName, appName);
   if (onloadCb) scriptDom.onload = onloadCb;
-  tryCallChangeAttrs('script', { appName, appGroupName, el: scriptDom, attrs, changeAttrs });
 
   if (appendToBody) doc.body.appendChild(scriptDom);
   else doc.head.appendChild(scriptDom);
@@ -132,37 +47,36 @@ function createScriptElement(appName: string, options: ICreateScriptOptions) {
 }
 
 interface ICreateLinkOptions {
+  platform: string;
   attrs: ILinkAttrs;
   appGroupName: string;
   appendToBody?: boolean;
-  changeAttrs?: IChangeAttrs;
 }
 
 function createLinkElement(appName: string, options: ICreateLinkOptions) {
-  const { appGroupName, appendToBody = false, attrs, changeAttrs } = options;
+  const { platform, appGroupName, appendToBody = false, attrs } = options;
   const { href, rel, as } = attrs;
   const doc = getGlobalThis().document;
   if (!href) return;
 
   const linkDom = doc.createElement('link');
-  linkDom.id = helLinkId(appName);
   linkDom.rel = rel || 'stylesheet';
   linkDom.href = href;
+  markElFeature(linkDom, platform, appGroupName, appName);
   if (as) linkDom.as = as;
-  tryCallChangeAttrs('link', { appName, appGroupName, el: linkDom, attrs, changeAttrs });
 
   if (appendToBody) doc.body.appendChild(linkDom);
   else doc.head.appendChild(linkDom);
 }
 
 interface ICreateDomOptions {
+  platform: string;
   appGroupName: string;
   webDirPath: string;
   appendToBody: boolean;
   appendCss: boolean;
   cssAppendTypes: CssAppendType[];
   excludeCssList: string[];
-  changeAttrs?: IChangeAttrs;
 }
 
 const getCssType = (webDirPath: string, cssUrl: string): CssAppendType => {
@@ -184,13 +98,13 @@ function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAt
 }
 
 function createDomByAssetList(appName: string, assetList: IAssetItem[], options: ICreateDomOptions) {
-  const { appGroupName, appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList, changeAttrs } = options;
+  const { platform, appGroupName, appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList } = options;
 
   assetList.forEach((v) => {
     const { tag, attrs } = v;
     // 处理 link 标签
     if (isLinkAttrs(tag, attrs)) {
-      const createLinkOptions = { appGroupName, appendToBody, attrs, changeAttrs };
+      const createLinkOptions = { platform, appGroupName, appendToBody, attrs };
       const { href } = attrs;
       // .ico 文件默认不加载
       if (href.endsWith('.ico')) {
@@ -213,7 +127,7 @@ function createDomByAssetList(appName: string, assetList: IAssetItem[], options:
     }
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
-      createScriptElement(appName, { appGroupName, appendToBody, attrs, changeAttrs });
+      createScriptElement(appName, { platform, appGroupName, appendToBody, attrs });
     }
   });
 }
@@ -231,9 +145,9 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   } = app;
   const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList = [] } = version.src_map;
   const {
+    platform = '',
     useAdditionalScript = false,
     appendCss = true,
-    changeAttrs,
     cssAppendTypes = ['static', 'build'],
     getExcludeCssList,
   } = loadOptions;
@@ -243,14 +157,15 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
 
   const createAdditionalScripts = (scripts?: string[], appendToBody?: boolean) => {
     if (!scripts) return;
+    const optionsCommon = { platform, appGroupName, appendToBody };
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
       if (scriptUrl.endsWith('.css')) {
         if (appendCss && !excludeCssList.includes(scriptUrl)) {
-          createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+          createLinkElement(name, { ...optionsCommon, attrs: { href: scriptUrl, rel: 'stylesheet' } });
         }
       } else {
-        createScriptElement(name, { appGroupName, appendToBody, attrs: { src: scriptUrl }, changeAttrs });
+        createScriptElement(name, { ...optionsCommon, attrs: { src: scriptUrl } });
       }
     }
   };
@@ -262,7 +177,7 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
 
   createAdditionalScripts(allExtraCssList, false);
 
-  const optionsCommon = { appGroupName, excludeCssList, webDirPath, appendCss, cssAppendTypes, changeAttrs };
+  const optionsCommon = { appGroupName, excludeCssList, webDirPath, appendCss, cssAppendTypes, platform };
   createDomByAssetList(name, headAssetList, { appendToBody: false, ...optionsCommon });
   createDomByAssetList(name, bodyAssetList, { appendToBody: true, ...optionsCommon });
 }

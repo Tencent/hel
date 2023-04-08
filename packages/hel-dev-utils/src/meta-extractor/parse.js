@@ -13,7 +13,7 @@ const { JSDOM } = jsdom;
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
-  const { appInfo, extractMode = 'build', buildDirFullPath } = extractOptions;
+  const { appInfo, extractMode = 'build', buildDirFullPath, enableReplaceDevJs = true } = extractOptions;
   const { homePage: appHomePage, name: appName } = appInfo;
   verbose(`homePage [${appHomePage}]`);
   verbose(`start to parse ${appName} index.html file`);
@@ -25,8 +25,8 @@ export async function parseIndexHtml(extractOptions) {
   const dom = new JSDOM(htmlContent);
   const { head, body } = dom.window.document;
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true }),
-    fillAssetList(body.children, srcMap, { extractMode, buildDirFullPath, appHomePage }),
+    fillAssetList(head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true, enableReplaceDevJs }),
+    fillAssetList(body.children, srcMap, { extractMode, buildDirFullPath, appHomePage, enableReplaceDevJs }),
   ]);
 
   replaceContentListOfHead.forEach((item) => {
@@ -36,9 +36,11 @@ export async function parseIndexHtml(extractOptions) {
     htmlContent = htmlContent.replace(item.toMatch, item.toReplace);
   });
 
-  const parsedRet = { srcMap, htmlContent, replaceContentListOfHead };
+  const hasReplacedContent = replaceContentListOfHead.length || replaceContentLisOfBody.length;
+  const parsedRet = { srcMap, htmlContent, hasReplacedContent };
   verbose(`parse ${appName} index.html file done!`);
   verbose('replaceContentListOfHead: ', replaceContentListOfHead);
+  verbose('replaceContentLisOfBody: ', replaceContentLisOfBody);
   verbose('parsedRet: ', parsedRet);
   return parsedRet;
 }

@@ -1,5 +1,6 @@
 import { commonUtil, helConsts, log } from 'hel-micro-core';
-import type { ICustom, IInnerPreFetchOptions } from '../types';
+import type { ILinkItem, IScriptItem } from 'hel-types';
+import type { ICustom, IHelMeta, IInnerPreFetchOptions } from '../types';
 import { requestGet } from '../util';
 
 const { DEFAULT_ONLINE_VER } = helConsts;
@@ -8,15 +9,13 @@ const type2conf = {
     endMark: '.js',
     reg: '(?<=(src="))[^"]*?(?=")',
     tag: 'script',
-    attrKey: 'src',
   },
   css: {
     endMark: '.css',
     reg: '(?<=(href="))[^"]*?(?=")',
     tag: 'link',
-    attrKey: 'href',
   },
-};
+} as const;
 const LOCAL_STR = 'http://localhost';
 const LOCAL_127 = 'http://127.0.0.1';
 
@@ -34,28 +33,36 @@ const inner = {
     // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
 
     const { host, type } = options;
-    const { endMark, tag, reg, attrKey } = type2conf[type];
+    const { endMark, tag, reg } = type2conf[type];
 
     // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
     // SyntaxError: Invalid regular expression: invalid group specifier name
     const assetReg = new RegExp(reg, 'ig');
     const rawList = htmlText.match(assetReg) || [];
-    const targetList: any[] = [];
+    // 记录sdk 初次加载应用需要的资源描述对象
+    const itemList: Array<ILinkItem | IScriptItem> = [];
+    // 记录所有的资源路径，注意此处只是模拟，实际上 通过 custom 方式加载的应用
+    // chunkJsSrcList chunkCssSrcList 信息并不如构建时提取的完整
+    const stringList: string[] = [];
 
     rawList.forEach((v) => {
+      stringList.push(v);
       if (!inner.isSrcMatchHost(v, host)) return;
       if (!v.endsWith(endMark)) return;
-      targetList.push({ tag, attrs: { [attrKey]: v } });
+      if (tag === 'script') {
+        return itemList.push({ tag, attrs: { src: v } });
+      }
+      itemList.push({ tag, attrs: { href: v, rel: 'stylesheet' } });
     });
-    return targetList;
+    return { itemList, stringList };
   },
   extractCssList(htmlText: string, host: string) {
-    const cssList = inner.extractAssetList(htmlText, { host, type: 'css' });
-    return cssList;
+    const data = inner.extractAssetList(htmlText, { host, type: 'css' });
+    return data;
   },
   extractScriptList(htmlText: string, host: string) {
-    const jsList = inner.extractAssetList(htmlText, { host, type: 'js' });
-    return jsList;
+    const data = inner.extractAssetList(htmlText, { host, type: 'js' });
+    return data;
   },
 };
 
@@ -67,12 +74,13 @@ export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom i
   return false;
 }
 
-export async function getCustomMeta(appName: string, custom: ICustom) {
+export async function getCustomMeta(appName: string, custom: ICustom): Promise<IHelMeta> {
   const { host, appGroupName, skipFetchHelMeta = false } = custom;
   const t = Date.now();
   if (!skipFetchHelMeta) {
+    const helMetaUrl = host.endsWith('hel-meta.json') ? host : `${host}/hel-meta.json?_t=${t}`;
     try {
-      const { reply } = await requestGet(`${host}/hel-meta.json?_t=${t}`);
+      const { reply } = await requestGet(helMetaUrl);
       if (reply) {
         reply.app.__fromCust = true;
         return reply;
@@ -83,11 +91,16 @@ export async function getCustomMeta(appName: string, custom: ICustom) {
     }
   }
 
-  const result = await requestGet(`${host}/index.html?_t=${t}`, false);
-  const htmlText = result.reply;
-  const cssList = inner.extractCssList(htmlText, host);
-  const jsList = inner.extractScriptList(htmlText, host);
-  const bodyAssetList = cssList.concat(jsList);
+  let htmlText = '';
+  try {
+    const result = await requestGet(`${host}/index.html?_t=${t}`, false);
+    htmlText = result.reply;
+  } catch (err: any) {
+    throw new Error(`${err.message} from ${host}`);
+  }
+  const cssData = inner.extractCssList(htmlText, host);
+  const jsData = inner.extractScriptList(htmlText, host);
+  const bodyAssetList = cssData.itemList.concat(jsData.itemList);
 
   return {
     app: {
@@ -102,9 +115,12 @@ export async function getCustomMeta(appName: string, custom: ICustom) {
       sub_app_name: appName,
       sub_app_version: DEFAULT_ONLINE_VER,
       src_map: {
+        webDirPath: host,
         headAssetList: [],
         bodyAssetList,
+        chunkCssSrcList: cssData.stringList,
+        chunkJsSrcList: jsData.stringList,
       },
     },
-  };
+  } as unknown as IHelMeta;
 }

@@ -6,6 +6,8 @@ import * as builtinFns from './builtin';
 const { isNull } = commonUtil;
 
 export type KeyName = keyof IPlatformConfigInitFull;
+export type Hook = IPlatformConfigInitFull['hook'];
+export type HookKey = keyof Hook;
 export type PreFetchKey = keyof IControlPreFetchOptions;
 
 export function getFn(platform: string | undefined, fnName: KeyName, userFn?: any): any {
@@ -49,6 +51,13 @@ export function getVal<T extends any = any>(platform: string | undefined, key: K
   }
 
   return defautVal;
+}
+
+export function getHookFn(loadOptions: IInnerPreFetchOptions, hookKey: HookKey) {
+  const conf = getPlatformConfig(loadOptions.platform);
+  const userHook: Hook = loadOptions.hook || {};
+  const { origin, hook } = conf;
+  return userHook[hookKey] || hook[hookKey] || origin.hook?.[hookKey];
 }
 
 /**

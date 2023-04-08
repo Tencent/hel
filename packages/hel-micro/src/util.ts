@@ -14,12 +14,8 @@ export function perfEnd(label: string) {
   }
 }
 
-export function helScriptId(appName: string) {
-  return `helScript_${appName}`;
-}
-
-export function helLinkId(appName: string) {
-  return `helLink_${appName}`;
+export function defPartial<T extends any = any>(partialObj: Partial<T>) {
+  return partialObj;
 }
 
 /**

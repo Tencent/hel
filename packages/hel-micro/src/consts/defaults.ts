@@ -7,7 +7,6 @@ const toExport = {
   ENABLE_APPEND_CSS: true,
   API_MODE: 'get',
   EXTRA_DATA_PREFIX: 'HelExtraData',
-  KEY_CSS_STR: 'CSS_STR',
 } as const;
 
 export default toExport;

@@ -153,6 +153,8 @@ export interface IUserExtractOptions {
   distDir?: string;
   /** default: true */
   writeMetaJsonToDist?: boolean;
+  /** default: true, 是否替换的 dev.js 结尾的文件为 .js */
+  enableReplaceDevJs?: boolean;
 }
 
 export interface IInnerSubAppOptions {
