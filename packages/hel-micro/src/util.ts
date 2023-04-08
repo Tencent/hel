@@ -14,10 +14,6 @@ export function perfEnd(label: string) {
   }
 }
 
-export function defPartial<T extends any = any>(partialObj: Partial<T>) {
-  return partialObj;
-}
-
 /**
  * 默认请求 unpkg
  */
