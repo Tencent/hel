@@ -75,7 +75,7 @@ export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
         return share.fetchRemoteModuleStyle(props, passCtx);
       }
 
-      // 提取可注入到shadow 的样式列表
+      // 提取可注入到 shadowdom 的样式列表
       const styleUrlList = getStyleList(props);
       // 拼接上用户额外透传的样式字符串
       const styleStr = `${shadowStyleStr}${extraShadowStyleStr}`;

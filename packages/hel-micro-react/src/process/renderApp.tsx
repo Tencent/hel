@@ -4,6 +4,7 @@ import ReactDom from 'react-dom';
 import type { IRenderAppOptions } from '../types';
 
 function getHostNode(hostNodeId?: string) {
+  const { document } = core.getGlobalThis();
   const id = hostNodeId ?? 'root';
   let node = document.getElementById(id);
   if (!node) {
@@ -21,10 +22,13 @@ function getHostNode(hostNodeId?: string) {
  */
 export default function renderApp(options: IRenderAppOptions) {
   const { App, renderSelf, appGroupName, lifecycle, hostNodeId, renderSelfFn, createRoot } = options;
-  const platform = options.platform || 'unpkg';
+  const platform = options.platform || core.helConsts.DEFAULT_PLAT;
   // 如用户未自定义自渲染值 renderSelf， 则走非子应用(即是主应用)时才执行自渲染的逻辑
-  const needRenderSelf = !core.isSubApp();
-  const finalRenderSelf = renderSelf ?? needRenderSelf;
+  let finalRenderSelf = renderSelf;
+  if (finalRenderSelf === undefined) {
+    // 建议切换到 hel-iso，此处保留为了兼容历史逻辑
+    finalRenderSelf = !core.isSubApp();
+  }
   const hostNode = getHostNode(hostNodeId);
 
   // 走自渲染逻辑

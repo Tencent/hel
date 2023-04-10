@@ -90,7 +90,11 @@ export function getObjsVal(objs, key, backupVal) {
 
 export function nbstr(mayLineBreakStr) {
   const lines = mayLineBreakStr.split('\n');
-  return lines.map((line) => line.trimStart?.() || line).join('');
+  return lines
+    .filter((line) => !!line)
+    .map((line) => line.trimStart?.() || line)
+    .map((line) => (line.endsWith(' ') ? line : `${line} `))
+    .join('');
 }
 
 export function nbalert(mayLineBreakStr, alertInDev = true) {
