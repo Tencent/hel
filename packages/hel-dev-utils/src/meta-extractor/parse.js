@@ -13,20 +13,19 @@ const { JSDOM } = jsdom;
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
-  const { subApp, extractMode = 'build', buildDirFullPath } = extractOptions;
-  const { homePage: appHomePage, name: appName } = subApp;
-  verbose(`homePage [${appHomePage}]`);
+  const { appInfo, buildDirFullPath, extractMode = 'all' } = extractOptions;
+  const { homePage: appHomePage, name: appName } = appInfo;
   verbose(`start to parse ${appName} index.html file`);
 
   const htmlFilePath = `${buildDirFullPath}/index.html`;
   let htmlContent = await readFile(htmlFilePath, { encoding: 'UTF-8' });
-  const srcMap = makeAppVersionSrcMap(appHomePage);
+  const srcMap = makeAppVersionSrcMap(appHomePage, extractMode);
 
   const dom = new JSDOM(htmlContent);
   const { head, body } = dom.window.document;
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true }),
-    fillAssetList(body.children, srcMap, { extractMode, buildDirFullPath, appHomePage }),
+    fillAssetList(head.children, { srcMap, extractOptions, isHead: true }),
+    fillAssetList(body.children, { srcMap, extractOptions }),
   ]);
 
   replaceContentListOfHead.forEach((item) => {
@@ -36,9 +35,17 @@ export async function parseIndexHtml(extractOptions) {
     htmlContent = htmlContent.replace(item.toMatch, item.toReplace);
   });
 
-  const parsedRet = { srcMap, htmlContent, replaceContentListOfHead };
+  const shouldRecordHtmlContent = extractMode === 'all' || extractMode === 'build';
+  const htmlContentVar = shouldRecordHtmlContent ? htmlContent : '';
+  if (!shouldRecordHtmlContent) {
+    verbose(`user set extractMode='${extractMode}', dev-utils will ignore write version.html_content`);
+  }
+
+  const hasReplacedContent = replaceContentListOfHead.length || replaceContentLisOfBody.length;
+  const parsedRet = { srcMap, htmlContent: htmlContentVar, hasReplacedContent };
   verbose(`parse ${appName} index.html file done!`);
   verbose('replaceContentListOfHead: ', replaceContentListOfHead);
+  verbose('replaceContentLisOfBody: ', replaceContentLisOfBody);
   verbose('parsedRet: ', parsedRet);
   return parsedRet;
 }

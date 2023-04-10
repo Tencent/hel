@@ -1,3 +1,14 @@
+/**
+ * default: 'all'，生成资源清单时的元数据提取方式，会影响元数据的记录结果
+ * ```
+ * all：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，同时也会记录 html_content
+ * build：只提取并记录构建时生成的产物，同时也会记录 html_content
+ * all_no_html：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，不记录 html_content
+ * build_no_html：只提取并记录构建时生成的产物，不记录 html_content
+ * ```
+ */
+type ExtractMode = 'all' | 'build' | 'all_no_html' | 'build_no_html';
+
 /** SrcMap形如：
 {
   "iconSrc": "/web-app/sub-apps/news-shelf/favicon.ico",
@@ -7,15 +18,22 @@
 */
 export interface SrcMap {
   webDirPath: string;
+  extractMode: ExtractMode,
   /** 用于辅助iframe载入子应用入口html地址 */
   iframeSrc: string;
-  iconSrc: string;
-  mainCssSrc: string;
+  /** 所有构建生成的 css 列表 */
+  chunkCssSrcList: string[],
+  /** 所有构建生成的 js 列表 */
+  chunkJsSrcList: string[],
+  /** 所有绝对路径导入的 homePage 之外的 css 列表 */
+  staticCssSrcList: string[],
+  /** 所有绝对路径导入的 homePage 之外的 js 列表 */
+  staticJsSrcList: string[],
+  /** 所有相对路径导入的 homePage 之外的 css 列表 */
+  relativeCssSrcList: string[],
+  /** 所有相对路径导入的 homePage 之外的 js 列表 */
+  relativeJsSrcList: string[],
   privCssSrcList: string[];
-  /** 应用包含的所有 css 列表 */
-  chunkCssSrcList: string[];
-  /** 应用包含的所有 js 列表 */
-  chunkJsSrcList: string[];
   headAssetList: string[];
   bodyAssetList: string[];
 }
@@ -130,7 +148,15 @@ export interface ISubAppBuildDesc {
 export interface IUserExtractOptions {
   buildDirFullPath: string;
   packageJson: Record<string, any>;
+  /**
+   * @deprecated
+   * 应用信息，保留此属性是为了让老用户升级后不报错，内部优先取 appInfo 再取 subApp
+   */
   subApp: ISubAppBuildDesc;
+  /**
+   * 应用信息
+   */
+  appInfo: ISubAppBuildDesc;
   /**
    *  构建版本号，当指定了 appHomePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
    *  默认生成规则：
@@ -138,12 +164,15 @@ export interface IUserExtractOptions {
    *  外网包：pkg.version
    */
   buildVer?: string;
-  /** default: 'build'，插件的资源清单元数据提取方式，build：只提取构建产物，bu_st：构建产物和静态产生都提取 */
-  extractMode?: 'build' | 'bu_st';
+  extractMode?: ExtractMode;
   /** default: hel_dist */
   distDir?: string;
   /** default: true */
   writeMetaJsonToDist?: boolean;
+  /** default: true, 是否替换的 dev.js 结尾的文件为 .js */
+  enableReplaceDevJs?: boolean;
+  /** default: false, 是否允许在 homePage 之外的相对路径的资源存在 */
+  enableRelativePath?: boolean;
 }
 
 export interface IInnerSubAppOptions {
