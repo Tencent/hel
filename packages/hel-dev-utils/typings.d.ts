@@ -18,21 +18,21 @@ type ExtractMode = 'all' | 'build' | 'all_no_html' | 'build_no_html';
 */
 export interface SrcMap {
   webDirPath: string;
-  extractMode: ExtractMode,
+  extractMode: ExtractMode;
   /** 用于辅助iframe载入子应用入口html地址 */
   iframeSrc: string;
   /** 所有构建生成的 css 列表 */
-  chunkCssSrcList: string[],
+  chunkCssSrcList: string[];
   /** 所有构建生成的 js 列表 */
-  chunkJsSrcList: string[],
+  chunkJsSrcList: string[];
   /** 所有绝对路径导入的 homePage 之外的 css 列表 */
-  staticCssSrcList: string[],
+  staticCssSrcList: string[];
   /** 所有绝对路径导入的 homePage 之外的 js 列表 */
-  staticJsSrcList: string[],
+  staticJsSrcList: string[];
   /** 所有相对路径导入的 homePage 之外的 css 列表 */
-  relativeCssSrcList: string[],
+  relativeCssSrcList: string[];
   /** 所有相对路径导入的 homePage 之外的 js 列表 */
-  relativeJsSrcList: string[],
+  relativeJsSrcList: string[];
   privCssSrcList: string[];
   headAssetList: string[];
   bodyAssetList: string[];

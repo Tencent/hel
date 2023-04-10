@@ -16,7 +16,7 @@ function isRelativePath(path) {
   return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
 }
 
-function getAssetBase(tag, /** @type UrlInfo */urlInfo, dataset) {
+function getAssetBase(tag, /** @type UrlInfo */ urlInfo, dataset) {
   const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
   // 仅当显式设置了 data-helappend="1" 时，才标识为 hel-micro sdk 加载首屏应用时需要载入的资源
   const canAppend = dataset['helappend'] === '1';
@@ -47,11 +47,11 @@ function getAssetBase(tag, /** @type UrlInfo */urlInfo, dataset) {
   };
 }
 
-function getLinkAssetBase(/** @type UrlInfo */urlInfo, dataset) {
+function getLinkAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
   return getAssetBase('link', urlInfo, dataset);
 }
 
-function getScriptAssetBase(/** @type UrlInfo */urlInfo, dataset) {
+function getScriptAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
   return getAssetBase('script', urlInfo, dataset);
 }
 
@@ -89,9 +89,16 @@ export async function fillAssetList(doms, parseOptions) {
   const { srcMap, isHead, extractOptions } = parseOptions;
   const { appInfo, enableReplaceDevJs = true, enableRelativePath = false } = extractOptions;
   const {
-    headAssetList, bodyAssetList, extractMode,
-    chunkCssSrcList, staticCssSrcList, relativeCssSrcList, privCssSrcList,
-    chunkJsSrcList, staticJsSrcList, relativeJsSrcList,
+    headAssetList,
+    bodyAssetList,
+    extractMode,
+    chunkCssSrcList,
+    staticCssSrcList,
+    relativeCssSrcList,
+    privCssSrcList,
+    chunkJsSrcList,
+    staticJsSrcList,
+    relativeJsSrcList,
   } = srcMap;
   const { homePage } = appInfo;
   const assetList = isHead ? headAssetList : bodyAssetList;
@@ -100,7 +107,7 @@ export async function fillAssetList(doms, parseOptions) {
   const replaceContentList = [];
   verbose(`extractMode is [${extractMode}]`);
 
-  const getUrlInfo = (/** @type string */url) => {
+  const getUrlInfo = (/** @type string */ url) => {
     // 是构建生成的产物路径
     const isBuildUrl = url.startsWith(homePage);
     const isRelative = isRelativePath(url);
@@ -120,7 +127,7 @@ export async function fillAssetList(doms, parseOptions) {
     };
   };
 
-  const pushToSrcList = (assetType, /** @type UrlInfo */urlInfo) => {
+  const pushToSrcList = (assetType, /** @type UrlInfo */ urlInfo) => {
     const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
     if (assetType === 'css') {
       if (isBuildUrl) {
@@ -141,16 +148,18 @@ export async function fillAssetList(doms, parseOptions) {
     }
   };
 
-  const checkRelativePath = (/** @type string */url, /** @type UrlInfo */urlInfo) => {
+  const checkRelativePath = (/** @type string */ url, /** @type UrlInfo */ urlInfo) => {
     if (urlInfo.isNonBuildAndRelative && !enableRelativePath) {
-      throw new Error(nbstr(`
+      throw new Error(
+        nbstr(`
         found asset url is relative path [${url}], it is obviously not a valid url for cdn architecture deploy!
         but if you are sure this url is valid, you must set enableRelativePath=true to skip
         this error occured, hel-dev-utils will mark this url as relativeLink or relativeScript, and set append
         as false, but if you want sdk append this asset, you must explicitly add data-helappend="1" on the asset dom attribute.
         a demo will be like: <script src="./a/b.js" data-helappend="1"></script>, note that the asset will
         depend on your host site seriously under this situation.
-      `));
+      `),
+      );
     }
   };
 

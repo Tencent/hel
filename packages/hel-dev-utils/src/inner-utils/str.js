@@ -11,8 +11,8 @@
 export function nbstr(mayLineBreakStr) {
   const lines = mayLineBreakStr.split('\n');
   return lines
-    .filter(line => !!line)
-    .map((line) => (line.trimStart?.() || line))
+    .filter((line) => !!line)
+    .map((line) => line.trimStart?.() || line)
     .map((line) => (line.endsWith(' ') ? line : `${line} `))
     .join('');
 }
