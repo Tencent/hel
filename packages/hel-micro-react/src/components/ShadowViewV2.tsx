@@ -8,7 +8,16 @@ function ShadowContent(props: any) {
 }
 
 export default function ShadowViewV2(props: any) {
-  const { style = {}, styleContent, delegatesFocus = true, styleSheets, shadowDelay, children, tagName, hostData = '' } = props;
+  const {
+    style = {},
+    styleContent = '',
+    delegatesFocus = true,
+    styleSheets = [],
+    shadowDelay = 0,
+    children,
+    tagName = 'hel-shadow-view',
+    hostData = '',
+  } = props;
   const shadowHostRef = React.useRef<HTMLDivElement | null>(null);
   const shadowRootRef = React.useRef<{ root: ShadowRoot | null }>({ root: null });
   const isDelayCalledRef = React.useRef<{ called: boolean }>({ called: false });
@@ -38,7 +47,7 @@ export default function ShadowViewV2(props: any) {
 
   const shadowRoot = shadowRootRef.current.root;
   const isDelayCalled = isDelayCalledRef.current.called;
-  const compContent = !shadowDelay || isDelayCalled ? children : '';
+  const uiComp = !shadowDelay || isDelayCalled ? children : '';
 
   const uiContent = (
     <>
@@ -51,7 +60,7 @@ export default function ShadowViewV2(props: any) {
             ))}
             <style type="text/css">{styleContent}</style>
           </section>
-          {compContent}
+          {uiComp}
         </ShadowContent>
       )}
     </>

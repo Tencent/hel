@@ -18,7 +18,6 @@ import * as meta from './data/meta';
 import * as status from './data/status';
 import * as style from './data/style';
 import * as version from './data/version';
-import * as feature from './handle/feature';
 import * as guess from './handle/guess';
 import * as iso from './handle/iso';
 import * as patch from './handle/patch';
@@ -91,5 +90,3 @@ export const { getPlatformConfig, getAppPlatform, setAppPlatform, initPlatformCo
 export const { getHelEventBus, getUserEventBus } = event;
 
 export const { libReady, appReady } = ready;
-
-export const { markElFeature } = feature;

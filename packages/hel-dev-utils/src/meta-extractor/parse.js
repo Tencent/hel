@@ -13,20 +13,20 @@ const { JSDOM } = jsdom;
  * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
-  const { appInfo, extractMode = 'build', buildDirFullPath, enableReplaceDevJs = true } = extractOptions;
+  const { appInfo, buildDirFullPath, extractMode = 'all' } = extractOptions;
   const { homePage: appHomePage, name: appName } = appInfo;
   verbose(`homePage [${appHomePage}]`);
   verbose(`start to parse ${appName} index.html file`);
 
   const htmlFilePath = `${buildDirFullPath}/index.html`;
   let htmlContent = await readFile(htmlFilePath, { encoding: 'UTF-8' });
-  const srcMap = makeAppVersionSrcMap(appHomePage);
+  const srcMap = makeAppVersionSrcMap(appHomePage, extractMode);
 
   const dom = new JSDOM(htmlContent);
   const { head, body } = dom.window.document;
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(head.children, srcMap, { extractMode, buildDirFullPath, appHomePage, isHead: true, enableReplaceDevJs }),
-    fillAssetList(body.children, srcMap, { extractMode, buildDirFullPath, appHomePage, enableReplaceDevJs }),
+    fillAssetList(head.children, { srcMap, extractOptions, isHead: true }),
+    fillAssetList(body.children, { srcMap, extractOptions }),
   ]);
 
   replaceContentListOfHead.forEach((item) => {
@@ -36,8 +36,14 @@ export async function parseIndexHtml(extractOptions) {
     htmlContent = htmlContent.replace(item.toMatch, item.toReplace);
   });
 
+  const shouldRecordHtmlContent = extractMode === 'all' || extractMode === 'build';
+  const htmlContentVar = shouldRecordHtmlContent ? htmlContent : '';
+  if (!shouldRecordHtmlContent) {
+    verbose(`user set extractMode='${extractMode}', dev-utils will ignore write version.html_content`);
+  }
+
   const hasReplacedContent = replaceContentListOfHead.length || replaceContentLisOfBody.length;
-  const parsedRet = { srcMap, htmlContent, hasReplacedContent };
+  const parsedRet = { srcMap, htmlContent: htmlContentVar, hasReplacedContent };
   verbose(`parse ${appName} index.html file done!`);
   verbose('replaceContentListOfHead: ', replaceContentListOfHead);
   verbose('replaceContentLisOfBody: ', replaceContentLisOfBody);

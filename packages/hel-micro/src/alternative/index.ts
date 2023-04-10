@@ -53,7 +53,7 @@ export function getVal<T extends any = any>(platform: string | undefined, key: K
   return defautVal;
 }
 
-export function getHookFn(loadOptions: IInnerPreFetchOptions, hookKey: HookKey) {
+export function getHookFn<Key extends HookKey>(loadOptions: IInnerPreFetchOptions, hookKey: Key): Hook[Key] {
   const conf = getPlatformConfig(loadOptions.platform);
   const userHook: Hook = loadOptions.hook || {};
   const { origin, hook } = conf;

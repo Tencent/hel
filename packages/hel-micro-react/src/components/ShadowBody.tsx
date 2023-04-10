@@ -1,4 +1,4 @@
-import { getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-micro-core';
+import { commonUtil, getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-micro-core';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import defaults from '../consts/defaults';
@@ -9,12 +9,13 @@ const { STATIC_SHADOW_BODY_NAME } = defaults;
 
 const bus = getHelEventBus();
 
-function makeBodyMountNode(name: string, prefix: string) {
+function makeBodyMountNode(name: string, nodeId: string) {
   const doc = getGlobalThis().document;
   const div = doc.createElement('div');
-  div.id = `${prefix}/${name || ''}`;
+  div.id = nodeId;
   // avoid read only warning: div.style = ''
   div.setAttribute('style', 'position: absolute; top: 0px; left: 0px; width: 100%;');
+  commonUtil.setDataset(div, 'name', name);
   doc.body.appendChild(div);
   return div;
 }

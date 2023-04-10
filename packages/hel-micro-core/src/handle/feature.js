@@ -1,7 +1,10 @@
 import { setDataset } from '../base/commonUtil';
 
-export function markElFeature(el, platform, appGroupName, appName) {
+export function markElFeature(/** @type {HTMLElement} */ el, options) {
+  const { platform, groupName, name, ver, id } = options;
+  el.id = id;
   setDataset(el, 'plat', platform);
-  setDataset(el, 'groupname', appGroupName);
-  setDataset(el, 'name', appName);
+  setDataset(el, 'gname', groupName);
+  setDataset(el, 'name', name);
+  setDataset(el, 'ver', ver);
 }

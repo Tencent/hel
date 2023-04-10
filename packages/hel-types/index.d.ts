@@ -18,11 +18,23 @@ export type ApiMode = 'get' | 'jsonp';
 export type TagLink = 'link';
 /** 构建产生的 script 标签 */
 export type TagScript = 'script';
-/** 非构建产生的 link 标签 */
+/** 绝对路径导入的 homePage 之外的 link 标签，通常由cdn等文件服务提供 */
 export type TagStaticLink = 'staticLink';
-/** 非构建产生的 script 标签 */
+/** 绝对路径导入的 homePage 之外的 script 标签，通常由cdn等文件服务提供*/
 export type TagStaticScript = 'staticScript';
-export type ItemTag = TagLink | TagScript | TagStaticLink | TagStaticScript;
+/** 相对路径导入的 homePage 之外的 link 标签，通常由cdn等文件服务提供 */
+export type TagRelativeLink = 'relativeLink';
+/** 相对路径导入的 homePage 之外的 script 标签，通常由cdn等文件服务提供*/
+export type TagRelativeScript = 'relativeScript';
+
+/**
+ * 这些标签类型默认不会被 sd k加载，仅表示处于 html 代码里的位置
+ * 除非显示标记 data-helappend="1" 会被加载，通常用于紧随主站点加载的私有化部署模式
+ * 或显示标记 data-helex="xxx-link"，用于控制需要延迟加载的且只加载一次的 external 资源
+ */
+type TagNoAppend = TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript;
+
+export type ItemTag = TagLink | TagScript | TagNoAppend;
 
 export interface ILinkAttrs {
   href: string;
@@ -34,48 +46,95 @@ export interface IScriptAttrs {
   src: string;
 }
 
-export interface ILinkItem {
+export interface IAssetItemBase {
+  append?: boolean;
+  ex?: string;
+}
+
+export interface ILinkItem extends IAssetItemBase {
   tag: TagLink;
   attrs: ILinkAttrs;
 }
 
-export interface IStaticLinkItem {
+export interface IStaticLinkItem extends IAssetItemBase {
   tag: TagStaticLink;
   attrs: ILinkAttrs;
 }
 
-export interface IScriptItem {
+export interface IRelativeLinkItem extends IAssetItemBase {
+  tag: TagRelativeLink;
+  attrs: ILinkAttrs;
+}
+
+export interface IScriptItem extends IAssetItemBase {
   tag: TagScript;
   attrs: IScriptAttrs;
 }
 
-export interface IStaticScriptItem {
+export interface IStaticScriptItem extends IAssetItemBase {
   tag: TagStaticScript;
   attrs: IScriptAttrs;
 }
 
-export type IAssetItem = ILinkItem | IScriptItem | IStaticLinkItem | IStaticScriptItem;
+export interface IRelativeScriptItem extends IAssetItemBase {
+  tag: TagRelativeScript;
+  attrs: IScriptAttrs;
+}
+
+export type IAssetItem = ILinkItem | IScriptItem | IStaticLinkItem | IStaticScriptItem | IRelativeLinkItem | IRelativeScriptItem;
 export type IAssetItemAttrs = ILinkAttrs | IScriptAttrs;
 
 export interface ISrcMap {
   /** index.html 入口文件地址 */
   htmlIndexSrc: string;
-  /** 产物的web目录名字，所有产物都会已这个目录作为根目录 */
+  /**
+   * 产物的web目录名字，所有产物都会以这个目录作为根目录
+   */
   webDirPath: string;
+  /**
+   * default: 'all'，生成资源清单时的元数据提取方式，会影响元数据的记录结果
+   * ```
+   * all：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，同时也会记录 html_content
+   * build：只提取并记录构建时生成的产物，同时也会记录 html_content
+   * all_no_html：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，不记录 html_content
+   * build_no_html：只提取并记录构建时生成的产物，不记录 html_content
+   * ```
+   */
+  extractMode?: 'all' | 'build' | 'all_no_html' | 'build_no_html';
+  /**
+   * 应用首屏加载时需要插入到 document.head 里的资源列表
+   */
   headAssetList: IAssetItem[];
+  /**
+   * 应用首屏加载时需要插入到 document.body 里的资源列表
+   */
   bodyAssetList: IAssetItem[];
-  /** 所有构建产生的 js 资源列表 */
+  /**
+   * 所有构建产生的 js 资源列表
+   */
   chunkJsSrcList: string[];
   /**
    * 所有构建产生的 css 资源列表
    */
   chunkCssSrcList: string[];
   /**
-   * 所有在index.html里声明的静态 css 资源列表
+   * 所有静态服务提供的 js 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
    */
-  staticCssList: string[];
+  staticJsSrcList: string[];
   /**
-   *  标记了 hreflang 为 PRIV_CSS 的文件列表
+   * 所有静态服务提供的 css 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
+   */
+  staticCssSrcList: string[];
+  /**
+   * 所有homePage之外相对路径引入的 js 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
+   */
+  relativeJsSrcList: string[];
+  /**
+   * 所有homePage之外相对路径引入的 css 资源列表，在 extractMode 为 all 时才会记录
+   */
+  relativeCssSrcList: string[];
+  /**
+   * 标记了 hreflang 为 PRIV_CSS 的文件列表
    */
   privCssSrcList: string[];
 }
@@ -112,10 +171,7 @@ export interface ISubApp {
   update_at: string; // "2019-11-05T08:37:17.000Z"
   create_by: string;
   desc: string;
-  /** 插件将资源记录到 src_map 时对应的元数据提取方式，build：只提取构建产物，bu_st：构建产物和静态产生都提取 */
-  extract_mode: 'build' | 'bu_st';
-
-  // ----------------- 以下属性目前针对 HelPack 有效（如用户自搭后台需要也可复用），还在使用中 -------------
+  // ----------------- 以下属性目前针对 helpack 有效（如用户自搭后台需要也可复用），还在使用中 -------------
   /** 流水线构建时需要验证的token */
   token: string;
   /** 是否正在灰度中，每次流水线构建时如果 enable_gray 是1，则此值会设置为1 */
@@ -128,17 +184,17 @@ export interface ISubApp {
   is_top: 1 | 0;
   /** 是否允许蓝盾【海拉元数据模块提取】插件执行 */
   enable_pipeline: 1 | 0;
-  /** 是否允许下发给 HelPack 前台做展示 */
+  /** 是否允许下发给 helpack 前台做展示 */
   enable_display: 1 | 0;
   /** 是否允许将构建版本（即灰度版本）发布为线上版本 */
   enable_build_to_online: 1 | 0;
-  /** 托管在 HelPack 渲染时，访问应用的开屏过度图 */
+  /** 托管在 helpack 渲染时，访问应用的开屏过度图 */
   splash_screen: string;
-  /** 应用在 HelPack 里展现的 logo url */
+  /** 应用在 helpack 里展现的 logo url */
   logo: string;
   /** 项目id和版本映射关系，目前该配置仅作用于 hel-pack 模块管理台 */
   proj_ver: IProjVer;
-  /** 是否在 HelPack 前台渲染 */
+  /** 是否在 helpack 前台渲染 */
   is_local_render: 1 | 0;
   additional_scripts: string[];
   additional_body_scripts?: string[];
@@ -179,7 +235,7 @@ export interface ISubAppVersion {
    * 资源描述表map
    */
   src_map: ISrcMap;
-  /** html entry 字符串 */
+  /** html entry 字符串，在 extractMode 为 all 或 build 时都会记录 */
   html_content: string;
   /** 触发构建时的 git 提交信息 */
   desc: string;

@@ -31,7 +31,8 @@ interface ICacheData {
 const inner = {
   recordAssetCtx(appInfo: ISubApp, appVersion: ISubAppVersion, options: IInnerPreFetchOptions) {
     const { name, app_group_name } = appInfo;
-    const { chunkCssSrcList = [], chunkJsSrcList = [] } = appVersion.src_map;
+    const { src_map: srcMap, sub_app_version: ver } = appVersion;
+    const { chunkCssSrcList = [], chunkJsSrcList = [] } = srcMap;
     const fn = alt.getHookFn(options, 'beforeAppendAssetNode');
     const assetList = chunkCssSrcList.concat(chunkJsSrcList);
     const { appendCss, platform } = options;
@@ -45,8 +46,9 @@ const inner = {
         Object.assign(urlData, {
           marked: true,
           platform,
-          name,
           groupName: app_group_name,
+          name,
+          ver,
           beforeAppend: fn,
           append: appendCss,
         });
@@ -55,16 +57,21 @@ const inner = {
     });
   },
 
-  tryTriggerOnAppVersionFetched(appVersion: ISubAppVersion, options: any) {
-    if (typeof options.onAppVersionFetched === 'function') {
-      options.onAppVersionFetched(appVersion);
-    }
+  tryTriggerOnFetchMetaSuccess(
+    appInfo: ISubApp,
+    appVersion: ISubAppVersion,
+    options: { fromFallback: boolean; loadOptions: IInnerPreFetchOptions },
+  ) {
+    const { loadOptions, fromFallback } = options;
+    const fn = alt.getHookFn(loadOptions, 'onFetchMetaSuccess');
+    fn?.({ app: appInfo, version: appVersion, fromFallback });
   },
 };
 
 function getFallbackHook(options: IInnerPreFetchOptions) {
-  const fallbackHook = alt.getFn(options.platform, 'onFetchMetaFailed', options.onFetchMetaFailed);
-  return fallbackHook;
+  const legacyFn = alt.getFn(options.platform, 'onFetchMetaFailed', options.onFetchMetaFailed);
+  const newFn = alt.getHookFn(options, 'onFetchMetaFailed');
+  return newFn || legacyFn;
 }
 
 /**
@@ -292,23 +299,25 @@ export async function getAndCacheApp(appName: string, options: ISrvInnerOptions)
 /**
  * 加载应用的入口函数，先获取元数据，再加载资源
  */
-export async function loadApp(appName: string, options: IInnerPreFetchOptions = {}): Promise<(() => void) | null> {
-  const { isFirstCall = true, controlLoadAssets = false } = options;
+export async function loadApp(appName: string, loadOptions: IInnerPreFetchOptions = {}): Promise<(() => void) | null> {
+  const { isFirstCall = true, controlLoadAssets = false, platform, versionId = '' } = loadOptions;
 
   try {
-    const appData = await getAppWithFallback(appName, options);
+    const appData = await getAppWithFallback(appName, loadOptions);
     let { appInfo, appVersion } = appData || {};
     const noMeta = !appInfo || !appVersion;
+    let fromFallback = false;
 
     // 尝试读取用户兜底数据
     if (noMeta && !isFirstCall) {
-      const fallbackHook = getFallbackHook(options);
+      const fallbackHook = getFallbackHook(loadOptions);
       if (fallbackHook) {
-        const meta = await Promise.resolve(fallbackHook({ appName }));
+        const meta = await Promise.resolve(fallbackHook({ platform, appName, versionId }));
         if (meta) {
           appInfo = meta.app;
           appVersion = meta.version;
-          cacheApp(appInfo, { appVersion, platform: getPlatform(options.platform), toDisk: false, loadOptions: options });
+          fromFallback = true;
+          cacheApp(appInfo, { appVersion, platform: getPlatform(platform), toDisk: false, loadOptions });
         }
       }
     }
@@ -317,13 +326,13 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
       throw new Error(`app[${appName}] not exist`);
     }
     if (!appVersion) {
-      throw new Error(`app[${appName}]'s version[${options.versionId}] not exist`);
+      throw new Error(`app[${appName}]'s version[${versionId}] not exist`);
     }
-    inner.tryTriggerOnAppVersionFetched(appVersion, options);
-    inner.recordAssetCtx(appInfo, appVersion, options);
+    inner.tryTriggerOnFetchMetaSuccess(appInfo, appVersion, { loadOptions, fromFallback });
+    inner.recordAssetCtx(appInfo, appVersion, loadOptions);
 
     const startLoad = () => {
-      loadAppAssets(appInfo as ISubApp, appVersion as ISubAppVersion, options);
+      loadAppAssets(appInfo as ISubApp, appVersion as ISubAppVersion, loadOptions);
     };
 
     // !!! 需要人工控制开始加载资源的时机
@@ -335,9 +344,9 @@ export async function loadApp(appName: string, options: IInnerPreFetchOptions = 
   } catch (err: any) {
     if (isFirstCall) {
       console.error('loadApp err and try one more time: ', err);
-      const ret = await loadApp(appName, { ...options, isFirstCall: false });
+      const ret = await loadApp(appName, { ...loadOptions, isFirstCall: false });
       return ret;
     }
-    throw new Error(`loadApp err ( ${err.message} ), recommend config onAppVersionFetched hook`);
+    throw new Error(`loadApp [${appName}] err (${err.message}), recommend config onFetchMetaFailed hook`);
   }
 }

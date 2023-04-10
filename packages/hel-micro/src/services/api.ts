@@ -48,7 +48,7 @@ export interface IHelBatchGetOptions extends IHelGetOptions {
 const inner = {
   /** 处理语义化版本平台返回的结果 */
   handleSemverRet(ret: any, options: IHelGetOptionsBase) {
-    const { version } = ret;
+    const { version } = ret || {};
     let retVar = ret;
     if (options.onlyVersion) {
       retVar = version;
@@ -124,10 +124,13 @@ function ensureVersion(version: ISubAppVersion) {
     htmlIndexSrc: '',
     webDirPath: '',
     headAssetList: [],
-    chunkJsSrcList: [],
     bodyAssetList: [],
+    chunkJsSrcList: [],
     chunkCssSrcList: [],
-    staticCssList: [],
+    staticJsSrcList: [],
+    staticCssSrcList: [],
+    relativeJsSrcList: [],
+    relativeCssSrcList: [],
     privCssSrcList: [],
   });
   return clonedVersion;
@@ -282,11 +285,12 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
-    const reply = await executeGet(custUrl || url, { apiMode: custApiMode || apiMode, semverApi: loadOptions?.semverApi });
+    const metaUrl = custUrl || url;
+    const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions?.semverApi });
     if (0 !== parseInt(reply.code, 10) || !reply) {
       throw new Error(reply?.msg || 'getSubAppAndItsVersion err');
     }
-    return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version) };
+    return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version), metaUrl };
   };
 
   if (getFn) {

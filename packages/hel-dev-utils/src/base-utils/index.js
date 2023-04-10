@@ -57,7 +57,7 @@ export function getHelEnvParams(pkg, options = {}) {
   const p0EnvParams = getHelProcessEnvParams();
   const appName = p0EnvParams.appName || pkg.appGroupName || '';
   return {
-    appHomePage: p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '',
+    appHomePage: p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '/',
     appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || appName,
     appName,
   };

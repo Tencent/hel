@@ -18,9 +18,9 @@ export function perfEnd(label: string) {
  * 默认请求 unpkg
  */
 export async function getSemverLatestVer(appName: string, apiPrefix: string) {
-  // https://unpkg.com/hel-lodash@1.2.21/1659925934381_hel-lodash
-  // https://cdn.jsdelivr.net/npm/hel-lodash@2.1.7/1659925934381_hel-lodash
-  const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${Date.now()}_${appName}`);
+  // 会先经过 302 重定向到一个 404 请求地址后，即可拿到最新的版本号
+  const comment = 'try_detect_latest_ver';
+  const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${comment}_${Date.now()}`);
   const [, includeVer] = url.split('@');
   const [ver] = includeVer.split('/');
   return ver;

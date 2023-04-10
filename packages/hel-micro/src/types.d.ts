@@ -6,7 +6,7 @@ export interface IGetOptionsLoose {
   versionId?: string;
 }
 
-export type CssAppendType = 'static' | 'build';
+export type CssAppendType = 'build' | 'static' | 'relative';
 
 export type AnyRecord = Record<string, any>;
 
@@ -155,7 +155,6 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * 选择本地缓存的类型是 localStorage 还是 indexedDB
    */
   storageType?: 'localStorage' | 'indexedDB';
-  onAppVersionFetched?: (versionData: ISubAppVersion) => void;
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;

@@ -150,13 +150,14 @@ function MayShadowComp(props: IMayShadowProps) {
       allProps = {};
     }
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
+    const hostData = getHostData(name, platAndVer);
 
     return (
       <>
         <ShadowViewV2
           id={name}
           tagName={SHADOW_HOST_NAME}
-          hostData={getHostData(name, platAndVer)}
+          hostData={hostData}
           style={shadowWrapStyle}
           styleSheets={styleUrlList}
           styleContent={styleContent}
@@ -175,10 +176,12 @@ function MayShadowComp(props: IMayShadowProps) {
           <ShadowBody
             id={name}
             tagName={SHADOW_BODY_NAME}
+            hostData={hostData}
+            style={shadowWrapStyle}
+            styleSheets={styleUrlList}
+            styleContent={styleContent}
+            shadowDelay={shadowDelay}
             onShadowRootReady={onShadowBodyRootReady}
-            styleSheets={styleContent}
-            styleContent={finalStyleStr}
-            shadowMode={shadowMode}
           />
         )}
       </>

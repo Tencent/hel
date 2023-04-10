@@ -32,15 +32,20 @@ export function getAllFilePath(dirPath) {
  * @param {string} homePage
  * @return {SrcMap}
  */
-export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
+export function makeAppVersionSrcMap(homePage, extractMode) {
   // 用于更新到数据库的app信息，通常来说在构建机器上触发
   // 从上往下的key顺序也是在html创建的顺序
   return {
     webDirPath: homePage,
     htmlIndexSrc: `${ensureSlash(homePage, false)}/index.html`,
-    iframeSrc,
-    chunkCssSrcList: [], // app's all css files
-    chunkJsSrcList: [], // app's all js files
+    extractMode,
+    iframeSrc: '',
+    chunkCssSrcList: [], //  all build css files
+    chunkJsSrcList: [], // all build js files
+    staticCssSrcList: [], // all static css files
+    staticJsSrcList: [], // all static js files
+    relativeCssSrcList: [], // all relative js files
+    relativeJsSrcList: [], // all relative js files
     privCssSrcList: [], // 独立放置 hreflang 为 PRIV_CSS 的文件
     headAssetList: [],
     bodyAssetList: [],
@@ -52,7 +57,7 @@ export function makeAppVersionSrcMap(homePage, iframeSrc = '') {
  * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { packageJson, extractMode = 'build', appInfo } = userExtractOptions;
+  const { packageJson, appInfo } = userExtractOptions;
   const { homePage, groupName, name: appName, semverApi } = appInfo;
 
   /**
@@ -94,7 +99,6 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       name: appName,
       app_group_name: groupName,
       git_repo_url: repo.url || packageJson.homepage || '',
-      extract_mode: extractMode,
       online_version: version,
       build_version: version,
     },

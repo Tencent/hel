@@ -1,10 +1,12 @@
 /** @typedef {import('../../typings').SrcMap} SrcMap*/
+/** @typedef {{isBuildUrl:boolean, isNonBuildAndRelative: boolean, url:string}} UrlInfo */
 import fs from 'fs';
 import util from 'util';
 import { ensureSlash } from '../base-utils/index';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull, purify } from '../inner-utils/obj';
+import { nbstr } from '../inner-utils/str';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
@@ -14,73 +16,53 @@ function isRelativePath(path) {
   return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
 }
 
-function getLinkType(appHomePage, srcOrHref) {
-  if (isRelativePath(appHomePage) || srcOrHref.startsWith(appHomePage)) {
-    return 'link';
+function getAssetBase(tag, /** @type UrlInfo */ urlInfo, dataset) {
+  const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
+  // 仅当显式设置了 data-helappend="1" 时，才标识为 hel-micro sdk 加载首屏应用时需要载入的资源
+  const canAppend = dataset['helappend'] === '1';
+
+  if (isBuildUrl) {
+    return {
+      tag,
+      // 非ico文件一定是true，ico 文件需要显式设置 helappend
+      append: url.endsWith('.ico') ? canAppend : true,
+    };
   }
-  return 'staticLink';
+
+  const ex = dataset['helex'] || '';
+  const append = !!(canAppend || ex);
+
+  if (isNonBuildAndRelative) {
+    return {
+      tag: tag === 'link' ? 'relativeLink' : 'relativeScript',
+      append,
+      ex,
+    };
+  }
+
+  return {
+    tag: tag === 'link' ? 'staticLink' : 'staticScript',
+    append,
+    ex,
+  };
 }
 
-function getScriptType(appHomePage, srcOrHref) {
-  if (isRelativePath(appHomePage) || srcOrHref.startsWith(appHomePage)) {
-    return 'script';
-  }
-  return 'staticScript';
+function getLinkAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
+  return getAssetBase('link', urlInfo, dataset);
 }
 
-/**
- * 是否忽略此文件
- * true：忽略，则不加入到首屏的资源清单里
- * false：不忽略，则加入到首屏的资源清单里
- * 注意，加入后也不一定会使用，目前 hel-micro sdk 不会加载 staticLink staticScript 型资源
- * @returns
- */
-function needIgnore(url, options) {
-  const { parseOptions, hreflang = '', id } = options;
-  const { extractMode, appHomePage } = parseOptions;
-  if (url) {
-    // 这种类型的css文件不忽略
-    if (hreflang.startsWith('PRIV_CSS')) {
-      return false;
-    }
-    // 用户标记此文件为静态资源文件且不忽略它，dev-utils 会记录到js入口清单里
-    // 如后续步骤不满足 homePage 匹配，会被标记为 staticLink staticScript
-    // 目前 hel-micro sdk 不会加载 staticLink staticScript 型资源
-    if (id === 'HelStatic') {
-      return false;
-    }
-    // 用户标记此文件为静态资源文件且忽略它，dev-utils 会不记录该js入口清单里
-    if (id === 'HelStaticIgnore') {
-      return true;
-    }
-    if (url.startsWith('http')) {
-      if (extractMode === 'build') {
-        return !url.startsWith(appHomePage); // 不是以 appHomePage 开头的都忽略掉
-      }
-      if (extractMode === 'bu_st') {
-        // 都不忽略，全部记录到记录到js入口清单里，如后续步骤不满足homePage匹配，会被标记为 staticLink staticScript，
-        // 目前 hel-micro sdk 不会加载 staticLink staticScript 型资源
-        return false;
-      }
-      throw new Error(`unknown extract_mode [${extractMode}]`);
-    }
-    // 以双斜杠开头的script引用直接忽略
-    if (url.startsWith('//')) return true;
-
-    if (isRelativePath(url)) {
-      return false; // 允许将 /xx/bb.js 格式的值写入到元数据里，适用于资源随主站点部署的情况
-    }
-
-    // 用户的子应用未能正确埋入 CMS_APP_HOME_PAGE，需要修改构建脚本的 publicPath 获取方式
-    throw new Error(`src or href is invalid, it must refer to a cdn host, now it is ${url}.`);
-  }
-  // 控制不忽略，会尝试提取 innerHtml
-  return false;
+function getScriptAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
+  return getAssetBase('script', urlInfo, dataset);
 }
 
 let custScriptIdx = 0;
-async function writeInnerHtml(childDom, fileType, parseOptions) {
-  const { buildDirFullPath, appHomePage } = parseOptions;
+
+/**
+ * @param {object} parseOptions
+ * @param {import('../../typings').IUserExtractOptions} extractOptions
+ */
+async function writeInnerHtml(childDom, fileType, extractOptions) {
+  const { appInfo, buildDirFullPath } = extractOptions;
   const { innerHTML } = childDom;
   if (!innerHTML) return '';
 
@@ -88,7 +70,7 @@ async function writeInnerHtml(childDom, fileType, parseOptions) {
   custScriptIdx += 1;
   const scriptName = `hel_userChunk_${custScriptIdx}.${fileType}`;
   const fileAbsolutePath = `${buildDirFullPath}/${scriptName}`;
-  const fileWebPath = `${ensureSlash(appHomePage, false)}/${scriptName}`;
+  const fileWebPath = `${ensureSlash(appInfo.homePage, false)}/${scriptName}`;
 
   await writeFile(fileAbsolutePath, innerHTML);
   verbose(`write done, the web file will be ${fileWebPath} later`);
@@ -98,64 +80,137 @@ async function writeInnerHtml(childDom, fileType, parseOptions) {
 /**
  * 提取link、script标签数据并填充到目标assetList
  * @param {HTMLCollectionOf<HTMLScriptElement>} doms
- * @param {SrcMap} fillTargets
  * @param {object} parseOptions
- * @param {string} parseOptions.buildDirFullPath
+ * @param {SrcMap} parseOptions.srcMap
  * @param {boolean} parseOptions.isHead
- * @param {boolean} parseOptions.enableReplaceDevJs
- * @param {string} parseOptions.appHomePage  - http://s.inews.gtimg.com/om_20200408203828
+ * @param {import('../../typings').IUserExtractOptions} parseOptions.extractOptions
  */
-export async function fillAssetList(doms, fillTargets, parseOptions) {
-  const { headAssetList, bodyAssetList, chunkCssSrcList, chunkJsSrcList, privCssSrcList } = fillTargets;
-  const { appHomePage, enableReplaceDevJs, isHead } = parseOptions;
+export async function fillAssetList(doms, parseOptions) {
+  const { srcMap, isHead, extractOptions } = parseOptions;
+  const { appInfo, enableReplaceDevJs = true, enableRelativePath = false } = extractOptions;
+  const {
+    headAssetList,
+    bodyAssetList,
+    extractMode,
+    chunkCssSrcList,
+    staticCssSrcList,
+    relativeCssSrcList,
+    privCssSrcList,
+    chunkJsSrcList,
+    staticJsSrcList,
+    relativeJsSrcList,
+  } = srcMap;
+  const { homePage } = appInfo;
   const assetList = isHead ? headAssetList : bodyAssetList;
-  const cssList = chunkCssSrcList;
-  const privCssList = privCssSrcList;
 
   const len = doms.length;
   const replaceContentList = [];
+  verbose(`extractMode is [${extractMode}]`);
+
+  const getUrlInfo = (/** @type string */ url) => {
+    // 是构建生成的产物路径
+    const isBuildUrl = url.startsWith(homePage);
+    const isRelative = isRelativePath(url);
+    // 是homePage之外相对路径导入的产物路径
+    const isNonBuildAndRelative = !isBuildUrl && isRelative;
+    // 设置了 extractMode 为 build 和 build_no_html 时，当前产物路径是非构建生成的，直接忽略
+    const shouldIgnore = !isBuildUrl && (extractMode === 'build' || extractMode === 'build_no_html');
+    if (shouldIgnore) {
+      verbose(` >>> ignore asset [${url}] by extractMode=${extractMode}`);
+    }
+
+    return {
+      url,
+      isBuildUrl,
+      isNonBuildAndRelative,
+      shouldIgnore,
+    };
+  };
+
+  const pushToSrcList = (assetType, /** @type UrlInfo */ urlInfo) => {
+    const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
+    if (assetType === 'css') {
+      if (isBuildUrl) {
+        return noDupPush(chunkCssSrcList, url);
+      }
+      if (extractMode === 'all' || extractMode === 'all_no_html') {
+        const list = isNonBuildAndRelative ? relativeCssSrcList : staticCssSrcList;
+        return noDupPush(list, url);
+      }
+    }
+
+    if (isBuildUrl) {
+      return noDupPush(chunkJsSrcList, url);
+    }
+    if (extractMode === 'all' || extractMode === 'all_no_html') {
+      const list = isNonBuildAndRelative ? relativeJsSrcList : staticJsSrcList;
+      return noDupPush(list, url);
+    }
+  };
+
+  const checkRelativePath = (/** @type string */ url, /** @type UrlInfo */ urlInfo) => {
+    if (urlInfo.isNonBuildAndRelative && !enableRelativePath) {
+      throw new Error(
+        nbstr(`
+        found asset url is relative path [${url}], it is obviously not a valid url for cdn architecture deploy!
+        but if you are sure this url is valid, you must set enableRelativePath=true to skip
+        this error occured, hel-dev-utils will mark this url as relativeLink or relativeScript, and set append
+        as false, but if you want sdk append this asset, you must explicitly add data-helappend="1" on the asset dom attribute.
+        a demo will be like: <script src="./a/b.js" data-helappend="1"></script>, note that the asset will
+        depend on your host site seriously under this situation.
+      `),
+      );
+    }
+  };
 
   for (let i = 0; i < len; i++) {
     const childDom = doms[i];
-    const { tagName, crossorigin, id } = childDom;
-    let toPush = null;
+    const { tagName, crossorigin, dataset = {} } = childDom;
+    let toPushAsset = null;
+    if (!['LINK', 'SCRIPT', 'STYLE'].includes(tagName)) {
+      continue;
+    }
+    if (!isNull(dataset)) {
+      verbose(`found ${tagName} dataset`, dataset);
+    }
+    if (dataset['helignore'] === '1') {
+      verbose(` >>> ignore asset [${childDom.href || childDom.src || ''}] by data-helignore="1"`);
+      continue;
+    }
+
     if (tagName === 'LINK') {
       const { as, rel, hreflang = '' } = childDom;
       let { href } = childDom;
       if (!href) continue;
-      if (needIgnore(href, { parseOptions, hreflang, id })) {
-        verbose(`ignore href ${href}`);
-        continue;
-      }
-
       verbose(`analyze link href[${href}] as[${as}] rel[${rel}]`);
       // 一些使用了老版本cra的项目，这两个href 在修改了 publicPath 后也不被添加前缀，这里做一下修正
       const legacyHrefs = ['/manifest.json', '/favicon.ico'];
       if (legacyHrefs.includes(href)) {
-        href = `${appHomePage}${href}`;
+        href = `${homePage}${href}`;
         replaceContentList.push({ toMatch: href, toReplace: href });
       }
 
+      const urlInfo = getUrlInfo(href);
+      if (urlInfo.shouldIgnore) {
+        continue;
+      }
+
+      checkRelativePath(href, urlInfo);
+      if (hreflang.startsWith('PRIV_CSS')) {
+        noDupPush(privCssSrcList, href);
+      }
       // 供 shadow-dom 或其他需要知道当前应用所有样式列表的场景用
       if (href.endsWith('.css')) {
-        noDupPush(cssList, href);
+        pushToSrcList('css', urlInfo);
       }
-      if (hreflang.startsWith('PRIV_CSS')) {
-        noDupPush(privCssList, href);
-      }
-      toPush = { tag: getLinkType(appHomePage, href), attrs: { href: href, as, rel, crossorigin } };
+      toPushAsset = { ...getLinkAssetBase(urlInfo, dataset), attrs: { href, as, rel, crossorigin } };
     } else if (tagName === 'SCRIPT') {
       const { src } = childDom;
       let targetSrc = src;
       if (!targetSrc) {
-        targetSrc = await writeInnerHtml(childDom, 'js', parseOptions);
+        targetSrc = await writeInnerHtml(childDom, 'js', extractOptions);
       }
       if (!targetSrc) continue;
-
-      if (needIgnore(targetSrc, { parseOptions, id })) {
-        verbose(`ignore script ${targetSrc}`);
-        continue;
-      }
 
       verbose(`analyze script src[${targetSrc}]`);
       if (enableReplaceDevJs) {
@@ -173,25 +228,36 @@ export async function fillAssetList(doms, fillTargets, parseOptions) {
         }
       }
 
-      noDupPush(chunkJsSrcList, targetSrc);
-      toPush = { tag: getScriptType(appHomePage, targetSrc), attrs: { src: targetSrc, crossorigin } };
+      const urlInfo = getUrlInfo(targetSrc);
+      if (urlInfo.shouldIgnore) {
+        continue;
+      }
+
+      checkRelativePath(targetSrc, urlInfo);
+      pushToSrcList('js', urlInfo);
+      toPushAsset = { ...getScriptAssetBase(urlInfo, dataset), attrs: { src: targetSrc, crossorigin } };
     } else if (tagName === 'STYLE') {
       // style 标签转换为 css 文件存起来
-      const linkHref = await writeInnerHtml(childDom, 'css', parseOptions);
-      if (!linkHref) continue;
+      const href = await writeInnerHtml(childDom, 'css', extractOptions);
+      if (!href) continue;
 
-      verbose(`upload style content to ${linkHref} done`);
-      toPush = { tag: getLinkType(appHomePage, linkHref), attrs: { href: linkHref, rel: 'stylesheet' } };
+      const urlInfo = getUrlInfo(href);
+      if (urlInfo.shouldIgnore) {
+        continue;
+      }
+
+      pushToSrcList('css', urlInfo);
+      toPushAsset = { ...getLinkAssetBase(urlInfo, dataset), attrs: { href, rel: 'stylesheet' } };
     }
 
-    if (toPush) {
+    if (toPushAsset) {
       const judgeValueValid = (value, key) => {
         if (key === 'crossorigin') return !isNull(value, { nullValues: [null, undefined] });
         return !isNull(value);
       };
 
-      toPush.attrs = purify(toPush.attrs, judgeValueValid);
-      assetList.push(toPush);
+      toPushAsset.attrs = purify(toPushAsset.attrs, judgeValueValid);
+      assetList.push(toPushAsset);
     }
   }
 

@@ -88,10 +88,12 @@ export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOpt
  */
 export function getPlatform(): Platform;
 
-export interface IAppAndVer {
+export interface IHelMeta {
   app: ISubApp;
   version: ISubAppVersion;
 }
+
+export type IAppAndVer = IHelMeta;
 
 export interface IControlPreFetchOptions {
   platform: Platform;
@@ -197,8 +199,8 @@ export interface IControlPreFetchOptions {
     versionId: string | undefined;
     url: string;
     /** 内部请求句柄 */
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer>;
-  }) => Promise<IAppAndVer> | IAppAndVer;
+    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IHelMeta>;
+  }) => Promise<IHelMeta> | IHelMeta;
   /**
    * default: 'HelUserRtxName'，仅当 semverApi 为 false 时，设置此值才会有效
    * 发起自定义平台请求时，尝试从 localStorage 的 {userLsKey} 下获取用户名，
@@ -212,9 +214,12 @@ export interface IControlPreFetchOptions {
    */
   getUserName: (passCtx: { platform: string; appName: string; userLsKey?: string }) => string;
   /**
-   * 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据
+   * @deprecated since version v4.0
+   * 建议配置到 options.hook.onFetchMetaFailed 里，此处保留此属性是为了让 v3 版本的用户升级到 v4 后，此钩子函数依然有效
+   * 如同时配置 options.onFetchMetaFailed 和 options.hook.onFetchMetaFailed
+   * 则 options.hook.onFetchMetaFailed 优先有效
    */
-  onFetchMetaFailed: (params: { appName: string }) => Promise<IAppAndVer> | IAppAndVer | void;
+  onFetchMetaFailed: (params: { platform: string; appName: string; versionId: string }) => Promise<IHelMeta> | IHelMeta | void;
   /**
    * default: null ，仅当 semverApi 为 false 时，设置此值才会有效
    * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
@@ -222,6 +227,14 @@ export interface IControlPreFetchOptions {
    */
   shouldUseGray: (passCtx: { appName: string }) => boolean | null;
   hook: {
+    /**
+     * 用于做一些额外提示之用，如 params.fromFallback 为true，则表示 meta 数据来自于 onFetchMetaFailed 钩子返回的数据
+     */
+    onFetchMetaSuccess?: (params: { fromFallback: boolean; app: ISubApp; version: ISubAppVersion }) => void;
+    /**
+     * 元数据获取失败时（远端和本地缓存均失败）的钩子函数，如返回自定元数据，则可作为兜底数据
+     */
+    onFetchMetaFailed?: (params: { platform: string; appName: string; versionId: string }) => Promise<IHelMeta> | IHelMeta | void;
     beforeAppendAssetNode?: (passCtx: {
       /** link 元素或 script 元素 */
       el: HTMLLinkElement | HTMLScriptElement;
@@ -506,5 +519,3 @@ export function inectPlatToMod<T extends Record<string, any> = Record<string, an
   mod: T,
   options?: IInjectPlatOptions,
 ): T;
-
-export function markElFeature(el: HTMLElement, platform: string, appGroupName: string, appName: string): void;

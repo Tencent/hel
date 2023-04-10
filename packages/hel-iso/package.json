@@ -1,6 +1,6 @@
 {
   "name": "hel-iso",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "this pack can only be bundeld with project, using it with external will make mistake",
   "repository": {
     "type": "git",
@@ -30,18 +30,14 @@
     "build:umd:min": "rollup -c --environment BUILD_ENV:production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "hel-types": ">=3.8.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "babel-cli": "^6.26.0",
     "rollup": "^2.23.0"
   },
-  "peerDependencies": {
-    "hel-types": ">=3.8.0"
-  },
+  "peerDependencies": {},
   "bundleDependencies": false,
   "deprecated": false
 }
