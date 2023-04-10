@@ -19,7 +19,7 @@ type ExtractMode = 'all' | 'build' | 'all_no_html' | 'build_no_html';
 export interface SrcMap {
   webDirPath: string;
   /** default: 'all' */
-  extractMode: ExtractMode,
+  extractMode: ExtractMode;
   /** 用于辅助iframe载入子应用入口html地址 */
   iframeSrc: string;
   /** 所有依据 homePage 构建生成的 js 列表 */
