@@ -110,27 +110,27 @@ export interface ISrcMap {
    */
   bodyAssetList: IAssetItem[];
   /**
-   * 所有构建产生的 js 资源列表
+   * 所有依据 homePage 构建生成的 js 列表
    */
   chunkJsSrcList: string[];
   /**
-   * 所有构建产生的 css 资源列表
+   * 所有依据 homePage 构建生成的 css 列表
    */
   chunkCssSrcList: string[];
   /**
-   * 所有静态服务提供的 js 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
+   * 所有绝对路径导入的 homePage 之外的 js 列表，在 extractMode 为 all 或 all_no_html 时才会记录
    */
   staticJsSrcList: string[];
   /**
-   * 所有静态服务提供的 css 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
+   * 所有绝对路径导入的 homePage 之外的 css 列表，在 extractMode 为 all 或 all_no_html 时才会记录
    */
   staticCssSrcList: string[];
   /**
-   * 所有homePage之外相对路径引入的 js 资源列表，在 extractMode 为 all 或 all_no_html 时才会记录
+   * 所有相对路径导入的 homePage 之外的 js 列表，在 extractMode 为 all 或 all_no_html 时才会记录
    */
   relativeJsSrcList: string[];
   /**
-   * 所有homePage之外相对路径引入的 css 资源列表，在 extractMode 为 all 时才会记录
+   * 所有相对路径导入的 homePage 之外的 css 列表，在 extractMode 为 all 或 all_no_html 时才会记录
    */
   relativeCssSrcList: string[];
   /**
