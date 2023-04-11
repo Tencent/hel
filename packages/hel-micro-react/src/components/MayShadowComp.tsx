@@ -26,7 +26,7 @@ function getPassedProps(
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
 ) {
-  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false } = loadOptions;
+  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false, reactRef } = loadOptions;
   const staticShadowBodyRootRef = getStaticShadowBodyRef(name, loadOptions);
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
   const getShadowAppRoot = () => shadowAppRootRef.current || null;
@@ -44,20 +44,17 @@ function getPassedProps(
     getEnsuredBodyRoot,
   };
 
-  let passedProps;
+  // avoid error: compProps object is not extensible,
+  let passedProps = { ...compProps, ref: reactRef };
   if (isLegacy) {
     // getShadowContainer getShadowBodyContainer 作为历史方法暴露，让 MicroAppLegacy 载入老应用时不会报错
     Object.assign(helContext, { getShadowContainer: getShadowBodyRoot, getShadowBodyContainer: getShadowBodyRoot });
-    passedProps = { appProps: compProps, children: compProps.children };
-  } else {
-    passedProps = compProps;
+    passedProps = { appProps: compProps, children: compProps.children, ref: reactRef };
   }
-
   if (!ignoreHelContext) {
     // helContext 是关键属性key，不允许用户覆盖
-    passedProps = { ...passedProps, helContext };
+    passedProps.helContext = helContext;
   }
-
   return passedProps;
 }
 
@@ -71,7 +68,6 @@ function MayShadowComp(props: IMayShadowProps) {
     Skeleton,
     shadowWrapStyle = {},
     shadowDelay,
-    reactRef, // 透传用户可能传递下来的 ref
     handleStyleStr,
     ShadowViewImpl,
   } = options;
@@ -92,7 +88,7 @@ function MayShadowComp(props: IMayShadowProps) {
       bus.on(evName, evCb);
 
       const renderProps = { data, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, props.createRoot, options);
+      tryMountStaticShadowBody(renderProps, options);
       return () => {
         bus.off(evName, evCb);
       };
@@ -103,7 +99,7 @@ function MayShadowComp(props: IMayShadowProps) {
 
   const isShadowRefsReady = () => {
     const staticRef = getStaticShadowBodyRef(name, options);
-    return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
+    return shadowAppRootRef.current && (options.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
     isShadowRefsReady() && forceUpdate();
@@ -127,11 +123,7 @@ function MayShadowComp(props: IMayShadowProps) {
       const SkeletonComp = Skeleton || BuildInSkeleton;
       uiContent = <SkeletonComp />;
     } else {
-      uiContent = (
-        <Comp {...passedProps} ref={reactRef}>
-          {children}
-        </Comp>
-      );
+      uiContent = <Comp {...passedProps}> {children} </Comp>;
     }
 
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
@@ -147,18 +139,14 @@ function MayShadowComp(props: IMayShadowProps) {
           为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
           推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
-        {props.mountShadowBodyForRef && (
+        {options.mountShadowBodyForRef && (
           <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onShadowBodyRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
         )}
       </>
     );
   }
 
-  return (
-    <Comp {...passedProps} ref={reactRef}>
-      {children}
-    </Comp>
-  );
+  return <Comp {...passedProps}> {children} </Comp>;
 }
 
 export default MayShadowComp;

@@ -21,7 +21,7 @@ function makeBodyMountNode(name: string, nodeId: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
+class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
@@ -56,8 +56,8 @@ export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) 
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, createRoot: any, options: IInnerRemoteModuleProps) {
-  const { name } = options;
+export function tryMountStaticShadowBody(props: any, options: IInnerRemoteModuleProps) {
+  const { name, createRoot } = options;
   if (wrap.getStaticShadowBodyRef(name, options)) {
     return;
   }
