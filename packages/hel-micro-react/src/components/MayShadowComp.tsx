@@ -61,16 +61,7 @@ function getPassedProps(
 function MayShadowComp(props: IMayShadowProps) {
   const { loadResult, options } = props;
   const { Comp, styleStr, styleUrlList } = loadResult;
-  const {
-    name,
-    shadow,
-    children,
-    Skeleton,
-    shadowWrapStyle = {},
-    shadowDelay,
-    handleStyleStr,
-    ShadowViewImpl,
-  } = options;
+  const { name, shadow, children, Skeleton, shadowWrapStyle = {}, shadowDelay, handleStyleStr, ShadowViewImpl } = options;
 
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
