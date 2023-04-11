@@ -150,7 +150,8 @@ export async function fillAssetList(doms, parseOptions) {
 
   const checkRelativePath = (/** @type string */ url, /** @type UrlInfo */ urlInfo) => {
     if (urlInfo.isNonBuildAndRelative && !enableRelativePath) {
-      throw new Error(pfstr(`
+      throw new Error(
+        pfstr(`
         found asset url [${url}] is a elative path,
         it is obviously not a valid url for cdn architecture deploy!
         but if you are sure this url is valid, there are 2 ways to skip this error occured, you can choose any one of them:
@@ -161,7 +162,8 @@ export async function fillAssetList(doms, parseOptions) {
         but if you want sdk append this asset, you must explicitly add data-helappend="1" on the asset dom attribute.
         a demo will be like:<script src="./a/b.js" data-helappend="1"></script>,<br/>
         note that the asset will depend on your host site seriously under this situation.
-      `));
+      `),
+      );
     }
   };
 
