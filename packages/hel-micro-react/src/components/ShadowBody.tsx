@@ -2,8 +2,9 @@ import { commonUtil, getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-m
 import React from 'react';
 import ReactDOM from 'react-dom';
 import defaults from '../consts/defaults';
+import type { IInnerRemoteModuleProps } from '../types';
 import * as wrap from '../wrap';
-import ShadowViewV2 from './ShadowViewV2';
+import ShadowView from './ShadowViewV2';
 
 const { STATIC_SHADOW_BODY_NAME } = defaults;
 
@@ -36,10 +37,11 @@ class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
 
   render() {
     const { node, props } = this;
+    const { ShadowView, ...restProps } = props;
     // 正常情况下，这句话的判断不会成立，此处为了让 tsc 编译通过
     if (!node) return <h1>node not ready</h1>;
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
-    return ReactDOM.createPortal(<ShadowViewV2 {...props} />, node);
+    return ReactDOM.createPortal(<ShadowView {...restProps} />, node);
   }
 }
 
@@ -54,7 +56,7 @@ export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) 
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, createRoot: any, options: IGetVerOptions) {
+export function tryMountStaticShadowBody(props: any, createRoot: any, options: IInnerRemoteModuleProps) {
   const name = props.id;
   if (wrap.getStaticShadowBodyRef(name, options)) {
     return;
@@ -71,9 +73,10 @@ export function tryMountStaticShadowBody(props: any, createRoot: any, options: I
   // so we create a mount node manually
   const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name, options);
+  const ShadowViewImpl = options.ShadowViewImpl || ShadowView;
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
-    <ShadowViewV2
+    <ShadowViewImpl
       {...{
         ...props,
         tagName: STATIC_SHADOW_BODY_NAME,

@@ -3,6 +3,7 @@ import { helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
+import ShadowView from './ShadowViewV2';
 
 export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const ensuredProps = { ...props };
@@ -20,6 +21,7 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   ensuredProps.children = ensuredProps.compProps.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
   ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
+  ensuredProps.ShadowViewImpl = props.ShadowViewImpl || ShadowView;
 
   return ensuredProps;
 }

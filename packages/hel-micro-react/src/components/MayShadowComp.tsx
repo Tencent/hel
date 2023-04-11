@@ -3,40 +3,27 @@ import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
-import type { AnyComp, AnyCompOrNull, IHelContext, IsLegacy, IUseRemoteCompOptions } from '../types';
+import type { IHelContext, IInnerRemoteModuleProps } from '../types';
 import { getStaticShadowBodyRef } from '../wrap';
 import BuildInSkeleton from './BuildInSkeleton';
 import ShadowBody, { getHostData, getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
-import ShadowViewV2 from './ShadowViewV2';
 
 const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
 
 const bus = getHelEventBus();
 
 export interface IMayShadowProps {
-  platform: string;
-  name: string;
-  versionId: string;
-  styleStr: string;
-  compProps: any;
-  Comp: AnyComp;
-  handleStyleStr?: (mayFetchedStr: string) => string;
-  Skeleton?: AnyCompOrNull;
-  styleUrlList?: string[];
-  isLegacy?: IsLegacy;
-  shadow?: boolean;
-  shadowWrapStyle?: any;
-  shadowDelay?: number;
-  errMsg?: string;
-  children?: any;
-  reactRef?: any;
-  createRoot?: IUseRemoteCompOptions['createRoot'];
-  mountShadowBodyForRef?: IUseRemoteCompOptions['mountShadowBodyForRef'];
-  ignoreHelContext?: IUseRemoteCompOptions['ignoreHelContext'];
+  loadResult: {
+    Comp: any;
+    styleStr: string;
+    styleUrlList: string[];
+    errMsg: string;
+  };
+  options: IInnerRemoteModuleProps;
 }
 
 function getPassedProps(
-  helProps: IMayShadowProps,
+  helProps: IInnerRemoteModuleProps,
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
   staticShadowBodyRootRef: any,
@@ -76,31 +63,28 @@ function getPassedProps(
 }
 
 function MayShadowComp(props: IMayShadowProps) {
+  const { loadResult, options } = props;
+  const { Comp, styleStr, styleUrlList, errMsg } = loadResult;
   const {
-    errMsg,
     name,
-    platform,
-    versionId,
     shadow,
-    styleUrlList = [],
-    styleStr,
-    Comp,
     children,
     Skeleton,
     shadowWrapStyle = {},
     shadowDelay,
     reactRef, // 透传用户可能传递下来的 ref
     handleStyleStr,
-  } = props;
-  const platAndVer = { platform, versionId };
+    ShadowViewImpl,
+  } = options;
+
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
   const forceUpdate = useForceUpdate();
 
   React.useEffect(() => {
-    const staticRef = getStaticShadowBodyRef(name, platAndVer);
+    const staticRef = getStaticShadowBodyRef(name, options);
     if (shadow && !staticRef) {
-      const evName = getShadowBodyReadyEvName(name, platAndVer);
+      const evName = getShadowBodyReadyEvName(name, options);
       const evCb = () => {
         bus.off(evName, evCb);
         tryForceUpdate();
@@ -108,7 +92,7 @@ function MayShadowComp(props: IMayShadowProps) {
       bus.on(evName, evCb);
 
       const renderProps = { id: name, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, props.createRoot, platAndVer);
+      tryMountStaticShadowBody(renderProps, props.createRoot, options);
       return () => {
         bus.off(evName, evCb);
       };
@@ -118,7 +102,7 @@ function MayShadowComp(props: IMayShadowProps) {
   }, []);
 
   const isShadowRefsReady = () => {
-    const staticRef = getStaticShadowBodyRef(name, platAndVer);
+    const staticRef = getStaticShadowBodyRef(name, options);
     return shadowAppRootRef.current && (props.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
@@ -133,7 +117,7 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowBodyRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name, platAndVer));
+  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name, options));
 
   if (errMsg) {
     return React.createElement(Comp, passedProps);
@@ -150,39 +134,22 @@ function MayShadowComp(props: IMayShadowProps) {
       allProps = {};
     }
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
-    const hostData = getHostData(name, platAndVer);
+    const hostData = getHostData(name, options);
+    const commonProps = { id: name, hostData, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
 
     return (
       <>
-        <ShadowViewV2
-          id={name}
-          tagName={SHADOW_HOST_NAME}
-          hostData={hostData}
-          style={shadowWrapStyle}
-          styleSheets={styleUrlList}
-          styleContent={styleContent}
-          shadowDelay={shadowDelay}
-          onShadowRootReady={onShadowAppRootReady}
-        >
+        <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onShadowAppRootReady} {...commonProps}>
           <TargetComp {...allProps}>{children}</TargetComp>
-        </ShadowViewV2>
+        </ShadowViewImpl>
         {/*
-        在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
-        可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
-        为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
-        推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
+          在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
+          可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
+          为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
+          推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
         {props.mountShadowBodyForRef && (
-          <ShadowBody
-            id={name}
-            tagName={SHADOW_BODY_NAME}
-            hostData={hostData}
-            style={shadowWrapStyle}
-            styleSheets={styleUrlList}
-            styleContent={styleContent}
-            shadowDelay={shadowDelay}
-            onShadowRootReady={onShadowBodyRootReady}
-          />
+          <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onShadowBodyRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
         )}
       </>
     );

@@ -2,7 +2,7 @@ import { appParamSrv, appStyleSrv } from 'hel-micro';
 import React from 'react';
 import type { IInnerRemoteModuleProps } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
-import MayShadowComp, { IMayShadowProps } from '../MayShadowComp';
+import MayShadowComp from '../MayShadowComp';
 import { ensurePropsDefaults, tryTriggerOnStyleFetched } from '../share';
 import useLoadRemoteModule from './useLoadRemoteModule';
 
@@ -11,8 +11,8 @@ import useLoadRemoteModule from './useLoadRemoteModule';
  */
 export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
   const ensuredProps = ensurePropsDefaults(props);
-  const { compProps, name, children, handleStyleStr, shadow, shadowWrapStyle } = ensuredProps;
-  const { platform, versionId } = appParamSrv.getPlatAndVer(name, ensuredProps);
+  const { platform, versionId } = appParamSrv.getPlatAndVer(ensuredProps.name, ensuredProps);
+  Object.assign(ensuredProps, { platform, versionId });
 
   const { errMsg, getModule } = useLoadRemoteModule(ensuredProps);
   React.useEffect(() => {
@@ -30,26 +30,6 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
     return <Skeleton />;
   }
 
-  const wrapProps: IMayShadowProps = {
-    Comp: RemoteModule,
-    styleStr,
-    styleUrlList,
-    errMsg,
-    compProps,
-    platform,
-    name,
-    versionId,
-    children,
-    handleStyleStr,
-    isLegacy: props.isLegacy,
-    Skeleton: props.Skeleton,
-    mountShadowBodyForRef: props.mountShadowBodyForRef,
-    reactRef: props.reactRef,
-    createRoot: props.createRoot,
-    ignoreHelContext: props.ignoreHelContext,
-    shadow,
-    shadowWrapStyle,
-    shadowDelay: props.shadowDelay,
-  };
-  return <MayShadowComp {...wrapProps} />;
+  const loadResult = { Comp: RemoteModule, styleStr, styleUrlList, errMsg };
+  return <MayShadowComp options={ensuredProps} loadResult={loadResult} />;
 }

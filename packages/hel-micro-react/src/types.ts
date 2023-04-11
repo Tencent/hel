@@ -142,6 +142,12 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * 如需要忽略，可设置此项为 true
    */
   ignoreHelContext?: boolean;
+  /**
+   * 自定义的 shadowdom 渲染器，替换内置的渲染器
+   * @param props
+   * @returns
+   */
+  ShadowViewImpl?: (props: IShadowViewImplProps) => React.ReactNode;
 }
 
 /**
@@ -173,7 +179,7 @@ export interface IInnerRemoteModuleProps<T extends AnyRecord = AnyRecord> extend
   reactRef?: any;
 }
 
-type IMicroAppLegacyPropsBase<T> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
+type IMicroAppLegacyPropsBase<T extends AnyRecord = AnyRecord> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
 
 /**
  * MicroAppLegacy 组件的历史遗留属性，后面的新组件和新接口为了统一词汇，
@@ -296,3 +302,30 @@ export interface IHelContext {
  * 因用户可能设置 ignoreHelContext 为 true，所以此处 helContext 是 ?
  */
 export type IHelProps<ReactProps> = ReactProps & { helContext?: IHelContext };
+
+export interface IShadowViewImplProps {
+  onShadowRootReady: () => ShadowRoot;
+  /**
+   * 根元素的 tagName，默认为 'hel-shadow-app'
+   */
+  tagName?: string;
+  /**
+   * shadow host 元素的样式
+   */
+  style?: React.CSSProperties;
+  /**
+   * 显示动画持续时间，如 style 里也设置了，会覆盖这里
+   */
+  transitionDuration?: string;
+  styleContent?: string;
+  styleSheets?: string[];
+  /**
+   * 显示延时
+   */
+  shadowDelay?: number;
+  children?: any;
+  /**
+   * React Ref function
+   */
+  ref?: Function;
+}
