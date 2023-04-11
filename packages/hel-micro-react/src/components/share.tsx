@@ -5,20 +5,23 @@ import defaults from '../consts/defaults';
 import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
 import ShadowView from './ShadowViewV2';
 
+const { CSS_LIST_TO_STR, SHADOW, WARN_STYLE } = defaults;
+
 export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
   const ensuredProps = { ...props };
 
   ensuredProps.platform = props.platform || 'unpkg';
   ensuredProps.extraShadowCssList = props.extraShadowCssList || [];
-  ensuredProps.extraShadowCssListToStr = props.extraShadowCssListToStr ?? defaults.CSS_LIST_TO_STR;
+  ensuredProps.extraShadowCssListToStr = props.extraShadowCssListToStr ?? CSS_LIST_TO_STR;
   ensuredProps.isLib = props.isLib ?? false;
-  ensuredProps.shadow = props.shadow ?? defaults.SHADOW;
-  ensuredProps.cssListToStr = props.cssListToStr ?? defaults.CSS_LIST_TO_STR;
+  ensuredProps.shadow = props.shadow ?? SHADOW;
+  ensuredProps.cssListToStr = props.cssListToStr ?? CSS_LIST_TO_STR;
   // 是否需要样式字符串（仅针对shadow配置有效）
   // 点击 props.appendCss 可进一步查看详细的默认值生成规则说明
   ensuredProps.appendCss = props.appendCss ?? !ensuredProps.shadow;
   ensuredProps.compProps = props.compProps || {};
-  ensuredProps.children = ensuredProps.compProps.children;
+  // 组件内jsx内部的 children 优先级高于组件属性上里传递的 children
+  ensuredProps.children = ensuredProps.compProps.children || props.children;
   ensuredProps.isLegacy = props.isLegacy ?? false;
   ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
   ensuredProps.ShadowViewImpl = props.ShadowViewImpl || ShadowView;
@@ -27,7 +30,7 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
 }
 
 export function getErrResult(props: ILocalCompProps, errMsg: string) {
-  const ErrorView = props.Error || (() => <h3 style={defaults.WARN_STYLE}>Hel MicroComp error: {errMsg}</h3>);
+  const ErrorView = props.Error || (() => <h3 style={WARN_STYLE}>Hel MicroComp error: {errMsg}</h3>);
   return {
     RemoteModule: () => <ErrorView errMsg={errMsg} />,
     styleStr: '',

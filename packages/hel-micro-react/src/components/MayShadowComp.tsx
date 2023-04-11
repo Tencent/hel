@@ -26,7 +26,7 @@ function getPassedProps(
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
 ) {
-  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false, reactRef } = loadOptions;
+  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false, reactRef, children } = loadOptions;
   const staticShadowBodyRootRef = getStaticShadowBodyRef(name, loadOptions);
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
   const getShadowAppRoot = () => shadowAppRootRef.current || null;
@@ -49,7 +49,7 @@ function getPassedProps(
   if (isLegacy) {
     // getShadowContainer getShadowBodyContainer 作为历史方法暴露，让 MicroAppLegacy 载入老应用时不会报错
     Object.assign(helContext, { getShadowContainer: getShadowBodyRoot, getShadowBodyContainer: getShadowBodyRoot });
-    passedProps = { appProps: compProps, children: compProps.children, ref: reactRef };
+    passedProps = { appProps: compProps, children, ref: reactRef };
   }
   if (!ignoreHelContext) {
     // helContext 是关键属性key，不允许用户覆盖
@@ -61,7 +61,7 @@ function getPassedProps(
 function MayShadowComp(props: IMayShadowProps) {
   const { loadResult, options } = props;
   const { Comp, styleStr, styleUrlList } = loadResult;
-  const { name, shadow, children, Skeleton, shadowWrapStyle = {}, shadowDelay, handleStyleStr, ShadowViewImpl } = options;
+  const { name, shadow, Skeleton, shadowWrapStyle = {}, shadowDelay, handleStyleStr, ShadowViewImpl } = options;
 
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
@@ -114,7 +114,7 @@ function MayShadowComp(props: IMayShadowProps) {
       const SkeletonComp = Skeleton || BuildInSkeleton;
       uiContent = <SkeletonComp />;
     } else {
-      uiContent = <Comp {...passedProps}> {children} </Comp>;
+      uiContent = <Comp {...passedProps} />;
     }
 
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
@@ -137,7 +137,7 @@ function MayShadowComp(props: IMayShadowProps) {
     );
   }
 
-  return <Comp {...passedProps}> {children} </Comp>;
+  return <Comp {...passedProps} />;
 }
 
 export default MayShadowComp;
