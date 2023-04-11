@@ -17,5 +17,5 @@ export default {
   DEFAULT_PLAT: 'unpkg',
   DEFAULT_NPM_CDN_TYPE: 'unpkg',
   DEFAULT_GUESS_SUB_APP_CONF_PATH: '../../../src/configs/subApp',
-  PLUGIN_VER: '4.2.5',
+  PLUGIN_VER: '4.2.7',
 };

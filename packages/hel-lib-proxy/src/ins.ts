@@ -5,6 +5,7 @@ const { purify } = commonUtil;
 
 // 无需处理的 key
 const ignoreKeys = ['isMasterApp', 'isSubApp', 'eventBus'];
+// 第 3 位参数是包含平台值的对象
 const arg3PlatKeys = ['appReady', 'libReady'];
 
 function makePlatObj(platform, arg: any) {

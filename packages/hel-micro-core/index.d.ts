@@ -489,7 +489,15 @@ export type CommonUtil = {
   safeParse: <T extends any = any>(jsonStr: any, defaultValue: T, errMsg?: string) => T;
   noop: (...args: any[]) => any[];
   /**
-   * for friendly print mulit line when use \`...\`
+   * for friendly print mulit line with no break-line strategy when use \`...\`
+   * ```
+   * // usage
+   * nbstr(`
+   *   line1 line1 line1,
+   *   line2 line2 line2.
+   * `);
+   * // output: line1 line1 line1, line2 line2 line2.
+   * ```
    */
   nbstr: (mayLineBreakStr: string) => string;
   /**

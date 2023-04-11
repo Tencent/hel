@@ -180,6 +180,12 @@ export interface IUserExtractOptions {
   enableReplaceDevJs?: boolean;
   /** default: false, 是否允许在 homePage 之外的相对路径的资源存在 */
   enableRelativePath?: boolean;
+  /**
+   * default: false, 是否自动为单斜杠开头的资源拼接上 homePage 值
+   * vite.config 不知配置配置 publicUrl，可设置此参数为 true
+   * 开启后，index.html里的 /aaa-123.js 会变为 {homePage}/aaa-123.js
+   */
+  enablePrefixHomePage?: boolean;
 }
 
 export interface IInnerSubAppOptions {
