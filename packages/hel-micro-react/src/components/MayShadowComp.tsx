@@ -134,8 +134,8 @@ function MayShadowComp(props: IMayShadowProps) {
       allProps = {};
     }
     const styleContent = handleStyleStr?.(styleStr) || styleStr;
-    const hostData = getHostData(name, options);
-    const commonProps = { id: name, hostData, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
+    const data = getHostData(name, options);
+    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
 
     return (
       <>

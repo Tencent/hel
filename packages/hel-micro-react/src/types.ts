@@ -147,7 +147,7 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * @param props
    * @returns
    */
-  ShadowViewImpl?: (props: IShadowViewImplProps) => React.ReactNode;
+  ShadowViewImpl?: ShadowViewImplComp;
 }
 
 /**
@@ -304,9 +304,9 @@ export interface IHelContext {
 export type IHelProps<ReactProps> = ReactProps & { helContext?: IHelContext };
 
 export interface IShadowViewImplProps {
-  onShadowRootReady: () => ShadowRoot;
+  onShadowRootReady: (shadowRoot: ShadowRoot) => void;
   /**
-   * 根元素的 tagName，默认为 'hel-shadow-app'
+   * 根元素的 tagName，默认为 'hel-shadow-view'
    */
   tagName?: string;
   /**
@@ -314,18 +314,39 @@ export interface IShadowViewImplProps {
    */
   style?: React.CSSProperties;
   /**
-   * 显示动画持续时间，如 style 里也设置了，会覆盖这里
+   * default: '.3s', 显示动画持续时间，如果 style 里也设置了，会覆盖这里
    */
   transitionDuration?: string;
+  /**
+   * 样式字符串内容
+   */
   styleContent?: string;
+  /**
+   * 样式 url 列表
+   */
   styleSheets?: string[];
   /**
    * 显示延时
    */
   shadowDelay?: number;
+  /**
+   * default: true
+   */
+  delegatesFocus?: boolean;
   children?: any;
   /**
    * React Ref function
    */
   ref?: Function;
+  /**
+   * default: ''
+   */
+  data?: string;
 }
+
+/**
+ * 实现的 react 组件内部，一定要调用 props.onShadowRootReady 方法把 shadowRoot 引用传出去
+ * 示例可参考 @see https://github.com/tnfe/hel/blob/main/packages/hel-micro-react/src/components/ShadowViewV2.tsx
+ * 如不调用此方法会导致 useRemoteComp 一直处于骨架屏状态
+ */
+export type ShadowViewImplComp = (props: IShadowViewImplProps) => React.ReactNode;

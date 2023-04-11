@@ -1,22 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useForceUpdate } from '../hooks/share';
+import { IShadowViewImplProps } from '../types';
 
 function ShadowContent(props: any) {
   const { children, root } = props;
   return ReactDOM.createPortal(children, root);
 }
 
-export default function ShadowViewV2(props: any) {
+export default function ShadowViewV2(props: IShadowViewImplProps) {
   const {
     style = {},
     styleContent = '',
     delegatesFocus = true,
     styleSheets = [],
     shadowDelay = 0,
-    children,
+    children = '',
+    transitionDuration = '.3s',
     tagName = 'hel-shadow-view',
-    hostData = '',
+    data = '',
   } = props;
   const shadowHostRef = React.useRef<HTMLDivElement | null>(null);
   const shadowRootRef = React.useRef<{ root: ShadowRoot | null }>({ root: null });
@@ -66,6 +68,6 @@ export default function ShadowViewV2(props: any) {
     </>
   );
 
-  const elProps = { ref: shadowHostRef, style: { transitionDuration: '.3s ', ...style }, data: hostData };
+  const elProps = { ref: shadowHostRef, style: { transitionDuration, ...style }, data };
   return React.createElement(tagName, elProps, uiContent);
 }
