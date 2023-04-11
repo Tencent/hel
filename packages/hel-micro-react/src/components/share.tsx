@@ -27,7 +27,7 @@ export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
 }
 
 export function getErrResult(props: ILocalCompProps, errMsg: string) {
-  const ErrorView = props.Error || (() => <h1 style={defaults.H1_STYLE}>Hel MicroComp error: {errMsg}</h1>);
+  const ErrorView = props.Error || (() => <h3 style={defaults.WARN_STYLE}>Hel MicroComp error: {errMsg}</h3>);
   return {
     RemoteModule: () => <ErrorView errMsg={errMsg} />,
     styleStr: '',

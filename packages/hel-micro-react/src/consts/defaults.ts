@@ -5,7 +5,7 @@ export default {
   SHADOW: true,
   CSS_LIST_TO_STR: true,
   ENABLE_APPEND_CSS: true,
-  H1_STYLE: { color: 'red' },
+  WARN_STYLE: { color: 'red' },
   SHADOW_BODY: 'ShadowBody',
   SHADOW_BODY_STATUS: 'ShadowBodyStatus',
 } as const;

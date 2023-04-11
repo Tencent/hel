@@ -17,30 +17,29 @@ export interface IMayShadowProps {
     Comp: any;
     styleStr: string;
     styleUrlList: string[];
-    errMsg: string;
   };
   options: IInnerRemoteModuleProps;
 }
 
 function getPassedProps(
-  helProps: IInnerRemoteModuleProps,
+  loadOptions: IInnerRemoteModuleProps,
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
-  staticShadowBodyRootRef: any,
 ) {
+  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false } = loadOptions;
+  const staticShadowBodyRootRef = getStaticShadowBodyRef(name, loadOptions);
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
   const getShadowAppRoot = () => shadowAppRootRef.current || null;
   const getShadowBodyRoot = () => shadowBodyRootRef.current || null;
   const getStaticShadowBodyRoot = () => staticShadowBodyRootRef;
   const getEnsuredBodyRoot = () => getShadowBodyRoot() || getStaticShadowBodyRoot() || getGlobalThis()?.document.body || null;
 
-  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false } = helProps;
   const helContext: IHelContext = {
     platform,
     name,
     versionId,
-    getShadowBodyRoot,
     getShadowAppRoot,
+    getShadowBodyRoot,
     getStaticShadowBodyRoot,
     getEnsuredBodyRoot,
   };
@@ -64,7 +63,7 @@ function getPassedProps(
 
 function MayShadowComp(props: IMayShadowProps) {
   const { loadResult, options } = props;
-  const { Comp, styleStr, styleUrlList, errMsg } = loadResult;
+  const { Comp, styleStr, styleUrlList } = loadResult;
   const {
     name,
     shadow,
@@ -80,6 +79,7 @@ function MayShadowComp(props: IMayShadowProps) {
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
   const forceUpdate = useForceUpdate();
+  const data = getHostData(name, options);
 
   React.useEffect(() => {
     const staticRef = getStaticShadowBodyRef(name, options);
@@ -91,7 +91,7 @@ function MayShadowComp(props: IMayShadowProps) {
       };
       bus.on(evName, evCb);
 
-      const renderProps = { id: name, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
+      const renderProps = { data, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
       tryMountStaticShadowBody(renderProps, props.createRoot, options);
       return () => {
         bus.off(evName, evCb);
@@ -117,30 +117,29 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowBodyRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(props, shadowAppRootRef, shadowBodyRootRef, getStaticShadowBodyRef(name, options));
+  const passedProps = getPassedProps(options, shadowAppRootRef, shadowBodyRootRef);
 
-  if (errMsg) {
-    return React.createElement(Comp, passedProps);
-  }
-
-  let allProps = { ...passedProps, ref: reactRef };
   if (shadow) {
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，
     // 确保 show 模式下透传给子组件的 helContext 的 getShadowAppRoot 方法一定能够活动 shawRoot 引用
-    let TargetComp = Comp;
+    let uiContent: React.ReactNode = '';
     if (!isShadowRefsReady()) {
-      TargetComp = Skeleton || BuildInSkeleton;
-      // 避免警告: Attempts to access this ref will fail
-      allProps = {};
+      const SkeletonComp = Skeleton || BuildInSkeleton;
+      uiContent = <SkeletonComp />;
+    } else {
+      uiContent = (
+        <Comp {...passedProps} ref={reactRef}>
+          {children}
+        </Comp>
+      );
     }
-    const styleContent = handleStyleStr?.(styleStr) || styleStr;
-    const data = getHostData(name, options);
-    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
 
+    const styleContent = handleStyleStr?.(styleStr) || styleStr;
+    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
     return (
       <>
         <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onShadowAppRootReady} {...commonProps}>
-          <TargetComp {...allProps}>{children}</TargetComp>
+          {uiContent}
         </ShadowViewImpl>
         {/*
           在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
@@ -155,7 +154,11 @@ function MayShadowComp(props: IMayShadowProps) {
     );
   }
 
-  return <Comp {...allProps}>{children}</Comp>;
+  return (
+    <Comp {...passedProps} ref={reactRef}>
+      {children}
+    </Comp>
+  );
 }
 
 export default MayShadowComp;

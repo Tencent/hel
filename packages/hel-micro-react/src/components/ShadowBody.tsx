@@ -57,7 +57,7 @@ export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) 
 }
 
 export function tryMountStaticShadowBody(props: any, createRoot: any, options: IInnerRemoteModuleProps) {
-  const name = props.id;
+  const { name } = options;
   if (wrap.getStaticShadowBodyRef(name, options)) {
     return;
   }
@@ -80,7 +80,6 @@ export function tryMountStaticShadowBody(props: any, createRoot: any, options: I
       {...{
         ...props,
         tagName: STATIC_SHADOW_BODY_NAME,
-        hostData: getHostData(name, options),
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
           wrap.setStaticShadowBodyRef(name, bodyRef, options);
           bus.emit(evName);

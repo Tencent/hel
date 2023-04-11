@@ -1,4 +1,4 @@
-import { appStyleSrv, logicSrv, preFetchLib } from 'hel-micro';
+import { appStyleSrv, core, logicSrv, preFetchLib } from 'hel-micro';
 import React, { forwardRef, useMemo } from 'react';
 import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
@@ -8,7 +8,8 @@ import defaults from '../consts/defaults';
 import type { GetSubVal, IInnerRemoteModuleProps, IInnerUseRemoteCompOptions, IUseRemoteLibCompOptions } from '../types';
 import { delay, useForceUpdate } from './share';
 
-const { H1_STYLE } = defaults;
+const { WARN_STYLE } = defaults;
+const { DEFAULT_PLAT } = core.helConsts;
 
 /**
  * 使用远程组件钩子函数核心逻辑，做好参数初始处理后
@@ -16,7 +17,7 @@ const { H1_STYLE } = defaults;
  */
 export function useRemoteCompLogic(name: string, compName: string, options: IInnerUseRemoteCompOptions) {
   const passProps: IInnerRemoteModuleProps = { ...(options || {}), name, compName, isLib: true };
-  passProps.platform = passProps.platform || 'unpkg';
+  passProps.platform = passProps.platform || DEFAULT_PLAT;
 
   const { needMemo = true } = passProps;
   const factory = () => {
@@ -72,7 +73,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
       if (RemoteComp && typeof RemoteComp === 'object') {
         RemoteComp.__HelRemote__ = 1; // 用户可用此属性判断这是远程组件而非骨架屏
       }
-      const Comp = RemoteComp || (() => <h1 style={H1_STYLE}>Invalid compName {compName}</h1>);
+      const Comp = RemoteComp || (() => <h3 style={WARN_STYLE}>Invalid compName {compName}</h3>);
       return Comp;
     };
     fetchComp()
@@ -80,7 +81,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
         compRef.current = Comp;
       })
       .catch((err: any) => {
-        compRef.current = Error || (() => <h1 style={H1_STYLE}>Load comp err {err.message}</h1>);
+        compRef.current = Error || (() => <h3 style={WARN_STYLE}>Load comp err {err.message}</h3>);
       })
       .finally(() => {
         forceUpdate();

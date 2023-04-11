@@ -30,6 +30,10 @@ export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
     return <Skeleton />;
   }
 
-  const loadResult = { Comp: RemoteModule, styleStr, styleUrlList, errMsg };
+  if (errMsg) {
+    return <RemoteModule />;
+  }
+
+  const loadResult = { Comp: RemoteModule, styleStr, styleUrlList };
   return <MayShadowComp options={ensuredProps} loadResult={loadResult} />;
 }

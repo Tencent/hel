@@ -1,6 +1,8 @@
 import React from 'react';
-import type { AnyComp, ILocalCompProps } from '../../types';
+import defaults from '../../consts/defaults';
+import type { ILocalCompProps } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
+import ForgetPassComp from '../ForgetPassComp';
 import MayShadowComp, { IMayShadowProps } from '../MayShadowComp';
 import useLoadStyle from './useLoadStyle';
 
@@ -8,7 +10,7 @@ import useLoadStyle from './useLoadStyle';
  * 本地组件渲染器，满足用户想对当前项目的某个组件直接使用 shadow 隔离能力的情况
  */
 export default function LocalCompRender(props: ILocalCompProps) {
-  const { compProps, name = 'LocalComp', shadow = true } = props;
+  const { compProps, name = 'LocalComp', shadow = true, Comp } = props;
 
   const { errMsg, getStyle } = useLoadStyle(props);
   // 此处 moduleReady 代表样式就绪
@@ -17,14 +19,15 @@ export default function LocalCompRender(props: ILocalCompProps) {
     const Skeleton = props.Skeleton || BuildInSkeleton;
     return <Skeleton />;
   }
+  if (errMsg) {
+    return <h3 style={defaults.WARN_STYLE}>Hel LocalComp error: {errMsg}</h3>;
+  }
 
-  const Comp: AnyComp = props.Comp || BuildInSkeleton;
   const wrapProps: IMayShadowProps = {
     loadResult: {
-      Comp,
+      Comp: Comp || ForgetPassComp,
       styleStr,
       styleUrlList,
-      errMsg,
     },
     options: {
       ...props,
