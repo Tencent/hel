@@ -1,14 +1,11 @@
-import { useRef, useEffect } from 'react';
-import { useObject } from './useObject';
+import { useEffect, useRef } from 'react';
 import { getInternal, getRawState } from '../helpers/createSharedObject';
 import { Dict } from '../typing';
+import { useObject } from './useObject';
 
 let insKey = 0;
 
-export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [
-  T,
-  (partialState: Partial<T>) => void,
-] {
+export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
   const [state, setState] = useObject(getRawState(sharedObject), true);
   const insCtxRef = useRef({
     keyMap: {} as any,
@@ -48,7 +45,7 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
           internal.setState({ [key]: val });
         }
         return true;
-      }
+      },
     });
     reactiveUpdater = internal.setState;
     insCtxRef.current.reactiveUpdater = reactiveUpdater;
@@ -58,8 +55,9 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   // start re compute dep in every render period
   useEffect(() => {
     const { keyMap, prevKeyMap } = insCtxRef.current;
-    Object.keys(prevKeyMap).forEach(prevKey => {
-      if (!keyMap[prevKey]) { // lost dep
+    Object.keys(prevKeyMap).forEach((prevKey) => {
+      if (!keyMap[prevKey]) {
+        // lost dep
         internal.delDep(prevKey, insCtxRef.current.insKey);
       }
     });
@@ -69,7 +67,7 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
     return () => {
       // del dep before unmount
       const { keyMap, insKey } = insCtxRef.current;
-      Object.keys(keyMap).forEach(key => {
+      Object.keys(keyMap).forEach((key) => {
         internal.delDep(key, insKey);
       });
     };

@@ -13,10 +13,7 @@ type Dict<T extends any = any> = Record<string, T>;
  * @param initialState
  * @returns
  */
-export function useObject<T extends Dict = Dict>(
-  initialState: T | (() => T),
-  isStable?: boolean,
-): [T, (partialState: Partial<T>) => void] {
+export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void] {
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
   const forceUpdate = useForceUpdate();
@@ -40,8 +37,5 @@ export function useObject<T extends Dict = Dict>(
       unmountRef.current = true;
     };
   }, []);
-  return [
-    state,
-    setState,
-  ];
+  return [state, setState];
 }

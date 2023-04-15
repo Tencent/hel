@@ -9,7 +9,7 @@ type SharedObject<T extends Dict = any> = T;
  * const sharedObj = createSharedObject({a:1, b:2});
  * ```
  */
-export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): SharedObject<T>
+export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): SharedObject<T>;
 
 /**
  *  创建响应式的共享对象，可透传给 useSharedObject
@@ -19,7 +19,9 @@ export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T
  * // setSharedObj({a: 111}); // 使用此方法修改 a 属性，同样也能触发视图渲染，深层次的数据修改可使用此方法
  * ```
  */
-export function createReactiveSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): [SharedObject<T>, (partialState: Partial<T>) => void]
+export function createReactiveSharedObject<T extends Dict = Dict>(
+  rawState: T | (() => T),
+): [SharedObject<T>, (partialState: Partial<T>) => void];
 
 /**
  * 使用共享对象
@@ -29,13 +31,13 @@ export function createReactiveSharedObject<T extends Dict = Dict>(rawState: T | 
  * // 然后在任意组件里使用即可
  * const [ obj, setObj ] = useSharedObject(sharedObj);
  * ```
- * @param sharedObject 
- * @param enableReactive 
+ * @param sharedObject
+ * @param enableReactive
  */
-export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [
-  SharedObject<T>,
-  (partialState: Partial<T>) => void,
-]
+export function useSharedObject<T extends Dict = Dict>(
+  sharedObject: T,
+  enableReactive?: boolean,
+): [SharedObject<T>, (partialState: Partial<T>) => void];
 
 /**
  * 使用 useObject 有两个好处
@@ -47,7 +49,7 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
  * @param initialState
  * @returns
  */
-export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void]
+export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void];
 
 /**
  * 是用服务模式开发 react 组件，demo 见：
@@ -69,12 +71,12 @@ export function useService<P extends Dict = Dict, S extends Dict = Dict, T exten
     getState: () => S;
     getProps: () => P;
   };
-}
+};
 
 /**
  * 强制更新
  */
-export function useForceUpdate(): () => void
+export function useForceUpdate(): () => void;
 
 type DefaultExport = {
   useObject: typeof useObject;

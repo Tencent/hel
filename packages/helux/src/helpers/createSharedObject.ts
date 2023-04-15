@@ -1,4 +1,3 @@
-
 import { Dict } from '../typing';
 
 export function getInternal(state: any) {
@@ -19,9 +18,9 @@ function bindRawState(state: any, rawState: any) {
   state.__proto__.__HeluxRaw__ = rawState;
 }
 
-
 function innerCreateSharedObject<T extends Dict = Dict>(
-  stateOrStateFn: T | (() => T), enableReactive?: boolean
+  stateOrStateFn: T | (() => T),
+  enableReactive?: boolean,
 ): [T, (partialState: Partial<T>) => void] {
   let rawState = stateOrStateFn as T;
   if (typeof stateOrStateFn === 'function') {
@@ -46,7 +45,6 @@ function innerCreateSharedObject<T extends Dict = Dict>(
     sharedState = rawState;
   }
 
-
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: any = {};
   bindInternal(sharedState, {
@@ -55,7 +53,7 @@ function innerCreateSharedObject<T extends Dict = Dict>(
     setState(partialState: any) {
       const keys = Object.keys(partialState);
       let allInsKeys: any[] = [];
-      keys.forEach(key => {
+      keys.forEach((key) => {
         const insKeys = key2InsKeys[key] || [];
         allInsKeys = allInsKeys.concat(insKeys);
       });
@@ -63,7 +61,7 @@ function innerCreateSharedObject<T extends Dict = Dict>(
       allInsKeys = Array.from(new Set(allInsKeys));
       allInsKeys.forEach((insKey) => {
         const updater = insKey2Updater[insKey];
-        updater(partialState)
+        updater(partialState);
       });
     },
     recordDep(key: string, insKey: any) {
