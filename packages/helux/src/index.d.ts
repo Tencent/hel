@@ -1,6 +1,4 @@
-type Dict<T extends any = any> = Record<string, T>;
-
-type SharedObject<T extends Dict = any> = T;
+import type { Dict, SharedObject } from './typing';
 
 /**
  * 创建共享对象，可透传给 useSharedObject，具体使用见 useSharedObject
@@ -22,6 +20,47 @@ export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T
 export function createReactiveSharedObject<T extends Dict = Dict>(
   rawState: T | (() => T),
 ): [SharedObject<T>, (partialState: Partial<T>) => void];
+
+/**
+ *  创建响应式的共享对象，当需要调用脱离函数上下文的服务函数（即不需要感知props时），可使用该接口
+ *  第二位参数为是否创建响应式状态，效果同 createReactiveSharedObject 返回的 sharedObj
+ *
+ * ```
+ *  const ret = createShared({ a: 100, b: 2 });
+ *  const ret2 = createShared({ a: 100, b: 2 }, true); // 创建响应式状态
+ *  // ret.state 可透传给 useSharedObject
+ *  // ret.setState 可以直接修改状态
+ *  // ret.call 可以调用服务函数，并透传上下文
+ * ```
+ *  以下将举例两种具体的调用方式
+ * ```
+ * // 调用服务函数第一种方式，直接调用定义的函数，配合 ret.setState 修改状态
+ * function changeAv2(a: number, b: number) {
+ *    ret.setState({ a, b });
+ * }
+ *
+ * // 第二种方式，使用 ret.call(srvFn, ...args) 调用定义在call函数参数第一位的服务函数
+ * function changeA(a: number, b: number) {
+ *    ret.call(async function (ctx) { // ctx 即是透传的调用上下文，
+ *      // args：使用 call 调用函数时透传的参数列表，state：状态，setState：更新状态句柄
+ *      // 此处可全部感知到具体的类型
+ *      // const { args, state, setState } = ctx;
+ *      return { a, b };
+ *    }, a, b);
+ *  }
+ * ```
+ */
+export function createShared<T extends Dict = Dict>(
+  rawState: T | (() => T),
+  enableReactive?: boolean,
+): {
+  state: SharedObject<T>;
+  call: <A extends any[] = any[]>(
+    srvFn: (ctx: { args: A; state: T; setState: (partialState: Partial<T>) => void }) => Promise<Partial<T>> | Partial<T> | void,
+    ...args: A
+  ) => void;
+  setState: (partialState: Partial<T>) => void;
+};
 
 /**
  * 使用共享对象
@@ -85,6 +124,7 @@ type DefaultExport = {
   useForceUpdate: typeof useForceUpdate;
   createSharedObject: typeof createSharedObject;
   createReactiveSharedObject: typeof createReactiveSharedObject;
+  createShared: typeof createShared;
 };
 
 declare const defaultExport: DefaultExport;
