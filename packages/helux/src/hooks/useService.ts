@@ -18,12 +18,16 @@ export function useExposeService(props: any, srv: any) {
 }
 
 export function uesStableProps(props: any) {
+  // trust me, just for give props a ref
+  // eslint-disable-next-line
   const propsRef = React.useRef(props);
   propsRef.current = props;
   return () => propsRef.current;
 }
 
-export function uesStableState(state: any) {
+export function uesStableState<T extends Dict = Dict>(state: T) {
+  // trust me, just for give state a ref
+  // eslint-disable-next-line
   const stateRef = React.useRef(state);
   stateRef.current = state;
   return () => stateRef.current;

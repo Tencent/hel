@@ -1,4 +1,6 @@
 import React from 'react';
+import { useForceUpdate } from './useForceUpdate';
+
 type Dict<T extends any = any> = Record<string, T>;
 
 /**
@@ -11,9 +13,26 @@ type Dict<T extends any = any> = Record<string, T>;
  * @param initialState
  * @returns
  */
-export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void] {
+export function useObject<T extends Dict = Dict>(
+  initialState: T | (() => T),
+  isStable?: boolean,
+): [T, (partialState: Partial<T>) => void] {
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
+  const forceUpdate = useForceUpdate();
+
+  const setState = (partialState: Partial<T>) => {
+    if (!unmountRef.current) {
+      if (isStable) {
+        Object.assign(state, partialState);
+        forceUpdate();
+      } else {
+        setFullState((state) => ({ ...state, ...partialState }));
+      }
+      // setFullState((state) => ({ ...state, ...partialState }));
+    }
+  };
+
   React.useEffect(() => {
     unmountRef.current = false; // 防止 StrictMode 写为true
     // cleanup callback，标记组件已卸载
@@ -23,12 +42,6 @@ export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [
   }, []);
   return [
     state,
-    (partialState: Partial<T>) => {
-      console.log('call setFullState', unmountRef.current);
-      if (!unmountRef.current) {
-        console.log('call setFullState22', partialState);
-        setFullState((state) => ({ ...state, ...partialState }));
-      }
-    },
+    setState,
   ];
 }

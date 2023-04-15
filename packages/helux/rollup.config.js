@@ -8,7 +8,7 @@ import pkg from './package.json';
 const external = Object.keys(pkg.peerDependencies);
 const env = process.env.BUILD_ENV;
 const bundleName = pkg.name.includes('/') ? pkg.name.split('/')[1] : pkg.name;
-const globalName = 'HelReactHooks';
+const globalName = 'Helux';
 
 const env2outputConf = {
   commonjs: {

@@ -1,4 +1,6 @@
-# hel-react-hooks
+# helux
+
+基于[concent](https://github.com/concentjs/concent)思路并抛弃面向class组件的api，全新设计的鼓励使用服务注入模式的react数据方案
 
 使用 service 服务模式开发 react 组件，好处
 

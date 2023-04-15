@@ -1,11 +1,11 @@
 {
-  "name": "hel-react-hooks",
-  "version": "1.0.4",
+  "name": "helux",
+  "version": "1.0.0",
   "description": "use service mode to develop react component, avoid forwarRef hell",
   "repository": {
     "type": "git",
     "url": "https://github.com/tnfe/hel.git",
-    "directory": "packages/hel-react-hooks"
+    "directory": "packages/helux"
   },
   "license": "MIT",
   "author": {
