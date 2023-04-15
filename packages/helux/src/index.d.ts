@@ -35,7 +35,7 @@ export function createReactiveSharedObject<T extends Dict = Dict>(
  * @param enableReactive
  */
 export function useSharedObject<T extends Dict = Dict>(
-  sharedObject: T,
+  sharedObject: T | (() => T),
   enableReactive?: boolean,
 ): [SharedObject<T>, (partialState: Partial<T>) => void];
 

@@ -1,6 +1,6 @@
 {
   "name": "helux",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "use service mode to develop react component, avoid forwarRef hell",
   "repository": {
     "type": "git",
