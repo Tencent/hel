@@ -2,7 +2,7 @@ import { commonUtil, getGlobalThis, getHelEventBus, IGetVerOptions } from 'hel-m
 import React from 'react';
 import ReactDOM from 'react-dom';
 import defaults from '../consts/defaults';
-import type { IInnerRemoteModuleProps } from '../types';
+import type { IRemoteCompRenderConfig } from '../types';
 import * as wrap from '../wrap';
 import ShadowView from './ShadowViewV2';
 
@@ -56,15 +56,15 @@ export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) 
   return evName;
 }
 
-export function tryMountStaticShadowBody(props: any, options: IInnerRemoteModuleProps) {
-  const { name, createRoot } = options;
-  if (wrap.getStaticShadowBodyRef(name, options)) {
+export function tryMountStaticShadowBody(props: any, config: IRemoteCompRenderConfig) {
+  const { name, controlOptions } = config;
+  if (wrap.getStaticShadowBodyRef(name, controlOptions)) {
     return;
   }
-  if (wrap.getStaticShadowBodyStatus(name, options)) {
+  if (wrap.getStaticShadowBodyStatus(name, controlOptions)) {
     return;
   }
-  wrap.setStaticShadowBodyStatus(name, 1, options);
+  wrap.setStaticShadowBodyStatus(name, 1, controlOptions);
 
   // mounting to body directly will lead the error below:
   // Rendering components directly into document.body is discouraged,
@@ -72,8 +72,8 @@ export function tryMountStaticShadowBody(props: any, options: IInnerRemoteModule
   // This may lead to subtle reconciliation issues. Try rendering into a container element created for your app.
   // so we create a mount node manually
   const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
-  const evName = getShadowBodyReadyEvName(name, options);
-  const ShadowViewImpl = options.ShadowViewImpl || ShadowView;
+  const evName = getShadowBodyReadyEvName(name, controlOptions);
+  const ShadowViewImpl = controlOptions.ShadowViewImpl || ShadowView;
   const uiShadowView = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
     <ShadowViewImpl
@@ -81,15 +81,15 @@ export function tryMountStaticShadowBody(props: any, options: IInnerRemoteModule
         ...props,
         tagName: STATIC_SHADOW_BODY_NAME,
         onShadowRootReady: (bodyRef: React.ReactHTMLElement<any>) => {
-          wrap.setStaticShadowBodyRef(name, bodyRef, options);
+          wrap.setStaticShadowBodyRef(name, bodyRef, controlOptions);
           bus.emit(evName);
         },
       }}
     />
   );
 
-  if (createRoot) {
-    const root = createRoot(mountNode);
+  if (controlOptions.createRoot) {
+    const root = controlOptions.createRoot(mountNode);
     root.render(uiShadowView);
   } else {
     ReactDOM.render(uiShadowView, mountNode);

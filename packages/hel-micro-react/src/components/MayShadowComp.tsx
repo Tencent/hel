@@ -3,7 +3,7 @@ import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
-import type { IHelContext, IInnerRemoteModuleProps } from '../types';
+import type { IHelContext, IRemoteCompRenderConfig } from '../types';
 import { getStaticShadowBodyRef } from '../wrap';
 import BuildInSkeleton from './BuildInSkeleton';
 import ShadowBody, { getHostData, getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
@@ -13,26 +13,30 @@ const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
 const bus = getHelEventBus();
 
 export interface IMayShadowProps {
-  loadResult: {
+  /** 内部计算出的组件相关信息 */
+  compInfo: {
     Comp: any;
     styleStr: string;
     styleUrlList: string[];
   };
-  options: IInnerRemoteModuleProps;
+  renderConfig: IRemoteCompRenderConfig;
 }
 
 function getPassedProps(
-  loadOptions: IInnerRemoteModuleProps,
+  renderConfig: IRemoteCompRenderConfig,
   shadowAppRootRef: React.RefObject<any>,
   shadowBodyRootRef: React.RefObject<any>,
 ) {
-  const { platform, name, versionId, compProps, isLegacy = false, ignoreHelContext = false, reactRef, children } = loadOptions;
-  const staticShadowBodyRootRef = getStaticShadowBodyRef(name, loadOptions);
+  const { name, controlOptions, compProps = {}, reactRef } = renderConfig;
+  const { platform, versionId, isLegacy = false, ignoreHelContext = false } = controlOptions;
+  const staticShadowBodyRootRef = getStaticShadowBodyRef(name, controlOptions);
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
   const getShadowAppRoot = () => shadowAppRootRef.current || null;
   const getShadowBodyRoot = () => shadowBodyRootRef.current || null;
   const getStaticShadowBodyRoot = () => staticShadowBodyRootRef;
   const getEnsuredBodyRoot = () => getShadowBodyRoot() || getStaticShadowBodyRoot() || getGlobalThis()?.document.body || null;
+  // 组件内jsx内部的 children 优先级高于组件属性上里传递的 children
+  const children = compProps.children || renderConfig.children;
 
   const helContext: IHelContext = {
     platform,
@@ -59,19 +63,20 @@ function getPassedProps(
 }
 
 function MayShadowComp(props: IMayShadowProps) {
-  const { loadResult, options } = props;
-  const { Comp, styleStr, styleUrlList } = loadResult;
-  const { name, shadow, Skeleton, shadowWrapStyle = {}, shadowDelay, handleStyleStr, ShadowViewImpl } = options;
+  const { compInfo, renderConfig } = props;
+  const { Comp, styleStr, styleUrlList } = compInfo;
+  const { name, controlOptions } = renderConfig;
+  const { shadow, Skeleton, shadowWrapStyle, shadowDelay, ShadowViewImpl } = controlOptions;
 
   const shadowAppRootRef = React.useRef(null);
   const shadowBodyRootRef = React.useRef(null);
   const forceUpdate = useForceUpdate();
-  const data = getHostData(name, options);
+  const data = getHostData(name, renderConfig);
 
   React.useEffect(() => {
-    const staticRef = getStaticShadowBodyRef(name, options);
+    const staticRef = getStaticShadowBodyRef(name, renderConfig);
     if (shadow && !staticRef) {
-      const evName = getShadowBodyReadyEvName(name, options);
+      const evName = getShadowBodyReadyEvName(name, renderConfig);
       const evCb = () => {
         bus.off(evName, evCb);
         tryForceUpdate();
@@ -79,7 +84,7 @@ function MayShadowComp(props: IMayShadowProps) {
       bus.on(evName, evCb);
 
       const renderProps = { data, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, options);
+      tryMountStaticShadowBody(renderProps, renderConfig);
       return () => {
         bus.off(evName, evCb);
       };
@@ -89,13 +94,12 @@ function MayShadowComp(props: IMayShadowProps) {
   }, []);
 
   const isShadowRefsReady = () => {
-    const staticRef = getStaticShadowBodyRef(name, options);
-    return shadowAppRootRef.current && (options.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
+    const staticRef = getStaticShadowBodyRef(name, renderConfig);
+    return shadowAppRootRef.current && (renderConfig.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
     isShadowRefsReady() && forceUpdate();
   };
-
   const onShadowAppRootReady = (shadowRoot) => {
     shadowAppRootRef.current = shadowRoot;
     tryForceUpdate();
@@ -104,7 +108,7 @@ function MayShadowComp(props: IMayShadowProps) {
     shadowBodyRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(options, shadowAppRootRef, shadowBodyRootRef);
+  const passedProps = getPassedProps(renderConfig, shadowAppRootRef, shadowBodyRootRef);
 
   if (shadow) {
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，
@@ -117,8 +121,7 @@ function MayShadowComp(props: IMayShadowProps) {
       uiContent = <Comp {...passedProps} />;
     }
 
-    const styleContent = handleStyleStr?.(styleStr) || styleStr;
-    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent, shadowDelay };
+    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent: styleStr, shadowDelay };
     return (
       <>
         <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onShadowAppRootReady} {...commonProps}>
@@ -130,7 +133,7 @@ function MayShadowComp(props: IMayShadowProps) {
           为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
           推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
-        {options.mountShadowBodyForRef && (
+        {renderConfig.mountShadowBodyForRef && (
           <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onShadowBodyRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
         )}
       </>

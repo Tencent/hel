@@ -6,7 +6,7 @@
 |--------------------------------------------------------------------------
 */
 import React, { forwardRef } from 'react';
-import type { AnyRecord, IInnerRemoteModuleProps, ILocalCompProps, IMicroAppLegacyProps, IMicroAppProps } from '../types';
+import type { AnyRecord, ILocalCompProps, IMicroAppLegacyProps, IMicroAppProps, IRemoteCompRenderConfig } from '../types';
 import LocalCompRender from './LocalCompRender';
 import RemoteCompRender from './RemoteCompRender';
 
@@ -29,8 +29,9 @@ export const LocalComp: LocalCompType = forwardRef((props, reactRef) => {
 /**
  * usage: <MicroApp name="rule" />
  */
-export const MicroApp: MicroAppType = forwardRef((props, reactRef) => {
-  const passProps: IInnerRemoteModuleProps = { ...props, isLegacy: false, reactRef };
+export const MicroApp: MicroAppType = forwardRef((props: IMicroAppProps, reactRef) => {
+  const { name, compProps, children, ...controlOptions } = props;
+  const passProps: IRemoteCompRenderConfig = { name, compProps, children, reactRef, controlOptions };
   return <RemoteCompRender {...passProps} />;
 });
 
@@ -41,22 +42,16 @@ export type MicroAppLegacyType = <T extends AnyRecord = AnyRecord>(
 
 /**
  * @deprecated 历史遗留组件，推荐用 MicroApp 替代
- * 渲染模块发布方通过 hel-micro-react.renderApp 接口发射出来的
- * 根组件，具体差异可查看 IsLegacy @typedef {import('../types').IsLegacy}
+ * 渲染模块发布方通过 hel-micro-react.renderApp 接口发射出来的根组件
+ * 具体差异可查看 IsLegacy @typedef {import('../types').IsLegacy}
  */
 export const MicroAppLegacy: MicroAppLegacyType = forwardRef((props, reactRef) => {
   // 重名名部分属性名，让下层保持统一
-  const { version: versionId, cache: enableDiskCache, appProps: compProps, ...rest } = props;
+  const { name, version, cache, appProps, children, ...controlOptions } = props;
   // 历史模式 mountShadowBodyForRef 一定为 true，确保 shadowBody 一定存在，让基于老包开发的提供模块可以正常工作
-  const passProps: IInnerRemoteModuleProps = {
-    ...rest,
-    versionId,
-    enableDiskCache,
-    compProps,
-    reactRef,
-    isLegacy: true,
-    mountShadowBodyForRef: true,
-  };
+  // 同时重名名部分属性名，让下层安全读取相关属性
+  Object.assign(controlOptions, { versionId: version, mountShadowBodyForRef: true, isLegacy: true, enableDiskCache: cache });
+  const passProps: IRemoteCompRenderConfig = { name, compProps: appProps, children, reactRef, controlOptions };
   return <RemoteCompRender {...passProps} />;
 });
 
@@ -64,7 +59,7 @@ export const MicroAppLegacy: MicroAppLegacyType = forwardRef((props, reactRef) =
  * @deprecated 带 memo 的历史遗留组件，推荐用 MicroApp 替代
  * 渲染模块发布方通过 hel-micro-react.renderApp 接口发射出来的根组件
  * 确保挂载好之后，不再因属性变化导致重渲染，
- * 这是历史遗留用法，新版本里推荐用户自己决定要不要memo，以及自行决定如何比较 props
+ * 这是历史遗留用法，新版本里推荐用户自己决定要不要 memo，以及自行决定如何比较 props
  */
 export const MicroAppLegacyMemo = React.memo(MicroAppLegacy, () => true) as <T extends AnyRecord = AnyRecord>(
   props: IMicroAppLegacyProps<T>,

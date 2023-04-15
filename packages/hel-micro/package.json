@@ -51,7 +51,7 @@
     "@babel/preset-react": "^7.12.10",
     "@types/qs": "^6.9.7",
     "babel-cli": "^6.26.0",
-    "fake-indexeddb": "^4.0.2",
+    "fake-indexeddb": "4.0.1",
     "qs": "^6.11.0",
     "rollup": "^2.23.0"
   },

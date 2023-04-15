@@ -6,9 +6,12 @@ import type { ILocalCompProps } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
 import * as share from '../share';
 
+const { LOADED, NOT_LOAD } = helLoadStatus;
+const { CSS_LIST_TO_STR } = defaults;
+
 function judgeFetchStyleStr(props: ILocalCompProps, fetchStyleStatusRef: React.RefObject<any>) {
-  const { cssListToStr = defaults.CSS_LIST_TO_STR, cssList = [] } = props;
-  if (fetchStyleStatusRef.current === helLoadStatus.LOADED) {
+  const { cssListToStr = CSS_LIST_TO_STR, cssList = [] } = props;
+  if (fetchStyleStatusRef.current === LOADED) {
     return false;
   }
   const shouldFetchStyle = cssListToStr && cssList.length > 0;
@@ -18,7 +21,7 @@ function judgeFetchStyleStr(props: ILocalCompProps, fetchStyleStatusRef: React.R
 export default function useLoadStyle(props: ILocalCompProps) {
   const forceUpdate = baseShareHooks.useForceUpdate();
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', styleStr: '' });
-  const fetchStyleStatusRef = React.useRef(helLoadStatus.NOT_LOAD);
+  const fetchStyleStatusRef = React.useRef(NOT_LOAD);
   const { errMsg, styleStr } = state;
 
   return {
@@ -28,7 +31,7 @@ export default function useLoadStyle(props: ILocalCompProps) {
 
       // 拉取模块过程中产生错误
       if (errMsg) {
-        return share.getErrResult(props, errMsg);
+        return share.getErrResult(props.Error, errMsg);
       }
 
       // 组件已获取完毕，需要获取样式字符串，则继续执行 fetchLocalCompStyleStr

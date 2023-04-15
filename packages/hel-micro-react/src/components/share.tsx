@@ -1,36 +1,34 @@
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import { helLoadStatus } from 'hel-micro-core';
+import { helConsts, helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
-import type { IInnerRemoteModuleProps, ILocalCompProps } from '../types';
+import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../types';
 import ShadowView from './ShadowViewV2';
 
 const { CSS_LIST_TO_STR, SHADOW, WARN_STYLE } = defaults;
+const { LOADING, LOADED } = helLoadStatus;
 
-export function ensurePropsDefaults(props: IInnerRemoteModuleProps) {
-  const ensuredProps = { ...props };
+export function ensureOptionsDefault(options: IInnerUseRemoteCompOptions) {
+  if (options.isDefaultEnsured) {
+    return options;
+  }
 
-  ensuredProps.platform = props.platform || 'unpkg';
-  ensuredProps.extraShadowCssList = props.extraShadowCssList || [];
-  ensuredProps.extraShadowCssListToStr = props.extraShadowCssListToStr ?? CSS_LIST_TO_STR;
-  ensuredProps.isLib = props.isLib ?? false;
-  ensuredProps.shadow = props.shadow ?? SHADOW;
-  ensuredProps.cssListToStr = props.cssListToStr ?? CSS_LIST_TO_STR;
-  // 是否需要样式字符串（仅针对shadow配置有效）
-  // 点击 props.appendCss 可进一步查看详细的默认值生成规则说明
-  ensuredProps.appendCss = props.appendCss ?? !ensuredProps.shadow;
-  ensuredProps.compProps = props.compProps || {};
-  // 组件内jsx内部的 children 优先级高于组件属性上里传递的 children
-  ensuredProps.children = ensuredProps.compProps.children || props.children;
-  ensuredProps.isLegacy = props.isLegacy ?? false;
-  ensuredProps.shadowWrapStyle = props.shadowWrapStyle || {};
-  ensuredProps.ShadowViewImpl = props.ShadowViewImpl || ShadowView;
+  const ensuredOptions = { ...options };
+  ensuredOptions.platform = options.platform || helConsts.DEFAULT_PLAT;
+  ensuredOptions.appendCss = options.appendCss ?? !ensuredOptions.shadow;
+  ensuredOptions.shadow = options.shadow ?? SHADOW;
+  ensuredOptions.extraShadowCssListToStr = options.extraShadowCssListToStr ?? CSS_LIST_TO_STR;
+  ensuredOptions.cssListToStr = options.cssListToStr ?? CSS_LIST_TO_STR;
+  ensuredOptions.isLib = options.isLib ?? false;
+  ensuredOptions.isLegacy = options.isLegacy ?? false;
+  ensuredOptions.ShadowViewImpl = options.ShadowViewImpl || ShadowView;
+  ensuredOptions.isDefaultEnsured = true;
 
-  return ensuredProps;
+  return ensuredOptions;
 }
 
-export function getErrResult(props: ILocalCompProps, errMsg: string) {
-  const ErrorView = props.Error || (() => <h3 style={WARN_STYLE}>Hel MicroComp error: {errMsg}</h3>);
+export function getErrResult(Error: any, errMsg: string) {
+  const ErrorView = Error || (() => <h3 style={WARN_STYLE}>Hel MicroComp error: {errMsg}</h3>);
   return {
     RemoteModule: () => <ErrorView errMsg={errMsg} />,
     styleStr: '',
@@ -48,12 +46,13 @@ export function getFetchingResult(SkeletonView: any) {
   };
 }
 
-export function tryTriggerOnStyleFetched(props: IInnerRemoteModuleProps) {
-  if (props.onStyleFetched) {
-    const oriStyleStr = appStyleSrv.getStyleStr(props.name, props);
-    const styleUrlList = appStyleSrv.getStyleUrlList(props.name, props);
-    const mayHandledStyleStr = props.handleStyleStr?.(oriStyleStr) || oriStyleStr;
-    props.onStyleFetched({ mayHandledStyleStr, oriStyleStr, styleUrlList });
+export function tryTriggerOnStyleFetched(config: IRemoteCompRenderConfig, mayHandledStyleStr?: string) {
+  const { controlOptions, name } = config;
+  if (controlOptions.onStyleFetched) {
+    const oriStyleStr = appStyleSrv.getStyleStr(name, controlOptions);
+    const styleUrlList = appStyleSrv.getStyleUrlList(name, controlOptions);
+    const mstr = mayHandledStyleStr || controlOptions.handleStyleStr?.(oriStyleStr) || oriStyleStr;
+    controlOptions.onStyleFetched({ mayHandledStyleStr: mstr, oriStyleStr, styleUrlList });
   }
 }
 
@@ -65,20 +64,20 @@ export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
   const { fetchStyleStatusRef, setState, SkeletonView } = ctx;
   const fetStyleStatus = fetchStyleStatusRef.current;
   // 还在执行中，依然返回骨架屏
-  if (fetStyleStatus === helLoadStatus.LOADING) {
+  if (fetStyleStatus === LOADING) {
     return getFetchingResult(SkeletonView);
   }
 
-  fetchStyleStatusRef.current = helLoadStatus.LOADING;
+  fetchStyleStatusRef.current = LOADING;
   // 异步拉取样式函数
   appStyleSrv
     .fetchStyleByUrlList(styleUrlList)
     .then((styleStr) => {
-      fetchStyleStatusRef.current = helLoadStatus.LOADED;
+      fetchStyleStatusRef.current = LOADED;
       setState({ styleStr });
     })
     .catch((err) => {
-      fetchStyleStatusRef.current = helLoadStatus.LOADED;
+      fetchStyleStatusRef.current = LOADED;
       setState({ errMsg: err.message || 'err occurred while fetch component style' });
     });
 
@@ -90,7 +89,7 @@ export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
  * 拉取远程组件样式核心逻辑
  * 标记执行中 ---> 开启骨架屏 ---> 异步拉取组件样式 ---> 拉取结束触发 setState
  */
-export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any) {
+export function fetchRemoteModuleStyle(config: IRemoteCompRenderConfig, ctx: any) {
   const { isLoadAppStyleExecutingRef, setState, SkeletonView } = ctx;
   // 还在执行中，依然返回骨架屏
   if (isLoadAppStyleExecutingRef.current) {
@@ -98,13 +97,12 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
   }
 
   isLoadAppStyleExecutingRef.current = true;
-  const { platform, versionId, extraShadowCssList = [] } = props;
+  const { platform, versionId, extraShadowCssList = [] } = config.controlOptions;
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleStr(props.name, { platform, versionId, extraCssList: extraShadowCssList })
+    .fetchStyleStr(config.name, { platform, versionId, extraCssList: extraShadowCssList })
     .then((styleStr) => {
       isLoadAppStyleExecutingRef.current = false;
-      tryTriggerOnStyleFetched(props);
       setState({ shadowStyleStr: styleStr, isShadowStyleStrFetched: true });
     })
     .catch((err) => {
@@ -120,7 +118,8 @@ export function fetchRemoteModuleStyle(props: IInnerRemoteModuleProps, ctx: any)
  * 拉取远程组件核心逻辑
  * 标记执行中 ---> 开启骨架屏 ---> 异步拉取组件 ---> 拉取结束触发 forceUpdate
  */
-export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
+export function fetchRemoteModule(config: IRemoteCompRenderConfig, ctx: any) {
+  const { name, controlOptions } = config;
   const { isLoadAppDataExecutingRef, setState, SkeletonView, forceUpdate } = ctx;
   // 还在执行中，依然返回骨架屏
   if (isLoadAppDataExecutingRef.current) {
@@ -130,8 +129,8 @@ export function fetchRemoteModule(props: IInnerRemoteModuleProps, ctx: any) {
   isLoadAppDataExecutingRef.current = true;
   // 声明拉取函数
   const doPreFetch = async () => {
-    if (props.isLib) return preFetchLib(props.name, props);
-    return preFetchApp(props.name, props);
+    if (controlOptions.isLib) return preFetchLib(name, controlOptions);
+    return preFetchApp(name, controlOptions);
   };
 
   // 开始执行异步获取组件操作

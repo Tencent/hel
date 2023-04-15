@@ -1,10 +1,11 @@
 /**
+/**
  * for pretty format multi line string when use \`...\`
  * @param {*} mayLineBreakStr
  * @param {'MULTI' | 'ONE'} [mode='MULTI']
  * @returns
  * ```
- * // usage 1 (attention: end <br/> will be removed automatically)
+ * // usage 1
  * pfstr(`
  *   line1 line1 line1,
  *   line2 line2 line2.
