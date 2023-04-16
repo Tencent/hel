@@ -1,6 +1,5 @@
 import React from 'react';
-
-type Dict<T extends any = any> = Record<string, T>;
+import type { Dict } from '../typing';
 
 // 如 props 上存在 exposeService 函数，则暴露服务出去
 export function useExposeService(props: any, srv: any) {

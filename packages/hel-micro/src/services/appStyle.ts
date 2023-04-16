@@ -17,6 +17,8 @@ const { STYLE_STR_FETCHED } = core.helEvents;
 export interface IFetchStyleOptions extends IGetOptionsLoose {
   /** 支持透传额外的样式地址列表 */
   extraCssList?: string[];
+  /** 支持透传额外的样式字符串 */
+  extraStyleStr?: string;
   /** 透传 应用自己的样式列表 + extraCssUrlList 额外样式列表给用户，用户可依此再次排除掉一部分样式，返回的是欲排除的样式列表 */
   getExcludeCssList?: IInnerPreFetchOptions['getExcludeCssList'];
   strictMatchVer?: boolean;
@@ -29,7 +31,7 @@ const inner = {
     return status === judeStatus;
   },
 
-  getStyleUrlList(appName: string, options: IGetOptionsLoose): string[] {
+  getStyleUrlList(appName: string, options: IGetOptionsLoose, onlyBuild?: boolean): string[] {
     const platAndVer = getPlatAndVer(appName, options);
     const appVersion = core.getVersion(appName, platAndVer);
     // 获取用户 preFetch 设定的额外样式列表
@@ -38,6 +40,10 @@ const inner = {
     let buildCssList: string[] = [];
     if (appVersion) {
       buildCssList = appVersion.src_map?.chunkCssSrcList || [];
+    }
+    // TODO: buildCssList 追加 headAssetList bodyAssetList 里的 staticList relativeLink 的 append 为 true 的样式
+    if (onlyBuild) {
+      return buildCssList;
     }
 
     const allCssList = core.commonUtil.merge2List(extraCssList, buildCssList);
@@ -95,35 +101,35 @@ const inner = {
   async fetchAndCacheAppStyleStr(appName: string, options: IFetchStyleOptions) {
     const platAndVer = getPlatAndVer(appName, options);
     const { extraCssList = [], getExcludeCssList } = options;
-    // 为应用预设的样式列表
-    const presetCssList = inner.getStyleUrlList(appName, options);
+    // 应用构建产生的样式列表
+    const buildCssList = inner.getStyleUrlList(appName, options, true);
     const status = core.getVerStyleStrStatus(appName, platAndVer);
-    let presetStyleStr = '';
+    let buildStyleStr = '';
 
     // 有其他上层调用已经触发样式获取逻辑，这里调用 waitStyleReady 等待样式获取动作完成即可
     if (status === LOADING) {
       await inner.waitStyleReady(appName, { ...platAndVer, strictMatchVer: options.strictMatchVer });
-      presetStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
+      buildStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
     } else if (status === NOT_LOAD) {
       core.setVerStyleStrStatus(appName, LOADING, platAndVer);
-      presetStyleStr = await inner.fetchStyleStr(presetCssList);
-      core.setAppStyleStr(appName, presetStyleStr, platAndVer);
+      buildStyleStr = await inner.fetchStyleStr(buildCssList);
+      core.setAppStyleStr(appName, buildStyleStr, platAndVer);
       core.setVerStyleStrStatus(appName, LOADED, platAndVer);
       eventBus.emit(STYLE_STR_FETCHED, { appName, ...platAndVer }); // 预设的样式列表转换为字符串完毕
     } else {
-      presetStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
+      buildStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
     }
 
-    const allCssList = core.commonUtil.merge2List(presetCssList, extraCssList);
+    const allCssList = core.commonUtil.merge2List(buildCssList, extraCssList);
     const excludeCssList = getExcludeCssList?.(allCssList, { version: core.getVersion(appName, platAndVer) }) || [];
     if (!excludeCssList.length && !extraCssList.length) {
-      return presetStyleStr;
+      return `${buildStyleStr}${options.extraStyleStr || ''}`;
     }
 
     // 过滤 allCssList ，去掉未排除的样式得到最终需要转化为字符串的样式列表
     const finalStyleList = allCssList.filter((item) => !excludeCssList.includes(item));
     const styleStr = await inner.fetchStyleStr(finalStyleList);
-    return styleStr;
+    return `${styleStr}${options.extraStyleStr || ''}`;
   },
 };
 
@@ -142,8 +148,8 @@ export async function fetchStyleByUrlList(cssUrlList: string[]) {
 }
 
 /**
- * 获取应用预设的样式字符串（构建动态产生，页面静态引用的、preFetch 时追加的 extraCssList）
- * 调用者需自己确保样式字符串已拉取，即 fetchStyleStr 已调用
+ * 获取构建产生的、能追加的 staticLink、relativeLink 全部样式列表换到的字符串
+ * 调用者需自己确保样式字符串已拉取，即  preFetchApp 或 preFetchLib 或 fetchStyleStr 已调用
  */
 export function getStyleStr(appName: string, options?: IGetOptionsLoose) {
   const platAndVer = getPlatAndVer(appName, options);
@@ -152,12 +158,12 @@ export function getStyleStr(appName: string, options?: IGetOptionsLoose) {
 }
 
 /**
- * 获取应用预设的样式列表（构建动态产生，页面静态引用的、preFetch 时追加的 extraCssList ）
+ * 获取构建产生的、能追加的 staticLink、relativeLink 全部样式列表
  * 调用者需自己确保版本数据已获取，即 preFetchApp 或 preFetchLib 已调用
  * @returns {string[]}
  */
 export function getStyleUrlList(appName: string, options?: IGetOptionsLoose): string[] {
-  const getStyleUrlList = inner.getStyleUrlList(appName, options || {});
+  const getStyleUrlList = inner.getStyleUrlList(appName, options || {}, true);
   return getStyleUrlList;
 }
 

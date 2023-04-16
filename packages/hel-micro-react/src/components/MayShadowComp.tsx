@@ -74,9 +74,9 @@ function MayShadowComp(props: IMayShadowProps) {
   const data = getHostData(name, renderConfig);
 
   React.useEffect(() => {
-    const staticRef = getStaticShadowBodyRef(name, renderConfig);
+    const staticRef = getStaticShadowBodyRef(name, controlOptions);
     if (shadow && !staticRef) {
-      const evName = getShadowBodyReadyEvName(name, renderConfig);
+      const evName = getShadowBodyReadyEvName(name, controlOptions);
       const evCb = () => {
         bus.off(evName, evCb);
         tryForceUpdate();
@@ -94,8 +94,8 @@ function MayShadowComp(props: IMayShadowProps) {
   }, []);
 
   const isShadowRefsReady = () => {
-    const staticRef = getStaticShadowBodyRef(name, renderConfig);
-    return shadowAppRootRef.current && (renderConfig.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
+    const staticRef = getStaticShadowBodyRef(name, controlOptions);
+    return shadowAppRootRef.current && (controlOptions.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
   };
   const tryForceUpdate = () => {
     isShadowRefsReady() && forceUpdate();
@@ -133,7 +133,7 @@ function MayShadowComp(props: IMayShadowProps) {
           为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
           推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
-        {renderConfig.mountShadowBodyForRef && (
+        {controlOptions.mountShadowBodyForRef && (
           <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onShadowBodyRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
         )}
       </>

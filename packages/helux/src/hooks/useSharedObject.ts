@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { getInternal, getRawState } from '../helpers/createSharedObject';
-import { Dict } from '../typing';
+import type { Dict } from '../typing';
 import { useObject } from './useObject';
 
 let insKey = 0;
@@ -20,7 +20,7 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   const internal = getInternal(sharedObject);
 
   if (!internal) {
-    throw new Error(`input sharedObject is not a result returned by createSharedObj!`);
+    throw new Error('OBJ_NOT_SHARED_ERR: input object is not a result returned by createSharedObj!');
   }
 
   const keyMap = insCtxRef.current.keyMap;

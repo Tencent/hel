@@ -37,13 +37,12 @@ export default function useLoadStyle(props: ILocalCompProps) {
       // 组件已获取完毕，需要获取样式字符串，则继续执行 fetchLocalCompStyleStr
       const shouldFetchStyleStr = judgeFetchStyleStr(props, fetchStyleStatusRef);
       if (shouldFetchStyleStr) {
-        return share.fetchLocalCompStyleStr(props.cssList || [], passCtx);
+        return share.fetchLocalCompStyleStr(props, passCtx);
       }
 
-      const finalStyleStr = `${styleStr}${props.extraShadowStyleStr || ''}`;
       // 设置了需要将css列表转为字符串，则返回空样式列表给上层，因逻辑走这里其实已将传入的样式列表转为了字符串
       const finalStyleUrlList = props.cssListToStr ? [] : props.cssList || [];
-      return { styleStr: finalStyleStr, styleUrlList: finalStyleUrlList, moduleReady: true };
+      return { styleStr, styleUrlList: finalStyleUrlList, moduleReady: true };
     },
     errMsg,
   };

@@ -35,15 +35,44 @@ export type IsLegacy = boolean;
 
 interface IUseOptionsCommon {
   /**
-   * 处理默认解析出来的字符串，返回的新字符串会替代掉默认字符串
-   * 如果设置了此函数，应用自定自带的解析出来的样式字符串无效
-   * 通常用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
-   * 如 ()=>{ let styleStr = ''; document.querySelectorAll('style').forEach(item=>{styleStr+=item.innerText;}); return styleStr }
-   * 如  document.querySelectorAll('style')[0].innerText
-   * 或者组件使用方处于某种目的，想强制重新设置样式字符串
+   *
+   * 组件样式获取完毕时触发，如返回新的字符串，则会替换掉 mergedStyleStr，为 shadowdom 组件提供样式
+   * params参数仅提供给用户参考
+   * @example
+   * 某些特殊场景需要独立返回新的样式字符串，例如：
+   * 用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
+   * ```ts
+   * // 如
+   * ()=>{
+   *  let styleStr = '';
+   *  document.querySelectorAll('style').forEach(item=>{styleStr+=item.innerText;});
+   *  return styleStr;
+   * }
+   * // 如
+   * document.querySelectorAll('style')[0].innerText
+   * // 或者组件使用方处于某种目的，想强制重新设置样式字符串
+   *
+   * ```
+   * @param params
+   * @returns
    */
-  handleStyleStr?: (mayFetchedStr: string) => string;
-  onStyleFetched?: (params: { mayHandledStyleStr: string; oriStyleStr: string; styleUrlList: string[] }) => void;
+  onStyleFetched?: (params: {
+    /** 应用构建生成的、能追加的 staticLink、relativeLink 全部样式列表 */
+    appCssList: string[];
+    /** 由 appCssList 转换出的样式字符串 */
+    appCssListStr: string;
+    /** 用户额外透传的样式列表 */
+    extraCssList: string[];
+    /** 用户额外透传的样式字符串 */
+    extraStyleStr: string;
+    /** 最终要使用的样式字符串，由 getExcludeCssList 算出的可获取 cssList 换到的样式字符串 + extraStyleStr 合并而来 */
+    mergedStyleStr: string;
+  }) => undefined | string;
+  /**
+   * @deprecated
+   * 返回新的样式字符串，该功能已由 onStyleFetched 替代，此处保留是为了保持老版本升级后不报错
+   */
+  handleStyleStr?: (mergedStyleStr: string) => string;
   /**
    * 异步加载组件过程的过度组件
    */
@@ -117,31 +146,10 @@ interface ICompRenderOptions {
   ignoreHelContext?: boolean;
 }
 
-interface IRemoteCompRenderOptions extends ICompRenderOptions {
-  /**
-   * default: []，该属性仅在 shadow 为 true 时有意义
-   * 以 shadowdom 模式渲染时，额外追加到 shadowdom 里的样式列表，通常作用于
-   * 1 目标组件以shadow模式渲染，让用户有机会自己注入额外的样式
-   * 2 目标组件以shadow模式渲染，想覆盖组件的已有样式
-   */
-  extraShadowCssList?: string[];
-  /**
-   * default: true，该属性仅在 shadow 为 true 时有意义
-   * 是否把 extraShadowCssList 里的样式转为字符串后再注入到 shadowdom 里
-   * 默认 true 值，避免 shadowdom 组件渲染时出现抖动情况
-   */
-  extraShadowCssListToStr?: boolean;
-  /**
-   * default: undefined，该属性仅在 shadow 为 true 时有意义
-   * 额外注入到shadowdom 里的样式字符串
-   */
-  extraShadowStyleStr?: string;
-}
-
 /**
  * 用户调用 MicroApp 需要传递的类型描述
  */
-export interface IUseRemoteCompOptions extends IPreFetchOptionsBase, IUseOptionsCommon, IRemoteCompRenderOptions {
+export interface IUseRemoteCompOptions extends IPreFetchOptionsBase, IUseOptionsCommon, ICompRenderOptions {
   /** 如果指定了 Component，表示复用 name 对应的预设应用样式，但使用用户透传的组件渲染 */
   Component?: AnyCompOrNull;
   /**

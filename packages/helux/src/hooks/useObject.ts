@@ -1,7 +1,6 @@
 import React from 'react';
+import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
-
-type Dict<T extends any = any> = Record<string, T>;
 
 /**
  * 使用 useObject 有两个好处
@@ -26,7 +25,6 @@ export function useObject<T extends Dict = Dict>(initialState: T | (() => T), is
       } else {
         setFullState((state) => ({ ...state, ...partialState }));
       }
-      // setFullState((state) => ({ ...state, ...partialState }));
     }
   };
 

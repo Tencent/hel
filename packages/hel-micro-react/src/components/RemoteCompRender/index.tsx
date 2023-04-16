@@ -3,7 +3,7 @@ import React from 'react';
 import type { IRemoteCompRenderConfig } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
 import MayShadowComp from '../MayShadowComp';
-import { ensureOptionsDefault, tryTriggerOnStyleFetched } from '../share';
+import { ensureOptionsDefault } from '../share';
 import useLoadRemoteModule from './useLoadRemoteModule';
 
 /**
@@ -18,15 +18,6 @@ export default function RemoteCompRender(props: IRemoteCompRenderConfig) {
 
   const { errMsg, getModule } = useLoadRemoteModule(renderConfig);
   const { RemoteModule, styleStr, styleUrlList, moduleReady } = getModule();
-  const mayHandledStyleStr = controlOptions.handleStyleStr?.(styleStr) || styleStr;
-  React.useEffect(() => {
-    if (moduleReady && !errMsg) {
-      tryTriggerOnStyleFetched(renderConfig, mayHandledStyleStr);
-    }
-    // here trust my code, only trigger onStyleFetched one time
-    // eslint-disable-next-line
-  }, [moduleReady, errMsg]);
-
   if (!moduleReady) {
     const Skeleton = controlOptions.Skeleton || BuildInSkeleton;
     // @ts-ignore
@@ -38,6 +29,6 @@ export default function RemoteCompRender(props: IRemoteCompRenderConfig) {
     return <RemoteModule />;
   }
 
-  const compInfo = { Comp: RemoteModule, styleStr: mayHandledStyleStr, styleUrlList };
+  const compInfo = { Comp: RemoteModule, styleStr, styleUrlList };
   return <MayShadowComp renderConfig={renderConfig} compInfo={compInfo} />;
 }

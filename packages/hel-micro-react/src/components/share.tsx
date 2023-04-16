@@ -2,7 +2,7 @@ import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
 import { helConsts, helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
-import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../types';
+import type { IInnerUseRemoteCompOptions, ILocalCompProps, IRemoteCompRenderConfig } from '../types';
 import ShadowView from './ShadowViewV2';
 
 const { CSS_LIST_TO_STR, SHADOW, WARN_STYLE } = defaults;
@@ -17,7 +17,6 @@ export function ensureOptionsDefault(options: IInnerUseRemoteCompOptions) {
   ensuredOptions.platform = options.platform || helConsts.DEFAULT_PLAT;
   ensuredOptions.appendCss = options.appendCss ?? !ensuredOptions.shadow;
   ensuredOptions.shadow = options.shadow ?? SHADOW;
-  ensuredOptions.extraShadowCssListToStr = options.extraShadowCssListToStr ?? CSS_LIST_TO_STR;
   ensuredOptions.cssListToStr = options.cssListToStr ?? CSS_LIST_TO_STR;
   ensuredOptions.isLib = options.isLib ?? false;
   ensuredOptions.isLegacy = options.isLegacy ?? false;
@@ -46,21 +45,30 @@ export function getFetchingResult(SkeletonView: any) {
   };
 }
 
-export function tryTriggerOnStyleFetched(config: IRemoteCompRenderConfig, mayHandledStyleStr?: string) {
+export function tryTriggerOnStyleFetched(config: IRemoteCompRenderConfig, mergedStyleStr: string) {
   const { controlOptions, name } = config;
+  let finalStyleStr = mergedStyleStr;
   if (controlOptions.onStyleFetched) {
-    const oriStyleStr = appStyleSrv.getStyleStr(name, controlOptions);
-    const styleUrlList = appStyleSrv.getStyleUrlList(name, controlOptions);
-    const mstr = mayHandledStyleStr || controlOptions.handleStyleStr?.(oriStyleStr) || oriStyleStr;
-    controlOptions.onStyleFetched({ mayHandledStyleStr: mstr, oriStyleStr, styleUrlList });
+    const params = {
+      appCssList: appStyleSrv.getStyleUrlList(name, controlOptions),
+      appCssListStr: appStyleSrv.getStyleStr(name, controlOptions),
+      extraCssList: controlOptions.extraCssList || [],
+      extraStyleStr: controlOptions.extraStyleStr || '',
+      mergedStyleStr,
+    };
+    finalStyleStr = controlOptions.onStyleFetched(params) || mergedStyleStr;
   }
+  // !!! 兼容性逻辑，仅为了升级不报错
+  finalStyleStr = controlOptions.handleStyleStr?.(finalStyleStr) || finalStyleStr;
+  return finalStyleStr;
 }
 
 /**
  * 拉取远程组件样式核心逻辑
  * 标记执行中 ---> 开启骨架屏 ---> 异步拉取组件样式 ---> 拉取结束触发forceUpdate
  */
-export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
+export function fetchLocalCompStyleStr(props: ILocalCompProps, ctx: any) {
+  const { cssList = [], name, ...controlOptions } = props;
   const { fetchStyleStatusRef, setState, SkeletonView } = ctx;
   const fetStyleStatus = fetchStyleStatusRef.current;
   // 还在执行中，依然返回骨架屏
@@ -71,10 +79,11 @@ export function fetchLocalCompStyleStr(styleUrlList: string[], ctx: any) {
   fetchStyleStatusRef.current = LOADING;
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleByUrlList(styleUrlList)
+    .fetchStyleByUrlList(cssList)
     .then((styleStr) => {
       fetchStyleStatusRef.current = LOADED;
-      setState({ styleStr });
+      const finalStr = tryTriggerOnStyleFetched({ name, controlOptions }, styleStr);
+      setState({ styleStr: finalStr });
     })
     .catch((err) => {
       fetchStyleStatusRef.current = LOADED;
@@ -97,13 +106,19 @@ export function fetchRemoteModuleStyle(config: IRemoteCompRenderConfig, ctx: any
   }
 
   isLoadAppStyleExecutingRef.current = true;
-  const { platform, versionId, extraShadowCssList = [] } = config.controlOptions;
+  let controlOptions = config.controlOptions;
+  if (!controlOptions.cssListToStr) {
+    // 刻意清空 extraCssList
+    controlOptions = { ...controlOptions, extraCssList: [] };
+  }
+
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleStr(config.name, { platform, versionId, extraCssList: extraShadowCssList })
+    .fetchStyleStr(config.name, controlOptions)
     .then((styleStr) => {
       isLoadAppStyleExecutingRef.current = false;
-      setState({ shadowStyleStr: styleStr, isShadowStyleStrFetched: true });
+      const shadowStyleStr = tryTriggerOnStyleFetched(config, styleStr);
+      setState({ shadowStyleStr, isShadowStyleStrFetched: true });
     })
     .catch((err) => {
       isLoadAppStyleExecutingRef.current = false;

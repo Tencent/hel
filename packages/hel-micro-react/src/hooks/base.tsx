@@ -70,11 +70,12 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
     isFetchExecuteRef.current = true;
     const fetchComp = async () => {
       const comps: any = await preFetchLib(name, restOptions);
+      let mergedStyleStr = '';
       if (options.onStyleFetched && !appStyleSrv.isStyleFetched(name, options)) {
-        await appStyleSrv.fetchStyleStr(name, options);
+        mergedStyleStr = await appStyleSrv.fetchStyleStr(name, options);
       }
       const config: IRemoteCompRenderConfig = { name, controlOptions: options };
-      tryTriggerOnStyleFetched(config);
+      tryTriggerOnStyleFetched(config, mergedStyleStr);
       if (options.delay) {
         await delay(options.delay);
       }

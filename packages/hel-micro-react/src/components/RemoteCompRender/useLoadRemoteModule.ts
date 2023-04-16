@@ -9,15 +9,12 @@ const { merge2List } = core.commonUtil;
 
 function getStyleList(options: IInnerUseRemoteCompOptions) {
   let list: string[] = [];
-  const { shadow, extraCssList, cssListToStr, extraShadowCssList, extraShadowCssListToStr } = options;
+  const { shadow, extraCssList, cssListToStr } = options;
   if (!shadow) {
     return list;
   }
   if (!cssListToStr && extraCssList) {
     list = merge2List(list, extraCssList);
-  }
-  if (!extraShadowCssListToStr && extraShadowCssList) {
-    list = merge2List(list, extraShadowCssList);
   }
   return list;
 }
@@ -48,7 +45,7 @@ function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, p
 
 export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   const { controlOptions, name } = config;
-  const { extraShadowStyleStr = '', Component, Skeleton, shadow, cssListToStr, extraShadowCssListToStr } = controlOptions;
+  const { Component, Skeleton, shadow, cssListToStr } = controlOptions;
   const forceUpdate = baseShareHooks.useForceUpdate();
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', shadowStyleStr: '', isShadowStyleStrFetched: false });
   const isLoadAppDataExecutingRef = React.useRef(false);
@@ -72,17 +69,15 @@ export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
       }
 
       // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle
-      if (shadow && !isShadowStyleStrFetched && (cssListToStr || extraShadowCssListToStr)) {
+      if (shadow && !isShadowStyleStrFetched && cssListToStr) {
         return share.fetchRemoteModuleStyle(config, passCtx);
       }
 
       // 提取可注入到 shadowdom 的样式列表
       const styleUrlList = getStyleList(controlOptions);
-      // 拼接上用户额外透传的样式字符串
-      const styleStr = `${shadowStyleStr}${extraShadowStyleStr}`;
       // 如用户透传了具体组件，表示复用 name 对应的预设应用样式，使用用户透传的组件渲染
       RemoteModule = Component || RemoteModule;
-      return { RemoteModule, styleStr, styleUrlList, moduleReady: true };
+      return { RemoteModule, styleStr: shadowStyleStr, styleUrlList, moduleReady: true };
     },
     errMsg,
   };
