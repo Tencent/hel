@@ -45,7 +45,7 @@ const forUpdate = useForceUpdate();
 
 ### createSharedObject
 创建一个共享对象，可透传给 `useSharedObject`，具体使用见 useSharedObject
-```
+```ts
 // 初始化一个共享对象
 const sharedObj = createSharedObject({a:1, b:2});
 // 基于函数初始化一个共享对象
@@ -54,7 +54,7 @@ const sharedObj = createSharedObject(()=>({a:1, b:2}));
 
 ### createReactiveSharedObject
 创建一个响应式的共享对象，可透传给 useSharedObject
-```
+```ts
 // 初始化一个共享对象
 const [reactiveObj, setState] = createReactiveSharedObject({a:1, b:2});
 
@@ -64,7 +64,7 @@ setSharedObj({a: 111}); // 使用此方法修改 a 属性，同样也能触发�
 
 ### createShared
 函数签名
-```
+```ts
 function createShared<T extends Dict = Dict>(
   rawState: T | (() => T),
   enableReactive?: boolean,
@@ -80,7 +80,7 @@ function createShared<T extends Dict = Dict>(
 
 创建一个响应式的共享对象，可透传给 useSharedObject，它是`createReactiveSharedObject`和`createSharedObject`的结合体，当需要调用脱离函数上下文的服务函数时（即不需要感知组件props时），可使用该接口，第二位参数为是否创建响应式状态，为 true 时效果同 `createReactiveSharedObject` 返回的 sharedObj
 
-```
+```ts
  const ret = createShared({ a: 100, b: 2 });
  const ret2 = createShared({ a: 100, b: 2 }, true); // 创建响应式状态
  // ret.state 可透传给 useSharedObject
@@ -90,7 +90,7 @@ function createShared<T extends Dict = Dict>(
 
 以下将举例两种具体的定义服务函数的方式，之后用户便可在其他其他地方任意调用这些服务函数修改共享状态了，如需感知组件上下文（例如props），则需要用到下面介绍的`useService`接口去定义服务函数。
 
-```
+```ts
 // 调用服务函数第一种方式，直接调用定义的函数，配合 ret.setState 修改状态
 function changeAv2(a: number, b: number) {
    ret.setState({ a, b });
@@ -109,7 +109,7 @@ function changeA(a: number, b: number) {
 
 ### useSharedObject
 函数签名
-```
+```ts
 function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [
   SharedObject<T>,
   (partialState: Partial<T>) => void,
@@ -132,7 +132,7 @@ const [ obj, setObj ] = useSharedObject(sharedObj);
 
 ### useService
 函数签名
-```
+```ts
 /**
  * 使用用服务模式开发 react 组件：
  * @param compCtx
