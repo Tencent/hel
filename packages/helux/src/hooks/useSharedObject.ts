@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { getInternal, getRawState } from '../helpers/createSharedObject';
+import { SKIP_CHECK_OBJ } from '../consts';
+import { getInternal, getRawState } from '../helpers/common';
 import type { Dict } from '../typing';
-import { useObject } from './useObject';
+import { useObjectInner } from './useObject';
 
 let insKey = 0;
 
 export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
-  const [state, setState] = useObject(getRawState(sharedObject), true);
+  const [state, setState] = useObjectInner(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
   const insCtxRef = useRef({
     keyMap: {} as any,
     compreKeyMap: {} as any,

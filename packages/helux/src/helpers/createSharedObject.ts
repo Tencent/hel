@@ -1,23 +1,5 @@
 import type { Dict, SharedObject } from '../typing';
-
-const InternalSymbol = Symbol('HeluxInternal');
-const RawStateSymbol = Symbol('HeluxRawState');
-
-export function getInternal(state: any) {
-  return state.__proto__[InternalSymbol];
-}
-
-export function getRawState(state: any) {
-  return state.__proto__[RawStateSymbol] || state;
-}
-
-function bindInternal(state: any, internal: any) {
-  state.__proto__[InternalSymbol] = internal;
-}
-
-function bindRawState(state: any, rawState: any) {
-  state.__proto__[RawStateSymbol] = rawState;
-}
+import { getInternal, bindRawState, bindInternal } from './common';
 
 function innerCreateSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
@@ -35,9 +17,7 @@ function innerCreateSharedObject<T extends Dict = Dict>(
       set(target, key, val) {
         // @ts-ignore
         rawState[key] = val;
-        if (enableReactive) {
-          getInternal(sharedState).setState({ [key]: val });
-        }
+        getInternal(sharedState).setState({ [key]: val });
         return true;
       },
     });

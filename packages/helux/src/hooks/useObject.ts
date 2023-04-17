@@ -1,21 +1,23 @@
 import React from 'react';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
+import { SKIP_CHECK_OBJ } from '../consts';
+import { getInternal } from '../helpers/common';
 
-/**
- * 使用 useObject 有两个好处
- * ```txt
- * 1 方便定义多个状态值时，少写很多 useState
- * 2 内部做了 unmount 判断，让异步函数也可以安全的调用 setState，避免 react 出现警告 :
- * "Called SetState() on an Unmounted Component" Errors
- * ```
- * @param initialState
- * @returns
- */
-export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void] {
+interface IInnerOptions {
+  isStable?: boolean;
+  [key: string | symbol]: any;
+}
+
+export function useObjectInner<T extends Dict = Dict>(initialState: T | (() => T), options: IInnerOptions): [T, (partialState: Partial<T>) => void] {
+  const { isStable } = options;
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
   const forceUpdate = useForceUpdate();
+
+  if (!options[SKIP_CHECK_OBJ] && getInternal(initialState)) {
+    throw new Error('OBJ_NOT_NORMAL_ERR: can not pass a shared object to useObject!');
+  }
 
   const setState = (partialState: Partial<T>) => {
     if (!unmountRef.current) {
@@ -36,4 +38,19 @@ export function useObject<T extends Dict = Dict>(initialState: T | (() => T), is
     };
   }, []);
   return [state, setState];
+}
+
+
+/**
+ * 使用 useObject 有两个好处
+ * ```txt
+ * 1 方便定义多个状态值时，少写很多 useState
+ * 2 内部做了 unmount 判断，让异步函数也可以安全的调用 setState，避免 react 出现警告 :
+ * "Called SetState() on an Unmounted Component" Errors
+ * ```
+ * @param initialState
+ * @returns
+ */
+export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void] {
+  return useObjectInner(initialState, { isStable });
 }
