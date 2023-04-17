@@ -1,6 +1,6 @@
 export const INTERNAL = Symbol('HeluxInternal');
 
-export const OBJECT_KEY = Symbol('HeluxObjectKey');
+export const SHARED_KEY = Symbol('HeluxSharedKey');
 
 export const SKIP_CHECK_OBJ = Symbol('HeluxSkipCheckObj');
 

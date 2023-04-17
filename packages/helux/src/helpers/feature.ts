@@ -1,4 +1,4 @@
-import { FIRST_UNMOUNT, INTERNAL, OBJECT_KEY, SECOND_UNMOUNT } from '../consts';
+import { FIRST_UNMOUNT, INTERNAL, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 
@@ -20,7 +20,7 @@ export function genInternalContainer(state: any) {
 }
 
 export function getInternal(state: any) {
-  const key = getObjectKey(state);
+  const key = getSharedKey(state);
   return state.__proto__[INTERNAL][key];
 }
 
@@ -29,17 +29,17 @@ export function getRawState(state: any) {
   return internal.rawState;
 }
 
-export function getObjectKey(state: any) {
-  return state[OBJECT_KEY] || 0;
+export function getSharedKey(state: any) {
+  return state[SHARED_KEY] || 0;
 }
 
 export function bindInternal(state: any, internal: any) {
-  const key = getObjectKey(state);
+  const key = getSharedKey(state);
   state[INTERNAL][key] = internal;
 }
 
 let keySeed = 0;
-export function markObjectKey(state: any) {
+export function markSharecKey(state: any) {
   keySeed = keySeed === Number.MAX_SAFE_INTEGER ? 1 : keySeed + 1;
-  state[OBJECT_KEY] = keySeed;
+  state[SHARED_KEY] = keySeed;
 }

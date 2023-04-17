@@ -1,5 +1,5 @@
-import { INTERNAL, OBJECT_KEY } from '../consts';
-import { bindInternal, genInternalContainer, getInternal, markObjectKey } from '../helpers/feature';
+import { INTERNAL, SHARED_KEY } from '../consts';
+import { bindInternal, genInternalContainer, getInternal, markSharecKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 
 export function buildSharedObject<T extends Dict = Dict>(
@@ -13,7 +13,7 @@ export function buildSharedObject<T extends Dict = Dict>(
   // let sharedState = Object.create(null);
   // Object.assign(sharedState, rawState); // then safe set internal, but object no proto methods
   let sharedState = rawState;
-  markObjectKey(sharedState);
+  markSharecKey(sharedState);
   genInternalContainer(sharedState);
 
   if (enableReactive) {
@@ -22,7 +22,7 @@ export function buildSharedObject<T extends Dict = Dict>(
       set(target, key: any, val) {
         // @ts-ignore
         rawState[key] = val;
-        if (![OBJECT_KEY, INTERNAL].includes(key)) {
+        if (![SHARED_KEY, INTERNAL].includes(key)) {
           getInternal(sharedState).setState({ [key]: val });
         }
         return true;

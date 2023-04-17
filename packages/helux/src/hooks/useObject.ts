@@ -1,6 +1,6 @@
 import React from 'react';
 import { SKIP_CHECK_OBJ } from '../consts';
-import { getInternal } from '../helpers/feature';
+import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
 
@@ -14,11 +14,12 @@ export function useObjectInner<T extends Dict = Dict>(
   options: IInnerOptions,
 ): [T, (partialState: Partial<T>) => void] {
   const { isStable } = options;
+
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
   const forceUpdate = useForceUpdate();
 
-  if (!options[SKIP_CHECK_OBJ] && getInternal(initialState)) {
+  if (!options[SKIP_CHECK_OBJ] && getSharedKey(initialState)) {
     throw new Error('OBJ_NOT_NORMAL_ERR: can not pass a shared object to useObject!');
   }
 
