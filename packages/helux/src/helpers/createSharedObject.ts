@@ -1,5 +1,5 @@
 import type { Dict, SharedObject } from '../typing';
-import { getInternal, bindRawState, bindInternal } from './common';
+import { bindInternal, bindRawState, getInternal } from './common';
 
 function innerCreateSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),

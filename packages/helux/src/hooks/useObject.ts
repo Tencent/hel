@@ -1,15 +1,18 @@
 import React from 'react';
-import type { Dict } from '../typing';
-import { useForceUpdate } from './useForceUpdate';
 import { SKIP_CHECK_OBJ } from '../consts';
 import { getInternal } from '../helpers/common';
+import type { Dict } from '../typing';
+import { useForceUpdate } from './useForceUpdate';
 
 interface IInnerOptions {
   isStable?: boolean;
   [key: string | symbol]: any;
 }
 
-export function useObjectInner<T extends Dict = Dict>(initialState: T | (() => T), options: IInnerOptions): [T, (partialState: Partial<T>) => void] {
+export function useObjectInner<T extends Dict = Dict>(
+  initialState: T | (() => T),
+  options: IInnerOptions,
+): [T, (partialState: Partial<T>) => void] {
   const { isStable } = options;
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
@@ -39,7 +42,6 @@ export function useObjectInner<T extends Dict = Dict>(initialState: T | (() => T
   }, []);
   return [state, setState];
 }
-
 
 /**
  * 使用 useObject 有两个好处

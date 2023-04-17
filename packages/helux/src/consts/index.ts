@@ -1,4 +1,3 @@
-
 export const INTERNAL = Symbol('HeluxInternal');
 
 export const RAW_STATE = Symbol('HeluxRawState');
