@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { SKIP_CHECK_OBJ } from '../consts';
-import { getInternal, getRawState } from '../helpers/common';
+import { clearDep, getInternal, getRawState, recoverDep, updateDep, buildInsCtx } from '../helpers/common';
 import type { Dict } from '../typing';
 import { useObjectInner } from './useObject';
-
-let insKey = 0;
 
 export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
   const [state, setState] = useObjectInner(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
@@ -29,48 +27,22 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   insCtxRef.current.keyMap = {}; // reset dep map
 
   if (!reactiveUpdater) {
-    insKey += 1;
-    insCtxRef.current.insKey = insKey;
-    internal.mapInsKeyUpdater(insKey, setState);
-    // TODO: downgrade to defineProperty
-    sharedState = new Proxy(state, {
-      get(target, key) {
-        insCtxRef.current.keyMap[key] = 1;
-        internal.recordDep(key, insCtxRef.current.insKey);
-        return target[key];
-      },
-      set(target, key, val) {
-        // @ts-ignore
-        target[key] = val;
-        if (enableReactive) {
-          internal.setState({ [key]: val });
-        }
-        return true;
-      },
-    });
-    reactiveUpdater = internal.setState;
-    insCtxRef.current.reactiveUpdater = reactiveUpdater;
-    insCtxRef.current.sharedState = sharedState;
+    const ret = buildInsCtx(insCtxRef, { state, setState, internal, enableReactive });
+    reactiveUpdater = ret.updater;
+    sharedState = ret.proxyedState;
   }
 
-  // start re compute dep in every render period
+  // start update dep in every render period
   useEffect(() => {
-    const { keyMap, prevKeyMap } = insCtxRef.current;
-    Object.keys(prevKeyMap).forEach((prevKey) => {
-      if (!keyMap[prevKey]) {
-        // lost dep
-        internal.delDep(prevKey, insCtxRef.current.insKey);
-      }
-    });
+    updateDep(insCtxRef.current, internal);
   });
 
   useEffect(() => {
+    const { keyMap, insKey } = insCtxRef.current;
+    // recover dep and updater for double mount behavior under react strict mode
+    recoverDep(insKey, { keyMap, internal, setState })
     return () => {
-      // del dep before unmount
-      const { keyMap, insKey } = insCtxRef.current;
-      Object.keys(keyMap).forEach((key) => {
-        internal.delDep(key, insKey);
-      });
+      clearDep(insKey, keyMap, internal);
     };
   }, []);
 

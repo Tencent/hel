@@ -1,5 +1,6 @@
 import type { Dict, SharedObject } from '../typing';
-import { bindInternal, bindRawState, getInternal } from './common';
+import { OBJECT_KEY, INTERNAL } from '../consts';
+import { bindInternal, getInternal, markObjectKey, genInternalContainer } from './common';
 
 function innerCreateSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
@@ -9,31 +10,37 @@ function innerCreateSharedObject<T extends Dict = Dict>(
   if (typeof stateOrStateFn === 'function') {
     rawState = stateOrStateFn();
   }
+  // let sharedState = Object.create(null);
+  // Object.assign(sharedState, rawState); // then safe set internal, but object no proto methods
   let sharedState = rawState;
+  markObjectKey(sharedState);
+  genInternalContainer(sharedState);
 
   if (enableReactive) {
     // TODO: downgrade to defineProperty
     sharedState = new Proxy(rawState, {
-      set(target, key, val) {
+      set(target, key: any, val) {
         // @ts-ignore
         rawState[key] = val;
-        getInternal(sharedState).setState({ [key]: val });
+        if (![OBJECT_KEY, INTERNAL].includes(key)) {
+          getInternal(sharedState).setState({ [key]: val });
+        }
         return true;
       },
     });
-    bindRawState(sharedState, rawState);
   } else {
     sharedState = rawState;
   }
 
   const insKey2Updater: Record<string, any> = {};
-  const key2InsKeys: any = {};
+  const key2InsKeys: Record<string, number[]> = {};
   bindInternal(sharedState, {
+    rawState,
     key2InsKeys,
     insKey2Updater,
     setState(partialState: any) {
       const keys = Object.keys(partialState);
-      let allInsKeys: any[] = [];
+      let allInsKeys: number[] = [];
       keys.forEach((key) => {
         const insKeys = key2InsKeys[key] || [];
         allInsKeys = allInsKeys.concat(insKeys);
@@ -42,10 +49,10 @@ function innerCreateSharedObject<T extends Dict = Dict>(
       allInsKeys = Array.from(new Set(allInsKeys));
       allInsKeys.forEach((insKey) => {
         const updater = insKey2Updater[insKey];
-        updater(partialState);
+        updater && updater(partialState);
       });
     },
-    recordDep(key: string, insKey: any) {
+    recordDep(key: string, insKey: number) {
       let insKeys: any[] = key2InsKeys[key];
       if (!insKeys) {
         insKeys = [];
@@ -55,15 +62,21 @@ function innerCreateSharedObject<T extends Dict = Dict>(
         insKeys.push(insKey);
       }
     },
-    delDep(key: string, insKey: any) {
+    delDep(key: string, insKey: number) {
       const insKeys: any[] = key2InsKeys[key] || [];
       const idx = insKeys.indexOf(insKey);
       if (idx >= 0) {
         insKeys.splice(idx, 1);
       }
     },
-    mapInsKeyUpdater(insKey: string, updater: any) {
+    mapInsKeyUpdater(insKey: number, updater: any) {
       insKey2Updater[insKey] = updater;
+    },
+    delInsKeyUpdater(insKey: number) {
+      if (insKey) {
+        // @ts-ignore
+        delete insKey2Updater[insKey];
+      }
     },
   });
 
