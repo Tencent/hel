@@ -12,9 +12,7 @@ import useLoadStyle from './useLoadStyle';
 export default function LocalCompRender(props: ILocalCompProps) {
   const { compProps, name = 'LocalComp', shadow = true, Comp } = props;
 
-  const { errMsg, getStyle } = useLoadStyle(props);
-  // 此处 moduleReady 代表样式就绪
-  const { styleStr, styleUrlList, moduleReady } = getStyle();
+  const { errMsg, styleStr, styleUrlList, moduleReady } = useLoadStyle(props);
   if (!moduleReady) {
     const Skeleton = props.Skeleton || BuildInSkeleton;
     return <Skeleton />;
@@ -23,6 +21,7 @@ export default function LocalCompRender(props: ILocalCompProps) {
     return <h3 style={defaults.WARN_STYLE}>Hel LocalComp error: {errMsg}</h3>;
   }
 
+  // 此处 moduleReady 代表样式就绪
   const wrapProps: IMayShadowProps = {
     compInfo: {
       Comp: Comp || ForgetPassComp,

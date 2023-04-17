@@ -24,26 +24,21 @@ export default function useLoadStyle(props: ILocalCompProps) {
   const fetchStyleStatusRef = React.useRef(NOT_LOAD);
   const { errMsg, styleStr } = state;
 
-  return {
-    getStyle: () => {
-      const SkeletonView = props.Skeleton || BuildInSkeleton;
-      const passCtx = { fetchStyleStatusRef, setState, SkeletonView, forceUpdate };
+  const SkeletonView = props.Skeleton || BuildInSkeleton;
+  const passCtx = { fetchStyleStatusRef, setState, SkeletonView, forceUpdate };
 
-      // 拉取模块过程中产生错误
-      if (errMsg) {
-        return share.getErrResult(props.Error, errMsg);
-      }
+  // 拉取模块过程中产生错误
+  if (errMsg) {
+    return share.getErrResult(props.Error, errMsg);
+  }
 
-      // 组件已获取完毕，需要获取样式字符串，则继续执行 fetchLocalCompStyleStr
-      const shouldFetchStyleStr = judgeFetchStyleStr(props, fetchStyleStatusRef);
-      if (shouldFetchStyleStr) {
-        return share.fetchLocalCompStyleStr(props, passCtx);
-      }
+  // 组件已获取完毕，需要获取样式字符串，则继续执行 fetchLocalCompStyleStr
+  const shouldFetchStyleStr = judgeFetchStyleStr(props, fetchStyleStatusRef);
+  if (shouldFetchStyleStr) {
+    return share.fetchLocalCompStyleStr(props, passCtx);
+  }
 
-      // 设置了需要将css列表转为字符串，则返回空样式列表给上层，因逻辑走这里其实已将传入的样式列表转为了字符串
-      const finalStyleUrlList = props.cssListToStr ? [] : props.cssList || [];
-      return { styleStr, styleUrlList: finalStyleUrlList, moduleReady: true };
-    },
-    errMsg,
-  };
+  // 设置了需要将css列表转为字符串，则返回空样式列表给上层，因逻辑走这里其实已将传入的样式列表转为了字符串
+  const finalStyleUrlList = props.cssListToStr ? [] : props.cssList || [];
+  return { errMsg, styleStr, styleUrlList: finalStyleUrlList, moduleReady: true };
 }
