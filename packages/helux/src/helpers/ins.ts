@@ -12,7 +12,7 @@ export function buildInsCtx(insCtx: any, options: any) {
   // TODO: downgrade to defineProperty
   const proxyedState = new Proxy(state, {
     get(target, key) {
-      insCtx.keyMap[key] = 1;
+      insCtx.readMap[key] = 1;
       internal.recordDep(key, insCtx.insKey);
       return target[key];
     },
@@ -26,7 +26,7 @@ export function buildInsCtx(insCtx: any, options: any) {
     },
   });
   const updater = internal.setState;
-  insCtx.reactiveUpdater = updater;
+  insCtx.updater = updater;
   insCtx.sharedState = proxyedState;
   return { updater, proxyedState };
 }

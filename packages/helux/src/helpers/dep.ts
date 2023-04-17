@@ -43,7 +43,7 @@ function checkUnmountInfo(internal: any) {
 }
 
 interface IRocoverDepOptions {
-  keyMap: Dict<number>;
+  readMap: Dict<number>;
   internal: any;
   setState: any;
 }
@@ -64,11 +64,11 @@ export function recoverDep(insKey: number, options: IRocoverDepOptions) {
   const { s: unmoutStatus, prev: prevInsKey } = info;
   if (unmoutStatus === SECOND_UNMOUNT) {
     // 是因为双调用导致的前一刻已触发了 unmount 行为
-    const { keyMap, internal, setState } = options;
+    const { readMap, internal, setState } = options;
     internal.mapInsKeyUpdater(insKey, setState);
     // 把前一个更新器移除，避免冗余更新
     internal.delInsKeyUpdater(info.prev);
-    Object.keys(keyMap).forEach((key) => {
+    Object.keys(readMap).forEach((key) => {
       internal.recordDep(key, insKey);
       internal.delDep(key, prevInsKey);
     });
@@ -78,34 +78,34 @@ export function recoverDep(insKey: number, options: IRocoverDepOptions) {
 /**
  * clear dep
  */
-export function clearDep(insKey: number, keyMap: Dict<number>, internal: any) {
+export function clearDep(insKey: number, readMap: Dict<number>, internal: any) {
   // del dep before unmount
-  Object.keys(keyMap).forEach((key) => internal.delDep(key, insKey));
+  Object.keys(readMap).forEach((key) => internal.delDep(key, insKey));
   internal.delInsKeyUpdater(insKey);
 
   checkUnmountInfo(internal);
 }
 
 export function updateDep(insCtx: any, internal: any) {
-  const { insKey, keyMap, keyMapPrev } = insCtx;
-  Object.keys(keyMapPrev).forEach((prevKey) => {
-    if (!keyMap[prevKey]) {
+  const { insKey, readMap, readMapPrev } = insCtx;
+  Object.keys(readMapPrev).forEach((prevKey) => {
+    if (!readMap[prevKey]) {
       // lost dep
       internal.delDep(prevKey, insKey);
     }
   });
-  insCtx.keyMapStrict = null;
+  insCtx.readMapStrict = null;
 }
 
-export function updateReadTrack(insCtx: any) {
-  const { keyMap, keyMapStrict } = insCtx;
-  if (keyMapStrict) {
+export function resetReadMap(insCtx: any) {
+  const { readMap, readMapStrict } = insCtx;
+  if (readMapStrict) {
     // second call
-    insCtx.keyMapPrev = keyMapStrict;
-    insCtx.keyMapStrict = null;
+    insCtx.readMapPrev = readMapStrict;
+    insCtx.readMapStrict = null;
   } else {
-    insCtx.keyMapPrev = keyMap;
-    insCtx.keyMapStrict = keyMap;
-    insCtx.keyMap = {}; // reset dep map
+    insCtx.readMapPrev = readMap;
+    insCtx.readMapStrict = readMap;
+    insCtx.readMap = {}; // reset read map
   }
 }

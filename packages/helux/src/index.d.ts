@@ -1,6 +1,6 @@
 /*
 |--------------------------------------------------------------------------
-| helux@1.3.1
+| helux@1.3.2
 | A React state library that encourages service injection and supports reactive updates
 |--------------------------------------------------------------------------
 */
