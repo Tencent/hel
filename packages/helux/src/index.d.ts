@@ -1,3 +1,9 @@
+/*
+|--------------------------------------------------------------------------
+| helux@1.3.1
+| A React state library that encourages service injection and supports reactive updates
+|--------------------------------------------------------------------------
+*/
 import type { Dict, SharedObject } from './typing';
 
 /**

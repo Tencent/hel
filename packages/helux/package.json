@@ -1,7 +1,7 @@
 {
   "name": "helux",
-  "version": "1.3.0",
-  "description": "use service mode to develop react component, avoid forwarRef hell",
+  "version": "1.3.1",
+  "description": "A React state library that encourages service injection and supports reactive updates",
   "repository": {
     "type": "git",
     "url": "https://github.com/tnfe/hel.git",

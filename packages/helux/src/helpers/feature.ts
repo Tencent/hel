@@ -2,9 +2,6 @@ import { FIRST_UNMOUNT, INTERNAL, OBJECT_KEY, SECOND_UNMOUNT } from '../consts';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 
-// @ts-ignorew
-window.MM = UNMOUNT_INFO_MAP;
-
 export interface IUnmountInfo {
   t: number;
   s: typeof FIRST_UNMOUNT | typeof SECOND_UNMOUNT;
