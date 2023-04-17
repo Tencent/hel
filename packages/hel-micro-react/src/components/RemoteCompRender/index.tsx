@@ -16,8 +16,7 @@ export default function RemoteCompRender(props: IRemoteCompRenderConfig) {
   Object.assign(ensuredOptions, { platform, versionId });
   const renderConfig = { ...props, controlOptions: ensuredOptions };
 
-  const { errMsg, getModule } = useLoadRemoteModule(renderConfig);
-  const { RemoteModule, styleStr, styleUrlList, moduleReady } = getModule();
+  const { errMsg, RemoteModule, styleStr, styleUrlList, moduleReady } = useLoadRemoteModule(renderConfig);
   if (!moduleReady) {
     const Skeleton = controlOptions.Skeleton || BuildInSkeleton;
     // @ts-ignore

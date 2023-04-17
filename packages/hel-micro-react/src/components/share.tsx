@@ -33,6 +33,7 @@ export function getErrResult(Error: any, errMsg: string) {
     styleStr: '',
     styleUrlList: [],
     moduleReady: true,
+    errMsg,
   };
 }
 
@@ -42,6 +43,7 @@ export function getFetchingResult(SkeletonView: any) {
     styleStr: '',
     styleUrlList: [],
     moduleReady: false,
+    errMsg: '',
   };
 }
 

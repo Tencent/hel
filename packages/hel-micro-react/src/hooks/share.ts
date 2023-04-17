@@ -51,7 +51,6 @@ export function useExecuteCallbackOnce(logicCb: (...args: any[]) => any) {
 
 type Dict = Record<string, any>;
 let keySeed = 0;
-const mountInfo = new Map<number, { key: number; updater: any; mountCount: number }>();
 
 function useIns() {
   const insRef = React.useRef({ key: 0, updater: null });
@@ -62,27 +61,49 @@ function useIns() {
   return insRef.current;
 }
 
+const mountInfo = new Map<number, { key: number; updater: any; mountCount: number; t: number }>();
 function updateMountInfo(key: number, updater: any) {
   let info = mountInfo.get(key);
   if (info) {
     info.mountCount = 2;
   } else {
-    info = { key, updater, mountCount: 1 };
+    info = { key, updater, mountCount: 1, t: Date.now() };
     mountInfo.set(key, info);
   }
 
   if (info.mountCount === 2) {
     const prevKey = key - 1;
-    mountInfo.set(prevKey, { key: prevKey, updater, mountCount: 1 });
+    mountInfo.set(prevKey, { key: prevKey, updater, mountCount: 1, t: Date.now() });
   }
+}
+
+let limit = 100;
+function checkExpireData() {
+  if (mountInfo.size < limit) {
+    return;
+  }
+  const map = new Map(mountInfo);
+  const now = Date.now();
+  let isDel = false;
+  map.forEach((value, key) => {
+    if (now - value.t > 2000) {
+      mountInfo.delete(key);
+      isDel = true;
+    }
+  });
+  // 无删除行为则提升下一次检测的上限
+  limit = isDel ? 100 : limit + 100;
 }
 
 function clearMountInfo(key: number) {
   const info = mountInfo.get(key);
-  if (info?.mountCount === 2) {
-    mountInfo.delete(info.key);
-    mountInfo.delete(info.key - 1);
+  if (!info) return;
+  const mountCount = info.mountCount;
+  if (mountCount === 2) {
+    mountInfo.delete(key);
+    mountInfo.delete(key - 1); // clear prev ghost ins mountInfo
   }
+  checkExpireData();
 }
 
 export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void] {
