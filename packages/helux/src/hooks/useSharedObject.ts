@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { SKIP_CHECK_OBJ } from '../consts';
-import { clearDep, getInternal, getRawState, recoverDep, updateDep, buildInsCtx } from '../helpers/common';
+import { buildInsCtx, clearDep, getInternal, getRawState, recoverDep, updateDep } from '../helpers/common';
 import type { Dict } from '../typing';
 import { useObjectInner } from './useObject';
 
@@ -40,7 +40,7 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   useEffect(() => {
     const { keyMap, insKey } = insCtxRef.current;
     // recover dep and updater for double mount behavior under react strict mode
-    recoverDep(insKey, { keyMap, internal, setState })
+    recoverDep(insKey, { keyMap, internal, setState });
     return () => {
       clearDep(insKey, keyMap, internal);
     };

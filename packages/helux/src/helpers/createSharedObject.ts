@@ -1,6 +1,6 @@
+import { INTERNAL, OBJECT_KEY } from '../consts';
 import type { Dict, SharedObject } from '../typing';
-import { OBJECT_KEY, INTERNAL } from '../consts';
-import { bindInternal, getInternal, markObjectKey, genInternalContainer } from './common';
+import { bindInternal, genInternalContainer, getInternal, markObjectKey } from './common';
 
 function innerCreateSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),

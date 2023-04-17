@@ -1,4 +1,4 @@
-import { INTERNAL, OBJECT_KEY, FIRST_UNMOUNT, SECOND_UNMOUNT, EXPIRE_MS, LIMIT_DELTA, LIMIT_SEED } from '../consts';
+import { EXPIRE_MS, FIRST_UNMOUNT, INTERNAL, LIMIT_DELTA, LIMIT_SEED, OBJECT_KEY, SECOND_UNMOUNT } from '../consts';
 import type { Dict } from '../typing';
 
 export interface IUnmountInfo {
@@ -63,7 +63,7 @@ export function checkUnmountInfo(internal: any) {
 
   if (prevInsKeys.length) {
     // trigger clear insKey2Updater logic
-    prevInsKeys.forEach(insKey => internal.delInsKeyUpdater(insKey));
+    prevInsKeys.forEach((insKey) => internal.delInsKeyUpdater(insKey));
     infoLimit = LIMIT_SEED;
   } else {
     // expand the upper limit
@@ -81,7 +81,8 @@ interface IRocoverDepOptions {
  * recover dep
  */
 export function recoverDep(insKey: number, options: IRocoverDepOptions) {
-  if (UNMOUNT_INFO_MAP.get(insKey)) { // 是因为双调用导致的前一刻已触发了 unmount 行为
+  if (UNMOUNT_INFO_MAP.get(insKey)) {
+    // 是因为双调用导致的前一刻已触发了 unmount 行为
     const { keyMap, internal, setState } = options;
     Object.keys(keyMap).forEach((key) => internal.recordDep(key, insKey));
     internal.mapInsKeyUpdater(insKey, setState);
