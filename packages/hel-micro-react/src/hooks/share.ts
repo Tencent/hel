@@ -49,20 +49,62 @@ export function useExecuteCallbackOnce(logicCb: (...args: any[]) => any) {
   }
 }
 
-export function useObject<T extends Record<string, any> = Record<string, any>>(initialState: T): [T, (partialState: Partial<T>) => void] {
+type Dict = Record<string, any>;
+let keySeed = 0;
+const mountInfo = new Map<number, { key: number; updater: any; mountCount: number }>();
+
+function useIns() {
+  const insRef = React.useRef({ key: 0, updater: null });
+  if (!insRef.current.key) {
+    keySeed += 1;
+    insRef.current.key = keySeed;
+  }
+  return insRef.current;
+}
+
+function updateMountInfo(key: number, updater: any) {
+  let info = mountInfo.get(key);
+  if (info) {
+    info.mountCount = 2;
+  } else {
+    info = { key, updater, mountCount: 1 };
+    mountInfo.set(key, info);
+  }
+
+  if (info.mountCount === 2) {
+    const prevKey = key - 1;
+    mountInfo.set(prevKey, { key: prevKey, updater, mountCount: 1 });
+  }
+}
+
+function clearMountInfo(key: number) {
+  const info = mountInfo.get(key);
+  if (info?.mountCount === 2) {
+    mountInfo.delete(info.key);
+    mountInfo.delete(info.key - 1);
+  }
+}
+
+export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void] {
   const [state, setFullState] = React.useState(initialState);
   const unmountRef = React.useRef(false);
-  React.useEffect(
-    () => () => {
+  const ins = useIns();
+  const { key } = ins;
+
+  React.useEffect(() => {
+    unmountRef.current = false; // 避免 strict mode 双调用机制写为 true
+    updateMountInfo(key, setFullState);
+    return () => {
       unmountRef.current = true;
-    },
-    [],
-  );
+      clearMountInfo(key);
+    };
+  }, []);
   return [
     state,
     (partialState: Partial<T>) => {
       if (!unmountRef.current) {
-        setFullState((state) => ({ ...state, ...partialState }));
+        const updater = mountInfo.get(key)?.updater || setFullState;
+        updater((state: any) => ({ ...state, ...partialState }));
       }
     },
   ];

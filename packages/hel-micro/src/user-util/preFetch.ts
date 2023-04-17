@@ -108,6 +108,8 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     return { emitApp, msg: '' };
   } catch (err: any) {
     console.error(err);
+    // 标记未加载，下次再进入可以继续重试
+    setVerLoadStatus(appName, helLoadStatus.NOT_LOAD, fixedInnerOptions);
     return { emitApp, msg: err.message };
   }
 }
