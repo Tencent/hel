@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { SKIP_CHECK_OBJ } from '../consts';
-import { buildInsCtx, clearDep, getInternal, getRawState, recoverDep, updateDep } from '../helpers/common';
+import { clearDep, recoverDep, updateDep, updateReadTrack } from '../helpers/dep';
+import { getInternal, getRawState } from '../helpers/feature';
+import { buildInsCtx } from '../helpers/ins';
 import type { Dict } from '../typing';
 import { useObjectInner } from './useObject';
 
@@ -8,8 +10,8 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   const [state, setState] = useObjectInner(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
   const insCtxRef = useRef({
     keyMap: {} as any,
-    compreKeyMap: {} as any,
-    prevKeyMap: {} as any,
+    keyMapPrev: {} as any,
+    keyMapStrict: null as any,
     insKey: 0,
     sharedState: state,
     reactiveUpdater: null as unknown as (partialState: Partial<T>) => void,
@@ -22,12 +24,10 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
     throw new Error('OBJ_NOT_SHARED_ERR: input object is not a result returned by createSharedObj!');
   }
 
-  const keyMap = insCtxRef.current.keyMap;
-  insCtxRef.current.prevKeyMap = keyMap;
-  insCtxRef.current.keyMap = {}; // reset dep map
+  updateReadTrack(insCtxRef.current);
 
   if (!reactiveUpdater) {
-    const ret = buildInsCtx(insCtxRef, { state, setState, internal, enableReactive });
+    const ret = buildInsCtx(insCtxRef.current, { state, setState, internal, enableReactive });
     reactiveUpdater = ret.updater;
     sharedState = ret.proxyedState;
   }

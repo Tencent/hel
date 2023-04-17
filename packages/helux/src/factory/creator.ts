@@ -1,8 +1,8 @@
 import { INTERNAL, OBJECT_KEY } from '../consts';
-import type { Dict, SharedObject } from '../typing';
-import { bindInternal, genInternalContainer, getInternal, markObjectKey } from './common';
+import { bindInternal, genInternalContainer, getInternal, markObjectKey } from '../helpers/feature';
+import type { Dict } from '../typing';
 
-function innerCreateSharedObject<T extends Dict = Dict>(
+export function buildSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
   enableReactive?: boolean,
 ): [T, (partialState: Partial<T>) => void] {
@@ -81,37 +81,4 @@ function innerCreateSharedObject<T extends Dict = Dict>(
   });
 
   return [sharedState, getInternal(sharedState).setState];
-}
-
-export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): T {
-  const [sharedState] = innerCreateSharedObject(rawState, false);
-  return sharedState;
-}
-
-export function createReactiveSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): [T, (partialState: Partial<T>) => void] {
-  const [reactiveSharedState, reactiveSetState] = innerCreateSharedObject(rawState, true);
-  return [reactiveSharedState, reactiveSetState];
-}
-
-export function createShared<T extends Dict = Dict>(
-  rawState: T | (() => T),
-  enableReactive?: boolean,
-): {
-  state: SharedObject<T>;
-  call: <A extends any[] = any[]>(
-    srvFn: (ctx: { args: A; state: T; setState: (partialState: Partial<T>) => void }) => Promise<Partial<T>> | Partial<T> | void,
-    ...args: A
-  ) => void;
-  setState: (partialState: Partial<T>) => void;
-} {
-  const [state, setState] = innerCreateSharedObject(rawState, enableReactive);
-  return {
-    state,
-    call: (srvFn, ...args) => {
-      Promise.resolve(srvFn({ state, setState, args })).then((partialState) => {
-        partialState && setState(partialState);
-      });
-    },
-    setState,
-  };
 }

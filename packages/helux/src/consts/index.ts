@@ -4,10 +4,10 @@ export const OBJECT_KEY = Symbol('HeluxObjectKey');
 
 export const SKIP_CHECK_OBJ = Symbol('HeluxSkipCheckObj');
 
-/** 第一次挂载 */
+/** 第一次卸载 */
 export const FIRST_UNMOUNT = 1;
 
-/** 第二次挂载 */
+/** 第二次卸载 */
 export const SECOND_UNMOUNT = 2;
 
 /** 卸载数据的过期时间 */

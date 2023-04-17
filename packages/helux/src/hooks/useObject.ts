@@ -1,6 +1,6 @@
 import React from 'react';
 import { SKIP_CHECK_OBJ } from '../consts';
-import { getInternal } from '../helpers/common';
+import { getInternal } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
 
