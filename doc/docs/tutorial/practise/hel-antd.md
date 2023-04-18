@@ -221,4 +221,4 @@ hel-micro 默认采用的是`unpkg`文件 cdn 服务，如有自建的`unpkg`私
 + const subApp = helDevUtils.createReactSubApp(pkg, { npmCdnType: 'unpkg', homePage: 'http://my-unpkg.com' });
 ```
 
-> 自建 npm+unpkg 私服可参考[issue 19](https://github.com/tnfe/hel/issues/19)
+> 自建 npm+unpkg 私服可参考[issue 64](https://github.com/tnfe/hel/issues/64)
