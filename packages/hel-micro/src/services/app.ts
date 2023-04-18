@@ -194,11 +194,11 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   return mayCachedApp;
 }
 
-async function getAppWithFallback(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
+async function getAppWithFallback(appName: string, options: IInnerPreFetchOptions): Promise<{ data: ICacheData | null; err: string }> {
   const { isFirstCall = true } = options;
   try {
-    const mayCachedApp = await getAppFromRemoteOrLocal(appName, options);
-    return mayCachedApp;
+    const data = await getAppFromRemoteOrLocal(appName, options);
+    return { data, err: '' };
   } catch (err: any) {
     // 第一次调用出错，抛上去，让上层再尝试一次
     if (isFirstCall) {
@@ -206,19 +206,19 @@ async function getAppWithFallback(appName: string, options: IInnerPreFetchOption
     }
     // 有指定 fallbackHook，返回空结果，让上层触发兜底函数
     if (getFallbackHook(options)) {
-      return null;
+      return { data: null, err: err.message };
     }
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
-    const mayCachedApp = await getDiskCachedApp(appName, options);
-    if (!mayCachedApp) {
+    const data = await getDiskCachedApp(appName, options);
+    if (!data) {
       throw err;
     }
 
     commonUtil.nbalert(`
-      ${err.message}, hel-micro will use cached data to keep your app works well,
+      ${err.message}, hel-micro will try use cached data to keep your app works well,
       please check your network if this behavior is not as you expected!
     `);
-    return mayCachedApp;
+    return { data, err: '' };
   }
 }
 
@@ -303,8 +303,8 @@ export async function loadApp(appName: string, loadOptions: IInnerPreFetchOption
   const { isFirstCall = true, controlLoadAssets = false, platform, versionId = '' } = loadOptions;
 
   try {
-    const appData = await getAppWithFallback(appName, loadOptions);
-    let { appInfo, appVersion } = appData || {};
+    const { data, err } = await getAppWithFallback(appName, loadOptions);
+    let { appInfo, appVersion } = data || {};
     const noMeta = !appInfo || !appVersion;
     let fromFallback = false;
 
@@ -323,10 +323,10 @@ export async function loadApp(appName: string, loadOptions: IInnerPreFetchOption
     }
 
     if (!appInfo) {
-      throw new Error(`app[${appName}] not exist`);
+      throw new Error(err || `app[${appName}] not exist`);
     }
     if (!appVersion) {
-      throw new Error(`app[${appName}]'s version[${versionId}] not exist`);
+      throw new Error(err || `app[${appName}]'s version[${versionId}] not exist`);
     }
     inner.tryTriggerOnFetchMetaSuccess(appInfo, appVersion, { loadOptions, fromFallback });
     inner.recordAssetCtx(appInfo, appVersion, loadOptions);

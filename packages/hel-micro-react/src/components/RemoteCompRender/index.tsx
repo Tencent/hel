@@ -1,55 +1,33 @@
-import { appParamSrv, appStyleSrv } from 'hel-micro';
+import { appParamSrv } from 'hel-micro';
 import React from 'react';
-import type { IInnerRemoteModuleProps } from '../../types';
+import type { IRemoteCompRenderConfig } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
-import MayShadowComp, { IMayShadowProps } from '../MayShadowComp';
-import { ensurePropsDefaults, tryTriggerOnStyleFetched } from '../share';
+import MayShadowComp from '../MayShadowComp';
+import { ensureOptionsDefault } from '../share';
 import useLoadRemoteModule from './useLoadRemoteModule';
 
 /**
  * 远程组件渲染器
  */
-export default function RemoteCompRender(props: IInnerRemoteModuleProps) {
-  const ensuredProps = ensurePropsDefaults(props);
-  const { compProps, name, children, handleStyleStr, shadow, shadowWrapStyle } = ensuredProps;
-  const { platform, versionId } = appParamSrv.getPlatAndVer(name, ensuredProps);
+export default function RemoteCompRender(props: IRemoteCompRenderConfig) {
+  const { controlOptions, name } = props;
+  const ensuredOptions = ensureOptionsDefault(controlOptions);
+  const { platform, versionId } = appParamSrv.getPlatAndVer(name, ensuredOptions);
+  Object.assign(ensuredOptions, { platform, versionId });
+  const renderConfig = { ...props, controlOptions: ensuredOptions };
 
-  const { errMsg, getModule } = useLoadRemoteModule(ensuredProps);
-  React.useEffect(() => {
-    const isStyleFetched = appStyleSrv.isStyleFetched(props.name, props);
-    isStyleFetched && tryTriggerOnStyleFetched(props);
-    // here trust my code
-    // eslint-disable-next-line
-  }, []);
-
-  const { RemoteModule, styleStr, styleUrlList, moduleReady } = getModule();
-
+  const { errMsg, RemoteModule, styleStr, styleUrlList, moduleReady } = useLoadRemoteModule(renderConfig);
   if (!moduleReady) {
-    const Skeleton = props.Skeleton || BuildInSkeleton;
+    const Skeleton = controlOptions.Skeleton || BuildInSkeleton;
     // @ts-ignore
     return <Skeleton />;
   }
 
-  const wrapProps: IMayShadowProps = {
-    Comp: RemoteModule,
-    styleStr,
-    styleUrlList,
-    errMsg,
-    compProps,
-    platform,
-    name,
-    versionId,
-    children,
-    handleStyleStr,
-    isLegacy: props.isLegacy,
-    Skeleton: props.Skeleton,
-    mountShadowBodyForRef: props.mountShadowBodyForRef,
-    reactRef: props.reactRef,
-    createRoot: props.createRoot,
-    ignoreHelContext: props.ignoreHelContext,
-    shadow,
-    shadowWrapStyle,
-    shadowDelay: props.shadowDelay,
-  };
-  return <MayShadowComp {...wrapProps} />;
+  if (errMsg) {
+    controlOptions.failCb?.(new Error(errMsg));
+    return <RemoteModule />;
+  }
+
+  const compInfo = { Comp: RemoteModule, styleStr, styleUrlList };
+  return <MayShadowComp renderConfig={renderConfig} compInfo={compInfo} />;
 }

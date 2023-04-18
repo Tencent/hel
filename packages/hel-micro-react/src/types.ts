@@ -1,5 +1,5 @@
 import type { IPreFetchOptionsBase } from 'hel-micro';
-import type { ISubAppVersion, Platform } from 'hel-types';
+import type { Platform } from 'hel-types';
 import React from 'react';
 
 // react-dom <= 16.9.10 并无此类型，取 ReactDOM.Container 会报红警告，这里单独声明一下
@@ -33,27 +33,46 @@ export type GetSubVals = <T extends AnyRecord = AnyRecord>(subCompNames: string[
  */
 export type IsLegacy = boolean;
 
-/**
- * 用户调用 MicroApp 需要传递的类型描述
- */
-export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
-  /** 如果指定了 Component，表示复用 name 对应的预设应用样式，但使用用户透传的组件渲染 */
-  Component?: AnyCompOrNull;
+interface IUseOptionsCommon {
   /**
-   * 处理默认解析出来的字符串，返回的新字符串会替代掉默认字符串
-   * 如果设置了此函数，应用自定自带的解析出来的样式字符串无效
-   * 通常用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
-   * 如 ()=>{ let styleStr = ''; document.querySelectorAll('style').forEach(item=>{styleStr+=item.innerText;}); return styleStr }
-   * 如  document.querySelectorAll('style')[0].innerText
-   * 或者组件使用方处于某种目的，想强制重新设置样式字符串
+   *
+   * 组件样式获取完毕时触发，如返回新的字符串，则会替换掉 mergedStyleStr，为 shadowdom 组件提供样式
+   * params参数仅提供给用户参考
+   * @example
+   * 某些特殊场景需要独立返回新的样式字符串，例如：
+   * 用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
+   * ```ts
+   * // 如
+   * ()=>{
+   *  let styleStr = '';
+   *  document.querySelectorAll('style').forEach(item=>{styleStr+=item.innerText;});
+   *  return styleStr;
+   * }
+   * // 如
+   * document.querySelectorAll('style')[0].innerText
+   * // 或者组件使用方处于某种目的，想强制重新设置样式字符串
+   *
+   * ```
+   * @param params
+   * @returns
    */
-  handleStyleStr?: (mayFetchedStr: string) => string;
+  onStyleFetched?: (params: {
+    /** 应用构建生成的、能追加的 staticLink、relativeLink 全部样式列表 */
+    appCssList: string[];
+    /** 由 appCssList 转换出的样式字符串 */
+    appCssListStr: string;
+    /** 用户额外透传的样式列表 */
+    extraCssList: string[];
+    /** 用户额外透传的样式字符串 */
+    extraStyleStr: string;
+    /** 最终要使用的样式字符串，由 getExcludeCssList 算出的可获取 cssList 换到的样式字符串 + extraStyleStr 合并而来 */
+    mergedStyleStr: string;
+  }) => undefined | string;
   /**
-   * default: true
-   * 远程组件默认是 memo 起来的，设置为 false 关闭 memo 功能
+   * @deprecated
+   * 返回新的样式字符串，该功能已由 onStyleFetched 替代，此处保留是为了保持老版本升级后不报错
    */
-  needMemo?: boolean;
-  onStyleFetched?: (params: { mayHandledStyleStr: string; oriStyleStr: string; styleUrlList: string[] }) => void;
+  handleStyleStr?: (mergedStyleStr: string) => string;
   /**
    * 异步加载组件过程的过度组件
    */
@@ -63,8 +82,9 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * 渲染出现错误时的 Error 组件
    */
   Error?: (props: { errMsg: string }) => React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
-  onAppVersionFetched?: (appVersion: ISubAppVersion) => void;
-  failCb?: (err: Error) => void;
+}
+
+interface ICompRenderOptions {
   /**
    * default: true
    */
@@ -80,53 +100,11 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    */
   shadowDelay?: number;
   /**
-   * default: false [when shadow is true], true [when shadow is false]
-   * 未显式设置 appendCss 时，它的默认受设置 shadow 影响，大多数时候应该走此规则，不需要人为设置
-   * 表示是否向 document 上附加样式外联样式标签
-   */
-  appendCss?: boolean;
-  /**
    * default: true，该属性仅在 shadow 为 true 时有意义
    * 是否把 IPreFetchOptionsBase.extraCssList 和应用自身的构建产物里的样式列表转为字符串后再注入到 shadowdom 里
    * 默认 true 值，避免 shadowdom 组件渲染时出现抖动情况
    */
   cssListToStr?: boolean;
-  /**
-   * default: []，该属性仅在 shadow 为 true 时有意义
-   * 以 shadowdom 模式渲染时，额外追加到 shadowdom 里的样式列表，通常作用于
-   * 1 目标组件以shadow模式渲染，让用户有机会自己注入额外的样式
-   * 2 目标组件以shadow模式渲染，想覆盖组件的已有样式
-   */
-  extraShadowCssList?: string[];
-  /**
-   * default: true，该属性仅在 shadow 为 true 时有意义
-   * 是否把 extraShadowCssList 里的样式转为字符串后再注入到 shadowdom 里
-   * 默认 true 值，避免 shadowdom 组件渲染时出现抖动情况
-   */
-  extraShadowCssListToStr?: boolean;
-  /**
-   * default: undefined，该属性仅在 shadow 为 true 时有意义
-   * 额外注入到shadowdom 里的样式字符串
-   */
-  extraShadowStyleStr?: string;
-  /**
-   * 在shadow模式下，默认使用 ReactDOM.render 挂载 shadowBody 到 body 下,
-   * 18版本react推荐使用 react-dom/client.createRoot 方法替代 ReactDOM.render
-   * 但程序内部无法写为如下格式来动态判断是否使用 createRoot 方法
-   * ```ts
-   *   if (ReactDOM.createRoot) {
-   *      // 16 版本react时，webpack编译到此处就报错 webpackMissingModule
-   *      const domClient = await import('react-dom/client');
-   *      const root = domClient.createRoot(mountNode);
-   *      root.render(uiShadowView);
-   *   } else {
-   *      ReactDOM.render(uiShadowView, mountNode);
-   *   }
-   * ```
-   * 如果如果用户在18版本 react 下调用 useRemoteComp 方法并使用了shadow模式，为避免 react-dom/client.createRoot 警告
-   * 需人工把 createRoot 传递下来
-   */
-  createRoot?: (...args: any) => any;
   /**
    * default: false
    * shadow 模式渲染时，是否为为当前实例挂载一个 shadowBody 容器到 document 下，
@@ -135,6 +113,30 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
    * 为性能考虑，默认是false，让用户优先考虑设置 staticShadowBody
    */
   mountShadowBodyForRef?: boolean;
+  /**
+   * 自定义的 shadowdom 渲染器，替换内置的渲染器
+   * @param props
+   * @returns
+   */
+  ShadowViewImpl?: ShadowViewImplComp;
+  /**
+   * 在shadow模式下，默认使用 ReactDOM.render 挂载 shadowBody 到 body 下,
+   * 18版本react推荐使用 react-dom/client.createRoot 方法替代 ReactDOM.render
+   * 但程序内部无法写为如下格式来动态判断是否使用 createRoot 方法
+   * ```ts
+   *   if (ReactDOM.createRoot) {
+   *      // 16 版本 react 时，webpack 编译到此处就报错 webpackMissingModule
+   *      const domClient = await import('react-dom/client');
+   *      const root = domClient.createRoot(mountNode);
+   *      root.render(uiShadowView);
+   *   } else {
+   *      ReactDOM.render(uiShadowView, mountNode);
+   *   }
+   * ```
+   * 如果如果用户在18版本 react 下调用 useRemoteComp 方法并使用了 shadow 模式，为避免 react-dom/client.createRoot 警告
+   * 需人工把 createRoot 传递下来
+   */
+  createRoot?: (...args: any) => any;
   /**
    * default: false
    * 是否需要忽略把 helContext 透传给远程组件，
@@ -147,33 +149,73 @@ export interface IUseRemoteCompOptions extends IPreFetchOptionsBase {
 /**
  * 用户调用 MicroApp 需要传递的类型描述
  */
-export interface IMicroAppProps<T extends AnyRecord = AnyRecord> extends IUseRemoteCompOptions {
+export interface IUseRemoteCompOptions extends IPreFetchOptionsBase, IUseOptionsCommon, ICompRenderOptions {
+  /** 如果指定了 Component，表示复用 name 对应的预设应用样式，但使用用户透传的组件渲染 */
+  Component?: AnyCompOrNull;
   /**
-   * 应用名
+   * default: true
+   * 远程组件默认是 memo 起来的，设置为 false 关闭 memo 功能
    */
-  name: string;
-  /** 透传给目标应用的属性集 */
-  compProps?: T;
-  children?: any;
+  needMemo?: boolean;
+  failCb?: (err: Error) => void;
+  /**
+   * default: false [when shadow is true], true [when shadow is false]
+   * 未显式设置 appendCss 时，它的默认受设置 shadow 影响，大多数时候应该走此规则，不需要人为设置
+   * 表示是否向 document 上附加样式外联样式标签
+   */
+  appendCss?: boolean;
+  /**
+   * 当需要提高远程组件渲染性能时，可定制此函数
+   */
+  isCompPropsEqual?: <T extends AnyRecord = AnyRecord>(prevProps: T, nextProps: T) => boolean;
 }
 
-export interface IInnerRemoteModuleProps<T extends AnyRecord = AnyRecord> extends IMicroAppProps<T> {
+/**
+ * 用户调用 MicroApp 需要传递的类型描述
+ */
+export type IMicroAppProps<T extends AnyRecord = AnyRecord> = IUseRemoteCompOptions & ICompRenderConfig<T>;
+
+export interface IInnerUseRemoteCompOptions extends IUseRemoteCompOptions {
   /**
    * default: false
+   * 内部使用属性，是否需要兼容历史逻辑
    */
   isLegacy?: IsLegacy;
   /**
    * default: false
+   * 内部使用属性，是否lib
    */
   isLib?: boolean;
   /**
-   * 使用 libReady 弹出的组件集合里，具体的组件名
+   * default: false
+   * 内部使用属性，controlOptions里一些关键属性的是否已保证了默认值
+   */
+  isDefaultEnsured?: boolean;
+  /**
+   * 当 lisLib 为 true 时，获取组件集里的具体的组件名
    */
   compName?: string;
+}
+
+export interface ICompRenderConfig<T extends AnyRecord = AnyRecord> {
+  /** 应用名称 */
+  name: string;
+  /**
+   * 透传的组件属性
+   */
+  compProps?: T;
+  /**
+   * 透传的孩子组件
+   */
+  children?: any;
   reactRef?: any;
 }
 
-type IMicroAppLegacyPropsBase<T> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
+export interface IRemoteCompRenderConfig extends ICompRenderConfig {
+  controlOptions: IInnerUseRemoteCompOptions;
+}
+
+type IMicroAppLegacyPropsBase<T extends AnyRecord = AnyRecord> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
 
 /**
  * MicroAppLegacy 组件的历史遗留属性，后面的新组件和新接口为了统一词汇，
@@ -185,62 +227,16 @@ export interface IMicroAppLegacyProps<T extends AnyRecord = AnyRecord> extends I
   appProps?: T;
 }
 
-export interface ILocalCompProps {
+export interface ILocalCompProps extends ICompRenderConfig, IUseOptionsCommon, ICompRenderOptions {
+  /** 要加载的样式样式列表 */
+  cssList: string[];
   /** 要渲染的目标组件 */
   Comp?: AnyCompOrNull;
-  /** 目标组件的属性 */
-  compProps?: AnyRecord;
-  /** 目标组件的样式列表 */
-  cssList?: string[];
-  /**
-   * default: true
-   * 是否将 cssList 转为 string，可避免初次加载样式抖动问题
-   */
-  cssListToStr?: boolean;
-  /**
-   * 额外的样式字符串
-   */
-  extraShadowStyleStr?: string;
-  /**
-   * default: 'LocalComp'
-   * shadow节点宿主 web-component id
-   */
-  name?: string;
-  /** 骨架屏组件 */
-  Skeleton?: any;
-  /** 加载出错是的组件 */
-  Error?: any;
-  /** 目标组件的孩子节点  */
-  children?: any;
-  reactRef?: React.Ref<any>;
-  /**
-   * default: true
-   */
-  shadow?: boolean;
-  /** 包裹shadowRoot节点的div节点的额外样式 */
-  shadowWrapStyle?: React.CSSProperties;
-  /** 构建 shadow-dom的延迟时间 */
-  shadowDelay?: number;
 }
 
-export interface IUseRemoteLibCompOptions extends IPreFetchOptionsBase {
-  /**
-   * 异步加载组件过程的过度组件
-   */
-  Skeleton?: AnyCompOrNull;
-  /**
-   * default: ()=> <h1>HelMicroComp error {errMsg}</h1>
-   * 渲染出现错误时的 Error 组件
-   */
-  Error?: (props: { errMsg: string }) => React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
-  onStyleFetched?: (params: { mayHandledStyleStr: string; oriStyleStr: string; styleUrlList: string[] }) => void;
-  handleStyleStr?: (mayFetchedStr: string) => string;
+export interface IUseRemoteLibCompOptions extends IPreFetchOptionsBase, IUseOptionsCommon {
   /** 组件获取到后，延迟返回的时间，单位：ms */
   delay?: number;
-}
-
-export interface IInnerUseRemoteCompOptions extends IUseRemoteCompOptions {
-  isLegacy?: IsLegacy;
 }
 
 export interface IRenderAppOptions {
@@ -296,3 +292,51 @@ export interface IHelContext {
  * 因用户可能设置 ignoreHelContext 为 true，所以此处 helContext 是 ?
  */
 export type IHelProps<ReactProps> = ReactProps & { helContext?: IHelContext };
+
+export interface IShadowViewImplProps {
+  onShadowRootReady: (shadowRoot: ShadowRoot) => void;
+  /**
+   * 根元素的 tagName，默认为 'hel-shadow-view'
+   */
+  tagName?: string;
+  /**
+   * shadow host 元素的样式
+   */
+  style?: React.CSSProperties;
+  /**
+   * default: '.3s', 显示动画持续时间，如果 style 里也设置了，会覆盖这里
+   */
+  transitionDuration?: string;
+  /**
+   * 样式字符串内容
+   */
+  styleContent?: string;
+  /**
+   * 样式 url 列表
+   */
+  styleSheets?: string[];
+  /**
+   * 显示延时
+   */
+  shadowDelay?: number;
+  /**
+   * default: true
+   */
+  delegatesFocus?: boolean;
+  children?: any;
+  /**
+   * React Ref function
+   */
+  ref?: Function;
+  /**
+   * default: ''
+   */
+  data?: string;
+}
+
+/**
+ * 实现的 react 组件内部，一定要调用 props.onShadowRootReady 方法把 shadowRoot 引用传出去
+ * 示例可参考 @see https://github.com/tnfe/hel/blob/main/packages/hel-micro-react/src/components/ShadowViewV2.tsx
+ * 如不调用此方法会导致 useRemoteComp 一直处于骨架屏状态
+ */
+export type ShadowViewImplComp = (props: IShadowViewImplProps) => React.ReactNode;

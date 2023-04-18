@@ -130,6 +130,8 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   getExcludeCssList?: (allCssList: string[], options: { version: ISubAppVersion | null }) => string[];
   /** 额外附加的样式列表 */
   extraCssList?: string[];
+  /** 额外的样式字符串 */
+  extraStyleStr?: string;
   /**
    * default: false
    * 是否使用平台配置的额外脚本文件或样式文件

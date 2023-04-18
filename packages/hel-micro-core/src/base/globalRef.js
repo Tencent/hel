@@ -1,32 +1,16 @@
 let globalThisRef = null;
 
 function assignRef() {
-  try {
-    // for browser env
-    if (typeof window !== 'undefined') {
-      globalThisRef = window;
-      return;
-    }
-    // eslint-disable-next-line
-    const workerSelf = self;
-    // for worker env
-    if (typeof workerSelf !== 'undefined') {
-      globalThisRef = workerSelf;
-    } else if (typeof global !== 'undefined') {
-      // for nodejs env
-      globalThisRef = global;
-    }
-    if (!globalThisRef) {
-      throw new Error('opps');
-    }
-  } catch (err) {
-    // below error occurred in jest node env node
-    // ReferenceError: self is not defined
-    if (!global) {
-      throw new Error('unable to locate global object');
-    }
+  // for browser env
+  if (typeof window !== 'undefined') {
+    globalThisRef = window;
+    return;
+  }
+  // for nodejs env
+  if (typeof global !== 'undefined') {
     globalThisRef = global;
   }
+  throw new Error('unable to locate global object');
 }
 
 /**

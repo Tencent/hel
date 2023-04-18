@@ -3,29 +3,35 @@ import React, { forwardRef, useMemo } from 'react';
 import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
 import RemoteCompRender from '../components/RemoteCompRender';
-import { tryTriggerOnStyleFetched } from '../components/share';
+import { ensureOptionsDefault, tryTriggerOnStyleFetched } from '../components/share';
 import defaults from '../consts/defaults';
-import type { GetSubVal, IInnerRemoteModuleProps, IInnerUseRemoteCompOptions, IUseRemoteLibCompOptions } from '../types';
-import { delay, useForceUpdate } from './share';
+import type { GetSubVal, IInnerUseRemoteCompOptions, IRemoteCompRenderConfig, IUseRemoteLibCompOptions } from '../types';
+import { delay, isEqual, useForceUpdate } from './share';
 
-const { H1_STYLE } = defaults;
+const { WARN_STYLE } = defaults;
 
 /**
  * 使用远程组件钩子函数核心逻辑，做好参数初始处理后
  * 基于 RemoteComp 并结合组件useMemo、ref转发两个基础工作进一步封装
  */
 export function useRemoteCompLogic(name: string, compName: string, options: IInnerUseRemoteCompOptions) {
-  const passProps: IInnerRemoteModuleProps = { ...(options || {}), name, compName, isLib: true };
-  passProps.platform = passProps.platform || 'unpkg';
+  const controlOptions: IInnerUseRemoteCompOptions = { ...(options || {}), compName, isLib: true };
+  const ensuredOptions = ensureOptionsDefault(controlOptions);
+  const { needMemo = true, platform, versionId, shadow, isCompPropsEqual } = ensuredOptions;
 
-  const { needMemo = true } = passProps;
   const factory = () => {
-    return forwardRef((compProps: React.PropsWithoutRef<any>, reactRef: React.Ref<any>) => {
-      return <RemoteCompRender {...{ ...passProps, compProps, reactRef }} />;
+    const Comp = forwardRef((compProps: React.PropsWithoutRef<any>, reactRef: React.Ref<any>) => {
+      return <RemoteCompRender name={name} controlOptions={ensuredOptions} compProps={compProps} reactRef={reactRef} />;
     });
+    // 用户不显式设置 needMemo 为 false 的话，会自动使用 React.memo 包裹远程组件做默认优化
+    // 此时如用户不传递 isCompPropsEqual 函数的话会使用内部默认的浅比较函数 isEqual
+    if (needMemo) {
+      return React.memo(Comp, isCompPropsEqual || isEqual);
+    }
+    return Comp;
   };
   const getSubVal: GetSubVal = (subCompName: string, waitVal?: any) => {
-    const emitApp = logicSrv.getLibOrApp(name, passProps);
+    const emitApp = logicSrv.getLibOrApp(name, controlOptions);
     const fallbackVal = waitVal !== undefined ? waitVal : EmptyView;
     return emitApp?.appProperties?.[compName]?.[subCompName] || fallbackVal;
   };
@@ -34,10 +40,13 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
     subCompNames.forEach((name) => (vals[name] = getSubVal(name, waitVal)));
     return vals;
   };
-  const MemoComp = useMemo(factory, [name, compName, passProps.platform, passProps.versionId, passProps.shadow]);
+  // only accept name, compName, platform, versionId, shadow change,
+  // will trigger unmount old one, mount new one
+  // eslint-disable ban react-hooks/exhaustive-deps, trust my code
+  const WrappedComp = useMemo(factory, [name, compName, platform, versionId, shadow]);
 
   return {
-    Comp: needMemo ? MemoComp : factory(),
+    Comp: WrappedComp,
     getSubVal,
     getSubVals,
   };
@@ -61,10 +70,12 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
     isFetchExecuteRef.current = true;
     const fetchComp = async () => {
       const comps: any = await preFetchLib(name, restOptions);
+      let mergedStyleStr = '';
       if (options.onStyleFetched && !appStyleSrv.isStyleFetched(name, options)) {
-        await appStyleSrv.fetchStyleStr(name, options);
+        mergedStyleStr = await appStyleSrv.fetchStyleStr(name, options);
       }
-      tryTriggerOnStyleFetched({ name, ...options });
+      const config: IRemoteCompRenderConfig = { name, controlOptions: options };
+      tryTriggerOnStyleFetched(config, mergedStyleStr);
       if (options.delay) {
         await delay(options.delay);
       }
@@ -72,7 +83,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
       if (RemoteComp && typeof RemoteComp === 'object') {
         RemoteComp.__HelRemote__ = 1; // 用户可用此属性判断这是远程组件而非骨架屏
       }
-      const Comp = RemoteComp || (() => <h1 style={H1_STYLE}>Invalid compName {compName}</h1>);
+      const Comp = RemoteComp || (() => <h3 style={WARN_STYLE}>Invalid compName {compName}</h3>);
       return Comp;
     };
     fetchComp()
@@ -80,7 +91,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
         compRef.current = Comp;
       })
       .catch((err: any) => {
-        compRef.current = Error || (() => <h1 style={H1_STYLE}>Load comp err {err.message}</h1>);
+        compRef.current = Error || (() => <h3 style={WARN_STYLE}>Load comp err {err.message}</h3>);
       })
       .finally(() => {
         forceUpdate();

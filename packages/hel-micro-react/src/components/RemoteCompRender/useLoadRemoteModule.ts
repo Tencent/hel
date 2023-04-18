@@ -1,30 +1,27 @@
 import { core, logicSrv } from 'hel-micro';
 import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
-import type { IInnerRemoteModuleProps } from '../../types';
+import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../../types';
 import BuildInSkeleton from '../BuildInSkeleton';
 import * as share from '../share';
 
 const { merge2List } = core.commonUtil;
 
-function getStyleList(props: IInnerRemoteModuleProps) {
+function getStyleList(options: IInnerUseRemoteCompOptions) {
   let list: string[] = [];
-  const { shadow, extraCssList, cssListToStr, extraShadowCssList, extraShadowCssListToStr } = props;
+  const { shadow, extraCssList, cssListToStr } = options;
   if (!shadow) {
     return list;
   }
   if (!cssListToStr && extraCssList) {
     list = merge2List(list, extraCssList);
   }
-  if (!extraShadowCssListToStr && extraShadowCssList) {
-    list = merge2List(list, extraShadowCssList);
-  }
   return list;
 }
 
-function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCtx: { [key: string]: any }) {
-  const { isLib, compName } = props;
-  const emitApp = logicSrv.getLibOrApp(appName, props);
+function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, passCtx: { [key: string]: any }) {
+  const { isLib, compName } = options;
+  const emitApp = logicSrv.getLibOrApp(appName, options);
 
   // 获取的是 libReady 弹射出去的组件
   if (isLib) {
@@ -46,43 +43,37 @@ function getRemoteModule(appName: string, props: IInnerRemoteModuleProps, passCt
   return emitApp?.Comp;
 }
 
-export default function useLoadRemoteModule(props: IInnerRemoteModuleProps) {
-  const { name: appName, extraShadowStyleStr = '' } = props;
+export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
+  const { controlOptions, name } = config;
+  const { Component, Skeleton, shadow, cssListToStr } = controlOptions;
   const forceUpdate = baseShareHooks.useForceUpdate();
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', shadowStyleStr: '', isShadowStyleStrFetched: false });
   const isLoadAppDataExecutingRef = React.useRef(false);
   const isLoadAppStyleExecutingRef = React.useRef(false);
   const { errMsg, shadowStyleStr, isShadowStyleStrFetched } = state;
 
-  return {
-    getModule: () => {
-      const SkeletonView = props.Skeleton || BuildInSkeleton;
-      const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView, forceUpdate };
+  const SkeletonView = Skeleton || BuildInSkeleton;
+  const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView, forceUpdate };
 
-      // 拉取模块过程中产生错误
-      if (errMsg) {
-        return share.getErrResult(props, errMsg);
-      }
+  // 拉取模块过程中产生错误
+  if (errMsg) {
+    return share.getErrResult(config.controlOptions.Error, errMsg);
+  }
 
-      // 模块还未缓存，是首次获取
-      let RemoteModule = getRemoteModule(appName, props, passCtx);
-      if (!RemoteModule) {
-        return share.fetchRemoteModule(props, passCtx);
-      }
+  // 模块还未缓存，是首次获取
+  let RemoteModule = getRemoteModule(name, controlOptions, passCtx);
+  if (!RemoteModule) {
+    return share.fetchRemoteModule(config, passCtx);
+  }
 
-      // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle
-      if (props.shadow && !isShadowStyleStrFetched && (props.cssListToStr || props.extraShadowCssListToStr)) {
-        return share.fetchRemoteModuleStyle(props, passCtx);
-      }
+  // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle
+  if (shadow && !isShadowStyleStrFetched && cssListToStr) {
+    return share.fetchRemoteModuleStyle(config, passCtx);
+  }
 
-      // 提取可注入到 shadowdom 的样式列表
-      const styleUrlList = getStyleList(props);
-      // 拼接上用户额外透传的样式字符串
-      const styleStr = `${shadowStyleStr}${extraShadowStyleStr}`;
-      // 如用户透传了具体组件，表示复用 name 对应的预设应用样式，使用用户透传的组件渲染
-      RemoteModule = props.Component || RemoteModule;
-      return { RemoteModule, styleStr, styleUrlList, moduleReady: true };
-    },
-    errMsg,
-  };
+  // 提取可注入到 shadowdom 的样式列表
+  const styleUrlList = getStyleList(controlOptions);
+  // 如用户透传了具体组件，表示复用 name 对应的预设应用样式，使用用户透传的组件渲染
+  RemoteModule = Component || RemoteModule;
+  return { errMsg, RemoteModule, styleStr: shadowStyleStr, styleUrlList, moduleReady: true };
 }

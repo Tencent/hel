@@ -11,6 +11,7 @@
     "build_hel": "pnpm --filter=hel-micro run build",
     "build_proxy": "pnpm --filter=hel-lib-proxy run build",
     "commitlint": "commitlint -e $HUSKY_GIT_PARAMS",
+    "doc": "pnpm --filter=hel-doc run build && rm -rf ../my-opensource/hel-gh-pages/* && cp -r ./doc/build/* ../my-opensource/hel-gh-pages",
     "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown",
     "prepare": "husky install"
   },
