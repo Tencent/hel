@@ -43,6 +43,7 @@ export function resetGlobalThis(globalThis) {
   // 确保 __HEL_MICRO_SHARED__ 存在
   ensureHelMicroShared();
   patch.patchAppendChild();
+  patch.obStyleTagInsert();
 }
 
 resetGlobalThis();

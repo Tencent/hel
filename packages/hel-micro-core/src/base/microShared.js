@@ -116,6 +116,7 @@ function makeHelMicroShared() {
   const userEventBus = makeEventBus();
   return {
     ver: CORE_VER,
+    isStyleObInit: false,
     nativeHeadAppend: null,
     nativeBodyAppend: null,
     createFeature: getJsRunLocation(),

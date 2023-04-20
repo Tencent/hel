@@ -23,24 +23,6 @@ export function isEqual(param: any, toDiffParam: any) {
   return !isNotEqualByShallowDiff(param, toDiffParam);
 }
 
-export function useForceUpdate(needJudgeUnmout = true) {
-  const [, update] = React.useState({});
-  const isHookUnmoutRef = React.useRef(false);
-  React.useEffect(() => {
-    return () => {
-      isHookUnmoutRef.current = true;
-    };
-  }, []);
-  return React.useCallback(() => {
-    if (!needJudgeUnmout) {
-      return update({});
-    }
-
-    const isUnmout = isHookUnmoutRef.current;
-    if (!isUnmout) update({});
-  }, [needJudgeUnmout]);
-}
-
 export function useExecuteCallbackOnce(logicCb: (...args: any[]) => any) {
   const executeFlag = React.useRef(false);
   if (!executeFlag.current) {
@@ -125,8 +107,15 @@ export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [
     (partialState: Partial<T>) => {
       if (!unmountRef.current) {
         const updater = mountInfo.get(key)?.updater || setFullState;
-        updater((state: any) => ({ ...state, ...partialState }));
+        updater({ ...state, ...partialState });
       }
     },
   ];
+}
+
+export function useForceUpdate() {
+  const [, update] = useObject({});
+  return React.useCallback(() => {
+    update({});
+  }, []);
 }

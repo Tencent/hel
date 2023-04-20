@@ -19,13 +19,12 @@ function judgeFetchStyleStr(props: ILocalCompProps, fetchStyleStatusRef: React.R
 }
 
 export default function useLoadStyle(props: ILocalCompProps) {
-  const forceUpdate = baseShareHooks.useForceUpdate();
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', styleStr: '' });
   const fetchStyleStatusRef = React.useRef(NOT_LOAD);
   const { errMsg, styleStr } = state;
 
   const SkeletonView = props.Skeleton || BuildInSkeleton;
-  const passCtx = { fetchStyleStatusRef, setState, SkeletonView, forceUpdate };
+  const passCtx = { fetchStyleStatusRef, setState, SkeletonView };
 
   // 拉取模块过程中产生错误
   if (errMsg) {

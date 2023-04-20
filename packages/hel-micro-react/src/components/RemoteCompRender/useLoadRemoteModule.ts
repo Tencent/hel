@@ -46,14 +46,13 @@ function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, p
 export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   const { controlOptions, name } = config;
   const { Component, Skeleton, shadow, cssListToStr } = controlOptions;
-  const forceUpdate = baseShareHooks.useForceUpdate();
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', shadowStyleStr: '', isShadowStyleStrFetched: false });
   const isLoadAppDataExecutingRef = React.useRef(false);
   const isLoadAppStyleExecutingRef = React.useRef(false);
   const { errMsg, shadowStyleStr, isShadowStyleStrFetched } = state;
 
   const SkeletonView = Skeleton || BuildInSkeleton;
-  const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView, forceUpdate };
+  const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView };
 
   // 拉取模块过程中产生错误
   if (errMsg) {

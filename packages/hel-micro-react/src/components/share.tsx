@@ -137,7 +137,7 @@ export function fetchRemoteModuleStyle(config: IRemoteCompRenderConfig, ctx: any
  */
 export function fetchRemoteModule(config: IRemoteCompRenderConfig, ctx: any) {
   const { name, controlOptions } = config;
-  const { isLoadAppDataExecutingRef, setState, SkeletonView, forceUpdate } = ctx;
+  const { isLoadAppDataExecutingRef, setState, SkeletonView } = ctx;
   // 还在执行中，依然返回骨架屏
   if (isLoadAppDataExecutingRef.current) {
     return getFetchingResult(SkeletonView);
@@ -157,7 +157,7 @@ export function fetchRemoteModule(config: IRemoteCompRenderConfig, ctx: any) {
         return setState({ errMsg: 'no component fetched' });
       }
       isLoadAppDataExecutingRef.current = false;
-      forceUpdate();
+      setState({});
     })
     .catch((err) => {
       isLoadAppDataExecutingRef.current = false;
