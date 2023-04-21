@@ -23,8 +23,10 @@ export const helConsts: {
   KEY_CSS_STR: 'CSS_STR';
   /** commonData.ASSET_CTX ，资源对应的具体上下文 */
   KEY_ASSET_CTX: 'ASSET_CTX';
-  /** commonData.STYLE_TAG_ADDED ，对应的样式字符串 { [key:groupName]: styleStr }  */
+  /** commonData.STYLE_TAG_ADDED ，对应的样式字符串 { [key: 'app-group-name' ]: string } */
   KEY_STYLE_TAG_ADDED: 'STYLE_TAG_ADDED';
+  /** commonData.CSS_LINK_TAG_ADDED ，对应的样式url列表 { [key: 'http://localhost:3000' ]: string[] } */
+  KEY_CSS_LINK_TAG_ADDED: 'CSS_LINK_TAG_ADDED';
 };
 
 export const helEvents: {
@@ -34,8 +36,10 @@ export const helEvents: {
   SUB_LIB_LOADED: 'SubLibLoaded';
   // 3.2+ 新增样式字符串获取完毕事件
   STYLE_STR_FETCHED: 'StyleStrFetched';
-  /** 4.2.3+ 用于监听调试模式下动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部*/
+  /** 4.2.3+ 用于监听调试模式下动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
   STYLE_TAG_ADDED: 'StyleTagAdded';
+  /** 4.2.6+ 用于监听调试模式下动态添加的 link 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
+  CSS_LINK_TAG_ADDED: 'CssLinkTagAdded';
 };
 
 type HelLoadStatus = {
@@ -51,6 +55,13 @@ export type HelLoadStatusEnum = HelLoadStatus[keyof HelLoadStatus];
 export function getHelEventBus(): EventBus;
 
 export function getUserEventBus(): EventBus;
+
+export interface IEvName {
+  styleTagAdded(groupName: string): string;
+  cssLinkTagAdded(host: string): string;
+}
+
+export const evName: IEvName;
 
 export interface IHelMicroDebug {
   /** 0: 不打印，1: log, 2: trace */
@@ -465,6 +476,16 @@ export function getCommonData<T extends any = any>(customKey: string, dataKey: s
  */
 export function setCommonData(customKey: string, dataKey: string, data: any): void;
 
+interface ICommonDataUtil {
+  getCssUrlList(ignoreCssPrefix: string): string[];
+  setCssUrl(ignoreCssPrefix: string, url: string): void;
+  getStyleTagText(groupName: string): string;
+  setStyleTagText(groupName: string, text: string): void;
+}
+
+/** 操作 commonData 的一些内置方法 */
+export const commonDataUtil: ICommonDataUtil;
+
 /**
  * 此函数服务于基于 hel-micro 二次封装后发布的定制包，供 createInstance 调用
  * 当 originInit 调用后，依然还能允许调用一次 init（initPlatformConfig） 重新一些平台参数
@@ -531,3 +552,15 @@ export function inectPlatToMod<T extends Record<string, any> = Record<string, an
   mod: T,
   options?: IInjectPlatOptions,
 ): T;
+
+export interface IAcvancedMethods {
+  /**
+   * 设置忽略 append 的 css 前缀名单，设置后，满足以此前缀开头的 css 见不会被加载，
+   * 再配合监听 evName.cssLinkTagAdded，并调用 commonDataUtil.getCssUrlList 拿到此前缀下的所有css列表
+   * 以达到样式安全转移到 shadowdom 内部的目的
+   */
+  setIgnoreCssPrefix(cssPrefix: string): void;
+  setIgnoreStyleTagKey(nameOrGroupName: string): void;
+}
+
+export const adv: IAcvancedMethods;

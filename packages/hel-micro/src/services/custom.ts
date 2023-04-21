@@ -41,14 +41,14 @@ const inner = {
     const rawList = htmlText.match(assetReg) || [];
     // 记录sdk 初次加载应用需要的资源描述对象
     const itemList: Array<ILinkItem | IScriptItem> = [];
-    // 记录所有的资源路径，注意此处只是模拟，实际上 通过 custom 方式加载的应用
+    // 记录所有的资源路径，注意此处只是模拟，实际上通过 custom 方式加载的应用
     // chunkJsSrcList chunkCssSrcList 信息并不如构建时提取的完整
     const stringList: string[] = [];
 
     rawList.forEach((v) => {
-      stringList.push(v);
       if (!inner.isSrcMatchHost(v, host)) return;
       if (!v.endsWith(endMark)) return;
+      stringList.push(v);
       if (tag === 'script') {
         return itemList.push({ tag, attrs: { src: v } });
       }

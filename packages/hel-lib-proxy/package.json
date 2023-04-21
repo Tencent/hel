@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "4.2.1",
+  "version": "4.4.0",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -37,7 +37,7 @@
     ]
   },
   "dependencies": {
-    "hel-micro-core": "^4.2.0",
+    "hel-micro-core": "^4.4.0",
     "hel-types": "^4.0.0"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "rollup": "^2.23.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^4.2.0",
+    "hel-micro-core": "^4.4.0",
     "hel-types": "^4.0.0"
   },
   "bundleDependencies": false,

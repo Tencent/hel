@@ -120,6 +120,9 @@ function makeHelMicroShared() {
     nativeHeadAppend: null,
     nativeBodyAppend: null,
     createFeature: getJsRunLocation(),
+    /** @type {string[]} */
+    ignoreCssPrefixList: [],
+    ignoreStyleTagKey: {},
     eventBus: innerEventBus,
     userEventBus,
     cacheRoot,
@@ -154,9 +157,15 @@ export function ensureHelMicroShared() {
       safeGetMap(cacheNode.origin, 'hook');
     });
 
-    // 补齐老包缺失的 userEventBus 对象
+    // 补齐老包缺失的对象
     if (!helMicroShared.userEventBus) {
       helMicroShared.userEventBus = makeEventBus();
+    }
+    if (!helMicroShared.ignoreCssPrefixList) {
+      helMicroShared.ignoreCssPrefixList = [];
+    }
+    if (!helMicroShared.ignoreStyleTagKey) {
+      helMicroShared.ignoreStyleTagKey = {};
     }
     return;
   }

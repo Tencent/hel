@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { getGlobalThis, getHelEventBus } from 'hel-micro-core';
+import { evName, getAppMeta, getGlobalThis, getHelEventBus } from 'hel-micro-core';
+import { appStyleSrv } from 'hel-micro';
 import React from 'react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
@@ -62,37 +63,74 @@ function getPassedProps(
   return passedProps;
 }
 
-function MayShadowComp(props: IMayShadowProps) {
+function useWatchSytleChange(props: IMayShadowProps, options: any) {
+  const { appGroupName, data, tryForceUpdate } = options;
   const { compInfo, renderConfig } = props;
-  const { Comp, styleStr, styleUrlList } = compInfo;
+  const { styleStr, styleUrlList } = compInfo;
   const { name, controlOptions } = renderConfig;
-  const { shadow, Skeleton, shadowWrapStyle, shadowDelay, ShadowViewImpl } = controlOptions;
-
-  const shadowAppRootRef = React.useRef(null);
-  const shadowBodyRootRef = React.useRef(null);
-  const forceUpdate = useForceUpdate();
-  const data = getHostData(name, renderConfig);
+  const { shadow } = controlOptions;
 
   React.useEffect(() => {
-    const staticRef = getStaticShadowBodyRef(name, controlOptions);
-    if (shadow && !staticRef) {
-      const evName = getShadowBodyReadyEvName(name, controlOptions);
-      const evCb = () => {
-        bus.off(evName, evCb);
-        tryForceUpdate();
-      };
-      bus.on(evName, evCb);
+    if (shadow) {
+      const staticRef = getStaticShadowBodyRef(name, controlOptions);
+      let staticRefReadyEv = '';
+      let staticRefCb = null;
+      if (!staticRef) {
+        staticRefReadyEv = getShadowBodyReadyEvName(name, controlOptions);
+        staticRefCb = () => {
+          bus.off(staticRefReadyEv, staticRefCb);
+          staticRefCb = null;
+          tryForceUpdate();
+        };
+        bus.on(staticRefReadyEv, staticRefCb);
+        const renderProps = { data, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
+        tryMountStaticShadowBody(renderProps, renderConfig);
+      }
 
-      const renderProps = { data, delegatesFocus: true, styleSheets: styleUrlList, styleContent: styleStr };
-      tryMountStaticShadowBody(renderProps, renderConfig);
+      let styleTagAddedEv = '';
+      let styleTagAddedCb = null;
+      if (appGroupName) {
+        styleTagAddedEv = evName.styleTagAdded(appGroupName);
+        styleTagAddedCb = (node) => {
+          tryForceUpdate();
+        };
+        bus.on(styleTagAddedEv, styleTagAddedCb);
+      }
+
+      let linkTagAddedEv = '';
+      let linkTagAddedCb = null;
+      if (controlOptions.custom?.host) {
+        linkTagAddedEv = evName.cssLinkTagAdded(controlOptions.custom?.host);
+        linkTagAddedCb = (node) => {
+          tryForceUpdate();
+        };
+        bus.on(linkTagAddedEv, linkTagAddedCb);
+      }
+
+      // appStyleSrv.disableStyleTags(appGroupName);
       return () => {
-        bus.off(evName, evCb);
+        staticRefCb && bus.off(staticRefReadyEv, staticRefCb);
+        styleTagAddedCb && bus.off(styleTagAddedEv, styleTagAddedCb);
+        linkTagAddedCb && bus.off(linkTagAddedEv, linkTagAddedCb);
       };
     }
     // here trust my code, ban react-hooks/exhaustive-deps
     // eslint-disable-next-line
   }, []);
+}
 
+function MayShadowComp(props: IMayShadowProps) {
+  const { compInfo, renderConfig } = props;
+  const { Comp, styleStr, styleUrlList } = compInfo;
+  const { name, controlOptions } = renderConfig;
+  const { shadow, Skeleton, shadowWrapStyle, shadowDelay, ShadowViewImpl, platform } = controlOptions;
+  const meta = getAppMeta(name, platform);
+  const appGroupName = meta?.app_group_name || '';
+  const data = getHostData(name, controlOptions);
+
+  const shadowAppRootRef = React.useRef(null);
+  const shadowBodyRootRef = React.useRef(null);
+  const forceUpdate = useForceUpdate();
   const isShadowRefsReady = () => {
     const staticRef = getStaticShadowBodyRef(name, controlOptions);
     return shadowAppRootRef.current && (controlOptions.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
@@ -109,8 +147,10 @@ function MayShadowComp(props: IMayShadowProps) {
     tryForceUpdate();
   };
   const passedProps = getPassedProps(renderConfig, shadowAppRootRef, shadowBodyRootRef);
+  useWatchSytleChange(props, { appGroupName, data, tryForceUpdate });
 
   if (shadow) {
+    // appStyleSrv.disableStyleTags(appGroupName);
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，
     // 确保 show 模式下透传给子组件的 helContext 的 getShadowAppRoot 方法一定能够活动 shawRoot 引用
     let uiContent: React.ReactNode = '';
@@ -121,7 +161,10 @@ function MayShadowComp(props: IMayShadowProps) {
       uiContent = <Comp {...passedProps} />;
     }
 
-    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets: styleUrlList, styleContent: styleStr, shadowDelay };
+    const styleContent = `${styleStr}${appStyleSrv.getStyleTagText(appGroupName)}`;
+    const ignoredCssUrlList = appStyleSrv.getIgnoredCssUrlList(name, renderConfig);
+    const styleSheets = styleUrlList.concat(ignoredCssUrlList);
+    const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets, styleContent, shadowDelay };
     return (
       <>
         <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onShadowAppRootReady} {...commonProps}>

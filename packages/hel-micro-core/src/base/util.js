@@ -134,3 +134,28 @@ export function safeAssign(assignTo, assignFrom) {
     }
   });
 }
+
+// [input] 'https://aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: 'https://aaaa' }
+// [input] 'http://aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: 'http://aaaa' }
+// [input] '//aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: '//aaaa' }
+// [input] 'aaa/bb//bb' ---> [out] { pure: '', withProtocol: '' }
+export function getHost(/** @type string */ url) {
+  let noProtocolStr = '';
+  let p = '';
+  if (url.includes('://')) {
+    const [protocol, ...rest] = url.split('://');
+    p = protocol;
+    noProtocolStr = rest.join('');
+  } else if (url.startsWith('//')) {
+    p = '//';
+    noProtocolStr = url.substring(2);
+  } else {
+    return { pure: '', withProtocol: '' };
+  }
+
+  const [host] = noProtocolStr.split('/');
+  return {
+    pure: host,
+    withProtocol: `${p}://host`,
+  };
+}

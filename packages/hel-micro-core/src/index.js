@@ -8,6 +8,7 @@ import * as debugMod from './base/microDebug';
 import { ensureHelMicroShared } from './base/microShared';
 import * as util from './base/util';
 import * as consts from './consts';
+import * as advanced from './data/advanced';
 import * as app from './data/app';
 import * as common from './data/common';
 import * as conf from './data/conf';
@@ -77,7 +78,7 @@ export const { getVersion, setVersion } = version;
 export const { getCustomData, setCustomData } = custom;
 
 // 通用的自定义数据 get set
-export const { getCommonData, setCommonData } = common;
+export const { getCommonData, setCommonData, commonDataUtil } = common;
 
 // 版本获取状态 get set，样式字符串获取状态 get set
 export const { getVerLoadStatus, setVerLoadStatus, getVerStyleStrStatus, setVerStyleStrStatus } = status;
@@ -89,6 +90,9 @@ export const { tryGetVersion, tryGetAppName } = guess;
 
 export const { getPlatformConfig, getAppPlatform, setAppPlatform, initPlatformConfig, originInit } = conf;
 
-export const { getHelEventBus, getUserEventBus } = event;
+export const { getHelEventBus, getUserEventBus, evName } = event;
 
 export const { libReady, appReady } = ready;
+
+/** 其他高级方法统一通过 adv 暴露 */
+export const adv = advanced;

@@ -5,9 +5,10 @@ import type { HelLoadStatusEnum } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
+import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions, ICustom } from '../types';
 import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
+import { getWebDirPath } from './share';
 
 const { KEY_CSS_STR } = core.helConsts;
 const { LOADED, LOADING, NOT_LOAD } = core.helLoadStatus;
@@ -172,4 +173,45 @@ export function getStyleUrlList(appName: string, options?: IGetOptionsLoose): st
  */
 export function isStyleFetched(appName: string, options?: IGetOptionsLoose) {
   return inner.isStyleStatusMatch(appName, LOADED, options || {});
+}
+
+
+/**
+ * 禁用所有 style tag 样式
+ */
+export function disableStyleTags(groupName: string) {
+  const g = core.getGlobalThis();
+  if (g.document) {
+    const styleTags = g.document.querySelectorAll(`style[data-gname="${groupName}"]`);
+    styleTags.forEach((el: any) => {
+      el.disabled = true;
+    });
+  }
+}
+
+export function getStyleTagText(groupName: string) {
+  let styleTagText = '';
+  styleTagText = core.commonDataUtil.getStyleTagText(groupName) || '';
+  return styleTagText;
+}
+
+/**
+ * 获取因主动设置了 ignoreCssPrefix 规则而忽略掉的样式列表
+ */
+export function getIgnoredCssUrlList(name: string, options?: (IGetOptionsLoose & { custom?: ICustom })) {
+  const g = core.getGlobalThis()
+  if (g?.location.port) {
+    const cssPrefix = getSuitableCssPrefix(name, options);
+    const cssList = core.commonDataUtil.getCssUrlList(cssPrefix) || [];
+    return cssList;
+  }
+  return [];
+}
+
+export function getSuitableCssPrefix(name: string, options?: (IGetOptionsLoose & { custom?: ICustom })) {
+  const custom = ((options || {}).custom || {}) as ICustom;
+
+  const enableCustom = custom.enable ?? true;
+  const cssPrefix = (custom.host && enableCustom) ? custom.host : getWebDirPath(name, options);
+  return cssPrefix;
 }

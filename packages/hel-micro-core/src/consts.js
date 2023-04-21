@@ -12,7 +12,7 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const helConsts = {
-  CORE_VER: '4.2.6',
+  CORE_VER: '4.4.0',
   DEFAULT_API_PREFIX: 'https://unpkg.com',
   DEFAULT_API_URL: '/openapi/v1/app/info',
   DEFAULT_ONLINE_VER,
@@ -24,8 +24,10 @@ export const helConsts = {
   KEY_CSS_STR: 'CSS_STR',
   /** commonData.ASSET_CTX ，资源对应的具体上下文 */
   KEY_ASSET_CTX: 'ASSET_CTX',
-  /** commonData.STYLE_TAG_ADDED ，对应的样式字符串 { [key:groupName]: styleStr }  */
+  /** commonData.STYLE_TAG_ADDED ，对应的样式字符串 { [key: 'app-group-name' ]: string } */
   KEY_STYLE_TAG_ADDED: 'STYLE_TAG_ADDED',
+  /** commonData.CSS_LINK_TAG_ADDED ，对应的样式url列表 { [key: 'http://localhost:3000' ]: string[] } */
+  KEY_CSS_LINK_TAG_ADDED: 'CSS_LINK_TAG_ADDED',
 };
 
 export const helEvents = {
@@ -36,8 +38,10 @@ export const helEvents = {
   SUB_LIB_LOADED: 'SubLibLoaded',
   // 3.2+ 新增样式字符串获取完毕事件
   STYLE_STR_FETCHED: 'StyleStrFetched',
-  /** 4.2.3+ 用于监听调试模式下动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部*/
+  /** 4.2.3+ 用于监听调试模式下动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
   STYLE_TAG_ADDED: 'StyleTagAdded',
+  /** 4.2.6+ 用于监听调试模式下动态添加的 link 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
+  CSS_LINK_TAG_ADDED: 'CssLinkTagAdded',
 };
 
 /**

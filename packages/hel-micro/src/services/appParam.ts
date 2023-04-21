@@ -4,6 +4,7 @@
 import * as core from 'hel-micro-core';
 import { getPlatform } from '../shared/platform';
 import type { IGetOptionsLoose, IGroupedStyleList, IPlatAndVer } from '../types';
+import * as share from './share';
 
 /**
  * 推导当前应用的平台与版本
@@ -44,3 +45,5 @@ export function getGroupedStyleList(appName: string, options?: IGetOptionsLoose)
   }
   return map;
 }
+
+export const getWebDirPath = share.getWebDirPath;
