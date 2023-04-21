@@ -1,5 +1,5 @@
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import { helConsts, helLoadStatus, adv, getAppMeta } from 'hel-micro-core';
+import { adv, getAppMeta, helConsts, helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerUseRemoteCompOptions, ILocalCompProps, IRemoteCompRenderConfig } from '../types';

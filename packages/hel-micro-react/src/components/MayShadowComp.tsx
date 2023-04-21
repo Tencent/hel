@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { evName, getAppMeta, getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import { appStyleSrv } from 'hel-micro';
+import { evName, getAppMeta, getGlobalThis, getHelEventBus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';

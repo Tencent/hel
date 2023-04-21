@@ -5,7 +5,7 @@ import type { HelLoadStatusEnum } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
 import type { IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions, ICustom } from '../types';
+import type { ICustom, IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions } from '../types';
 import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 import { getWebDirPath } from './share';
@@ -175,7 +175,6 @@ export function isStyleFetched(appName: string, options?: IGetOptionsLoose) {
   return inner.isStyleStatusMatch(appName, LOADED, options || {});
 }
 
-
 /**
  * 禁用所有 style tag 样式
  */
@@ -198,8 +197,8 @@ export function getStyleTagText(groupName: string) {
 /**
  * 获取因主动设置了 ignoreCssPrefix 规则而忽略掉的样式列表
  */
-export function getIgnoredCssUrlList(name: string, options?: (IGetOptionsLoose & { custom?: ICustom })) {
-  const g = core.getGlobalThis()
+export function getIgnoredCssUrlList(name: string, options?: IGetOptionsLoose & { custom?: ICustom }) {
+  const g = core.getGlobalThis();
   if (g?.location.port) {
     const cssPrefix = getSuitableCssPrefix(name, options);
     const cssList = core.commonDataUtil.getCssUrlList(cssPrefix) || [];
@@ -208,10 +207,10 @@ export function getIgnoredCssUrlList(name: string, options?: (IGetOptionsLoose &
   return [];
 }
 
-export function getSuitableCssPrefix(name: string, options?: (IGetOptionsLoose & { custom?: ICustom })) {
+export function getSuitableCssPrefix(name: string, options?: IGetOptionsLoose & { custom?: ICustom }) {
   const custom = ((options || {}).custom || {}) as ICustom;
 
   const enableCustom = custom.enable ?? true;
-  const cssPrefix = (custom.host && enableCustom) ? custom.host : getWebDirPath(name, options);
+  const cssPrefix = custom.host && enableCustom ? custom.host : getWebDirPath(name, options);
   return cssPrefix;
 }
