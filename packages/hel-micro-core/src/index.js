@@ -20,8 +20,8 @@ import * as style from './data/style';
 import * as version from './data/version';
 import * as guess from './handle/guess';
 import * as iso from './handle/iso';
-import * as ready from './handle/ready';
 import * as patch from './handle/patch';
+import * as ready from './handle/ready';
 import * as styleNode from './handle/styleNode';
 import * as cacheWrap from './wrap/cache';
 

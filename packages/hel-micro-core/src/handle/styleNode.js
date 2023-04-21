@@ -10,7 +10,6 @@ const HEL_CSS_MARK_START = '/* @helstart ';
 const HEL_CSS_MARK_END = ' @helend */';
 const START_LEN = HEL_CSS_MARK_START.length;
 
-
 function handleNodeAdded(/** @type {HTMLElement} */ node) {
   const { tagName, innerText } = node;
   if (tagName !== 'STYLE' || !innerText) {
