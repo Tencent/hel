@@ -56,6 +56,9 @@ const inner = {
     // 暂不考虑异常情况，一个 url 拉取失败则中断渲染
     for (let i = 0, len = cssList.length; i < len; i++) {
       const cssUrl = cssList[i];
+      if (!cssUrl.endsWith('.css')) {
+        continue;
+      }
       let cachedCssStr = core.getCommonData(KEY_CSS_STR, cssUrl);
       if (!cachedCssStr) {
         // 此处在 for 循环里 try catch，是为了保证 css 获取失败时，不影响组件加载
