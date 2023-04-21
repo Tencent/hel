@@ -20,8 +20,9 @@ import * as style from './data/style';
 import * as version from './data/version';
 import * as guess from './handle/guess';
 import * as iso from './handle/iso';
-import * as patch from './handle/patch';
 import * as ready from './handle/ready';
+import * as patch from './handle/patch';
+import * as styleNode from './handle/styleNode';
 import * as cacheWrap from './wrap/cache';
 
 util.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
@@ -43,7 +44,7 @@ export function resetGlobalThis(globalThis) {
   // 确保 __HEL_MICRO_SHARED__ 存在
   ensureHelMicroShared();
   patch.patchAppendChild();
-  patch.obStyleTagInsert();
+  styleNode.obStyleTagInsert();
 }
 
 resetGlobalThis();
