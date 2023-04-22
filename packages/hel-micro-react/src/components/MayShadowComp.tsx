@@ -150,7 +150,7 @@ function MayShadowComp(props: IMayShadowProps) {
   useWatchSytleChange(props, { appGroupName, data, tryForceUpdate });
 
   if (shadow) {
-    // appStyleSrv.disableStyleTags(appGroupName);
+    appStyleSrv.disableStyleTags(appGroupName);
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，
     // 确保 show 模式下透传给子组件的 helContext 的 getShadowAppRoot 方法一定能够活动 shawRoot 引用
     let uiContent: React.ReactNode = '';
@@ -161,7 +161,7 @@ function MayShadowComp(props: IMayShadowProps) {
       uiContent = <Comp {...passedProps} />;
     }
 
-    const styleContent = `${styleStr}${appStyleSrv.getStyleTagText(appGroupName)}`;
+    const styleContent = `${styleStr}${appStyleSrv.getStyleTagText(appGroupName, controlOptions)}`;
     const ignoredCssUrlList = appStyleSrv.getIgnoredCssUrlList(name, renderConfig);
     const styleSheets = styleUrlList.concat(ignoredCssUrlList);
     const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets, styleContent, shadowDelay };

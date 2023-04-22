@@ -21,6 +21,8 @@ const coreRules = {
   arg1PlatFns: ['getPlatformConfig', 'getSharedCache'],
   // 这些函数共2个参数，第2位参数是平台值
   arg2PlatFns: ['initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'],
+  // 这些函数共2个参数，第2位参数是平台值对象
+  arg2PlatObjFns: [] as string[],
 };
 // 这些函数共2个参数，第2位参数是包含平台值的对象或版本号，且需要注入 semverApi 值
 const preFetchFns = ['preFetchLib', 'preFetchApp'];
@@ -45,6 +47,8 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
         args[0] = arg0 || platform;
       } else if (coreRules.arg2PlatFns.includes(fnName)) {
         args[1] = arg1 || platform;
+      } else if (coreRules.arg2PlatObjFns.includes(fnName)) {
+        args[1] = mergePlatObj(arg1);
       } else if (!coreRules.ignoreFns.includes(fnName)) {
         if (fnName.startsWith('set')) {
           // 统一按第3位参数是包含平台值的对象来处理

@@ -10,7 +10,7 @@ import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 import { getWebDirPath } from './share';
 
-const { KEY_CSS_STR } = core.helConsts;
+const { KEY_CSS_STR, DEFAULT_PLAT } = core.helConsts;
 const { LOADED, LOADING, NOT_LOAD } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
@@ -192,8 +192,7 @@ export function disableStyleTags(groupName: string) {
 }
 
 export function getStyleTagText(groupName: string) {
-  let styleTagText = '';
-  styleTagText = core.commonDataUtil.getStyleTagText(groupName) || '';
+  const styleTagText = core.commonDataUtil.getStyleTagText(groupName);
   return styleTagText;
 }
 
@@ -201,19 +200,27 @@ export function getStyleTagText(groupName: string) {
  * 获取因主动设置了 ignoreCssPrefix 规则而忽略掉的样式列表
  */
 export function getIgnoredCssUrlList(name: string, options?: IGetOptionsLoose & { custom?: ICustom }) {
-  const g = core.getGlobalThis();
-  if (g?.location.port) {
-    const cssPrefix = getSuitableCssPrefix(name, options);
-    const cssList = core.commonDataUtil.getCssUrlList(cssPrefix) || [];
-    return cssList;
-  }
-  return [];
+  const cssPrefix = getSuitableCssPrefix(name, options);
+  const cssList = core.commonDataUtil.getIgnoreCssPrefixCssUrlList(cssPrefix) || [];
+  return cssList;
 }
 
+/**
+ * 获取合适的 css 前缀
+ */
 export function getSuitableCssPrefix(name: string, options?: IGetOptionsLoose & { custom?: ICustom }) {
   const custom = ((options || {}).custom || {}) as ICustom;
-
-  const enableCustom = custom.enable ?? true;
-  const cssPrefix = custom.host && enableCustom ? custom.host : getWebDirPath(name, options);
+  let cssPrefix = '';
+  const { host, enable = true } = custom;
+  if (host && enable) {
+    if (host.endsWith('.json') || host.endsWith('.html')) {
+      const arr = host.split('/');
+      const len = arr.length;
+      arr.splice(len - 1, len); // 去掉最后一位元素
+      cssPrefix = arr.join('/');
+    }
+  } else {
+    cssPrefix = getWebDirPath(name, options);
+  }
   return cssPrefix;
 }

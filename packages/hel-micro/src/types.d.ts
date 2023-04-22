@@ -113,6 +113,11 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    */
   projectId?: string;
   /**
+   * default: false,
+   * 是否需要支持 shadow 特性
+   */
+  shadow?: boolean;
+  /**
    * default: true
    */
   appendCss?: boolean;

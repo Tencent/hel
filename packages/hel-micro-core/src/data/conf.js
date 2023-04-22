@@ -1,6 +1,7 @@
 /** @typedef {import('../../index').IPlatformConfigFull} IPlatformConfigFull */
 /** @typedef {import('../../index').SharedCache} SharedCache */
-import { log, safeAssign } from '../base/util';
+import { log } from '../base/microDebug';
+import { safeAssign } from '../base/util';
 import { getCacheRoot, getPlatform, getSharedCache } from '../wrap/cache';
 
 /**

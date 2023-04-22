@@ -12,7 +12,7 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const helConsts = {
-  CORE_VER: '4.4.1',
+  CORE_VER: '4.5.0',
   DEFAULT_API_PREFIX: 'https://unpkg.com',
   DEFAULT_API_URL: '/openapi/v1/app/info',
   DEFAULT_ONLINE_VER,
@@ -28,6 +28,12 @@ export const helConsts = {
   KEY_STYLE_TAG_ADDED: 'STYLE_TAG_ADDED',
   /** commonData.CSS_LINK_TAG_ADDED ，对应的样式url列表 { [key: 'http://localhost:3000' ]: string[] } */
   KEY_CSS_LINK_TAG_ADDED: 'CSS_LINK_TAG_ADDED',
+  /** commonData.IGNORE_CSS_PREFIX_LIST ，忽略样式前缀列表 string[] */
+  KEY_IGNORE_CSS_PREFIX_LIST: 'IGNORE_CSS_PREFIX_LIST',
+  /** commonData.IGNORE_STYLE_TAG_KEY ，忽略样式前缀列表 { [key: string ]: 1|0 } */
+  KEY_IGNORE_STYLE_TAG_KEY: 'IGNORE_STYLE_TAG_KEY',
+  /** commonData.IGNORE_CSS_PREFIX_2_KEYS ，忽略样式前缀对应的key { [key: 'http://localhost:3000' ]: string } */
+  KEY_IGNORE_CSS_PREFIX_2_KEYS: 'IGNORE_CSS_PREFIX_2_KEYS',
 };
 
 export const helEvents = {

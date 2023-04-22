@@ -1,4 +1,5 @@
-import { log, safeGetMap, setSubMapValue } from '../base/util';
+import { log } from '../base/microDebug';
+import { safeGetMap, setSubMapValue } from '../base/util';
 import { DEFAULT_ONLINE_VER } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 import inner from './util';

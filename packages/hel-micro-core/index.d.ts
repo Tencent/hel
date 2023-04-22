@@ -27,6 +27,14 @@ export const helConsts: {
   KEY_STYLE_TAG_ADDED: 'STYLE_TAG_ADDED';
   /** commonData.CSS_LINK_TAG_ADDED ，对应的样式url列表 { [key: 'http://localhost:3000' ]: string[] } */
   KEY_CSS_LINK_TAG_ADDED: 'CSS_LINK_TAG_ADDED';
+  /** commonData.IGNORE_CSS_PREFIX_LIST ，忽略样式前缀列表 string[] */
+  KEY_IGNORE_CSS_PREFIX_LIST: 'IGNORE_CSS_PREFIX_LIST';
+  /** commonData.IGNORE_STYLE_TAG_KEY ，忽略样式前缀列表 { [key: string ]: 1|0 } */
+  KEY_IGNORE_STYLE_TAG_KEY: 'IGNORE_STYLE_TAG_KEY';
+  /** commonData.IGNORE_CSS_PREFIX_2_GNAME ，忽略样式前缀对应的组名 { [key: 'http://localhost:3000' ]: string } */
+  KEY_IGNORE_CSS_PREFIX_2_GNAME: 'IGNORE_CSS_PREFIX_2_GNAME';
+  /** commonData.IGNORE_CSS_PREFIX_2_NAME ，忽略样式前缀对应的应用名 { [key: 'http://localhost:3000' ]: string } */
+  KEY_IGNORE_CSS_PREFIX_2_NAME: 'IGNORE_CSS_PREFIX_2_NAME';
 };
 
 export const helEvents: {
@@ -380,8 +388,8 @@ export function getVerLib(appName: string, options?: IGetOptions): IEmitAppInfo[
 export function setEmitLib(appName: string, emitApp: IEmitAppInfo, options?: { appGroupName?: string; platform?: Platform }): void;
 
 export interface IGetVerOptions {
-  versionId?: string;
   platform?: Platform;
+  versionId?: string;
 }
 
 export function getVersion(appName: string, options?: IGetVerOptions): ISubAppVersion | null;
@@ -394,8 +402,8 @@ export function setAppMeta(appMeta: ISubApp, platform?: Platform): void;
 
 export interface IGetStyleOptions {
   // 对应样式获取来说，版本必须传
-  platform?: Platform;
   versionId: string;
+  platform?: Platform;
 }
 type ISetStyleOptions = IGetStyleOptions;
 
@@ -477,13 +485,25 @@ export function getCommonData<T extends any = any>(customKey: string, dataKey: s
 export function setCommonData(customKey: string, dataKey: string, data: any): void;
 
 interface ICommonDataUtil {
-  getCssUrlList(ignoreCssPrefix: string): string[];
-  setCssUrl(ignoreCssPrefix: string, url: string): void;
+  /**
+   * 设置忽略 append 的 css 前缀名单，设置后，满足以此前缀开头的 css 见不会被加载，
+   * 再配合监听 evName.cssLinkTagAdded，并调用 commonDataUtil.getCssUrlList 拿到此前缀下的所有css列表
+   * 以达到样式安全转移到 shadowdom 内部的目的
+   */
+  setIgnoreCssPrefix(ignoreCssPrefix: string): void;
+  setIgnoreStyleTagKey(nameOrGroupName: string): void;
+  getIgnoreStyleTagMap(): Record<string, 1>;
+  setIgnoreCssPrefixKey(ignoreCssPrefix: string, key: string): void;
+  getIgnoreCssPrefixKeys(ignoreCssPrefix: string): string[];
+  getMatchedIgnoreCssPrefix(url: string): string;
+  getIgnoreCssPrefixCssUrlList(ignoreCssPrefix: string): string[];
+  setIgnoreCssPrefixCssUrl(ignoreCssPrefix: string, url: string): void;
   getStyleTagText(groupName: string): string;
-  setStyleTagText(groupName: string, text: string): void;
+  clearStyleTagText(groupName: string): void;
+  appendStyleTagText(groupName: string, text: string): void;
 }
 
-/** 操作 commonData 的一些内置方法 */
+/** 操作 commonData 的内置方法集合 */
 export const commonDataUtil: ICommonDataUtil;
 
 /**
@@ -514,15 +534,50 @@ export type CommonUtil = {
   safeParse: <T extends any = any>(jsonStr: any, defaultValue: T, errMsg?: string) => T;
   noop: (...args: any[]) => any[];
   /**
-   * for friendly print mulit line with no break-line strategy when use \`...\`
+   * for pretty format multi line string when use \`...\`
+   * @param {*} mayLineBreakStr
+   * @param {'MULTI' | 'ONE'} [mode='MULTI']
+   * @returns
    * ```
-   * // usage
-   * nbstr(`
+   * // usage 1
+   * pfstr(`
    *   line1 line1 line1,
    *   line2 line2 line2.
    * `);
-   * // output: line1 line1 line1, line2 line2 line2.
+   * // will print:
+   * line1 line1 line1,
+   * line2 line2 line2.
+   * // attention: end <br/> will be removed automatically in MULTI mode
+   * pfstr(`
+   *   line1 line1 line1,<br/>
+   *   line2 line2 line2.
+   * `);
+   * // will print:
+   * line1 line1 line1,
+   * line2 line2 line2.
+   *
+   * // usage 2, set mode='ONE' to print no line break string
+   * pfstr(`
+   *   line1 line1 line1,
+   *   line2 line2 line2.
+   * `, 'ONE');
+   * // will print:
+   * line1 line1 line1, line2 line2 line2.
+   *
+   * // usage 3, add <br/> to control line break
+   * pfstr(`
+   *   line1 line1 line1,
+   *   line2 line2 line2,<br/>
+   *   line3 line3 line3.
+   * `, 'ONE');
+   * // will print:
+   * line1 line1 line1,
+   * line2 line2 line2,line3 line3 line3.
    * ```
+   */
+  pfstr: (mayLineBreakStr: string, mode: 'MULTI' | 'ONE') => string;
+  /**
+   * call pfstr(mayLineBreakStr, 'ONE');
    */
   nbstr: (mayLineBreakStr: string) => string;
   /**
@@ -552,15 +607,3 @@ export function inectPlatToMod<T extends Record<string, any> = Record<string, an
   mod: T,
   options?: IInjectPlatOptions,
 ): T;
-
-export interface IAcvancedMethods {
-  /**
-   * 设置忽略 append 的 css 前缀名单，设置后，满足以此前缀开头的 css 见不会被加载，
-   * 再配合监听 evName.cssLinkTagAdded，并调用 commonDataUtil.getCssUrlList 拿到此前缀下的所有css列表
-   * 以达到样式安全转移到 shadowdom 内部的目的
-   */
-  setIgnoreCssPrefix(cssPrefix: string): void;
-  setIgnoreStyleTagKey(nameOrGroupName: string): void;
-}
-
-export const adv: IAcvancedMethods;

@@ -1,5 +1,5 @@
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
-import { adv, getAppMeta, helConsts, helLoadStatus } from 'hel-micro-core';
+import { helConsts, helLoadStatus } from 'hel-micro-core';
 import React from 'react';
 import defaults from '../consts/defaults';
 import type { IInnerUseRemoteCompOptions, ILocalCompProps, IRemoteCompRenderConfig } from '../types';
@@ -150,22 +150,11 @@ export function fetchRemoteModule(config: IRemoteCompRenderConfig, ctx: any) {
     return preFetchApp(name, controlOptions);
   };
 
-  // 忽略掉动态 append 的 css link 标签
-  const { shadow } = controlOptions;
-  if (shadow) {
-    const cssPrefix = appStyleSrv.getSuitableCssPrefix(name, controlOptions);
-    adv.setIgnoreCssPrefix(cssPrefix);
-    adv.setIgnoreStyleTagKey(name);
-  }
-
   // 开始执行异步获取组件操作
   doPreFetch()
     .then((emitAppOrLib) => {
       if (!emitAppOrLib) {
         return setState({ errMsg: 'no component fetched' });
-      }
-      if (shadow) {
-        adv.setIgnoreStyleTagKey(getAppMeta(name, controlOptions.platform)?.app_group_name || '');
       }
       isLoadAppDataExecutingRef.current = false;
       setState({});

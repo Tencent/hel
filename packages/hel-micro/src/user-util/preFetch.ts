@@ -1,10 +1,21 @@
-import { commonUtil, getHelEventBus, getVerLoadStatus, helEvents, helLoadStatus, log, setVerLoadStatus } from 'hel-micro-core';
+import {
+  commonDataUtil,
+  commonUtil,
+  getAppMeta,
+  getHelEventBus,
+  getVerLoadStatus,
+  helEvents,
+  helLoadStatus,
+  log,
+  setVerLoadStatus,
+} from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
 import * as alt from '../alternative';
 import defaults from '../consts/defaults';
 import type { BatchGetFn } from '../services/api';
 import * as apiSrv from '../services/api';
 import { cacheApp, getAppFromRemoteOrLocal, loadApp } from '../services/app';
+import * as appStyle from '../services/appStyle';
 import * as logicSrv from '../services/logic';
 import { getPlatform } from '../shared/platform';
 import type {
@@ -31,6 +42,26 @@ function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | Ver
   return optionsVar;
 }
 
+function markShadowData(appName: string, preFetchOptions: IInnerPreFetchOptions) {
+  if (preFetchOptions.shadow) {
+    // 辅助后续流程标记 css link disable=true, style tag disable=true
+    const cssPrefix = appStyle.getSuitableCssPrefix(appName, preFetchOptions);
+    commonDataUtil.setIgnoreCssPrefix(cssPrefix);
+    commonDataUtil.setIgnoreStyleTagKey(appName);
+    commonDataUtil.setIgnoreCssPrefixKey(cssPrefix, appName);
+  }
+}
+
+function markShadowDataBeforeLoad(appName: string, groupName: string, preFetchOptions: IInnerPreFetchOptions) {
+  if (preFetchOptions.shadow) {
+    // 辅助后续流程标记 css link disable=true, style tag disable=true
+    if (!groupName) return;
+    const cssPrefix = appStyle.getSuitableCssPrefix(appName, preFetchOptions);
+    commonDataUtil.setIgnoreStyleTagKey(groupName);
+    commonDataUtil.setIgnoreCssPrefixKey(cssPrefix, groupName);
+  }
+}
+
 async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions, loadAssetsStarter?: LoadAssetsStarter) {
   const eventBus = getHelEventBus();
   const { platform, isLib = false, versionId, projectId, strictMatchVer } = innerOptions;
@@ -49,6 +80,8 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
     // 先监听，再触发资源加载，确保监听不会有遗漏
     eventBus.on(eventName, handleAppLoaded);
     if (loadAssetsStarter) {
+      const appMeta = getAppMeta(appName, platform);
+      appMeta && markShadowDataBeforeLoad(appName, appMeta.app_group_name, innerOptions);
       loadAssetsStarter();
     }
   });
@@ -61,7 +94,7 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
 }
 
 /**
- * 预抓取一些应用js脚本并解析执行，返回应用暴露的模块或组件
+ * 预抓取一些应用 js 脚本并解析执行，返回应用暴露的模块或组件
  * @param appName
  * @param preFetchOptions
  * @returns
@@ -99,6 +132,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     // 还未开始加载，标记加载中，防止连续的 preFetch 调用重复触发 loadApp
     if (currentLoadStatus !== helLoadStatus.LOADING) {
       setVerLoadStatus(appName, helLoadStatus.LOADING, fixedInnerOptions);
+      markShadowData(appName, fixedInnerOptions);
       loadAssetsStarter = await loadApp(appName, { ...fixedInnerOptions, controlLoadAssets: true });
     }
 

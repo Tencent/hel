@@ -2,9 +2,22 @@
 /** @typedef {HelLoadStatusType[keyof HelLoadStatusType]} HelLoadStatusEnum */
 import { helConsts } from '../consts';
 import { getHelSingletonHost } from './globalRef';
-import { getJsRunLocation, safeGetMap, setLogFilter, setLogMode } from './util';
+import { inner } from './microDebug';
+import { getJsRunLocation, safeGetMap } from './util';
 
-const { DEFAULT_API_URL, DEFAULT_USER_LS_KEY, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX, CORE_VER } = helConsts;
+const {
+  DEFAULT_API_URL,
+  DEFAULT_USER_LS_KEY,
+  PLAT_HEL,
+  PLAT_UNPKG,
+  DEFAULT_API_PREFIX,
+  CORE_VER,
+  KEY_CSS_LINK_TAG_ADDED,
+  KEY_STYLE_TAG_ADDED,
+  KEY_IGNORE_CSS_PREFIX_LIST,
+  KEY_IGNORE_STYLE_TAG_KEY,
+  KEY_IGNORE_CSS_PREFIX_2_KEYS,
+} = helConsts;
 
 function makeOriginOptions(presetOptions) {
   const { apiPrefix } = presetOptions || {};
@@ -120,9 +133,6 @@ function makeHelMicroShared() {
     nativeHeadAppend: null,
     nativeBodyAppend: null,
     createFeature: getJsRunLocation(),
-    /** @type {string[]} */
-    ignoreCssPrefixList: [],
-    ignoreStyleTagKey: {},
     eventBus: innerEventBus,
     userEventBus,
     cacheRoot,
@@ -132,10 +142,22 @@ function makeHelMicroShared() {
     helCache,
     /** 调试相关函数 */
     dev: {
-      setLogMode,
-      setLogFilter,
+      setLogMode: inner.setLogMode,
+      setLogFilter: inner.setLogFilter,
     },
   };
+}
+
+function ensureCommonKeys(common) {
+  const keys = [
+    KEY_CSS_LINK_TAG_ADDED,
+    KEY_STYLE_TAG_ADDED,
+    KEY_IGNORE_CSS_PREFIX_LIST,
+    KEY_IGNORE_STYLE_TAG_KEY,
+    KEY_IGNORE_CSS_PREFIX_2_KEYS,
+  ];
+  const getDefault = (key) => (key === KEY_IGNORE_CSS_PREFIX_LIST ? [] : {});
+  keys.forEach((key) => safeGetMap(common, key, getDefault(key)));
 }
 
 export function ensureHelMicroShared() {
@@ -156,21 +178,17 @@ export function ensureHelMicroShared() {
       safeGetMap(cacheNode, 'origin', makeOriginOptions());
       safeGetMap(cacheNode.origin, 'hook');
     });
+    ensureCommonKeys(cacheRoot.common);
 
     // 补齐老包缺失的对象
     if (!helMicroShared.userEventBus) {
       helMicroShared.userEventBus = makeEventBus();
     }
-    if (!helMicroShared.ignoreCssPrefixList) {
-      helMicroShared.ignoreCssPrefixList = [];
-    }
-    if (!helMicroShared.ignoreStyleTagKey) {
-      helMicroShared.ignoreStyleTagKey = {};
-    }
     return;
   }
 
   helMicroShared = makeHelMicroShared();
+  ensureCommonKeys(helMicroShared.cacheRoot.common);
   getHelSingletonHost().__HEL_MICRO_SHARED__ = helMicroShared;
 }
 

@@ -6,9 +6,7 @@ import * as globalRef from './base/globalRef';
 import * as inject from './base/inject';
 import * as debugMod from './base/microDebug';
 import { ensureHelMicroShared } from './base/microShared';
-import * as util from './base/util';
 import * as consts from './consts';
-import * as advanced from './data/advanced';
 import * as app from './data/app';
 import * as common from './data/common';
 import * as conf from './data/conf';
@@ -26,7 +24,7 @@ import * as ready from './handle/ready';
 import * as styleNode from './handle/styleNode';
 import * as cacheWrap from './wrap/cache';
 
-util.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
+debugMod.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
 
 export const { helEvents, helLoadStatus, helConsts } = consts;
 
@@ -44,6 +42,7 @@ export function resetGlobalThis(globalThis) {
   iso.tryMarkFlag(!!globalThis);
   // 确保 __HEL_MICRO_SHARED__ 存在
   ensureHelMicroShared();
+  debugMod.ensureHelMicroDebug();
   patch.patchAppendChild();
   styleNode.obStyleTagInsert();
 }
@@ -56,9 +55,7 @@ resetGlobalThis();
  */
 export const { getPlatform, getSharedCache } = cacheWrap;
 
-export const { allowLog, log } = util;
-
-export const getHelDebug = debugMod.getHelMicroDebug;
+export const { getHelMicroDebug: getHelDebug, allowLog, log } = debugMod;
 
 export const { getGlobalThis, setGlobalThis } = globalRef;
 
@@ -93,6 +90,3 @@ export const { getPlatformConfig, getAppPlatform, setAppPlatform, initPlatformCo
 export const { getHelEventBus, getUserEventBus, evName } = event;
 
 export const { libReady, appReady } = ready;
-
-/** 其他高级方法统一通过 adv 暴露 */
-export const adv = advanced;

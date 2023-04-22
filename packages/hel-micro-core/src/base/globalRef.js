@@ -9,6 +9,7 @@ function assignRef() {
   // for nodejs env
   if (typeof global !== 'undefined') {
     globalThisRef = global;
+    return;
   }
   throw new Error('unable to locate global object');
 }
@@ -19,7 +20,7 @@ function assignRef() {
  */
 export function getGlobalThis() {
   if (!globalThisRef) {
-    return assignRef();
+    assignRef();
   }
   return globalThisRef;
 }

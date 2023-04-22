@@ -1,27 +1,7 @@
 import { getGlobalThis } from './globalRef';
-import { getHelMicroDebug } from './microDebug';
 
-try {
-  initMicroDebug();
-} catch (err) {}
-
-function initMicroDebug() {
-  if (getHelMicroDebug().isInit) {
-    return;
-  }
-
-  getHelMicroDebug().isInit = true;
-  const searchObj = getSearchObj();
-  const { hellog, hellogf } = searchObj;
-  const ls = getGlobalThis().localStorage;
-
-  // 优先读 url 上的控制参数 hellog，再读 localStorage 里的控制参数
-  const logMode = hellog || ls?.getItem('HelConfig.logMode') || 0;
-  setLogMode(logMode);
-
-  // 优先读 url 上的控制参数 hellogf
-  const logFilter = hellogf || ls?.getItem('HelConfig.logFilter') || '';
-  setLogFilter(logFilter);
+export function okeys(map) {
+  return Object.keys(map);
 }
 
 function getSearch() {
@@ -31,15 +11,6 @@ function getSearch() {
     // 可能是非同域的iframe载入，访问iframe外部变量会报错
     return getGlobalThis()?.location?.search || '';
   }
-}
-
-function isIncludeFilter(firstArg, logFilter) {
-  if (!logFilter.includes(',')) {
-    return firstArg.includes(logFilter);
-  }
-  /** @type {string[]} */
-  const filterList = logFilter.split(',');
-  return filterList.some((item) => firstArg.includes(item));
 }
 
 export function getSearchObj() {
@@ -54,51 +25,6 @@ export function getSearchObj() {
     });
   }
   return map;
-}
-
-/** 采用一次缓存值后，便不再从search推导，方便单页面应用路由变化后，依然可以打印log */
-export function allowLog() {
-  return getLogMode() !== 0;
-}
-
-export function setLogMode(value) {
-  const modeNum = parseInt(value, 10);
-  if ([1, 2].includes(modeNum)) {
-    getHelMicroDebug().logMode = modeNum;
-  }
-}
-
-export function getLogMode() {
-  return getHelMicroDebug().logMode;
-}
-
-export function setLogFilter(value) {
-  getHelMicroDebug().logFilter = value;
-}
-
-export function getLogFilter() {
-  return getHelMicroDebug().logFilter;
-}
-
-const logPrefix = '  %c--> HEL LOG:';
-const colorDesc = 'color:#ad4e00;font-weight:600';
-export function log(...args) {
-  if (!allowLog()) {
-    return;
-  }
-  const logFn = getLogMode() === 1 ? console.log : console.trace || console.log;
-  const [firstArg, ...rest] = args;
-  if (typeof firstArg !== 'string') {
-    return logFn(logPrefix, colorDesc, ...args);
-  }
-
-  const logFilter = getLogFilter();
-  const logParams = [`${logPrefix} ${firstArg}`, colorDesc, ...rest];
-  if (logFilter) {
-    isIncludeFilter(firstArg, logFilter) && logFn(...logParams);
-    return;
-  }
-  logFn(...logParams);
 }
 
 export function getJsRunLocation() {
@@ -135,27 +61,29 @@ export function safeAssign(assignTo, assignFrom) {
   });
 }
 
-// [input] 'https://aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: 'https://aaaa' }
-// [input] 'http://aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: 'http://aaaa' }
-// [input] '//aaa/bb//bb' ---> [out] { pure: 'aaa', withProtocol: '//aaaa' }
-// [input] 'aaa/bb//bb' ---> [out] { pure: '', withProtocol: '' }
-export function getHost(/** @type string */ url) {
-  let noProtocolStr = '';
-  let p = '';
-  if (url.includes('://')) {
-    const [protocol, ...rest] = url.split('://');
-    p = protocol;
-    noProtocolStr = rest.join('');
-  } else if (url.startsWith('//')) {
-    p = '//';
-    noProtocolStr = url.substring(2);
-  } else {
-    return { pure: '', withProtocol: '' };
+export function noDupPush(oriList, toPush) {
+  if (!oriList.includes(toPush)) oriList.push(toPush);
+}
+
+export function isNull(value, nullDef = {}) {
+  const { nullValues = [null, undefined, ''], emptyObjIsNull = true, emptyArrIsNull = true } = nullDef;
+
+  const inNullValues = nullValues.includes(value);
+  if (inNullValues) {
+    return true;
   }
 
-  const [host] = noProtocolStr.split('/');
-  return {
-    pure: host,
-    withProtocol: `${p}://host`,
-  };
+  if (Array.isArray(value)) {
+    if (emptyArrIsNull) return value.length === 0;
+    return false;
+  }
+
+  if (typeof value === 'object') {
+    const keys = okeys(value);
+    const keyLen = keys.length;
+    if (emptyObjIsNull) return keyLen === 0;
+    return false;
+  }
+
+  return false;
 }

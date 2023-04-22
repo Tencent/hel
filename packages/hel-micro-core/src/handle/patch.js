@@ -7,19 +7,13 @@ import { markElFeature } from './feature';
 
 const { KEY_ASSET_CTX } = helConsts;
 
-function matchIgnoreCssPrefix(el, url) {
-  // 分析 url ，符合 shadow 特征的不追加dom，仅发射事件让上层适配层去处理
-  const { ignoreCssPrefixList = [] } = getHelMicroShared();
-  let matchedPrefix = '';
+function matchIgnoreCssPrefix(node, url) {
   const bus = getHelEventBus();
-  for (let i = 0; i < ignoreCssPrefixList.length; i++) {
-    const cssPrefix = ignoreCssPrefixList[i];
-    if (url.startsWith(cssPrefix)) {
-      matchedPrefix = cssPrefix;
-      commonDataUtil.setCssUrl(cssPrefix, url);
-      bus.emit(evName.cssLinkTagAdded(cssPrefix), el);
-      break;
-    }
+  const matchedPrefix = commonDataUtil.getMatchedIgnoreCssPrefix(url);
+  // 分析 url ，符合 shadow 特征的不追加 dom，仅发射事件让上层适配层去处理
+  if (matchedPrefix) {
+    commonDataUtil.setCssUrl(matchedPrefix, url);
+    bus.emit(evName.cssLinkTagAdded(matchedPrefix), { nodes: [node] });
   }
   return matchedPrefix;
 }
