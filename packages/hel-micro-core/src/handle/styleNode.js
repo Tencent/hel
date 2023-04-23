@@ -1,4 +1,4 @@
-import { setDataset } from '../base/commonUtil';
+import { setDataset, disableNode } from '../base/commonUtil';
 import { getGlobalThis } from '../base/globalRef';
 import { getHelMicroShared } from '../base/microShared';
 import { commonDataUtil } from '../data/common';
@@ -8,28 +8,23 @@ const HEL_CSS_MARK_START = '/* @helstart ';
 const HEL_CSS_MARK_END = ' @helend */';
 const START_LEN = HEL_CSS_MARK_START.length;
 
-function disableNode(node) {
-  // 只能连续命名，否则会报错
-  // failed to set a named property on 'DOMStringMap': 'hel-disabled' is not a valid property name.
-  setDataset(node, 'heldisabled', '1');
-  node.disabled = true;
-}
-
 function resetStyleText(groupName) {
   const g = getGlobalThis();
   if (!g) return;
 
-  commonDataUtil.clearStyleTagText(groupName);
   const list = g.document.head.querySelectorAll(`style[data-gname="${groupName}"]`);
-  list.forEach((node) => {
-    disableNode(node);
-    commonDataUtil.appendStyleTagText(groupName, node.innerText);
-  });
-  const bus = getHelEventBus();
-  bus.emit(evName.styleTagAdded(groupName), { nodes: list });
+  if (list.length) {
+    commonDataUtil.clearStyleTagText(groupName);
+    list.forEach((node) => {
+      disableNode(node);
+      commonDataUtil.appendStyleTagText(groupName, node.innerText);
+    });
+    const bus = getHelEventBus();
+    bus.emit(evName.styleTagAdded(groupName), { nodes: list });
+  }
 }
 
-function handleNodeAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
+function handleStyleTagAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
   const { tagName, innerText } = node;
   if (tagName !== 'STYLE' || !innerText) {
     return;
@@ -56,9 +51,11 @@ function handleNodeAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
   }
 }
 
-function handleNodeRemoved(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
-  const { tagName, src } = node;
+function handleHotUpdate(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
+  const { tagName, src = '' } = node;
   if (tagName !== 'SCRIPT') return false;
+  if (!src.endsWith('.hot-update.js')) return false;
+
   const matchedPrefix = commonDataUtil.getMatchedIgnoreCssPrefix(src);
   if (!matchedPrefix) return false;
   const keys = commonDataUtil.getIgnoreCssPrefixKeys(matchedPrefix);
@@ -71,7 +68,7 @@ function handleNodeRemoved(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
       handled = true;
     }
   });
-  return true;
+  return handled;
 }
 
 export function obStyleTagInsert() {
@@ -82,6 +79,7 @@ export function obStyleTagInsert() {
   if (isStyleObInit || !doc) {
     return;
   }
+  helMicroShared.isStyleObInit = true;
 
   const ignoreStyleTagMap = commonDataUtil.getIgnoreStyleTagMap();
   // @ts-ignore
@@ -90,16 +88,15 @@ export function obStyleTagInsert() {
   const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       const { addedNodes, removedNodes } = mutation;
+
       const len = addedNodes.length;
       for (let i = 0; i < len; i++) {
-        handleNodeAdded(addedNodes[i], ignoreStyleTagMap);
+        handleStyleTagAdded(addedNodes[i], ignoreStyleTagMap);
       }
 
       const remLen = removedNodes.length;
       for (let i = 0; i < remLen; i++) {
-        const node = removedNodes[i];
-        const handled = handleNodeRemoved(node, ignoreStyleTagMap);
-        if (handled) {
+        if (handleHotUpdate(removedNodes[i], ignoreStyleTagMap)) {
           break;
         }
       }

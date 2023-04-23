@@ -44,10 +44,10 @@ export const helEvents: {
   SUB_LIB_LOADED: 'SubLibLoaded';
   // 3.2+ 新增样式字符串获取完毕事件
   STYLE_STR_FETCHED: 'StyleStrFetched';
-  /** 4.2.3+ 用于监听调试模式下动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
-  STYLE_TAG_ADDED: 'StyleTagAdded';
-  /** 4.2.6+ 用于监听调试模式下动态添加的 link 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
-  CSS_LINK_TAG_ADDED: 'CssLinkTagAdded';
+  /** 4.2.3+ 用于监听动态添加的 style 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
+  STYLE_TAG_ADDED: 'StyleTagAdded',
+  /** 4.2.6+ 用于监听动态添加的 link 标签，方便上层用到 shadowdom 的地方可以接收样式并转移到 shadowdom 内部 */
+  CSS_LINK_TAG_ADDED: 'CssLinkTagAdded',
 };
 
 type HelLoadStatus = {
@@ -586,7 +586,8 @@ export type CommonUtil = {
    * if set false, it will always alert
    */
   nbalert: (mayLineBreakStr: string, alertInDev?: boolean) => string;
-  setDataset: (el: HTMLElement, key: string, val: string) => void;
+  setDataset: (el: Element, key: string, val: string) => void;
+  disableNode: (el: Element) => void;
 };
 
 export const commonUtil: CommonUtil;

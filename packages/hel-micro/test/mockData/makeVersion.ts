@@ -91,7 +91,6 @@ export default function makeVersion(options?: IMakeVersionOptions) {
           },
         },
       ] as IAssetItem[],
-
     },
     html_content:
       '<!DOCTYPE html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/favicon.ico"><title>remote-vue-comps-tpl</title><script src="https://xx.cdn.com/hel-runtime/level1/v1-2.6.14-vue.js"></script><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/css/chunk-22a77020.8cdf916a.css" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/css/chunk-f3ad9638.8cdf916a.css" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/chunk-22a77020.00c5ef17.js" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/chunk-f3ad9638.3a5553b3.js" rel="prefetch"><link href="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/app~e2e93592.bd978cec.js" rel="preload" as="script"></head><body><noscript><strong>We\'re sorry but remote-vue-comps-tpl doesn\'t work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script src="https://xx.cdn.com/hel/remote-vue-comps-tpl_20220602022833/js/app~e2e93592.bd978cec.js"></script></body></html>',

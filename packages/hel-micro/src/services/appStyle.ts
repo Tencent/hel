@@ -10,7 +10,7 @@ import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 import { getWebDirPath } from './share';
 
-const { KEY_CSS_STR, DEFAULT_PLAT } = core.helConsts;
+const { KEY_CSS_STR } = core.helConsts;
 const { LOADED, LOADING, NOT_LOAD } = core.helLoadStatus;
 const eventBus = core.getHelEventBus();
 const { STYLE_STR_FETCHED } = core.helEvents;
@@ -185,9 +185,7 @@ export function disableStyleTags(groupName: string) {
   const g = core.getGlobalThis();
   if (g.document) {
     const styleTags = g.document.querySelectorAll(`style[data-gname="${groupName}"]`);
-    styleTags.forEach((el: any) => {
-      el.disabled = true;
-    });
+    styleTags.forEach(core.commonUtil.disableNode);
   }
 }
 
@@ -218,6 +216,8 @@ export function getSuitableCssPrefix(name: string, options?: IGetOptionsLoose & 
       const len = arr.length;
       arr.splice(len - 1, len); // 去掉最后一位元素
       cssPrefix = arr.join('/');
+    } else {
+      cssPrefix = host;
     }
   } else {
     cssPrefix = getWebDirPath(name, options);

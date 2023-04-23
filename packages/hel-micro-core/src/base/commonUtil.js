@@ -118,3 +118,11 @@ export function setDataset(el, key, val) {
     el.setAttribute(`data-${key}`, val);
   }
 }
+
+export function disableNode(node) {
+  // 只能连续命名，否则会报错
+  // failed to set a named property on 'DOMStringMap': 'hel-disabled' is not a valid property name.
+  setDataset(node, 'heldisabled', '1');
+  node.disabled = true;
+}
+

@@ -24,6 +24,7 @@ import * as ready from './handle/ready';
 import * as styleNode from './handle/styleNode';
 import * as cacheWrap from './wrap/cache';
 
+resetGlobalThis();
 debugMod.log(`hel-micro-core ver ${consts.helConsts.CORE_VER}`);
 
 export const { helEvents, helLoadStatus, helConsts } = consts;
@@ -46,8 +47,6 @@ export function resetGlobalThis(globalThis) {
   patch.patchAppendChild();
   styleNode.obStyleTagInsert();
 }
-
-resetGlobalThis();
 
 /**
  * 获取默认的平台值

@@ -107,7 +107,6 @@ function useWatchSytleChange(props: IMayShadowProps, options: any) {
         bus.on(linkTagAddedEv, linkTagAddedCb);
       }
 
-      // appStyleSrv.disableStyleTags(appGroupName);
       return () => {
         staticRefCb && bus.off(staticRefReadyEv, staticRefCb);
         styleTagAddedCb && bus.off(styleTagAddedEv, styleTagAddedCb);
@@ -150,7 +149,6 @@ function MayShadowComp(props: IMayShadowProps) {
   useWatchSytleChange(props, { appGroupName, data, tryForceUpdate });
 
   if (shadow) {
-    appStyleSrv.disableStyleTags(appGroupName);
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，
     // 确保 show 模式下透传给子组件的 helContext 的 getShadowAppRoot 方法一定能够活动 shawRoot 引用
     let uiContent: React.ReactNode = '';
