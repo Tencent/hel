@@ -125,4 +125,3 @@ export function disableNode(node) {
   setDataset(node, 'heldisabled', '1');
   node.disabled = true;
 }
-
