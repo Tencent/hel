@@ -6,7 +6,7 @@ import util from 'util';
 import { ensureSlash } from '../base-utils/index';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
-import { isNull, purify } from '../inner-utils/obj';
+import { isNull } from '../inner-utils/obj';
 import { pfstr } from '../inner-utils/str';
 import { getAllFilePath } from './utils';
 
@@ -143,7 +143,8 @@ function getAssetInfo(/** @type string */ url, options) {
     helAppendValOfInnerLogic = '0'; // ico 文件特殊处理，默认是不加载的
   } else if (isStatic) {
     helAppendValOfInnerLogic = '0';
-  } else { // isBuild
+  } else {
+    // isBuild
     helAppendValOfInnerLogic = '1'; // 标记为可加载
   }
 

@@ -41,7 +41,7 @@ function createScriptElement(options: ICreateScriptOptions) {
 
   const el = doc.createElement('script');
   el.setAttribute('src', src);
-  okeys(rest).forEach(key => el.setAttribute(key, rest[key]));
+  okeys(rest).forEach((key) => el.setAttribute(key, rest[key]));
   if (onloadCb) el.onload = onloadCb;
 
   if (appendToBody) doc.body.appendChild(el);
@@ -68,7 +68,7 @@ function createLinkElement(options: ICreateLinkOptions) {
   const el = doc.createElement('link');
   el.setAttribute('rel', rel || 'stylesheet');
   el.setAttribute('href', href);
-  okeys(rest).forEach(key => el.setAttribute(key, rest[key]));
+  okeys(rest).forEach((key) => el.setAttribute(key, rest[key]));
 
   if (appendToBody) doc.body.appendChild(el);
   else doc.head.appendChild(el);
