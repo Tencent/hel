@@ -4,7 +4,7 @@ import { getAssetUrlType } from '../browser/helper';
 import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 
-const { noop } = commonUtil;
+const { noop, okeys } = commonUtil;
 const assign = Object.assign;
 
 function isAssetExisted(selectors: string) {
@@ -26,7 +26,7 @@ interface ICreateScriptOptions {
 
 function createScriptElement(options: ICreateScriptOptions) {
   const { attrs, appendToBody = true, onloadCb, ex } = options;
-  const { src } = attrs;
+  const { src, ...rest } = attrs;
   if (!src) {
     return false;
   }
@@ -39,12 +39,13 @@ function createScriptElement(options: ICreateScriptOptions) {
     return false;
   }
 
-  const scriptDom = doc.createElement('script');
-  scriptDom.src = src;
-  if (onloadCb) scriptDom.onload = onloadCb;
+  const el = doc.createElement('script');
+  el.setAttribute('src', src);
+  okeys(rest).forEach(key => el.setAttribute(key, rest[key]));
+  if (onloadCb) el.onload = onloadCb;
 
-  if (appendToBody) doc.body.appendChild(scriptDom);
-  else doc.head.appendChild(scriptDom);
+  if (appendToBody) doc.body.appendChild(el);
+  else doc.head.appendChild(el);
 
   return true;
 }
@@ -57,20 +58,20 @@ interface ICreateLinkOptions {
 
 function createLinkElement(options: ICreateLinkOptions) {
   const { appendToBody = false, attrs, ex } = options;
-  const { href, rel, as } = attrs;
+  const { href, rel, ...rest } = attrs;
   const doc = getGlobalThis().document;
   if (!href) return;
   if (ex && isAssetExisted(`link[data-helex="${ex}"]`)) {
     return;
   }
 
-  const linkDom = doc.createElement('link');
-  linkDom.rel = rel || 'stylesheet';
-  linkDom.href = href;
-  if (as) linkDom.as = as;
+  const el = doc.createElement('link');
+  el.setAttribute('rel', rel || 'stylesheet');
+  el.setAttribute('href', href);
+  okeys(rest).forEach(key => el.setAttribute(key, rest[key]));
 
-  if (appendToBody) doc.body.appendChild(linkDom);
-  else doc.head.appendChild(linkDom);
+  if (appendToBody) doc.body.appendChild(el);
+  else doc.head.appendChild(el);
 }
 
 interface ICreateDomOptions {

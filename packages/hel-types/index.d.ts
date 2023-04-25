@@ -38,15 +38,13 @@ export type ItemTag = TagLink | TagScript | TagNoAppend;
 
 export interface ILinkAttrs {
   href: string;
-  rel?: string;
-  as?: string;
-  /** 新增动态字段，方便将来扩展存储其他属性 */
+  /** 新增动态字段，方便将来扩展存储其他属性，目前可能有 rel as crossorigin ... */
   [key: string]: string;
 }
 
 export interface IScriptAttrs {
   src: string;
-  /** 新增动态字段，方便将来扩展存储其他属性 */
+  /** 新增动态字段，方便将来扩展存储其他属性，目前可能有 type crossorigin ... */
   [key: string]: string;
 }
 

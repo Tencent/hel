@@ -17,41 +17,51 @@ function isRelativePath(path) {
   return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
 }
 
-function getAssetBase(tag, /** @type {IAssetInfo} */ assetInfo) {
-  const { isBuildUrl, isNonBuildAndRelative, canAppend, el } = assetInfo;
+function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
+  const isLink = tag === 'link';
+  const { isBuildUrl, isNonBuildAndRelative, canAppend, el, url } = assetInfo;
   const { dataset = {} } = el;
-  const type = el.getAttribute('type');
-  const ex = dataset.ex || '';
+  const ex = dataset.ex;
+  const attrs = isLink ? { href: url } : { src: url };
+  const setAttr = (attrName, allowZeroStr) => {
+    const val = el.getAttribute(attrName);
+    let isValValid = false;
+    if (allowZeroStr) {
+      isValValid = !isNull(val, { nullValues: [null, undefined] });
+    } else {
+      isValValid = !isNull(val);
+    }
+
+    if (isValValid) {
+      attrs[attrName] = val;
+    }
+  };
+  const setItemField = (name, val) => {
+    if (val) {
+      assetItem[name] = val;
+    }
+  };
 
   let tagVar = '';
   if (isBuildUrl) {
     tagVar = tag;
   } else if (isNonBuildAndRelative) {
-    tagVar = tag === 'link' ? 'relativeLink' : 'relativeScript';
+    tagVar = isLink ? 'relativeLink' : 'relativeScript';
   } else {
-    tagVar = tag === 'link' ? 'staticLink' : 'staticScript';
+    tagVar = isLink ? 'staticLink' : 'staticScript';
   }
 
-  const toReturn = {
-    tag: tagVar,
-    append: canAppend,
-    ex,
-  };
+  const assetItem = { tag: tagVar, append: canAppend, attrs };
+  // other item field may added here in the future
+  setItemField('ex', ex);
 
-  // other attrs may added here in the future
-  if (type) {
-    toReturn.type = type; // support esm, type may be 'module' for script
-  }
-
-  return toReturn;
-}
-
-function getLinkAssetBase(/** @type {IAssetInfo} */ assetInfo) {
-  return getAssetBase('link', assetInfo);
-}
-
-function getScriptAssetBase(/** @type {IAssetInfo} */ assetInfo) {
-  return getAssetBase('script', assetInfo);
+  // other ttr field may added here in the future
+  // href, as, rel, crossorigin
+  setAttr('type'); // support esm, type may be 'module' for script
+  setAttr('as');
+  setAttr('rel');
+  setAttr('crossorigin', true);
+  return assetItem;
 }
 
 let custScriptIdx = 0;
@@ -84,6 +94,8 @@ function getAssetInfo(/** @type string */ url, options) {
   const isRelative = isRelativePath(url);
   // 是 homePage 之外相对路径导入的产物路径
   const isNonBuildAndRelative = !isBuildUrl && isRelative;
+  const isStatic = !isBuildUrl && !isRelative;
+  const isIcoAsset = url.endsWith('.ico');
   // 设置了 extractMode 为 build 和 build_no_html 时，当前产物路径是非构建生成的，则直接忽略，不记录到 assetList 数据里
   const ignoreAddToAssetList = !isBuildUrl && (extractMode === 'build' || extractMode === 'build_no_html');
   let allowAddToAssetList = !ignoreAddToAssetList;
@@ -99,6 +111,10 @@ function getAssetInfo(/** @type string */ url, options) {
   }
 
   if (isNonBuildAndRelative) {
+    if (isIcoAsset && !helAppendValOfDataset) {
+      helAppendValOfDataset = '0'; // ico 文件特殊处理，默认是不加载的
+    }
+
     // 如下面错误描述所示，在既没有设置 enableRelativePath=true，又没有显式的标记 data-helappend 的情况下
     // 不允许 homePage 之外的相对路径导入的资源存在
     // 所以对于此类 homePage 之外的相对路径导入的资源，要么用户设置 enableRelativePath=true，要么显式的标记 data-helappend
@@ -123,9 +139,11 @@ function getAssetInfo(/** @type string */ url, options) {
     // 构建时设置 enableRelativePath=true，则允许此类【homePage之外相对路径导入的产物】加入到资源清单列表里
     allowAddToAssetList = true;
     helAppendValOfInnerLogic = helAppendValOfDataset || '0'; // 没有显示设定 data-helappend 时默认标记为不加载
-  } else if (url.endsWith('.ico')) {
+  } else if (isIcoAsset) {
     helAppendValOfInnerLogic = '0'; // ico 文件特殊处理，默认是不加载的
-  } else {
+  } else if (isStatic) {
+    helAppendValOfInnerLogic = '0';
+  } else { // isBuild
     helAppendValOfInnerLogic = '1'; // 标记为可加载
   }
 
@@ -215,10 +233,10 @@ export async function fillAssetList(doms, parseOptions) {
 
   for (let i = 0; i < len; i++) {
     const childDom = doms[i];
-    const { tagName, crossorigin, dataset = {} } = childDom;
+    const { tagName, dataset = {} } = childDom;
     let toPushAsset = null;
     let allowAddToAssetList = false;
-    const assetOptions = { el: childDom, homePage, extractMode, enableRelativePath, type };
+    const assetOptions = { el: childDom, homePage, extractMode, enableRelativePath };
 
     if (!['LINK', 'SCRIPT', 'STYLE'].includes(tagName)) {
       continue;
@@ -228,16 +246,18 @@ export async function fillAssetList(doms, parseOptions) {
     }
 
     if (tagName === 'LINK') {
-      const { as, rel, hreflang = '' } = childDom;
+      const { hreflang = '' } = childDom;
       if (!childDom.href) continue;
 
       let href = mayPrefixHomePage(childDom.href);
-      verbose(`analyze link href[${href}] as[${as}] rel[${rel}]`);
+      verbose(`analyze link [${href}]`);
       // 一些使用了老版本cra的项目，这两个href 在修改了 publicPath 后也不被添加前缀，这里做一下修正
       const legacyHrefs = ['/manifest.json', '/favicon.ico'];
       if (legacyHrefs.includes(href)) {
+        const oldHref = href;
         href = `${homePage}${href}`;
         replaceContentList.push({ toMatch: href, toReplace: href });
+        verbose(`replace link [${oldHref}] to [href]`);
       }
 
       const assetInfo = getAssetInfo(href, assetOptions);
@@ -250,7 +270,7 @@ export async function fillAssetList(doms, parseOptions) {
       if (href.endsWith('.css')) {
         pushToSrcList('css', assetInfo);
       }
-      toPushAsset = { ...getLinkAssetBase(assetInfo), attrs: { href, as, rel, crossorigin } };
+      toPushAsset = buildAssetItem('link', assetInfo);
     } else if (tagName === 'SCRIPT') {
       const { src } = childDom;
       let targetSrc = src;
@@ -280,9 +300,9 @@ export async function fillAssetList(doms, parseOptions) {
       allowAddToAssetList = assetInfo.allowAddToAssetList;
 
       pushToSrcList('js', assetInfo);
-      toPushAsset = { ...getScriptAssetBase(assetInfo), attrs: { src: targetSrc, crossorigin } };
+      toPushAsset = buildAssetItem('script', assetInfo);
     } else if (tagName === 'STYLE') {
-      // style 标签转换为 css 文件存起来
+      // style 标签转换为 css 文件存起来，以便让 hel-micro 用 link 标签加载
       let href = await writeInnerHtml(childDom, 'css', extractOptions);
       if (!href) continue;
 
@@ -291,16 +311,10 @@ export async function fillAssetList(doms, parseOptions) {
       allowAddToAssetList = assetInfo.allowAddToAssetList;
 
       pushToSrcList('css', assetInfo);
-      toPushAsset = { ...getLinkAssetBase(assetInfo), attrs: { href, rel: 'stylesheet' } };
+      toPushAsset = buildAssetItem('link', assetInfo);
     }
 
     if (toPushAsset && allowAddToAssetList) {
-      const judgeValueValid = (value, key) => {
-        if (key === 'crossorigin') return !isNull(value, { nullValues: [null, undefined] });
-        return !isNull(value);
-      };
-
-      toPushAsset.attrs = purify(toPushAsset.attrs, judgeValueValid);
       assetList.push(toPushAsset);
     }
   }

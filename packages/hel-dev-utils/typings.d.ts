@@ -137,7 +137,7 @@ export interface FileDesc {
 
 export interface IAssetInfo {
   url: string;
-  el: HTMLCollectionOf<HTMLScriptElement>;
+  el: HTMLScriptElement;
   isBuildUrl: boolean;
   isNonBuildAndRelative: boolean;
   allowAddToAssetList: boolean;
