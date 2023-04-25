@@ -76,7 +76,6 @@ async function writeInnerHtml(childDom, fileType, extractOptions) {
   return fileWebPath;
 }
 
-
 function getAssetInfo(/** @type string */ url, options) {
   const { homePage, extractMode, enableRelativePath, el } = options;
   const { dataset = {} } = el;
@@ -147,7 +146,7 @@ function getAssetInfo(/** @type string */ url, options) {
     canAppend: helAppend,
     allowAddToAssetList,
   };
-};
+}
 
 /**
  * 提取link、script标签数据并填充到目标assetList

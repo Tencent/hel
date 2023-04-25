@@ -1,7 +1,7 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
-import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAssetUrlType } from '../browser/helper';
+import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 
 const { noop } = commonUtil;

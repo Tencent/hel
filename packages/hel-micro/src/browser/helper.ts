@@ -1,7 +1,7 @@
 import { getGlobalThis } from 'hel-micro-core';
 import storageKeys from '../consts/storageKeys';
-import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 import { AssetUrlType } from '../types';
+import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 
 function isRelativePath(path: string) {
   if (path.startsWith('//')) return false;
@@ -16,7 +16,7 @@ export function getAssetUrlType(webDirPath: string, url: string): AssetUrlType {
     return 'relative';
   }
   return 'static';
-};
+}
 
 export function getIndexedDB() {
   if (!getIndexedDBFactory()) return null;
