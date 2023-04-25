@@ -1,4 +1,5 @@
-import { commonUtil, IControlPreFetchOptions, IPlatformConfigInitFull, originInit } from 'hel-micro-core';
+import type { IControlPreFetchOptions, IPlatformConfigInitFull } from 'hel-micro-core';
+import { commonUtil, originInit } from 'hel-micro-core';
 import * as apis from './apis';
 
 const { purify } = commonUtil;
