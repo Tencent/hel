@@ -63,7 +63,7 @@ export function exposeLib<L extends LibProperties>(libName: string, options?: IE
       asProxy = options.asProxy ?? true;
     }
   }
-  platform = platform || helConsts.DEFAULT_PLAT;
+  platform = platform || core.getAppPlatform(libName) || helConsts.DEFAULT_PLAT;
 
   let libObj = share.getLibObj<L>(libName, platform);
   if (typeof Proxy === 'function' && asProxy) {

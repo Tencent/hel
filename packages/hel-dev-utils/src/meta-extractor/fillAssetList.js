@@ -1,5 +1,6 @@
 /** @typedef {import('../../typings').SrcMap} SrcMap*/
-/** @typedef {{isBuildUrl:boolean, isNonBuildAndRelative: boolean, url:string}} UrlInfo */
+/** @typedef {import('../../typings').IAssetInfo} IAssetInfo */
+/** @typedef {import('../../typings').IUserExtractOptions} IUserExtractOptions */
 import fs from 'fs';
 import util from 'util';
 import { ensureSlash } from '../base-utils/index';
@@ -16,50 +17,48 @@ function isRelativePath(path) {
   return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
 }
 
-function getAssetBase(tag, /** @type UrlInfo */ urlInfo, dataset) {
-  const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
-  // 仅当显式设置了 data-helappend="1" 时，才标识为 hel-micro sdk 加载首屏应用时需要载入的资源
-  const canAppend = dataset['helappend'] === '1';
+function getAssetBase(tag, /** @type {IAssetInfo} */ assetInfo) {
+  const { isBuildUrl, isNonBuildAndRelative, canAppend, el } = assetInfo;
+  const { dataset = {} } = el;
+  const type = el.getAttribute('type');
+  const ex = dataset.ex || '';
 
+  let tagVar = '';
   if (isBuildUrl) {
-    return {
-      tag,
-      // 非ico文件一定是true，ico 文件需要显式设置 helappend
-      append: url.endsWith('.ico') ? canAppend : true,
-    };
+    tagVar = tag;
+  } else if (isNonBuildAndRelative) {
+    tagVar = tag === 'link' ? 'relativeLink' : 'relativeScript';
+  } else {
+    tagVar = tag === 'link' ? 'staticLink' : 'staticScript';
   }
 
-  const ex = dataset['helex'] || '';
-  const append = !!(canAppend || ex);
-
-  if (isNonBuildAndRelative) {
-    return {
-      tag: tag === 'link' ? 'relativeLink' : 'relativeScript',
-      append,
-      ex,
-    };
-  }
-
-  return {
-    tag: tag === 'link' ? 'staticLink' : 'staticScript',
-    append,
+  const toReturn = {
+    tag: tagVar,
+    append: canAppend,
     ex,
   };
+
+  // other attrs may added here in the future
+  if (type) {
+    toReturn.type = type; // support esm, type may be 'module' for script
+  }
+
+  return toReturn;
 }
 
-function getLinkAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
-  return getAssetBase('link', urlInfo, dataset);
+function getLinkAssetBase(/** @type {IAssetInfo} */ assetInfo) {
+  return getAssetBase('link', assetInfo);
 }
 
-function getScriptAssetBase(/** @type UrlInfo */ urlInfo, dataset) {
-  return getAssetBase('script', urlInfo, dataset);
+function getScriptAssetBase(/** @type {IAssetInfo} */ assetInfo) {
+  return getAssetBase('script', assetInfo);
 }
 
 let custScriptIdx = 0;
 
 /**
  * @param {object} parseOptions
- * @param {import('../../typings').IUserExtractOptions} extractOptions
+ * @param {IUserExtractOptions} extractOptions
  */
 async function writeInnerHtml(childDom, fileType, extractOptions) {
   const { appInfo, buildDirFullPath } = extractOptions;
@@ -77,13 +76,86 @@ async function writeInnerHtml(childDom, fileType, extractOptions) {
   return fileWebPath;
 }
 
+
+function getAssetInfo(/** @type string */ url, options) {
+  const { homePage, extractMode, enableRelativePath, el } = options;
+  const { dataset = {} } = el;
+  // 是构建生成的产物路径
+  const isBuildUrl = url.startsWith(homePage);
+  const isRelative = isRelativePath(url);
+  // 是 homePage 之外相对路径导入的产物路径
+  const isNonBuildAndRelative = !isBuildUrl && isRelative;
+  // 设置了 extractMode 为 build 和 build_no_html 时，当前产物路径是非构建生成的，则直接忽略，不记录到 assetList 数据里
+  const ignoreAddToAssetList = !isBuildUrl && (extractMode === 'build' || extractMode === 'build_no_html');
+  let allowAddToAssetList = !ignoreAddToAssetList;
+  if (!allowAddToAssetList) {
+    verbose(` >>> ignore add asset [${url}] to assetList by extractMode=${extractMode}`);
+  }
+
+  // 未显式设置 data-helappend 时，helappend 默认值会走内部逻辑来决定如何赋值
+  let helAppendValOfDataset = dataset['helappend'];
+  let helAppendValOfInnerLogic = '';
+  if (helAppendValOfDataset && !['1', '0'].includes(helAppendValOfDataset)) {
+    throw new Error(`found invalid helappend value [${helAppendValOfDataset}], only accpet 1 or 0 currently`);
+  }
+
+  if (isNonBuildAndRelative) {
+    // 如下面错误描述所示，在既没有设置 enableRelativePath=true，又没有显式的标记 data-helappend 的情况下
+    // 不允许 homePage 之外的相对路径导入的资源存在
+    // 所以对于此类 homePage 之外的相对路径导入的资源，要么用户设置 enableRelativePath=true，要么显式的标记 data-helappend
+    // 设置 enableRelativePath=true 后，优先读可能已存在的 data-helappend 值，没有则默认为 0，表示不加载
+    // 不设置 enableRelativePath=true 的话，则需要用户一定标记 data-helappend 值
+    if (!enableRelativePath && !helAppendValOfDataset) {
+      throw new Error(
+        pfstr(`
+        found asset url [${url}] is a relative path, it is obviously not a valid url for cdn architecture deploy!
+        but if you are sure this url is valid, there are 2 ways to skip this error occured, you can choose any one of them:
+        1. pass enableRelativePath true to hel-dev-utils.extractHelMetaJson method options.
+        2. add data-helappend="0" on the asset dom attribute to tell hel-dev-utils ignore this asset.
+
+        hel-dev-utils will mark this url as relativeLink or relativeScript, and set append as false,
+        if you want sdk append this asset, you can explicitly add data-helappend="1" on the asset dom attribute.
+        a demo will be like:<script src="./a/b.js" data-helappend="1"></script>,<br/>
+        note that the asset will depend on your host site seriously under this situation.
+      `),
+      );
+    }
+
+    // 构建时设置 enableRelativePath=true，则允许此类【homePage之外相对路径导入的产物】加入到资源清单列表里
+    allowAddToAssetList = true;
+    helAppendValOfInnerLogic = helAppendValOfDataset || '0'; // 没有显示设定 data-helappend 时默认标记为不加载
+  } else if (url.endsWith('.ico')) {
+    helAppendValOfInnerLogic = '0'; // ico 文件特殊处理，默认是不加载的
+  } else {
+    helAppendValOfInnerLogic = '1'; // 标记为可加载
+  }
+
+  const helAppendVal = helAppendValOfDataset || helAppendValOfInnerLogic;
+  const helAppend = helAppendVal === '1';
+  const ex = dataset['helex'] || '';
+
+  if (ex && !helAppend) {
+    // 设置了 helex 但同时设置了不加载，会造成歧义，当前版本是不允许的
+    throw new Error(`found conflict setting: [helex="${ex}"]、[helappend="${helAppendVal}"], remove one of them!`);
+  }
+
+  return {
+    url,
+    el,
+    isBuildUrl,
+    isNonBuildAndRelative,
+    canAppend: helAppend,
+    allowAddToAssetList,
+  };
+};
+
 /**
  * 提取link、script标签数据并填充到目标assetList
  * @param {HTMLCollectionOf<HTMLScriptElement>} doms
  * @param {object} parseOptions
  * @param {SrcMap} parseOptions.srcMap
  * @param {boolean} parseOptions.isHead
- * @param {import('../../typings').IUserExtractOptions} parseOptions.extractOptions
+ * @param {IUserExtractOptions} parseOptions.extractOptions
  */
 export async function fillAssetList(doms, parseOptions) {
   const { srcMap, isHead, extractOptions } = parseOptions;
@@ -107,33 +179,15 @@ export async function fillAssetList(doms, parseOptions) {
   const replaceContentList = [];
   verbose(`extractMode is [${extractMode}]`);
 
-  const getUrlInfo = (/** @type string */ url) => {
-    // 是构建生成的产物路径
-    const isBuildUrl = url.startsWith(homePage);
-    const isRelative = isRelativePath(url);
-    // 是homePage之外相对路径导入的产物路径
-    const isNonBuildAndRelative = !isBuildUrl && isRelative;
-    // 设置了 extractMode 为 build 和 build_no_html 时，当前产物路径是非构建生成的，直接忽略
-    const shouldIgnore = !isBuildUrl && (extractMode === 'build' || extractMode === 'build_no_html');
-    if (shouldIgnore) {
-      verbose(` >>> ignore asset [${url}] by extractMode=${extractMode}`);
-    }
+  const pushToSrcList = (assetType, /** @type {IAssetInfo} */ assetInfo) => {
+    const { isBuildUrl, isNonBuildAndRelative, url } = assetInfo;
+    const isAllExtractMode = extractMode === 'all' || extractMode === 'all_no_html';
 
-    return {
-      url,
-      isBuildUrl,
-      isNonBuildAndRelative,
-      shouldIgnore,
-    };
-  };
-
-  const pushToSrcList = (assetType, /** @type UrlInfo */ urlInfo) => {
-    const { isBuildUrl, isNonBuildAndRelative, url } = urlInfo;
     if (assetType === 'css') {
       if (isBuildUrl) {
         return noDupPush(chunkCssSrcList, url);
       }
-      if (extractMode === 'all' || extractMode === 'all_no_html') {
+      if (isAllExtractMode) {
         const list = isNonBuildAndRelative ? relativeCssSrcList : staticCssSrcList;
         return noDupPush(list, url);
       }
@@ -142,28 +196,9 @@ export async function fillAssetList(doms, parseOptions) {
     if (isBuildUrl) {
       return noDupPush(chunkJsSrcList, url);
     }
-    if (extractMode === 'all' || extractMode === 'all_no_html') {
+    if (isAllExtractMode) {
       const list = isNonBuildAndRelative ? relativeJsSrcList : staticJsSrcList;
       return noDupPush(list, url);
-    }
-  };
-
-  const checkRelativePath = (/** @type string */ url, /** @type UrlInfo */ urlInfo) => {
-    if (urlInfo.isNonBuildAndRelative && !enableRelativePath) {
-      throw new Error(
-        pfstr(`
-        found asset url [${url}] is a elative path,
-        it is obviously not a valid url for cdn architecture deploy!
-        but if you are sure this url is valid, there are 2 ways to skip this error occured, you can choose any one of them:
-        1. pass enableRelativePath true to hel-dev-utils.extractHelMetaJson method options.
-        2. add data-helignore="1" on the asset dom attribute to tell hel-dev-utils ignore this asset.
-
-        hel-dev-utils will mark this url as relativeLink or relativeScript, and set append as false,
-        but if you want sdk append this asset, you must explicitly add data-helappend="1" on the asset dom attribute.
-        a demo will be like:<script src="./a/b.js" data-helappend="1"></script>,<br/>
-        note that the asset will depend on your host site seriously under this situation.
-      `),
-      );
     }
   };
 
@@ -183,15 +218,14 @@ export async function fillAssetList(doms, parseOptions) {
     const childDom = doms[i];
     const { tagName, crossorigin, dataset = {} } = childDom;
     let toPushAsset = null;
+    let allowAddToAssetList = false;
+    const assetOptions = { el: childDom, homePage, extractMode, enableRelativePath, type };
+
     if (!['LINK', 'SCRIPT', 'STYLE'].includes(tagName)) {
       continue;
     }
     if (!isNull(dataset)) {
       verbose(`found ${tagName} dataset`, dataset);
-    }
-    if (dataset['helignore'] === '1') {
-      verbose(` >>> ignore asset [${childDom.href || childDom.src || ''}] by data-helignore="1"`);
-      continue;
     }
 
     if (tagName === 'LINK') {
@@ -207,20 +241,17 @@ export async function fillAssetList(doms, parseOptions) {
         replaceContentList.push({ toMatch: href, toReplace: href });
       }
 
-      const urlInfo = getUrlInfo(href);
-      if (urlInfo.shouldIgnore) {
-        continue;
-      }
+      const assetInfo = getAssetInfo(href, assetOptions);
+      allowAddToAssetList = assetInfo.allowAddToAssetList;
 
-      checkRelativePath(href, urlInfo);
       if (hreflang.startsWith('PRIV_CSS')) {
         noDupPush(privCssSrcList, href);
       }
       // 供 shadow-dom 或其他需要知道当前应用所有样式列表的场景用
       if (href.endsWith('.css')) {
-        pushToSrcList('css', urlInfo);
+        pushToSrcList('css', assetInfo);
       }
-      toPushAsset = { ...getLinkAssetBase(urlInfo, dataset), attrs: { href, as, rel, crossorigin } };
+      toPushAsset = { ...getLinkAssetBase(assetInfo), attrs: { href, as, rel, crossorigin } };
     } else if (tagName === 'SCRIPT') {
       const { src } = childDom;
       let targetSrc = src;
@@ -246,30 +277,25 @@ export async function fillAssetList(doms, parseOptions) {
         }
       }
 
-      const urlInfo = getUrlInfo(targetSrc);
-      if (urlInfo.shouldIgnore) {
-        continue;
-      }
+      const assetInfo = getAssetInfo(targetSrc, assetOptions);
+      allowAddToAssetList = assetInfo.allowAddToAssetList;
 
-      checkRelativePath(targetSrc, urlInfo);
-      pushToSrcList('js', urlInfo);
-      toPushAsset = { ...getScriptAssetBase(urlInfo, dataset), attrs: { src: targetSrc, crossorigin } };
+      pushToSrcList('js', assetInfo);
+      toPushAsset = { ...getScriptAssetBase(assetInfo), attrs: { src: targetSrc, crossorigin } };
     } else if (tagName === 'STYLE') {
       // style 标签转换为 css 文件存起来
       let href = await writeInnerHtml(childDom, 'css', extractOptions);
       if (!href) continue;
 
       href = mayPrefixHomePage(href);
-      const urlInfo = getUrlInfo(href);
-      if (urlInfo.shouldIgnore) {
-        continue;
-      }
+      const assetInfo = getAssetInfo(href, assetOptions);
+      allowAddToAssetList = assetInfo.allowAddToAssetList;
 
-      pushToSrcList('css', urlInfo);
-      toPushAsset = { ...getLinkAssetBase(urlInfo, dataset), attrs: { href, rel: 'stylesheet' } };
+      pushToSrcList('css', assetInfo);
+      toPushAsset = { ...getLinkAssetBase(assetInfo), attrs: { href, rel: 'stylesheet' } };
     }
 
-    if (toPushAsset) {
+    if (toPushAsset && allowAddToAssetList) {
       const judgeValueValid = (value, key) => {
         if (key === 'crossorigin') return !isNull(value, { nullValues: [null, undefined] });
         return !isNull(value);
@@ -285,7 +311,7 @@ export async function fillAssetList(doms, parseOptions) {
 
 /**
  * @param {{ srcMap:SrcMap, htmlContent:string, hasReplacedContent:boolean }} parsedRet
- * @param {import('../../typings').IUserExtractOptions} extractOptions
+ * @param {IUserExtractOptions} extractOptions
  */
 export async function fillAssetListByDist(parsedRet, extractOptions) {
   const { buildDirFullPath, appInfo } = extractOptions;

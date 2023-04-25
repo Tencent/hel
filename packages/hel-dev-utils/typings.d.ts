@@ -34,6 +34,8 @@ export interface SrcMap {
   relativeJsSrcList: string[];
   /** 所有相对路径导入的 homePage 之外的 css 列表，在 extractMode 为 all 或 all_no_html 时才会记录 */
   relativeCssSrcList: string[];
+  /** 首屏里的所有被忽略的资源清单放置到此列表，包含未记录到 bodyAssetList privCssSrcList 的，设置了 helappend="0" 的 */
+  ignoredSrcList: string[];
   /** 应用首屏加载时需要插入到 document.head 里的资源列表 */
   headAssetList: string[];
   /** 应用首屏加载时需要插入到 document.body 里的资源列表 */
@@ -131,6 +133,15 @@ export interface FileDesc {
   fileWebPath: string;
   /** 文件在网络上所处的路径（不带host） */
   fileWebPathWithoutHost: string;
+}
+
+export interface IAssetInfo {
+  url: string;
+  el: HTMLCollectionOf<HTMLScriptElement>,
+  isBuildUrl: boolean;
+  isNonBuildAndRelative: boolean;
+  allowAddToAssetList: boolean;
+  canAppend: boolean;
 }
 
 export interface ISubAppBuildDesc {

@@ -38,12 +38,16 @@ export type ItemTag = TagLink | TagScript | TagNoAppend;
 
 export interface ILinkAttrs {
   href: string;
-  rel: string;
+  rel?: string;
   as?: string;
+  /** 新增动态字段，方便将来扩展存储其他属性 */
+  [key: string]: string;
 }
 
 export interface IScriptAttrs {
   src: string;
+  /** 新增动态字段，方便将来扩展存储其他属性 */
+  [key: string]: string;
 }
 
 export interface IAssetItemBase {
@@ -171,7 +175,7 @@ export interface ISubApp {
   update_at: string; // "2019-11-05T08:37:17.000Z"
   create_by: string;
   desc: string;
-  // ----------------- 以下属性目前针对 helpack 有效（如用户自搭后台需要也可复用），还在使用中 -------------
+  // ----------------- 以下属性目前针对 helpack 有效（如用户自搭后台需要也可复用），还在使用中，外部用户可不用关注 -------------
   /** 流水线构建时需要验证的token */
   token: string;
   /** 是否正在灰度中，每次流水线构建时如果 enable_gray 是1，则此值会设置为1 */
@@ -207,7 +211,7 @@ export interface ISubApp {
   /** 是否是星辰项目专属 */
   is_xc: 1 | 0;
 
-  // ----------------- 以下属性目前针对 HelPack 有效，后续可能计划全部下架 --------------
+  // ----------------- 以下属性描述目前针对 helpack 有效，后续可能计划全部下架，外部用户可不用关注 --------------
   api_host: string;
   /** 是否是富媒体类型应用 */
   is_rich: 1 | 0;

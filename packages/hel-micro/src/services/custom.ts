@@ -6,12 +6,12 @@ import { requestGet } from '../util';
 const { DEFAULT_ONLINE_VER } = helConsts;
 const type2conf = {
   js: {
-    endMark: '.js',
+    endMarks: ['.js', '.ts'] as string[],
     reg: '(?<=(src="))[^"]*?(?=")',
     tag: 'script',
   },
   css: {
-    endMark: '.css',
+    endMarks: ['.css'] as string[],
     reg: '(?<=(href="))[^"]*?(?=")',
     tag: 'link',
   },
@@ -33,7 +33,7 @@ const inner = {
     // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
 
     const { host, type } = options;
-    const { endMark, tag, reg } = type2conf[type];
+    const { endMarks, tag, reg } = type2conf[type];
 
     // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
     // SyntaxError: Invalid regular expression: invalid group specifier name
@@ -46,13 +46,24 @@ const inner = {
     const stringList: string[] = [];
 
     rawList.forEach((v) => {
-      if (!inner.isSrcMatchHost(v, host)) return;
-      if (!v.endsWith(endMark)) return;
+      if (!inner.isSrcMatchHost(v, host)) {
+        return;
+      }
+      if (endMarks.every((endMark) => !v.endsWith(endMark))) {
+        return;
+      }
+
       stringList.push(v);
       if (tag === 'script') {
-        return itemList.push({ tag, attrs: { src: v } });
+        const toPush: IScriptItem = { tag, attrs: { src: v } };
+        // TODO: 优化为读取到 module 属性存在就设置 type = 'module'
+        if (v.endsWith('.ts')) {
+          toPush.attrs.type = 'module'; // support esm
+        }
+        itemList.push(toPush);
+      } else {
+        itemList.push({ tag, attrs: { href: v, rel: 'stylesheet' } });
       }
-      itemList.push({ tag, attrs: { href: v, rel: 'stylesheet' } });
     });
     return { itemList, stringList };
   },
@@ -120,6 +131,10 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
         bodyAssetList,
         chunkCssSrcList: cssData.stringList,
         chunkJsSrcList: jsData.stringList,
+        staticCssSrcList: [],
+        staticJsSrcList: [],
+        relativeCssSrcList: [],
+        relativeJsSrcList: [],
       },
     },
   } as unknown as IHelMeta;

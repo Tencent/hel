@@ -6,7 +6,7 @@ export interface IGetOptionsLoose {
   versionId?: string;
 }
 
-export type CssAppendType = 'build' | 'static' | 'relative';
+export type AssetUrlType = 'build' | 'static' | 'relative';
 
 export type AnyRecord = Record<string, any>;
 
@@ -127,7 +127,7 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * 'static' 表示链接的静态css文件
    * 'build' 表示每次构建新生成的css文件
    */
-  cssAppendTypes?: Array<CssAppendType>;
+  cssAppendTypes?: Array<AssetUrlType>;
   /**
    * 默认 []
    * 返回的要排除的 css 链接列表，这些 css 将不会附加到 html 文档上

@@ -1,15 +1,11 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
-import type { CssAppendType, IInnerPreFetchOptions } from '../types';
+import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
+import { getAssetUrlType } from '../browser/helper';
 import { getAllExtraCssList } from '../util';
 
 const { noop } = commonUtil;
 const assign = Object.assign;
-
-function isRelativePath(path: string) {
-  if (path.startsWith('//')) return false;
-  return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
-}
 
 function isAssetExisted(selectors: string) {
   try {
@@ -81,19 +77,9 @@ interface ICreateDomOptions {
   webDirPath: string;
   appendToBody: boolean;
   appendCss: boolean;
-  cssAppendTypes: CssAppendType[];
+  cssAppendTypes: AssetUrlType[];
   excludeCssList: string[];
 }
-
-const getCssType = (webDirPath: string, cssUrl: string): CssAppendType => {
-  if (cssUrl.startsWith(webDirPath)) {
-    return 'build'; // 是构建生成的 css 文件
-  }
-  if (isRelativePath(cssUrl)) {
-    return 'relative';
-  }
-  return 'static';
-};
 
 // 相比 as 写法，谓词可直接将 attrs 类型缩小并适用于整个 if block 块里
 function isLinkAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is ILinkAttrs {
@@ -136,7 +122,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
       if (href.endsWith('.css')) {
         if (
           appendCss
-          && cssAppendTypes.includes(getCssType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
+          && cssAppendTypes.includes(getAssetUrlType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
           && !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
         ) {
           createLinkElement(createLinkOptions);
@@ -171,13 +157,13 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   const allCssList = commonUtil.merge2List(allExtraCssList, chunkCssSrcList);
   const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
 
-  const createAdditionalScripts = (scripts?: string[], appendToBody?: boolean) => {
+  const createAdditionalAssets = (scripts?: string[], appendToBody?: boolean) => {
     if (!scripts) return;
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
       if (scriptUrl.endsWith('.css')) {
         if (appendCss && !excludeCssList.includes(scriptUrl)) {
-          createLinkElement({ appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' } });
+          createLinkElement({ appendToBody, attrs: { href: scriptUrl } });
         }
       } else {
         createScriptElement({ appendToBody, attrs: { src: scriptUrl } });
@@ -186,11 +172,11 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   };
 
   if (useAdditionalScript) {
-    createAdditionalScripts(additionalScripts, false);
-    createAdditionalScripts(additionalBodyScripts, true);
+    createAdditionalAssets(additionalScripts, false);
+    createAdditionalAssets(additionalBodyScripts, true);
   }
 
-  createAdditionalScripts(allExtraCssList, false);
+  createAdditionalAssets(allExtraCssList, false);
 
   const optionsCommon = { excludeCssList, webDirPath, appendCss, cssAppendTypes };
   createDomByAssetList(headAssetList, assign(optionsCommon, { appendToBody: false }));
