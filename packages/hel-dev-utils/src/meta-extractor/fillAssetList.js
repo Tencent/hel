@@ -20,27 +20,7 @@ function isRelativePath(path) {
 function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
   const isLink = tag === 'link';
   const { isBuildUrl, isNonBuildAndRelative, canAppend, el, url } = assetInfo;
-  const { dataset = {} } = el;
-  const ex = dataset.ex;
   const attrs = isLink ? { href: url } : { src: url };
-  const setAttr = (attrName, allowZeroStr) => {
-    const val = el.getAttribute(attrName);
-    let isValValid = false;
-    if (allowZeroStr) {
-      isValValid = !isNull(val, { nullValues: [null, undefined] });
-    } else {
-      isValValid = !isNull(val);
-    }
-
-    if (isValValid) {
-      attrs[attrName] = val;
-    }
-  };
-  const setItemField = (name, val) => {
-    if (val) {
-      assetItem[name] = val;
-    }
-  };
 
   let tagVar = '';
   if (isBuildUrl) {
@@ -52,15 +32,12 @@ function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
   }
 
   const assetItem = { tag: tagVar, append: canAppend, attrs };
-  // other item field may added here in the future
-  setItemField('ex', ex);
+  const attrNames = el.getAttributeNames();
+  attrNames.forEach((name) => {
+    if (['src', 'href'].includes(name)) return;
+    attrs[name] = el.getAttribute(name);
+  });
 
-  // other ttr field may added here in the future
-  // href, as, rel, crossorigin
-  setAttr('type'); // support esm, type may be 'module' for script
-  setAttr('as');
-  setAttr('rel');
-  setAttr('crossorigin', true);
   return assetItem;
 }
 
@@ -154,7 +131,7 @@ function getAssetInfo(/** @type string */ url, options) {
 
   if (ex && !helAppend) {
     // 设置了 helex 但同时设置了不加载，会造成歧义，当前版本是不允许的
-    throw new Error(`found conflict setting: [helex="${ex}"]、[helappend="${helAppendVal}"], remove one of them!`);
+    throw new Error(`found conflict setting: [data-helex="${ex}"]、[data-helappend="${helAppendVal}"], remove one of them!`);
   }
 
   return {

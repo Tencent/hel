@@ -42,21 +42,13 @@ function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | Ver
   return optionsVar;
 }
 
-function markShadowData(appName: string, preFetchOptions: IInnerPreFetchOptions) {
-  if (preFetchOptions.shadow) {
-    // 辅助后续流程标记 css link disable=true, style tag disable=true
-    const cssPrefix = appStyle.getSuitableCssPrefix(appName, preFetchOptions);
-    commonDataUtil.setIgnoreCssPrefix(cssPrefix);
-    commonDataUtil.setIgnoreStyleTagKey(appName);
-    commonDataUtil.setIgnoreCssPrefixKey(cssPrefix, appName);
-  }
-}
-
 function markShadowDataBeforeLoad(appName: string, groupName: string, preFetchOptions: IInnerPreFetchOptions) {
   if (preFetchOptions.shadow) {
     // 辅助后续流程标记 css link disable=true, style tag disable=true
     if (!groupName) return;
     const cssPrefix = appStyle.getSuitableCssPrefix(appName, preFetchOptions);
+    commonDataUtil.setIgnoreCssPrefix(cssPrefix);
+    commonDataUtil.setIgnoreStyleTagKey(appName);
     commonDataUtil.setIgnoreStyleTagKey(groupName);
     commonDataUtil.setIgnoreCssPrefixKey(cssPrefix, groupName);
   }
@@ -132,7 +124,6 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     // 还未开始加载，标记加载中，防止连续的 preFetch 调用重复触发 loadApp
     if (currentLoadStatus !== helLoadStatus.LOADING) {
       setVerLoadStatus(appName, helLoadStatus.LOADING, fixedInnerOptions);
-      markShadowData(appName, fixedInnerOptions);
       loadAssetsStarter = await loadApp(appName, { ...fixedInnerOptions, controlLoadAssets: true });
     }
 

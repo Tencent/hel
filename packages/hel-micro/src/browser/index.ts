@@ -17,16 +17,23 @@ function isAssetExisted(selectors: string) {
   }
 }
 
+function isExLoaded(attrs: Record<string, any>) {
+  const ex = attrs['data-helex'];
+  if (ex && isAssetExisted(`script[data-helex="${ex}"]`)) {
+    return true;
+  }
+}
+
 interface ICreateScriptOptions {
   attrs: IScriptAttrs;
   appendToBody?: boolean;
   onloadCb?: () => void;
-  ex?: string;
 }
 
 function createScriptElement(options: ICreateScriptOptions) {
-  const { attrs, appendToBody = true, onloadCb, ex } = options;
+  const { attrs, appendToBody = true, onloadCb } = options;
   const { src, ...rest } = attrs;
+  const restObj: Record<string, any> = rest;
   if (!src) {
     return false;
   }
@@ -35,13 +42,13 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (isAssetExisted(`script[src="${src}"]`)) {
     return false;
   }
-  if (ex && isAssetExisted(`script[data-helex="${ex}"]`)) {
+  if (isExLoaded(restObj)) {
     return false;
   }
 
   const el = doc.createElement('script');
   el.setAttribute('src', src);
-  okeys(rest).forEach((key) => el.setAttribute(key, rest[key]));
+  okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (onloadCb) el.onload = onloadCb;
 
   if (appendToBody) doc.body.appendChild(el);
@@ -53,22 +60,22 @@ function createScriptElement(options: ICreateScriptOptions) {
 interface ICreateLinkOptions {
   attrs: ILinkAttrs;
   appendToBody?: boolean;
-  ex?: string;
 }
 
 function createLinkElement(options: ICreateLinkOptions) {
-  const { appendToBody = false, attrs, ex } = options;
+  const { appendToBody = false, attrs } = options;
   const { href, rel, ...rest } = attrs;
+  const restObj: Record<string, any> = rest;
   const doc = getGlobalThis().document;
   if (!href) return;
-  if (ex && isAssetExisted(`link[data-helex="${ex}"]`)) {
-    return;
+  if (isExLoaded(restObj)) {
+    return false;
   }
 
   const el = doc.createElement('link');
   el.setAttribute('rel', rel || 'stylesheet');
   el.setAttribute('href', href);
-  okeys(rest).forEach((key) => el.setAttribute(key, rest[key]));
+  okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
 
   if (appendToBody) doc.body.appendChild(el);
   else doc.head.appendChild(el);
@@ -93,27 +100,19 @@ function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAt
   return ['script', 'staticScript', 'relativeScript'].includes(tag);
 }
 
-function getAppend(assetItem: IAssetItem) {
-  const { tag, append } = assetItem;
-  if (['link', 'script'].includes(tag)) {
-    return true;
-  }
-  return append === true;
-}
-
 function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOptions) {
   const { appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList } = options;
 
   assetList.forEach((v) => {
-    const { tag, attrs, ex } = v;
-    const append = getAppend(v);
+    // 兼容历史元数据，无 append 的话就默认为 true
+    const { tag, attrs, append = true } = v;
     if (!append) {
       return;
     }
     // 处理 link 标签
     if (isLinkAttrs(tag, attrs)) {
       // Object.assign is much faster than spread operator
-      const createLinkOptions = { appendToBody, attrs, ex };
+      const createLinkOptions = { appendToBody, attrs };
       const { href } = attrs;
       // .ico 文件默认不加载
       if (href.endsWith('.ico')) {
@@ -136,7 +135,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
     }
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
-      createScriptElement({ appendToBody, attrs, ex });
+      createScriptElement({ appendToBody, attrs });
     }
   });
 }
@@ -146,7 +145,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
  */
 export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions: IInnerPreFetchOptions) {
   // 重命名，避免 @typescript-eslint/naming-convention 警告
-  const { name, additional_scripts: additionalScripts = [], additional_body_scripts: additionalBodyScripts = [] } = app;
+  const { additional_scripts: additionalScripts = [], additional_body_scripts: additionalBodyScripts = [] } = app;
   const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList = [] } = version.src_map;
   const {
     useAdditionalScript = false,

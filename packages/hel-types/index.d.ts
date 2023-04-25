@@ -50,7 +50,6 @@ export interface IScriptAttrs {
 
 export interface IAssetItemBase {
   append?: boolean;
-  ex?: string;
 }
 
 export interface ILinkItem extends IAssetItemBase {

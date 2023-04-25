@@ -12,7 +12,7 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const helConsts = {
-  CORE_VER: '4.5.2',
+  CORE_VER: '4.6.1',
   DEFAULT_API_PREFIX: 'https://unpkg.com',
   DEFAULT_API_URL: '/openapi/v1/app/info',
   DEFAULT_ONLINE_VER,

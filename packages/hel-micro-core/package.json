@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-core",
-  "version": "4.5.2",
+  "version": "4.6.1",
   "description": "hel micro core",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "hel-types": "^4.1.0"
+    "hel-types": "^4.2.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -40,7 +40,7 @@
     "rollup": "^2.23.0"
   },
   "peerDependencies": {
-    "hel-types": "^4.1.0"
+    "hel-types": "^4.2.0"
   },
   "bundleDependencies": false,
   "deprecated": false

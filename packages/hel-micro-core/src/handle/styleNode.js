@@ -8,6 +8,17 @@ const HEL_CSS_MARK_START = '/* @helstart ';
 const HEL_CSS_MARK_END = ' @helend */';
 const START_LEN = HEL_CSS_MARK_START.length;
 
+function matchIgnoreCssPrefix(node, url) {
+  const bus = getHelEventBus();
+  const matchedPrefix = commonDataUtil.getMatchedIgnoreCssPrefix(url);
+  // 分析 url ，符合 shadow 特征的不追加 dom，仅发射事件让上层适配层去处理
+  if (matchedPrefix) {
+    commonDataUtil.setIgnoreCssPrefixCssUrl(matchedPrefix, url);
+    bus.emit(evName.cssLinkTagAdded(matchedPrefix), { nodes: [node] });
+  }
+  return matchedPrefix;
+}
+
 function resetStyleText(groupName) {
   const g = getGlobalThis();
   if (!g) return;
@@ -24,30 +35,44 @@ function resetStyleText(groupName) {
   }
 }
 
-function handleStyleTagAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
-  const { tagName, innerText } = node;
-  if (tagName !== 'STYLE' || !innerText) {
-    return;
-  }
-  const markStart = innerText.indexOf(HEL_CSS_MARK_START);
-  // starts with '/* @helstart '
-  if (markStart < 0) {
+function handleStyleAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
+  const { tagName, innerText, href } = node;
+  if (!['STYLE', 'LINK'].includes(tagName)) return;
+
+  // is style tag or link tag
+  const isStyleTag = tagName === 'STYLE';
+  if (tagName === 'STYLE' && !innerText) {
     return;
   }
 
-  // 处理 css-loader 动态向 heade 添加 style 标签的情况
-  // /* @helstart hel-tpl-remote-react-comp-ts @helend */ --> hel-tpl-remote-react-comp-ts
-  const markEnd = innerText.indexOf(HEL_CSS_MARK_END);
-  const helKey = innerText.substring(START_LEN + markStart, markEnd);
-  if (helKey) {
-    const groupName = helKey.trim();
-    setDataset(node, 'gname', groupName);
-    if (ignoreStyleTagMap[groupName]) {
-      disableNode(node);
+  if (isStyleTag) {
+    const markStart = innerText.indexOf(HEL_CSS_MARK_START);
+    // starts with '/* @helstart '
+    if (markStart < 0) {
+      return;
     }
-    const bus = getHelEventBus();
-    commonDataUtil.appendStyleTagText(groupName, innerText);
-    bus.emit(evName.styleTagAdded(groupName), { nodes: [node] });
+
+    // 处理 css-loader 动态向 heade 添加 style 标签的情况
+    // /* @helstart hel-tpl-remote-react-comp-ts @helend */ --> hel-tpl-remote-react-comp-ts
+    const markEnd = innerText.indexOf(HEL_CSS_MARK_END);
+    const helKey = innerText.substring(START_LEN + markStart, markEnd);
+    if (helKey) {
+      const groupName = helKey.trim();
+      setDataset(node, 'gname', groupName);
+      if (ignoreStyleTagMap[groupName]) {
+        disableNode(node);
+      }
+      const bus = getHelEventBus();
+      commonDataUtil.appendStyleTagText(groupName, innerText);
+      bus.emit(evName.styleTagAdded(groupName), { nodes: [node] });
+    }
+    return;
+  }
+
+  // process link tag
+  const matchedPrefix = matchIgnoreCssPrefix(node, href);
+  if (matchedPrefix) {
+    disableNode(node);
   }
 }
 
@@ -91,7 +116,7 @@ export function obStyleTagInsert() {
 
       const len = addedNodes.length;
       for (let i = 0; i < len; i++) {
-        handleStyleTagAdded(addedNodes[i], ignoreStyleTagMap);
+        handleStyleAdded(addedNodes[i], ignoreStyleTagMap);
       }
 
       const remLen = removedNodes.length;

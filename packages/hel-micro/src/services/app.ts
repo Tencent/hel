@@ -35,7 +35,7 @@ const inner = {
     const { chunkCssSrcList = [], chunkJsSrcList = [] } = srcMap;
     const fn = alt.getHookFn(options, 'beforeAppendAssetNode');
     const assetList = chunkCssSrcList.concat(chunkJsSrcList);
-    const { appendCss, platform } = options;
+    const { platform } = options;
 
     // 记录资源映射的 配置上下文数据，方便以下作用
     // 1 记录 beforeAppendAssetNode 句柄引用，方便 patchAppendChild 逻辑里做追加的资源替换
@@ -50,7 +50,6 @@ const inner = {
           name,
           ver,
           beforeAppend: fn,
-          append: appendCss,
         });
         core.setCommonData(KEY_ASSET_CTX, url, urlData);
       }
