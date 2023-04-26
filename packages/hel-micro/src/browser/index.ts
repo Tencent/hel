@@ -1,8 +1,8 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
-import { getAssetUrlType } from '../browser/helper';
 import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
+import { getAssetUrlType } from './helper';
 
 const { noop, okeys } = commonUtil;
 const assign = Object.assign;
@@ -114,8 +114,8 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
       // Object.assign is much faster than spread operator
       const createLinkOptions = { appendToBody, attrs };
       const { href } = attrs;
-      // .ico 文件默认不加载
-      if (href.endsWith('.ico')) {
+      // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
+      if (href.endsWith('.ico') && v.append !== true) {
         return;
       }
 

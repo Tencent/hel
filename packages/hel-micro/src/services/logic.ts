@@ -1,3 +1,4 @@
+import type { IGetOptions } from 'hel-micro-core';
 import {
   getAppMeta,
   getPlatform,
@@ -5,7 +6,6 @@ import {
   getVerExtraCssList,
   getVerLib,
   getVersion,
-  IGetOptions,
   libReady,
   log,
   setAppMeta,

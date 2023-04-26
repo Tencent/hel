@@ -1,6 +1,6 @@
 import { getGlobalThis } from 'hel-micro-core';
 import storageKeys from '../consts/storageKeys';
-import { AssetUrlType } from '../types';
+import type { AssetUrlType } from '../types';
 import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 
 function isRelativePath(path: string) {

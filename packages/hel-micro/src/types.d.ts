@@ -122,9 +122,10 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    */
   appendCss?: boolean;
   /**
-   * default: ['static', 'build']
+   * default: ['static', 'relative', 'build']
    * 该配置项在 appendCss 为 true 时有效，表示按要附加哪几种类型的 css 链接到 html 文档上
-   * 'static' 表示链接的静态css文件
+   * 'static' 表示homePage之外 绝对路径导入的css文件
+   * 'relative' 表示homePage之外 相对路径导入的css文件
    * 'build' 表示每次构建新生成的css文件
    */
   cssAppendTypes?: Array<AssetUrlType>;
