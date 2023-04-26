@@ -57,7 +57,12 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
      * @returns
      */
     getPublicPathOrUrl: (fallbackPathOrUrl = '/', ensureEndSlash = true) => {
-      const pathOrUrl = envParams.appHomePage || fallbackPathOrUrl;
+      let pathOrUrl = envParams.appHomePage;
+      // 用户传递了非 / 的值时，优先采用用户传递的值
+      if (pathOrUrl === '/' && fallbackPathOrUrl !== '/') {
+        pathOrUrl = fallbackPathOrUrl;
+      }
+
       const finalPathOrUrl = base.getPublicPathOrUrl(pathOrUrl, ensureEndSlash);
       return finalPathOrUrl;
     },
