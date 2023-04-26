@@ -37,10 +37,24 @@ function tryMarkFlag() {
   }
 }
 
+function getCodeHost() {
+  let loc = '';
+  try {
+    throw new Error('codeHost');
+  } catch (err) {
+    const stackArr = err.stack.split('\n');
+    loc = stackArr[stackArr.length - 1] || '';
+  }
+  // at main (http://localhost:3103/static/js/bundle.js:343:60)
+  const codeHost = loc.split('//')[1].split('/')[0];
+  return codeHost;
+}
+
 function getIsMaster() {
   const globalThis = getGlobalThis();
-  const { HelMicroCore, __MASTER_APP_LOADED__: masterFlag, __HEL_MICRO_SHARED__: microShared } = globalThis;
   const { isFirstMod, isBeforeCore } = info;
+
+  // 如果不是第一个载入的，一定是子模块
   if (!isFirstMod) {
     return false;
   }
@@ -51,22 +65,15 @@ function getIsMaster() {
   if (isBeforeCore) {
     return true;
   }
-  // 处于 core 之后加载，core 已提升为 external
-  // 此时假定所用应用均接入 hel-iso 并再也未使用 external core 的 isMasterApp 判断
-  if (HelMicroCore) {
+
+  // 当前运行环境和代码的位置一致，一定是主应用
+  const { location } = globalThis;
+  const codeHost = getCodeHost();
+  if (location && location.host === codeHost) {
     return true;
   }
-  // 分析 microShared 数据做最后的兜底
-  if (microShared) {
-    const map = microShared.cacheRoot.appGroupName2platform;
-    if (Object.keys(map).length) {
-      // 已存在相关子模块数据，确认为非主应用
-      return false;
-    }
-  }
-  // 处于 core 之后加载，core 未提升，走老规则判断
-  // 因 iso 处于 core 之后加载，注意此时 masterFlag 一定已设为了布尔值
-  return masterFlag;
+
+  return false;
 }
 
 /**

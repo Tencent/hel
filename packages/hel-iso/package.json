@@ -1,6 +1,6 @@
 {
   "name": "hel-iso",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "this pack can only be bundeld with project, using it with external will make mistake",
   "repository": {
     "type": "git",
