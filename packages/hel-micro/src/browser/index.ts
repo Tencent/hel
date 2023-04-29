@@ -17,11 +17,17 @@ function isAssetExisted(selectors: string) {
   }
 }
 
-function isExLoaded(attrs: Record<string, any>, tag = 'script') {
+function isExLoaded(attrs: Record<string, any>, tag: string) {
   const ex = attrs['data-helex'];
-  if (ex && isAssetExisted(`${tag}[data-helex="${ex}"]`)) {
-    return true;
+  const g = getGlobalThis();
+  if (ex) {
+    if (tag === 'script' && g[ex]) { // script 型的 ex，优先查 globalThis 上是否已绑定
+      return true;
+    }
+    // 查 helex 特征值对应的资源是否存在
+    return isAssetExisted(`${tag}[data-helex="${ex}"]`);
   }
+  return false;
 }
 
 interface ICreateScriptOptions {
@@ -42,7 +48,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (isAssetExisted(`script[src="${src}"]`)) {
     return false;
   }
-  if (isExLoaded(restObj)) {
+  if (isExLoaded(restObj, 'script')) {
     return false;
   }
 
