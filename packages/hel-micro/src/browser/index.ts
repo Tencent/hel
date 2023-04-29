@@ -17,9 +17,9 @@ function isAssetExisted(selectors: string) {
   }
 }
 
-function isExLoaded(attrs: Record<string, any>) {
+function isExLoaded(attrs: Record<string, any>, tag = 'script') {
   const ex = attrs['data-helex'];
-  if (ex && isAssetExisted(`script[data-helex="${ex}"]`)) {
+  if (ex && isAssetExisted(`${tag}[data-helex="${ex}"]`)) {
     return true;
   }
 }
@@ -68,7 +68,7 @@ function createLinkElement(options: ICreateLinkOptions) {
   const restObj: Record<string, any> = rest;
   const doc = getGlobalThis().document;
   if (!href) return;
-  if (isExLoaded(restObj)) {
+  if (isExLoaded(restObj, 'link')) {
     return false;
   }
 
@@ -141,7 +141,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
 }
 
 /**
- * 加载应用各项资源
+ * 加载应用首屏的各项资源
  */
 export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions: IInnerPreFetchOptions) {
   // 重命名，避免 @typescript-eslint/naming-convention 警告
