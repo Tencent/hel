@@ -114,7 +114,8 @@ function getAssetInfo(url, options) {
     // 设置 enableRelativePath=true 后，优先读可能已存在的 data-helappend 值，没有则默认为 0，表示不加载
     // 不设置 enableRelativePath=true 的话，则需要用户一定标记 data-helappend 值
     if (!enableRelativePath && !helAppendValOfDataset) {
-      throw new Error(pfstr(`
+      throw new Error(
+        pfstr(`
         found asset url [${url}] is a relative path, it is obviously not a valid url for cdn architecture deploy!
         but if you are sure this url is valid, there are 2 ways to skip this error occured, you can choose any one of them:
         1. pass enableRelativePath true to hel-dev-utils.extractHelMetaJson method options.
@@ -124,7 +125,8 @@ function getAssetInfo(url, options) {
         if you want sdk append this asset, you can explicitly add data-helappend="1" on the asset dom attribute.
         a demo will be like:<script src="./a/b.js" data-helappend="1"></script>,<br/>
         note that the asset will depend on your host site seriously under this situation.
-      `));
+      `),
+      );
     }
 
     // 构建时设置 enableRelativePath=true，则允许此类【homePage之外相对路径导入的产物】加入到资源清单列表里
@@ -149,10 +151,12 @@ function getAssetInfo(url, options) {
   const helAppend = helAppendVal === '1';
   if (ex && !helAppend) {
     // 设置了 helex 但同时设置了不加载，会造成歧义，当前版本是不允许的
-    throw new Error(pfstr(`
+    throw new Error(
+      pfstr(`
       found conflict setting for helex: [data-helex="${ex}"]、[data-helappend="${helAppendVal}"],
       remove data-helappend( append is true for helex by default ) or set data-helappend="1"!
-    `));
+    `),
+    );
   }
 
   return {

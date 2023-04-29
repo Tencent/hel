@@ -9,9 +9,9 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import cst from './configs/consts';
 import { verbose } from './inner-utils/index';
 import { pfstr } from './inner-utils/str';
-import cst from './configs/consts';
 
 /**
  * @param {Record<string, any>} pkg - 用户模块的 package.json 文件
@@ -73,13 +73,15 @@ export default function (pkg, subAppFilePathOrOptions) {
     }
   }
   if (!srcAppGroupName) {
-    throw new Error(pfstr(`
+    throw new Error(
+      pfstr(`
       HEL_APP_GROUP_NAME or LIB_NAME not found in src/configs/subApp.(js|ts) file,
       your should expose it like below:
       export const HEL_APP_GROUP_NAME = 'your-app';
       or
       export const LIB_NAME = 'your-app';
-  `));
+  `),
+    );
   }
 
   const pgkAppGroupName = pkg.appGroupName || pkg.name;

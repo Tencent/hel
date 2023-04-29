@@ -241,9 +241,9 @@ export interface ICreateSubAppOptions {
    */
   npmCdnType?: 'unpkg' | 'jsdelivr';
   /**
- * default: true
- * 是否是语义化api格式的cdn链接
- */
+   * default: true
+   * 是否是语义化api格式的cdn链接
+   */
   semverApi?: boolean;
 }
 

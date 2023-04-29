@@ -23,7 +23,8 @@ export function ensureSlash(inputPath, options) {
     }
   }
   if (!isEnd) {
-    if (shouldDelSlash) { // del start slash
+    if (shouldDelSlash) {
+      // del start slash
       return inputPath.substring(1);
     }
     if (shouldAddSlash) {
