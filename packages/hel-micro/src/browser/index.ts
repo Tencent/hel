@@ -21,7 +21,8 @@ function isExLoaded(attrs: Record<string, any>, tag: string) {
   const ex = attrs['data-helex'];
   const g = getGlobalThis();
   if (ex) {
-    if (tag === 'script' && g[ex]) { // script 型的 ex，优先查 globalThis 上是否已绑定
+    if (tag === 'script' && g[ex]) {
+      // script 型的 ex，优先查 globalThis 上是否已绑定
       return true;
     }
     // 查 helex 特征值对应的资源是否存在
