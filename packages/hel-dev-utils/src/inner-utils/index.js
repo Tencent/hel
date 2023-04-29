@@ -11,7 +11,7 @@ import cst from '../configs/consts';
 export function getAllFilePath(dirPath) {
   const _getAllFilePath = (dirPath, filePathList) => {
     const names = fs.readdirSync(dirPath);
-    names.forEach(function (name) {
+    names.forEach((name) => {
       const stats = fs.statSync(`${dirPath}/${name}`);
       if (stats.isDirectory()) {
         _getAllFilePath(`${dirPath}/${name}`, filePathList);
@@ -52,7 +52,7 @@ export function makeFileDescList(fileFullPathList, appHomePage, splitStrForFileP
 }
 
 export function verbose(...args) {
-  console.log(`[Hel-verbose:] `, ...args);
+  console.log('[Hel-verbose:] ', ...args);
 }
 
 /**

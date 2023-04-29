@@ -5,40 +5,28 @@
 |
 |--------------------------------------------------------------------------
 */
+/** @typedef {import('../typings').ICheckOptions} ICheckOptions */
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import consts from './configs/consts';
 import { verbose } from './inner-utils/index';
-
-const { DEFAULT_GUESS_SUB_APP_CONF_PATH } = consts;
+import { pfstr } from './inner-utils/str';
+import cst from './configs/consts';
 
 /**
- *
  * @param {Record<string, any>} pkg - 用户模块的 package.json 文件
- * @param {string | {fileFullPath?:string, checkEnv?:boolean}} [fileFullPathOrOptions] - 文件全路径名字，可带或不带后缀（.ts, .js）
- * 不传递 fileFullPath 的话，会按照下面的路径去猜测：
- *
- * 执行的代码位于：<projectDir>/node_modules/hel-dev-utils/lib/index.js
- * 推测路径：path.join(__dirname, '../../../src/configs/subApp')
- *
- * 因通常 check 都是在 <projectDir>/scripts/check.js 里执行，如要传递可写为
- * ```js
- *  const fileFullPath = path.join(__dirname, '../src/configs/subApp');
- * ```
- *
- * checkEnv（ default: true ）, 是否检查 process.env.HEL_APP_GROUP_NAME 和 代码里的定义是否对应
+ * @param {ICheckOptions['fileFullPath'] | ICheckOptions} [subAppFilePathOrOptions] - 文件全路径名字，可带或不带后缀（.ts, .js）
  */
-export default function (pkg, fileFullPathOrOptions) {
-  let fileFullPath = path.join(__dirname, DEFAULT_GUESS_SUB_APP_CONF_PATH);
+export default function (pkg, subAppFilePathOrOptions) {
+  let fileFullPath = path.join(__dirname, cst.DEFAULT_GUESS_SUB_APP_CONF_PATH);
   let checkEnv = true;
-  if (fileFullPathOrOptions) {
-    if (typeof fileFullPathOrOptions === 'string') {
-      fileFullPath = fileFullPathOrOptions;
+  if (subAppFilePathOrOptions) {
+    if (typeof subAppFilePathOrOptions === 'string') {
+      fileFullPath = subAppFilePathOrOptions;
     } else {
-      fileFullPath = fileFullPathOrOptions.fileFullPath;
-      if (fileFullPathOrOptions.checkEnv !== undefined) {
-        checkEnv = fileFullPathOrOptions.checkEnv;
+      fileFullPath = subAppFilePathOrOptions.fileFullPath;
+      if (subAppFilePathOrOptions.checkEnv !== undefined) {
+        checkEnv = subAppFilePathOrOptions.checkEnv;
       }
     }
   }
@@ -68,8 +56,7 @@ export default function (pkg, fileFullPathOrOptions) {
 
   const fileStr = content.toString();
   const strList = fileStr.split(os.EOL);
-  for (let i = 0; i < strList.length; i++) {
-    const item = strList[i];
+  for (const item of strList) {
     // export const HEL_APP_GROUP_NAME = 'your-app';
     // or
     // export const LIB_NAME = 'your-app';
@@ -86,13 +73,13 @@ export default function (pkg, fileFullPathOrOptions) {
     }
   }
   if (!srcAppGroupName) {
-    throw new Error(`
-    HEL_APP_GROUP_NAME or LIB_NAME not found in src/configs/subApp.(js|ts) file,
-    your should expose it like below:
-    export const HEL_APP_GROUP_NAME = 'your-app';
-    or
-    export const LIB_NAME = 'your-app';
-  `);
+    throw new Error(pfstr(`
+      HEL_APP_GROUP_NAME or LIB_NAME not found in src/configs/subApp.(js|ts) file,
+      your should expose it like below:
+      export const HEL_APP_GROUP_NAME = 'your-app';
+      or
+      export const LIB_NAME = 'your-app';
+  `));
   }
 
   const pgkAppGroupName = pkg.appGroupName || pkg.name;
@@ -103,7 +90,7 @@ export default function (pkg, fileFullPathOrOptions) {
   }
 
   if (checkEnv) {
-    // 以下常量由ci&cd系统注入（通常由流水线变量或bash脚本注入）
+    // 以下常量由 ci&cd 系统注入（通常由流水线变量或 bash 脚本注入）
     const { HEL_APP_GROUP_NAME } = process.env;
 
     if (pgkAppGroupName !== HEL_APP_GROUP_NAME) {

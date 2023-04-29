@@ -1,16 +1,46 @@
 /** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import { getNpmCdnHomePage } from '../inner-utils/index';
 
-export function ensureSlash(inputPath, needsSlash) {
-  const hasEndSlash = inputPath.endsWith('/');
-  if (hasEndSlash && !needsSlash) {
-    return inputPath.substr(0, inputPath.length - 1);
+/**
+ * @param {string} inputPath
+ * @param {Object} options
+ * @param {'end' | 'start'} [options.loc='end']
+ * @param {boolean} [options.need=false]
+ */
+export function ensureSlash(inputPath, options) {
+  const { need, loc = 'end' } = options;
+  const isEnd = loc === 'end';
+  const hasSlash = isEnd ? inputPath.endsWith('/') : inputPath.startsWith('/');
+
+  const shouldDelSlash = hasSlash && !need;
+  const shouldAddSlash = !hasSlash && need;
+  if (isEnd) {
+    if (shouldDelSlash) {
+      return inputPath.substring(0, inputPath.length - 1);
+    }
+    if (shouldAddSlash) {
+      return `${inputPath}/`;
+    }
   }
-  if (!hasEndSlash && needsSlash) {
-    return `${inputPath}/`;
+  if (!isEnd) {
+    if (shouldDelSlash) { // del start slash
+      return inputPath.substring(1);
+    }
+    if (shouldAddSlash) {
+      return `/${inputPath}`;
+    }
   }
+
   return inputPath;
 }
+
+/** 语义化 slash 相关操作，方便上层理解和使用 */
+export const slash = {
+  start: (path) => ensureSlash(path, { loc: 'start', need: true }),
+  noStart: (path) => ensureSlash(path, { loc: 'start', need: false }),
+  end: (path) => ensureSlash(path, { loc: 'end', need: true }),
+  noEnd: (path) => ensureSlash(path, { loc: 'end', need: false }),
+};
 
 export function getHelProcessEnvParams() {
   // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
@@ -80,43 +110,9 @@ export function getJsonpFnName(appName, useTimestampSuffix = true) {
 /**
  *
  * @param {string} homePage - 应用homePage
- * @param {boolean} [needsSlash]
+ * @param {boolean} [needSlash]
  * @returns
  */
-export function getPublicPathOrUrl(homePage, needsSlash = true) {
-  return ensureSlash(homePage, needsSlash);
-}
-
-/**
- * 返回 react 相关的包体 externals 映射对象
- * @returns
- */
-export function getReactExternals() {
-  return {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-    'react-reconciler': 'ReactReconciler',
-    'react-is': 'ReactIs',
-  };
-}
-
-/**
- * 返回 vue3 相关的包体 externals 映射对象，目前已有以下版本
- * ```
- * @returns
- */
-export function getVue3Externals() {
-  return {
-    vue: 'Vue',
-  };
-}
-
-/**
- * 返回 vue2 相关的包体 externals 映射对象，目前已有以下版本
- * @returns
- */
-export function getVue2Externals() {
-  return {
-    vue: 'Vue',
-  };
+export function getPublicPathOrUrl(homePage, needSlash = true) {
+  return ensureSlash(homePage, { loc: 'end', need: needSlash });
 }

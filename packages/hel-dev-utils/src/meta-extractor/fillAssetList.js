@@ -1,9 +1,9 @@
 /** @typedef {import('../../typings').SrcMap} SrcMap*/
 /** @typedef {import('../../typings').IAssetInfo} IAssetInfo */
-/** @typedef {import('../../typings').IUserExtractOptions} IUserExtractOptions */
+/** @typedef {import('../../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import fs from 'fs';
 import util from 'util';
-import { ensureSlash } from '../base-utils/index';
+import { slash } from '../base-utils/index';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull } from '../inner-utils/obj';
@@ -11,6 +11,14 @@ import { pfstr } from '../inner-utils/str';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
+
+function getDatasetVal(dataset, key, defaultValIfOnlyKey) {
+  const hasKey = Object.prototype.hasOwnProperty.call(dataset, key);
+  if (hasKey) {
+    return dataset[key] || defaultValIfOnlyKey;
+  }
+  return '';
+}
 
 function isRelativePath(path) {
   if (path.startsWith('//')) return false;
@@ -34,7 +42,9 @@ function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
   const assetItem = { tag: tagVar, append: canAppend, attrs };
   const attrNames = el.getAttributeNames();
   attrNames.forEach((name) => {
-    if (['src', 'href'].includes(name)) return;
+    // src href 上面已记录真正的目标值，故移除
+    // data-helappend 只在提取元数据辅助计算 append 值时用到，故此处移除
+    if (['src', 'href', 'data-helappend'].includes(name)) return;
     attrs[name] = el.getAttribute(name);
   });
 
@@ -44,11 +54,12 @@ function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
 let custScriptIdx = 0;
 
 /**
- * @param {object} parseOptions
- * @param {IUserExtractOptions} extractOptions
+ * @param {object} childDom
+ * @param {string} fileType
+ * @param {IInnerFillAssetListOptions} options
  */
-async function writeInnerHtml(childDom, fileType, extractOptions) {
-  const { appInfo, buildDirFullPath } = extractOptions;
+async function writeInnerHtml(childDom, fileType, options) {
+  const { homePage, buildDirFullPath } = options;
   const { innerHTML } = childDom;
   if (!innerHTML) return '';
 
@@ -56,14 +67,18 @@ async function writeInnerHtml(childDom, fileType, extractOptions) {
   custScriptIdx += 1;
   const scriptName = `hel_userChunk_${custScriptIdx}.${fileType}`;
   const fileAbsolutePath = `${buildDirFullPath}/${scriptName}`;
-  const fileWebPath = `${ensureSlash(appInfo.homePage, false)}/${scriptName}`;
+  const fileWebPath = `${slash.noEnd(homePage)}/${scriptName}`;
 
   await writeFile(fileAbsolutePath, innerHTML);
   verbose(`write done, the web file will be ${fileWebPath} later`);
   return fileWebPath;
 }
 
-function getAssetInfo(/** @type string */ url, options) {
+/**
+ * @param {string} url
+ * @param {IInnerFillAssetListOptions} options
+ */
+function getAssetInfo(url, options) {
   const { homePage, extractMode, enableRelativePath, el } = options;
   const { dataset = {} } = el;
   // 是构建生成的产物路径
@@ -81,12 +96,13 @@ function getAssetInfo(/** @type string */ url, options) {
   }
 
   // 未显式设置 data-helappend 时，helappend 默认值会走内部逻辑来决定如何赋值
-  let helAppendValOfDataset = dataset['helappend'];
+  let helAppendValOfDataset = getDatasetVal(dataset, 'helappend', '1');
   let helAppendValOfInnerLogic = '';
   if (helAppendValOfDataset && !['1', '0'].includes(helAppendValOfDataset)) {
     throw new Error(`found invalid helappend value [${helAppendValOfDataset}], only accpet 1 or 0 currently`);
   }
 
+  const ex = dataset.helex || '';
   if (isNonBuildAndRelative) {
     if (isIcoAsset && !helAppendValOfDataset) {
       helAppendValOfDataset = '0'; // ico 文件特殊处理，默认是不加载的
@@ -98,8 +114,7 @@ function getAssetInfo(/** @type string */ url, options) {
     // 设置 enableRelativePath=true 后，优先读可能已存在的 data-helappend 值，没有则默认为 0，表示不加载
     // 不设置 enableRelativePath=true 的话，则需要用户一定标记 data-helappend 值
     if (!enableRelativePath && !helAppendValOfDataset) {
-      throw new Error(
-        pfstr(`
+      throw new Error(pfstr(`
         found asset url [${url}] is a relative path, it is obviously not a valid url for cdn architecture deploy!
         but if you are sure this url is valid, there are 2 ways to skip this error occured, you can choose any one of them:
         1. pass enableRelativePath true to hel-dev-utils.extractHelMetaJson method options.
@@ -109,8 +124,7 @@ function getAssetInfo(/** @type string */ url, options) {
         if you want sdk append this asset, you can explicitly add data-helappend="1" on the asset dom attribute.
         a demo will be like:<script src="./a/b.js" data-helappend="1"></script>,<br/>
         note that the asset will depend on your host site seriously under this situation.
-      `),
-      );
+      `));
     }
 
     // 构建时设置 enableRelativePath=true，则允许此类【homePage之外相对路径导入的产物】加入到资源清单列表里
@@ -119,7 +133,13 @@ function getAssetInfo(/** @type string */ url, options) {
   } else if (isIcoAsset) {
     helAppendValOfInnerLogic = '0'; // ico 文件特殊处理，默认是不加载的
   } else if (isStatic) {
-    helAppendValOfInnerLogic = '0';
+    if (ex) {
+      // 对于标记了 helex 的元素，默认是 append 的，只能能不能真的追加到文档上，取决于 hel-micro 的重复检测结果
+      // 重复则不追加，不重复则追加
+      helAppendValOfInnerLogic = helAppendValOfDataset || '1';
+    } else {
+      helAppendValOfInnerLogic = '0';
+    }
   } else {
     // isBuild
     helAppendValOfInnerLogic = '1'; // 标记为可加载
@@ -127,11 +147,12 @@ function getAssetInfo(/** @type string */ url, options) {
 
   const helAppendVal = helAppendValOfDataset || helAppendValOfInnerLogic;
   const helAppend = helAppendVal === '1';
-  const ex = dataset['helex'] || '';
-
   if (ex && !helAppend) {
     // 设置了 helex 但同时设置了不加载，会造成歧义，当前版本是不允许的
-    throw new Error(`found conflict setting: [data-helex="${ex}"]、[data-helappend="${helAppendVal}"], remove one of them!`);
+    throw new Error(pfstr(`
+      found conflict setting for helex: [data-helex="${ex}"]、[data-helappend="${helAppendVal}"],
+      remove data-helappend( append is true for helex by default ) or set data-helappend="1"!
+    `));
   }
 
   return {
@@ -147,14 +168,10 @@ function getAssetInfo(/** @type string */ url, options) {
 /**
  * 提取link、script标签数据并填充到目标assetList
  * @param {HTMLCollectionOf<HTMLScriptElement>} doms
- * @param {object} parseOptions
- * @param {SrcMap} parseOptions.srcMap
- * @param {boolean} parseOptions.isHead
- * @param {IUserExtractOptions} parseOptions.extractOptions
+ * @param {IInnerFillAssetListOptions} options
  */
-export async function fillAssetList(doms, parseOptions) {
-  const { srcMap, isHead, extractOptions } = parseOptions;
-  const { appInfo, enableReplaceDevJs = true, enableRelativePath = false, enablePrefixHomePage = false } = extractOptions;
+export async function fillAssetList(doms, options) {
+  const { homePage, enableReplaceDevJs = true, enableRelativePath = false, enablePrefixHomePage = false, srcMap, isHead } = options;
   const {
     headAssetList,
     bodyAssetList,
@@ -167,7 +184,6 @@ export async function fillAssetList(doms, parseOptions) {
     staticJsSrcList,
     relativeJsSrcList,
   } = srcMap;
-  const { homePage } = appInfo;
   const assetList = isHead ? headAssetList : bodyAssetList;
 
   const len = doms.length;
@@ -201,7 +217,7 @@ export async function fillAssetList(doms, parseOptions) {
     if (enablePrefixHomePage) {
       if (url.startsWith('/') && !url.startsWith('//')) {
         verbose(` >>> prefix homePage [${homePage}] for url [${url}]`);
-        const finalUrl = `${ensureSlash(homePage)}${url}`;
+        const finalUrl = `${slash.noEnd(homePage)}${url}`;
         replaceContentList.push({ toMatch: `="${url}"`, toReplace: `="${finalUrl}"` });
         return finalUrl;
       }
@@ -253,7 +269,7 @@ export async function fillAssetList(doms, parseOptions) {
       const { src } = childDom;
       let targetSrc = src;
       if (!targetSrc) {
-        targetSrc = await writeInnerHtml(childDom, 'js', extractOptions);
+        targetSrc = await writeInnerHtml(childDom, 'js', options);
       }
       if (!targetSrc) continue;
 
@@ -281,7 +297,7 @@ export async function fillAssetList(doms, parseOptions) {
       toPushAsset = buildAssetItem('script', assetInfo);
     } else if (tagName === 'STYLE') {
       // style 标签转换为 css 文件存起来，以便让 hel-micro 用 link 标签加载
-      let href = await writeInnerHtml(childDom, 'css', extractOptions);
+      let href = await writeInnerHtml(childDom, 'css', options);
       if (!href) continue;
 
       href = mayPrefixHomePage(href);
@@ -301,13 +317,10 @@ export async function fillAssetList(doms, parseOptions) {
 }
 
 /**
- * @param {{ srcMap:SrcMap, htmlContent:string, hasReplacedContent:boolean }} parsedRet
- * @param {IUserExtractOptions} extractOptions
+ * @param {IInnerFillAssetListOptions} options
  */
-export async function fillAssetListByDist(parsedRet, extractOptions) {
-  const { buildDirFullPath, appInfo } = extractOptions;
-  const { homePage } = appInfo;
-  const { srcMap } = parsedRet;
+export async function fillAssetListByDist(options) {
+  const { homePage, srcMap, buildDirFullPath } = options;
   const fileFullPathList = getAllFilePath(buildDirFullPath);
   verbose('filePathList', fileFullPathList);
 
@@ -316,11 +329,8 @@ export async function fillAssetListByDist(parsedRet, extractOptions) {
     //  /static/js/runtime-main.66c45929.js
     //  /asset-manifest.json
     const filePathUnderBuild = fileAbsolutePath.split(buildDirFullPath)[1];
-
-    // 避免 buildDirFullPath 是以 / 结尾的，导致 filePathUnderBuild 非 / 开头
-    const maySlash = filePathUnderBuild.startsWith('/') ? '' : '/';
     // 拼出 web 路径
-    const fileWebPath = `${ensureSlash(homePage)}${maySlash}${filePathUnderBuild}`;
+    const fileWebPath = `${slash.noEnd(homePage)}${slash.start(filePathUnderBuild)}`;
 
     // 补上剩余的 css 文件路径
     if (fileWebPath.endsWith('.css')) {

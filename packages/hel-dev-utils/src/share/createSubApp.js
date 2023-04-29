@@ -2,7 +2,7 @@
 /** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
 import * as base from '../base-utils/index';
 import cst from '../configs/consts';
-import presetExternal from '../configs/presetExternal';
+import presetExternals from '../configs/presetExternals';
 
 /**
  *
@@ -23,7 +23,7 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     userOptions || {},
   );
   const envParams = base.getHelEnvParams(pkg, optionsVar);
-  const externals = Object.assign({}, optionsVar.externals || {}, presetExternal[frameworkType] || {});
+  const externals = Object.assign({}, optionsVar.externals || {}, presetExternals[frameworkType] || {});
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);
 
   return {
@@ -53,17 +53,17 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     jsonpFnName,
     /**
      * @param {string} [fallbackPathOrUrl] 兜底用的 publicPathOrUrl
-     * @param {boolean} [ensureEndSlash]
+     * @param {boolean} [needEndSlash]
      * @returns
      */
-    getPublicPathOrUrl: (fallbackPathOrUrl = '/', ensureEndSlash = true) => {
+    getPublicPathOrUrl: (fallbackPathOrUrl = '/', needEndSlash = true) => {
       let pathOrUrl = envParams.appHomePage;
       // 用户传递了非 / 的值时，优先采用用户传递的值
       if (pathOrUrl === '/' && fallbackPathOrUrl !== '/') {
         pathOrUrl = fallbackPathOrUrl;
       }
 
-      const finalPathOrUrl = base.getPublicPathOrUrl(pathOrUrl, ensureEndSlash);
+      const finalPathOrUrl = base.getPublicPathOrUrl(pathOrUrl, needEndSlash);
       return finalPathOrUrl;
     },
     distDir: cst.HEL_DIST_DIR,

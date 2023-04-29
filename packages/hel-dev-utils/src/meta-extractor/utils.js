@@ -1,7 +1,26 @@
 /** @typedef {import('../../typings').SrcMap} SrcMap*/
 import * as fs from 'fs';
-import { ensureSlash } from '../base-utils/index';
+import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
+
+export function getIndexHtmlFileName(dirPath) {
+  const names = fs.readdirSync(dirPath);
+  let indexHtmlName = '';
+  let matchCount = 0;
+  names.forEach((name) => {
+    if (name.endsWith('.html')) {
+      matchCount += 1;
+      indexHtmlName = name;
+    }
+  });
+  if (!matchCount) {
+    throw new Error('no index.html found');
+  }
+  if (matchCount > 1) {
+    throw new Error(`there are more than one indexHtml file under [${dirPath}]!`);
+  }
+  return indexHtmlName;
+}
 
 /**
  * 递归获得某个目录下的所有文件绝对路径
@@ -28,16 +47,16 @@ export function getAllFilePath(dirPath) {
 }
 
 /**
- *
- * @param {string} homePage
- * @return {SrcMap}
+ * @param {import('../../typings').IUserExtractOptions} extractOptions
  */
-export function makeAppVersionSrcMap(homePage, extractMode) {
+export function makeAppVersionSrcMap(extractOptions) {
+  const { appInfo, indexHtmlName = cst.DEFAULT_HTML_INDEX_NAME, extractMode = 'all' } = extractOptions;
+  const { homePage } = appInfo;
   // 用于更新到数据库的app信息，通常来说在构建机器上触发
   // 从上往下的key顺序也是在html创建的顺序
   return {
     webDirPath: homePage,
-    htmlIndexSrc: `${ensureSlash(homePage, false)}/index.html`,
+    htmlIndexSrc: `${slash.end(homePage)}${indexHtmlName}`,
     extractMode,
     iframeSrc: '',
     chunkCssSrcList: [], //  all build css files
@@ -57,8 +76,8 @@ export function makeAppVersionSrcMap(homePage, extractMode) {
  * @param {import('../../typings').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { packageJson, appInfo } = userExtractOptions;
-  const { homePage, groupName, name: appName, semverApi } = appInfo;
+  const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
+  const { homePage, groupName, name: appName, semverApi } = subApp;
 
   /**
    *  构建版本号，当指定了 homePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
@@ -84,7 +103,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
             version = versionMakeOnPipeline;
           }
         }
-      } catch (err) {}
+      } catch (err) { }
 
       if (!version) {
         // 自定义 homePage 后，版本未必能推导出来，降级为使用 package.json 版本号
@@ -104,6 +123,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
     },
     version: {
       plugin_ver: cst.PLUGIN_VER,
+      extract_mode: extractMode,
       sub_app_name: appName,
       sub_app_version: version,
       src_map: parsedRet.srcMap,

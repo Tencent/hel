@@ -1,7 +1,10 @@
-/** @typedef {import('../../typings').SrcMap} SrcMap*/
+/** @typedef {import('../../typings').SrcMap} SrcMap */
+/** @typedef {import('../../typings').IUserExtractOptions} IUserExtractOptions */
+/** @typedef {import('../../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import * as fs from 'fs';
 import jsdom from 'jsdom';
 import * as util from 'util';
+import cst from '../configs/consts';
 import { verbose } from '../inner-utils/index';
 import { fillAssetList } from './fillAssetList';
 import { makeAppVersionSrcMap } from './utils';
@@ -10,23 +13,24 @@ const readFile = util.promisify(fs.readFile);
 const { JSDOM } = jsdom;
 
 /**
- * @param {import('../../typings').IUserExtractOptions} extractOptions
+ * @param {IUserExtractOptions} extractOptions
  */
 export async function parseIndexHtml(extractOptions) {
-  const { appInfo, buildDirFullPath, extractMode = 'all' } = extractOptions;
-  const { homePage: appHomePage, name: appName } = appInfo;
-  verbose(`homePage [${appHomePage}]`);
-  verbose(`start to parse ${appName} index.html file`);
+  const { appInfo, buildDirFullPath, extractMode = 'all', indexHtmlName = cst.DEFAULT_HTML_INDEX_NAME } = extractOptions;
+  const { name, homePage } = appInfo;
+  const htmlFilePath = `${buildDirFullPath}/${indexHtmlName}`;
+  verbose(`start to parse ${name} index.html file [${htmlFilePath}]`);
 
-  const htmlFilePath = `${buildDirFullPath}/index.html`;
   let htmlContent = await readFile(htmlFilePath, { encoding: 'UTF-8' });
-  const srcMap = makeAppVersionSrcMap(appHomePage, extractMode);
+  const srcMap = makeAppVersionSrcMap(extractOptions);
 
   const dom = new JSDOM(htmlContent);
   const { head, body } = dom.window.document;
+  /** @type {IInnerFillAssetListOptions} */
+  const fillAssetListOptions = { srcMap, homePage, ...extractOptions };
   const [replaceContentListOfHead, replaceContentLisOfBody] = await Promise.all([
-    fillAssetList(head.children, { srcMap, extractOptions, isHead: true }),
-    fillAssetList(body.children, { srcMap, extractOptions }),
+    fillAssetList(head.children, { ...fillAssetListOptions, isHead: true }),
+    fillAssetList(body.children, fillAssetListOptions),
   ]);
 
   replaceContentListOfHead.forEach((item) => {
@@ -44,7 +48,7 @@ export async function parseIndexHtml(extractOptions) {
 
   const hasReplacedContent = replaceContentListOfHead.length || replaceContentLisOfBody.length;
   const parsedRet = { srcMap, htmlContent: htmlContentVar, hasReplacedContent };
-  verbose(`parse ${appName} index.html file done!`);
+  verbose(`parse app [${name}] index.html file done!`);
   verbose('replaceContentListOfHead: ', replaceContentListOfHead);
   verbose('replaceContentLisOfBody: ', replaceContentLisOfBody);
   verbose('parsedRet: ', parsedRet);

@@ -1,12 +1,11 @@
 /**
-/**
  * for pretty format multi line string when use \`...\`
  * @param {*} mayLineBreakStr
  * @param {'MULTI' | 'ONE'} [mode='MULTI']
  * @returns
  * ```
- * // usage 1
- * pfstr(`
+ * // usage 1 (attention: end <br/> will be removed automatically)
+ * nbstr(`
  *   line1 line1 line1,
  *   line2 line2 line2.
  * `);
@@ -14,7 +13,7 @@
  * line1 line1 line1,
  * line2 line2 line2.
  * // attention: end <br/> will be removed automatically in MULTI mode
- * pfstr(`
+ * nbstr(`
  *   line1 line1 line1,<br/>
  *   line2 line2 line2.
  * `);
@@ -23,7 +22,7 @@
  * line2 line2 line2.
  *
  * // usage 2, set mode='ONE' to print no line break string
- * pfstr(`
+ * nbstr(`
  *   line1 line1 line1,
  *   line2 line2 line2.
  * `, 'ONE');
@@ -31,7 +30,7 @@
  * line1 line1 line1, line2 line2 line2.
  *
  * // usage 3, add <br/> to control line break
- * pfstr(`
+ * nbstr(`
  *   line1 line1 line1,
  *   line2 line2 line2,<br/>
  *   line3 line3 line3.
@@ -59,7 +58,8 @@ export function pfstr(/** @type string */ mayLineBreakStr, mode = 'MULTI') {
         return `${result}${noBrStr}`;
       };
 
-      let result = line.trimStart?.() || line; // 去头部所有空格
+      // 暂不写可选链，后续找到rollup编译可选链配置写法后，在修改为可选链
+      let result = line.trimStart ? line.trimStart() : line; // 去头部所有空格
       if (mode === 'MULTI') {
         return `${replaceBr(result, '')}\n`;
       }

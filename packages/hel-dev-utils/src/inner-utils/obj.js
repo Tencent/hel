@@ -17,12 +17,12 @@ export function isNull(value, nullDef = {}) {
 
   if (Array.isArray(value)) {
     if (isEmptyArrNull) return value.length === 0;
-    else return false;
+    return false;
   }
 
   if (typeof value === 'object') {
     if (isEmptyObjNull) return okeys(value).length === 0;
-    else return false;
+    return false;
   }
 
   return false;
