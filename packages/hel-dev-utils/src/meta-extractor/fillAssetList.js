@@ -106,6 +106,8 @@ function getAssetInfo(url, options) {
   if (isNonBuildAndRelative) {
     if (isIcoAsset && !helAppendValOfDataset) {
       helAppendValOfDataset = '0'; // ico 文件特殊处理，默认是不加载的
+    } else if (ex && !helAppendValOfDataset) {
+      helAppendValOfDataset = '1'; // 标记了 ex 的文件特殊处理，默认需要加载，能不能真的追加到文档上，取决于 hel-micro 的重复检测结果
     }
 
     // 如下面错误描述所示，在既没有设置 enableRelativePath=true，又没有显式的标记 data-helappend 的情况下
@@ -136,7 +138,7 @@ function getAssetInfo(url, options) {
     helAppendValOfInnerLogic = '0'; // ico 文件特殊处理，默认是不加载的
   } else if (isStatic) {
     if (ex) {
-      // 对于标记了 helex 的元素，默认是 append 的，只能能不能真的追加到文档上，取决于 hel-micro 的重复检测结果
+      // 对于标记了 helex 的元素，默认是 append 的，能不能真的追加到文档上，取决于 hel-micro 的重复检测结果
       // 重复则不追加，不重复则追加
       helAppendValOfInnerLogic = helAppendValOfDataset || '1';
     } else {
