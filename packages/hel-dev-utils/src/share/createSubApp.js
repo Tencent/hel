@@ -18,7 +18,7 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
       platform: cst.DEFAULT_PLAT,
       npmCdnType: cst.DEFAULT_NPM_CDN_TYPE,
       handleHomePage: true,
-      semverApi: true,
+      semverApi: cst.DEFAULT_SEMVER_API,
     },
     userOptions || {},
   );
