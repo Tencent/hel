@@ -1,6 +1,8 @@
 import * as apis from './apis';
 import * as ins from './ins';
-export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase } from './types';
+export type {
+  IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase, IStyleDataResult,
+} from './types';
 
 export const {
   VER,

@@ -40,6 +40,23 @@ export interface IWaitStyleReadyOptions extends IPlatAndVer {
   strictMatchVer?: boolean;
 }
 
+export interface IStyleDataResult {
+  /** 应用构建生成的全部样式列表 */
+  buildCssList: string[];
+  /** preFetch 时设定的额外样式列表，该值设置一次之后不会再变动 */
+  initExtraCssList: string[];
+  /** 应用构建生成的 + 能追加的 staticLink、relativeLink + preFetch 时设置的 extraCssList 的全部样式列表之合集 */
+  appCssList: string[];
+  /** 每一次调用透传的额外样式列表 */
+  extraCssList: string[];
+  /** appCssList 叠加 extraCssList 后再经过 getExcludeCssList 函数排除掉的剩余有效样式列表 */
+  validCssList: string[];
+  /** 用户自己透传的额外样式字符串 */
+  extraStyleStr: string;
+  /** 最终渲染用的样式字符串 */
+  renderStyleStr: string;
+}
+
 type HostOrHelMetaUrl = string;
 
 /**

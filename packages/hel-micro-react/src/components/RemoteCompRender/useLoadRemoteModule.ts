@@ -1,4 +1,4 @@
-import { core, logicSrv } from 'hel-micro';
+import { core, logicSrv, appStyleSrv } from 'hel-micro';
 import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
 import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../../types';
@@ -7,8 +7,9 @@ import * as share from '../share';
 
 const { merge2List } = core.commonUtil;
 
-function getStyleList(options: IInnerUseRemoteCompOptions) {
-  let list: string[] = [];
+function getStyleList(name: string, options: IInnerUseRemoteCompOptions) {
+  let result = appStyleSrv.getAppCssList(name, options);
+  let list = result.appCssList;
   const { shadow, extraCssList, cssListToStr } = options;
   if (!shadow) {
     return list;
@@ -45,7 +46,7 @@ function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, p
 
 export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   const { controlOptions, name } = config;
-  const { Component, Skeleton, shadow, cssListToStr } = controlOptions;
+  const { Component, Skeleton } = controlOptions;
   const [state, setState] = baseShareHooks.useObject({ errMsg: '', shadowStyleStr: '', isShadowStyleStrFetched: false });
   const isLoadAppDataExecutingRef = React.useRef(false);
   const isLoadAppStyleExecutingRef = React.useRef(false);
@@ -66,12 +67,12 @@ export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   }
 
   // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle
-  if (shadow && !isShadowStyleStrFetched && cssListToStr) {
+  if (!isShadowStyleStrFetched) {
     return share.fetchRemoteModuleStyle(config, passCtx);
   }
 
   // 提取可注入到 shadowdom 的样式列表
-  const styleUrlList = getStyleList(controlOptions);
+  const styleUrlList = getStyleList(name, controlOptions);
   // 如用户透传了具体组件，表示复用 name 对应的预设应用样式，使用用户透传的组件渲染
   RemoteModule = Component || RemoteModule;
   return { errMsg, RemoteModule, styleStr: shadowStyleStr, styleUrlList, moduleReady: true };

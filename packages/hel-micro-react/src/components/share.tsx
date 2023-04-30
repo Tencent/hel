@@ -1,3 +1,4 @@
+import type { IStyleDataResult } from 'hel-micro';
 import { appStyleSrv, preFetchApp, preFetchLib } from 'hel-micro';
 import { helConsts, helLoadStatus } from 'hel-micro-core';
 import React from 'react';
@@ -47,22 +48,13 @@ export function getFetchingResult(SkeletonView: any) {
   };
 }
 
-export function tryTriggerOnStyleFetched(config: IRemoteCompRenderConfig, mergedStyleStr: string) {
-  const { controlOptions, name } = config;
-  let finalStyleStr = mergedStyleStr;
+export function tryTriggerOnStyleFetched(config: IRemoteCompRenderConfig, styleData: IStyleDataResult) {
+  const { controlOptions } = config;
+  let renderStyleStr = styleData.renderStyleStr;
   if (controlOptions.onStyleFetched) {
-    const params = {
-      appCssList: appStyleSrv.getStyleUrlList(name, controlOptions),
-      appCssListStr: appStyleSrv.getStyleStr(name, controlOptions),
-      extraCssList: controlOptions.extraCssList || [],
-      extraStyleStr: controlOptions.extraStyleStr || '',
-      mergedStyleStr,
-    };
-    finalStyleStr = controlOptions.onStyleFetched(params) || mergedStyleStr;
+    renderStyleStr = controlOptions.onStyleFetched(styleData) || renderStyleStr;
   }
-  // !!! 兼容性逻辑，仅为了升级不报错
-  finalStyleStr = controlOptions.handleStyleStr?.(finalStyleStr) || finalStyleStr;
-  return finalStyleStr;
+  return renderStyleStr;
 }
 
 /**
@@ -79,12 +71,13 @@ export function fetchLocalCompStyleStr(props: ILocalCompProps, ctx: any) {
   }
 
   fetchStyleStatusRef.current = LOADING;
+  const options = { ...controlOptions, extraCssList: cssList };
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleByUrlList(cssList)
-    .then((styleStr) => {
+    .fetchAppStyleData(name, options)
+    .then((styleData) => {
       fetchStyleStatusRef.current = LOADED;
-      const finalStr = tryTriggerOnStyleFetched({ name, controlOptions }, styleStr);
+      const finalStr = tryTriggerOnStyleFetched({ name, controlOptions }, styleData);
       setState({ styleStr: finalStr });
     })
     .catch((err) => {
@@ -108,18 +101,13 @@ export function fetchRemoteModuleStyle(config: IRemoteCompRenderConfig, ctx: any
   }
 
   isLoadAppStyleExecutingRef.current = true;
-  let controlOptions = config.controlOptions;
-  if (!controlOptions.cssListToStr) {
-    // 刻意清空 extraCssList
-    controlOptions = { ...controlOptions, extraCssList: [] };
-  }
-
+  const { controlOptions, name } = config;
   // 异步拉取样式函数
   appStyleSrv
-    .fetchStyleStr(config.name, controlOptions)
-    .then((styleStr) => {
+    .fetchAppStyleData(name, controlOptions)
+    .then((styleData) => {
       isLoadAppStyleExecutingRef.current = false;
-      const shadowStyleStr = tryTriggerOnStyleFetched(config, styleStr);
+      const shadowStyleStr = tryTriggerOnStyleFetched(config, styleData);
       setState({ shadowStyleStr, isShadowStyleStrFetched: true });
     })
     .catch((err) => {

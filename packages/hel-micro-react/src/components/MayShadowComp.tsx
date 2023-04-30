@@ -159,7 +159,7 @@ function MayShadowComp(props: IMayShadowProps) {
       uiContent = <Comp {...passedProps} />;
     }
 
-    const styleContent = `${styleStr}${appStyleSrv.getStyleTagText(appGroupName, controlOptions)}`;
+    const styleContent = `${styleStr}${appStyleSrv.getStyleTagText(appGroupName)}`;
     const ignoredCssUrlList = appStyleSrv.getIgnoredCssUrlList(name, renderConfig);
     const styleSheets = styleUrlList.concat(ignoredCssUrlList);
     const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets, styleContent, shadowDelay };

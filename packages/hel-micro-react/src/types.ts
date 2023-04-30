@@ -1,4 +1,4 @@
-import type { IPreFetchOptionsBase } from 'hel-micro';
+import type { IPreFetchOptionsBase, IStyleDataResult } from 'hel-micro';
 import type { Platform } from 'hel-types';
 import React from 'react';
 
@@ -35,9 +35,15 @@ export type IsLegacy = boolean;
 
 interface IUseOptionsCommon {
   /**
-   *
-   * 组件样式获取完毕时触发，如返回新的字符串，则会替换掉 mergedStyleStr，为 shadowdom 组件提供样式
-   * params参数仅提供给用户参考
+   * 组件样式获取完毕时触发，如返回新的字符串，则会替换掉 renderStyleStr ，为 shadowdom 组件提供样式
+   * params参数仅提供给用户参考，shadow 为 false 时 renderStyleStr 为 空字符串
+   * @example
+   * 有一些框架自己的css变量定义，但这些定义未参与css打包时，可以配置 onStyleFetched 主动注入
+   * ```ts
+   * onStyleFetched: ({ renderStyleStr }) => {
+   *   return `${cssVarStr} ${renderStyleStr}`;
+   * },
+   * ```
    * @example
    * 某些特殊场景需要独立返回新的样式字符串，例如：
    * 用于配置本地调试 Component 时之用，作用于 Component 组件处于本地调试的 shadow 渲染时，设置样式字符串
@@ -56,23 +62,7 @@ interface IUseOptionsCommon {
    * @param params
    * @returns
    */
-  onStyleFetched?: (params: {
-    /** 应用构建生成的、能追加的 staticLink、relativeLink 全部样式列表 */
-    appCssList: string[];
-    /** 由 appCssList 转换出的样式字符串 */
-    appCssListStr: string;
-    /** 用户额外透传的样式列表 */
-    extraCssList: string[];
-    /** 用户额外透传的样式字符串 */
-    extraStyleStr: string;
-    /** 最终要使用的样式字符串，由 getExcludeCssList 算出的可获取 cssList 换到的样式字符串 + extraStyleStr 合并而来 */
-    mergedStyleStr: string;
-  }) => undefined | string;
-  /**
-   * @deprecated
-   * 返回新的样式字符串，该功能已由 onStyleFetched 替代，此处保留是为了保持老版本升级后不报错
-   */
-  handleStyleStr?: (mergedStyleStr: string) => string;
+  onStyleFetched?: (params: IStyleDataResult) => void | string;
   /**
    * 异步加载组件过程的过度组件
    */

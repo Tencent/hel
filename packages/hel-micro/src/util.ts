@@ -70,5 +70,5 @@ export function getAllExtraCssList(loadOptions: IInnerPreFetchOptions) {
       return mergedList;
     }
   }
-  return extraCssList;
+  return extraCssList.slice();
 }

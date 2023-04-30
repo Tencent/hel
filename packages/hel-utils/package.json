@@ -1,6 +1,6 @@
 {
   "name": "hel-utils",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "common util fns for hel-micro-core.",
   "keywords": [
     "hel",
@@ -43,7 +43,7 @@
     "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
   "dependencies": {
-    "hel-micro-core": "^4.6.1",
+    "hel-micro-core": "^4.7.0",
     "hel-types": "^4.2.0"
   },
   "devDependencies": {
@@ -56,7 +56,7 @@
     "rollup": "^2.23.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^4.6.1",
+    "hel-micro-core": "^4.7.0",
     "hel-types": "^4.2.0"
   },
   "bundleDependencies": [],
