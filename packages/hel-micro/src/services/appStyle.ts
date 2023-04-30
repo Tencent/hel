@@ -3,9 +3,9 @@
  */
 import type { HelLoadStatusEnum } from 'hel-micro-core';
 import * as core from 'hel-micro-core';
-import type { IEmitStyleInfo, IAssetItem } from 'hel-types';
+import type { IAssetItem, IEmitStyleInfo } from 'hel-types';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { ICustom, IGetOptionsLoose, IInnerPreFetchOptions, IWaitStyleReadyOptions, IStyleDataResult } from '../types';
+import type { ICustom, IGetOptionsLoose, IInnerPreFetchOptions, IStyleDataResult, IWaitStyleReadyOptions } from '../types';
 import { requestGet } from '../util';
 import { getPlatAndVer } from './appParam';
 import { getWebDirPath } from './share';
@@ -147,8 +147,13 @@ const inner = {
 
     // renderStyleStr 为渲染用到的样式字符串
     const result: IStyleDataResult = {
-      validCssList, buildCssList, initExtraCssList, appCssList,
-      extraCssList, extraStyleStr, renderStyleStr: '',
+      validCssList,
+      buildCssList,
+      initExtraCssList,
+      appCssList,
+      extraCssList,
+      extraStyleStr,
+      renderStyleStr: '',
     };
     if (!cssListToStr) {
       return result;

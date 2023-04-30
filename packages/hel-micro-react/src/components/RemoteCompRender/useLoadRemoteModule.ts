@@ -1,4 +1,4 @@
-import { core, logicSrv, appStyleSrv } from 'hel-micro';
+import { appStyleSrv, core, logicSrv } from 'hel-micro';
 import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
 import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../../types';
