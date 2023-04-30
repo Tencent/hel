@@ -77,7 +77,8 @@ const inner = {
   },
   extactHelMeta(reply: any) {
     const { code, data, msg } = reply;
-    if (code && data) { // 符合来着管理台的相应数据特征
+    if (code && data) {
+      // 符合来着管理台的相应数据特征
       if (code !== '0') {
         throw new Error(msg || 'server error occurred');
       }
@@ -87,7 +88,7 @@ const inner = {
     return reply;
   },
   async getHelMeta(appName: string, apiUrl: string, throwError?: boolean) {
-    const msg = (detail = '') => `fetch ${appName} helmeta by url ${apiUrl} failed in custom mode! ${detail}`
+    const msg = (detail = '') => `fetch ${appName} helmeta by url ${apiUrl} failed in custom mode! ${detail}`;
     try {
       const { reply } = await requestGet(apiUrl);
       const helMeta = inner.extactHelMeta(reply);

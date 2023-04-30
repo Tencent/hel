@@ -14,14 +14,14 @@ import {
 import type { IEmitAppInfo, Platform } from 'hel-types';
 import * as alt from '../alternative';
 import emitApp from '../process/emitApp';
-import { isEmitVerMatchInputVer } from '../shared/util';
 import { getPlatform } from '../shared/platform';
+import { isEmitVerMatchInputVer } from '../shared/util';
 import type { IInnerPreFetchOptions } from '../types';
 import { isCustomValid } from './custom';
 
 interface IFixOptions extends IGetOptions {
   emitPlatform: string;
-  emitVer: string
+  emitVer: string;
 }
 
 function tryFixAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
