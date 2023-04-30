@@ -12,6 +12,13 @@ export type AnyRecord = Record<string, any>;
 
 export type VersionId = string;
 
+/**
+ * default: false
+ * 谨慎设置此选项！当设置为 true 时，就是相信调试的远程模块一定和当前传入的名字是匹配的，
+ * hel-micro 会跳过一切检查，将对应地址的远程模块返回给调用方，可能会造成模块不符合预期结果的危险后果
+ */
+export type TrustEmit = boolean;
+
 export interface IHelMeta {
   app: ISubApp;
   version: ISubAppVersion;
@@ -35,22 +42,29 @@ export interface IWaitStyleReadyOptions extends IPlatAndVer {
 
 type HostOrHelMetaUrl = string;
 
+/**
+ * 自定义参数描述对象，通常用于本地联调
+ */
 export interface ICustom {
   /**
    * 自定义的请求站点域名，用于本地联调时设定：http://locahost:3000
    * 也可以写为一个具体的 hel-meta.json 地址：https://unpkg.com/hel-lodash/hel_dist/hel-meta.json
    */
   host: HostOrHelMetaUrl;
+  /**
+   * default: false
+   * 在 host 末尾为 hel-meta.json 时，sdk 默认将此链接当做可以获取到元数据的请求api，其他的则不会（或当作页面去动态解析出元数据）
+   * 如用户认为设置的 host 是元数据的请求api，则可设置此参数为 true
+   */
+  isApiUrl?: boolean;
   /** default: true */
   enable?: boolean;
   /** 调用方设定的组名，用于匹配远程模块组名，用于当模块名和组名不一致时，且框架无法推导调用方需要的组名时，用户需自己设定 */
   appGroupName?: string;
   /**
    * default: false
-   * 谨慎设置此选项！当设置为 true 时，就是相信调试的远程模块一定和当前传入的名字是匹配的，
-   * hel-micro 会跳过一切检查，将对应地址的远程模块返回给调用方，可能会造成模块不符合预期结果的危险后果
    */
-  trust?: boolean;
+  trust?: TrustEmit;
   /** 额外附加的样式列表，方便基于 web-dev-server 调试组件时，样式不丢失，仅在 enable=true 时此配置才有效 */
   extraCssList?: string[];
   /**
@@ -166,6 +180,7 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;
+  trust?: TrustEmit;
   /**
    * default: false
    * 是否跳过404嗅探，该配置项只针对 unpkg 平台生效，当用户设置为 true 时，就不会发起一个带随机参数的url去试探出最新版本的请求

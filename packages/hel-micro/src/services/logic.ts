@@ -1,7 +1,6 @@
 import type { IGetOptions } from 'hel-micro-core';
 import {
   getAppMeta,
-  getPlatform,
   getVerApp,
   getVerExtraCssList,
   getVerLib,
@@ -16,11 +15,13 @@ import type { IEmitAppInfo, Platform } from 'hel-types';
 import * as alt from '../alternative';
 import emitApp from '../process/emitApp';
 import { isEmitVerMatchInputVer } from '../shared/util';
+import { getPlatform } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
 import { isCustomValid } from './custom';
 
 interface IFixOptions extends IGetOptions {
-  emitPlatform?: string;
+  emitPlatform: string;
+  emitVer: string
 }
 
 function tryFixAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
@@ -46,18 +47,19 @@ function tryFixAssociateData(appName: string, appGroupName: string, fixOptions: 
  * @returns {boolean} - shouldNext
  */
 function fixLibAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
-  const { platform, emitPlatform, versionId } = fixOptions;
+  const { platform, emitPlatform, versionId, emitVer } = fixOptions;
   const lib = getVerLib(appName, fixOptions);
   if (!lib) {
     tryFixAssociateData(appName, appGroupName, fixOptions);
     let originalLib = getVerLib(appGroupName, { platform, versionId }); // appGroupName 对应 lib 由 core 写入，此处可获取到
     if (!originalLib && emitPlatform) {
-      originalLib = getVerLib(appGroupName, { platform: emitPlatform, versionId, strictMatchVer: false });
+      // 相信弹射的版本数据就是目标版本数据
+      originalLib = getVerLib(appGroupName, { platform: emitPlatform, versionId: emitVer, strictMatchVer: false });
     }
     if (!originalLib) {
-      throw new Error(`seems ${appGroupName} emit null lib`);
+      throw new Error(`seems plat ${emitPlatform} emit null lib for ${appGroupName}`);
     }
-    libReady(appName, originalLib, { platform }); // 强制转移给 appName
+    libReady(appGroupName, originalLib, { platform, appName, versionId }); // 强制转移给当前平台
     return false; // 不走 next()，等待 libReady 内部触发新的 judgeAppReady 流程
   }
   return true; // lib 匹配成功，执行 next()，返回给上层调用
@@ -67,25 +69,26 @@ function fixLibAssociateData(appName: string, appGroupName: string, fixOptions: 
  * @returns {boolean} - shouldNext
  */
 function fixAppAssociateData(appName: string, appGroupName: string, fixOptions: IFixOptions) {
-  const { platform, emitPlatform, versionId } = fixOptions;
+  const { platform, emitPlatform, versionId, emitVer } = fixOptions;
   const emittedApp = getVerApp(appName, fixOptions);
   if (!emittedApp) {
     tryFixAssociateData(appName, appGroupName, fixOptions);
     let oriEmittedApp = getVerApp(appGroupName, { platform, versionId });
     if (!oriEmittedApp && emitPlatform) {
-      oriEmittedApp = getVerApp(appGroupName, { platform: emitPlatform, versionId, strictMatchVer: false });
+      oriEmittedApp = getVerApp(appGroupName, { platform: emitPlatform, versionId: emitVer, strictMatchVer: false });
     }
     if (!oriEmittedApp) {
-      throw new Error(`seems ${appGroupName} emit null app`);
+      throw new Error(`seems plat ${emitPlatform} emit null app for ${appGroupName}`);
     }
-    emitApp({ ...oriEmittedApp, appName, versionId });
+    emitApp({ ...oriEmittedApp, platform, appGroupName, appName, versionId }); // 强制转移给当前平台
     return false; // 不走 next()，等待 emitApp 内部触发新的 judgeAppReady 流程
   }
   return true; // app 匹配成功，执行 next()，返回给上层调用
 }
 
 export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions) {
-  const { platform = getPlatform(), versionId = '', isLib } = innerOptions;
+  const { versionId = '', isLib } = innerOptions;
+  const platform = getPlatform(innerOptions.platform);
   const strictMatchVer = alt.getVal(platform, 'strictMatchVer', [innerOptions.strictMatchVer]);
   const newGetOptions = { ...innerOptions, strictMatchVer };
 
@@ -134,12 +137,12 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   const fnMark = '[[ judgeAppReady ]]';
   log(`${fnMark} receive emitApp(appInfo):`, appInfo);
   const { versionId: inputVer = '', projectId, appName, platform, next, error, isLib, strictMatchVer } = options;
-  const { appName: emitAppName, appGroupName, platform: emitPlatform = getPlatform(), versionId: emitVer } = appInfo;
+  const inputPlatform = getPlatform(platform);
+  const { appName: emitAppName, appGroupName, platform: emitPlatform = inputPlatform, versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);
-  const inputPlatform = platform || getPlatform();
 
-  const { custom } = preFetchOptions;
+  const { custom, trust } = preFetchOptions;
   const fixData = (fixOptions: IFixOptions) => {
     try {
       const shouldNext = isLib
@@ -164,7 +167,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
       }
 
       // trust 模式会强行复制远程模块为当前调用所需要模块，同时会为远程补齐缺失数据，开发者需要知道并承担其危险后果！
-      const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform });
+      const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform, emitVer });
       shouldNext && next();
       return;
     }
@@ -184,8 +187,9 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   }
 
   const trustAppNames = alt.getVal<string[]>(inputPlatform, 'trustAppNames', [null, []], { emptyArrIsNull: false });
-  if (inputPlatform !== emitPlatform && trustAppNames.includes(appName)) {
-    const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform });
+  // sdk 初始化了一些信任的应用，或者模块使用方主动设置了信任模式，则开始走模块转移流程
+  if (inputPlatform !== emitPlatform && (trust || trustAppNames.includes(appName))) {
+    const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform, emitVer });
     if (!shouldNext) {
       log(`${fnMark} transfer ${emitPlatform} app [${appName}] to ${inputPlatform} plat due to being in trustAppNames`);
       return logStillWait();

@@ -1,3 +1,4 @@
+import type { IPreFetchOptionsBase } from 'hel-micro';
 import { commonUtil, helConsts } from 'hel-micro-core';
 import React, { forwardRef } from 'react';
 import * as apis from './apis';
@@ -10,18 +11,20 @@ const compKeys = ['MicroApp', 'MicroAppLegacy', 'MicroAppLegacyMemo'];
 // 这些函数第1位参数是平台值对象
 const arg1PlatObjFns = ['renderApp', 'getMayStaticShadowNode'];
 
-function injectCompPlat(Comp: any, platform: string) {
+function injectCompPlat(Comp: any, platform: string, options: ICreateInstanceOptions) {
   return forwardRef((props: any, reactRef) => {
     const plat = props.platform || platform || helConsts.DEFAULT_PLAT;
-    const newProps: any = { ...props, platform: plat };
+    const semverApi = props.semverApi ?? options.semverApi;
+    const newProps: any = { ...props, platform: plat, semverApi };
     return <Comp ref={reactRef} {...newProps} />;
   });
 }
 
-function injectHookPlat(hookFn: any, platform: string) {
+function injectHookPlat(hookFn: any, platform: string, options: ICreateInstanceOptions) {
   return (...args: any[]) => {
-    const [arg1, arg2, options = {}] = args;
-    const newOptions: any = { platform, ...purify(options) };
+    const [arg1, arg2, hookOptions = {}] = args;
+    const { semverApi } = options;
+    const newOptions: any = { platform, semverApi, ...purify(hookOptions) };
     return hookFn(arg1, arg2, newOptions);
   };
 }
@@ -34,7 +37,7 @@ function injectArg1Plat(fn: any, platform?: string) {
   };
 }
 
-function tryInectPlat(obj: any, platform: string) {
+function tryInectPlat(obj: any, platform: string, options: ICreateInstanceOptions) {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
     // @ts-ignore
@@ -44,7 +47,7 @@ function tryInectPlat(obj: any, platform: string) {
       return;
     }
     if (compKeys.includes(key)) {
-      newObj[key] = injectCompPlat(val, platform);
+      newObj[key] = injectCompPlat(val, platform, options);
       return;
     }
     if (arg1PlatObjFns.includes(key)) {
@@ -52,7 +55,7 @@ function tryInectPlat(obj: any, platform: string) {
       return;
     }
     if (key.startsWith('use')) {
-      newObj[key] = injectHookPlat(val, platform);
+      newObj[key] = injectHookPlat(val, platform, options);
       return;
     }
     newObj[key] = val;
@@ -64,8 +67,15 @@ type Apis = typeof apis;
 type CreateInstance = (platform: string) => HelMicroReactApis;
 type HelMicroReactApis = Apis & { createInstance: CreateInstance };
 
-export function createInstance(platform: string): HelMicroReactApis {
-  const newApis = tryInectPlat(apis, platform);
+interface ICreateInstanceOptions {
+  semverApi?: IPreFetchOptionsBase['semverApi'];
+}
+
+export function createInstance(platform: string, options?: ICreateInstanceOptions): HelMicroReactApis {
+  const optionsVar = options || {};
+  const { semverApi = true } = optionsVar;
+
+  const newApis = tryInectPlat(apis, platform, Object.assign({ semverApi }, optionsVar));
   newApis.createInstance = createInstance;
   return newApis;
 }

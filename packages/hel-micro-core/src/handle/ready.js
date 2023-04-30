@@ -15,7 +15,8 @@ export function libReady(appGroupName, appProperties, options = {}) {
   const appMeta = getAppMeta(appName, platform);
   // @ts-ignore，来自于用户设定 cust 配置弹射的模块
   if (appMeta?.__fromCust) {
-    versionId = appMeta.online_version;
+    // 优先读用户透传的版本数据，再读实际对应的在线版本
+    versionId = options.versionId || appMeta.online_version;
     appName = appMeta.name;
   }
 

@@ -28,7 +28,7 @@ export type TagRelativeLink = 'relativeLink';
 export type TagRelativeScript = 'relativeScript';
 
 /**
- * 这些标签类型默认不会被 sd k加载，仅表示处于 html 代码里的位置
+ * 这些标签类型默认不会被 sdk 加载，仅表示处于 html 代码里的位置
  * 除非显示标记 data-helappend="1" 会被加载，通常用于紧随主站点加载的私有化部署模式
  * 或显示标记 data-helex="xxx-link"，用于控制需要延迟加载的且只加载一次的 external 资源
  */

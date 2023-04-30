@@ -21,6 +21,7 @@ function isExLoaded(attrs: Record<string, any>, tag: string) {
   const ex = attrs['data-helex'];
   const g = getGlobalThis();
   if (ex) {
+    // @ts-ignore avoid error: type {xxx} was found on type 'typeof globalThis'.
     if (tag === 'script' && g[ex]) {
       // script 型的 ex，优先查 globalThis 上是否已绑定
       return true;

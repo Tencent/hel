@@ -1,49 +1,51 @@
 /**
- * for pretty format multi line string when use \`...\`
- * @param {*} mayLineBreakStr
+ * for getting pretty format multi line string when use \`...\`
+ * this function will remove indent of every line automatically
+ * @param {string} mayLineBreakStr
  * @param {'MULTI' | 'ONE'} [mode='MULTI']
  * @returns
  * ```
- * // usage 1 (attention: end <br/> will be removed automatically)
- * nbstr(`
+ * // usage 1, process multi lines with mode='MULTI' by default
+ * pfstr(`
  *   line1 line1 line1,
  *   line2 line2 line2.
  * `);
- * // will print:
+ * // pass to console.log will print:
  * line1 line1 line1,
  * line2 line2 line2.
  * // attention: end <br/> will be removed automatically in MULTI mode
- * nbstr(`
+ * pfstr(`
  *   line1 line1 line1,<br/>
  *   line2 line2 line2.
  * `);
- * // will print:
+ * // pass to console.log will print:
  * line1 line1 line1,
  * line2 line2 line2.
  *
- * // usage 2, set mode='ONE' to print no line break string
- * nbstr(`
+ * // usage 2, set mode='ONE' to get no line break string
+ * pfstr(`
  *   line1 line1 line1,
  *   line2 line2 line2.
  * `, 'ONE');
- * // will print:
+ * // pass to console.log will print:
  * line1 line1 line1, line2 line2 line2.
  *
  * // usage 3, add <br/> to control line break
- * nbstr(`
+ * pfstr(`
  *   line1 line1 line1,
  *   line2 line2 line2,<br/>
  *   line3 line3 line3.
  * `, 'ONE');
- * // will print:
- * line1 line1 line1,
- * line2 line2 line2,line3 line3 line3.
+ * // pass to console.log will print:
+ * line1 line1 line1, line2 line2 line2,
+ * line3 line3 line3.
  * ```
  */
 export function pfstr(/** @type string */ mayLineBreakStr, mode = 'MULTI') {
   // MULTI ONE
   const lines = mayLineBreakStr.split('\n');
   const lastIdx = lines.length - 1;
+
   const formatLine = lines
     .map((line, idx) => {
       if (!line && (idx === 0 || idx === lastIdx)) {
@@ -58,8 +60,10 @@ export function pfstr(/** @type string */ mayLineBreakStr, mode = 'MULTI') {
         return `${result}${noBrStr}`;
       };
 
-      // 暂不写可选链，后续找到rollup编译可选链配置写法后，在修改为可选链
-      let result = line.trimStart ? line.trimStart() : line; // 去头部所有空格
+      // 此处暂时规避可选链写法，因 rollup 对此未处理，编译后上层使用会报错
+      // SyntaxError: Unexpected token '.'
+      const { trimStart } = line;
+      let result = ltrimStart ? trimStart() : line; // 去头部所有空格
       if (mode === 'MULTI') {
         return `${replaceBr(result, '')}\n`;
       }

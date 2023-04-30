@@ -75,6 +75,38 @@ const inner = {
     const data = inner.extractAssetList(htmlText, { host, type: 'js' });
     return data;
   },
+  extactHelMeta(reply: any) {
+    const { code, data, msg } = reply;
+    if (code && data) { // 符合来着管理台的相应数据特征
+      if (code !== '0') {
+        throw new Error(msg || 'server error occurred');
+      }
+      return data;
+    }
+    // 当作是来自 cdn 存储的元数据
+    return reply;
+  },
+  async getHelMeta(appName: string, apiUrl: string, throwError?: boolean) {
+    const msg = (detail = '') => `fetch ${appName} helmeta by url ${apiUrl} failed in custom mode! ${detail}`
+    try {
+      const { reply } = await requestGet(apiUrl);
+      const helMeta = inner.extactHelMeta(reply);
+      if (helMeta && helMeta.app && helMeta.version) {
+        helMeta.app.__fromCust = true;
+        return helMeta;
+      }
+      if (throwError) {
+        throw new Error(msg());
+      }
+      log('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
+      return null;
+    } catch (err: any) {
+      if (throwError) {
+        throw new Error(msg(err.messgae));
+      }
+      commonUtil.noop('json parse fail or other error');
+    }
+  },
 };
 
 export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom is ICustom {
@@ -86,19 +118,19 @@ export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom i
 }
 
 export async function getCustomMeta(appName: string, custom: ICustom): Promise<IHelMeta> {
-  const { host, appGroupName, skipFetchHelMeta = false } = custom;
+  const { host, appGroupName, skipFetchHelMeta = false, isApiUrl } = custom;
   const t = Date.now();
+
+  if (isApiUrl) {
+    const helMeta = await inner.getHelMeta(appName, host, true);
+    return helMeta;
+  }
+
   if (!skipFetchHelMeta) {
     const helMetaUrl = host.endsWith('hel-meta.json') ? host : `${host}/hel-meta.json?_t=${t}`;
-    try {
-      const { reply } = await requestGet(helMetaUrl);
-      if (reply) {
-        reply.app.__fromCust = true;
-        return reply;
-      }
-      log('[[ getCustomMeta ]] 404 is a expected behavior for custom mode, user can ignore it');
-    } catch (err: any) {
-      commonUtil.noop('json parse fail or other error');
+    const helMeta = await inner.getHelMeta(appName, helMetaUrl);
+    if (helMeta) {
+      return helMeta;
     }
   }
 
