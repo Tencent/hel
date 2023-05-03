@@ -88,14 +88,13 @@ function getIsMaster() {
   return false;
 }
 
+getIsMaster();
+
 /**
  * 是否是主应用
  * @returns
  */
 export function isMasterApp() {
-  if (cachedIsMaster === null) {
-    cachedIsMaster = getIsMaster();
-  }
   return cachedIsMaster;
 }
 
