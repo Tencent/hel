@@ -166,7 +166,7 @@ export interface IInnerRemoteModuleProps<T extends AnyRecord = AnyRecord> extend
   reactRef?: any;
 }
 
-type IMicroAppLegacyPropsBase<T> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
+type IMicroAppLegacyPropsBase<T extends AnyRecord = AnyRecord> = Omit<IMicroAppProps<T>, 'versionId' | 'enableDiskCache'>;
 
 /**
  * MicroAppLegacy 组件的历史遗留属性，后面的新组件和新接口为了统一词汇，
