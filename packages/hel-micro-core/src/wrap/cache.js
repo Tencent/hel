@@ -7,7 +7,7 @@ import { DEFAULT_PLAT } from '../consts';
  */
 export function getPlatform() {
   // 已不再支持重置平台默认值，上层可用 helMicro.createInstace 接口来定义出自动拉取对应平台的相关接口
-  return getHelMicroShared().cacheRoot.platform || DEFAULT_PLAT;
+  return DEFAULT_PLAT;
 }
 
 /**

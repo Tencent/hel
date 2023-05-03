@@ -43,12 +43,18 @@ function getCodeHost() {
     var stackArr = err.stack.split('\n');
     loc = stackArr[stackArr.length - 1] || '';
   }
+
+  // case 1 codeHost will be ''
+  // "    at _next (webpack-internal:///./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:31:9)"
+  // case 2 codeHost will be 'localhost:3103'
   // at main (http://localhost:3103/static/js/bundle.js:343:60)
   var codeHost = loc.split('//')[1].split('/')[0];
   return codeHost;
 }
 function getIsMaster() {
   var globalThis = getGlobalThis();
+  var location = globalThis.location,
+    microShared = globalThis.__HEL_MICRO_SHARED__;
   var isFirstMod = info.isFirstMod,
     isBeforeCore = info.isBeforeCore;
 
@@ -65,10 +71,18 @@ function getIsMaster() {
   }
 
   // 当前运行环境和代码的位置一致，一定是主应用
-  var location = globalThis.location;
   var codeHost = getCodeHost();
   if (location && location.host === codeHost) {
     return true;
+  }
+
+  // codeHost 判断失败时，再看 microShared
+  if (microShared) {
+    var map = microShared.cacheRoot.appGroupName2platform;
+    // 无任何相关子模块数据，一定是主应用
+    if (!Object.keys(map).length) {
+      return true;
+    }
   }
   return false;
 }

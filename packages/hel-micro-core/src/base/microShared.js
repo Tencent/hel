@@ -107,8 +107,13 @@ function makeHelMicroShared() {
   const unpkgCache = makeCacheNode(PLAT_UNPKG);
   const helCache = makeCacheNode(PLAT_HEL);
   const cacheRoot = {
-    /** 默认的平台值 */
-    platform: PLAT_UNPKG,
+    /**
+     * 默认的平台值，这个值在这里已无意义，最新版本的 getPlatform 返回值已固定，不再取此处的值
+     * 这里刻意设为 PLAT_HEL 是为了让 3.0 和 4.0 版本包共存时
+     * 例如宿主4子模块3这种情况，子模块的旧版本 hel-micro-core 调用 getPlatform 依然能正常获取到 hel 为默认平台
+     */
+    platform: PLAT_HEL,
+    platformHint: 'the platform value here does not make any sense!',
     /** 1.4+ 新增，用于记录 preFetchLib 时显示传递了 platform 值，供 hel-lib-proxy 使用，
      * 方便多平台共同加载包体场景下， exposeLib 接口如果未显式的传递平台值，能尽量正确推测出应用对应的 platform 值
      * 但是这里依然推荐用户 exposeLib 传递具体的平台值，避免推测错误
