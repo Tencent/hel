@@ -7,8 +7,8 @@
 
 // iso 模块加载信息
 const info = getIsoInfo();
-let cachedIsMaster = null;
 tryMarkFlag();
+const cachedIsMaster = getIsMaster();
 
 /**
  * @returns {typeof globalThis}
@@ -87,8 +87,6 @@ function getIsMaster() {
 
   return false;
 }
-
-getIsMaster();
 
 /**
  * 是否是主应用
