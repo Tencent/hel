@@ -491,16 +491,16 @@ interface ICommonDataUtil {
    * 以达到样式安全转移到 shadowdom 内部的目的
    */
   setIgnoreCssPrefix(ignoreCssPrefix: string): void;
-  setIgnoreStyleTagKey(nameOrGroupName: string): void;
+  setIgnoreStyleTagKey(key: string): void;
   getIgnoreStyleTagMap(): Record<string, 1>;
   setIgnoreCssPrefixKey(ignoreCssPrefix: string, key: string): void;
   getIgnoreCssPrefixKeys(ignoreCssPrefix: string): string[];
   getMatchedIgnoreCssPrefix(url: string): string;
   getIgnoreCssPrefixCssUrlList(ignoreCssPrefix: string): string[];
   setIgnoreCssPrefixCssUrl(ignoreCssPrefix: string, url: string): void;
-  getStyleTagText(groupName: string): string;
-  clearStyleTagText(groupName: string): void;
-  appendStyleTagText(groupName: string, text: string): void;
+  getStyleTagText(key: string): string;
+  clearStyleTagText(key: string): void;
+  appendStyleTagText(key: string, text: string): void;
 }
 
 /** 操作 commonData 的内置方法集合 */

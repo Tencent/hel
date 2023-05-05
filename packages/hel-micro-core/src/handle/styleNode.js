@@ -51,20 +51,32 @@ function handleStyleAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
     if (markStart < 0) {
       return;
     }
-
     // 处理 css-loader 动态向 heade 添加 style 标签的情况
     // /* @helstart hel-tpl-remote-react-comp-ts @helend */ --> hel-tpl-remote-react-comp-ts
     const markEnd = innerText.indexOf(HEL_CSS_MARK_END);
+    if (markEnd < 0) {
+      return;
+    }
+
     const helKey = innerText.substring(START_LEN + markStart, markEnd);
     if (helKey) {
-      const groupName = helKey.trim();
+      const trimedStr = helKey.trim(); // may groupName or plat/groupName
+      let plat = '';
+      let groupName = trimedStr;
+      if (trimedStr.includes('/')) {
+        const arr = trimedStr.split('/');
+        plat = arr[0];
+        groupName = arr[1];
+      }
+
       setDataset(node, 'gname', groupName);
-      if (ignoreStyleTagMap[groupName]) {
+      plat && setDataset(node, 'plat', plat);
+      if (ignoreStyleTagMap[trimedStr]) {
         disableNode(node);
       }
       const bus = getHelEventBus();
-      commonDataUtil.appendStyleTagText(groupName, innerText);
-      bus.emit(evName.styleTagAdded(groupName), { nodes: [node] });
+      commonDataUtil.appendStyleTagText(trimedStr, innerText);
+      bus.emit(evName.styleTagAdded(trimedStr), { nodes: [node] });
     }
     return;
   }

@@ -34,9 +34,9 @@ export const commonDataUtil = {
     const list = getDataNode(KEY_IGNORE_CSS_PREFIX_LIST);
     noDupPush(list, cssPrefix);
   },
-  setIgnoreStyleTagKey(nameOrGroupName) {
+  setIgnoreStyleTagKey(key) {
     const map = commonDataUtil.getIgnoreStyleTagMap();
-    map[nameOrGroupName] = 1;
+    map[key] = 1;
   },
   getIgnoreStyleTagMap() {
     const map = getDataNode(KEY_IGNORE_STYLE_TAG_KEY);
