@@ -63,7 +63,7 @@ export function pfstr(/** @type string */ mayLineBreakStr, mode = 'MULTI') {
       // 此处暂时规避可选链写法，因 rollup 对此未处理，编译后上层使用会报错
       // SyntaxError: Unexpected token '.'
       const { trimStart } = line;
-      let result = ltrimStart ? trimStart() : line; // 去头部所有空格
+      let result = trimStart ? trimStart() : line; // 去头部所有空格
       if (mode === 'MULTI') {
         return `${replaceBr(result, '')}\n`;
       }
