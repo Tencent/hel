@@ -131,7 +131,7 @@ function ensureVersion(version: ISubAppVersion) {
     staticCssSrcList: [],
     relativeJsSrcList: [],
     relativeCssSrcList: [],
-    privCssSrcList: [],
+    otherSrcList: [],
   });
   return clonedVersion;
 }

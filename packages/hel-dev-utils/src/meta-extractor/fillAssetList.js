@@ -343,6 +343,8 @@ export async function fillAssetListByDist(options) {
       noDupPush(srcMap.chunkCssSrcList, fileWebPath);
     } else if (fileWebPath.endsWith('.js')) {
       noDupPush(srcMap.chunkJsSrcList, fileWebPath);
+    } else {
+      noDupPush(srcMap.otherSrcList, fileWebPath);
     }
   });
 }

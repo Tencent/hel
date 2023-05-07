@@ -65,9 +65,9 @@ export function makeAppVersionSrcMap(extractOptions) {
     staticJsSrcList: [], // all static js files
     relativeCssSrcList: [], // all relative js files
     relativeJsSrcList: [], // all relative js files
-    privCssSrcList: [], // 独立放置 hreflang 为 PRIV_CSS 的文件
     headAssetList: [],
     bodyAssetList: [],
+    otherSrcList: [],
   };
 }
 

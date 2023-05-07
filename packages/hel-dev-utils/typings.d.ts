@@ -38,7 +38,8 @@ export interface SrcMap {
   headAssetList: string[];
   /** 应用首屏加载时需要插入到 document.body 里的资源列表 */
   bodyAssetList: string[];
-  privCssSrcList: string[];
+  /** 所有依据 homePage 构建生成的其他类型的资源文件列表 */
+  otherSrcList: string[];
 }
 
 interface ObjBase {

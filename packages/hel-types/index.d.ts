@@ -49,6 +49,10 @@ export interface IScriptAttrs {
 }
 
 export interface IAssetItemBase {
+  /**
+   * default: true
+   * 是否追加当前资源到dom文档树
+   */
   append?: boolean;
 }
 
@@ -135,9 +139,9 @@ export interface ISrcMap {
    */
   relativeCssSrcList: string[];
   /**
-   * 标记了 hreflang 为 PRIV_CSS 的文件列表
+   * 所有依据 homePage 构建生成的其他类型的资源文件列表
    */
-  privCssSrcList: string[];
+  otherSrcList: string[];
 }
 
 export interface IProjVer {
@@ -193,7 +197,7 @@ export interface ISubApp {
   splash_screen: string;
   /** 应用在 helpack 里展现的 logo url */
   logo: string;
-  /** 项目id和版本映射关系，目前该配置仅作用于 hel-pack 模块管理台 */
+  /** 项目id和版本映射关系，目前该配置仅作用于 helpack 模块管理台 */
   proj_ver: IProjVer;
   /** 是否在 helpack 前台渲染 */
   is_local_render: 1 | 0;
@@ -205,8 +209,6 @@ export interface ISubApp {
   gray_users: string[];
   /** 应用的分类类型 */
   class_name: string;
-  /** 是否是星辰项目专属 */
-  is_xc: 1 | 0;
 
   // ----------------- 以下属性描述目前针对 helpack 有效，后续可能计划全部下架，外部用户可不用关注 --------------
   api_host: string;
@@ -215,12 +217,10 @@ export interface ISubApp {
   /** 是否后端渲染 */
   is_back_render: 1 | 0;
   iframe_src_map: Record<string, string>;
-  /** 【暂无用】原计划为 'react-shadow' | 'react' | 'iframe' */
+  /** 【暂无用】原枚举有 'react-shadow' | 'react' | 'iframe' */
   render_mode: string;
   host_map: Record<string, string>;
   ui_framework: string;
-  /** 【已彻底无用】安全平台里对应的名字 */
-  name_in_sec: string;
   [key: string]: any;
 }
 
