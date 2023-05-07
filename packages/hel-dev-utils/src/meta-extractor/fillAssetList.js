@@ -185,7 +185,6 @@ export async function fillAssetList(doms, options) {
     chunkCssSrcList,
     staticCssSrcList,
     relativeCssSrcList,
-    privCssSrcList,
     chunkJsSrcList,
     staticJsSrcList,
     relativeJsSrcList,
@@ -263,9 +262,6 @@ export async function fillAssetList(doms, options) {
       const assetInfo = getAssetInfo(href, assetOptions);
       allowAddToAssetList = assetInfo.allowAddToAssetList;
 
-      if (hreflang.startsWith('PRIV_CSS')) {
-        noDupPush(privCssSrcList, href);
-      }
       // 供 shadow-dom 或其他需要知道当前应用所有样式列表的场景用
       if (href.endsWith('.css')) {
         pushToSrcList('css', assetInfo);
