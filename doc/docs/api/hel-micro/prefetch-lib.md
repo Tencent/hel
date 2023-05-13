@@ -187,6 +187,44 @@ await preFetchLib('hel-tpl-remote-vue-comps', {
 });
 ```
 
+如联调模块因为一些配置不当（ 例如 LIB_NAME 配置和调用者匹配不上 ）导致无法加载，可设置`custom.trust=true`告诉 sdk 相信模板模块就是需要加载的模块
+
+```diff
+  await preFetchLib('hel-tpl-remote-vue-comps', {
+    custom: {
+      host: 'http://localhost:7001',
++     trust: true,
+    },
+  );
+```
+
+### 资源路径替换
+
+**参数名称**：`IPreFetchLibOptions.hook.beforeAppendAssetNode`
+
+该方法会在`appendChildNode`之前触发，用于当需要对追加到 dom 树的资源标签（link、script）做路径替换时，可以重写此钩子函数，不过对于做了 cdn 多域名备份的模块，推荐使用[assets-retry](https://github.com/Nikaple/assets-retry)这个库来完成资源加载失败的优雅容错方案
+
+```ts
+preFetchLib('libxx', {
+  hook: {
+    beforeAppendAssetNode(passCtx) {
+      const { url, setAssetUrl } = passCtx;
+      // https://unpkg.com/remote-vue-project@1.0.6/hel_dist/css/27.aea1e7be.css
+      // --->
+      // https://cdn.jsdelivr.net/npm/remote-vue-project@1.0.6/hel_dist/css/27.aea1e7be.css
+      const jsdelivrUrl = url.replace('https://unpkg.com', 'https://cdn.jsdelivr.net/npm');
+      setAssetUrl(jsdelivrUrl);
+    },
+  },
+});
+```
+
+:::tip 支持异步资源替换
+
+该功能基于`MutationObserver`实现，对于非首屏加载的异步资源也能够拦截并做替换
+
+:::
+
 ## 静态导入支持
 
 如用户同时发布了 npm 包，则`preFetchLib`可作为预加载接口使用，先将项目入口文件内容后移一层，即可像本地模块一样头部静态导入远程模块
@@ -225,13 +263,15 @@ function callRemoteMethod() {
 
 ## IPreFetchLibOptions
 
+以下列举了常用参数解释，更多可选参数见[IPreFetchOptionsBase](/docs/api/types/IPreFetchOptionsBase)描述
+
 | <div style={{width:'150px'}}>属性</div> | <div style={{width:'150px'}}>类型</div> | <div style={{width:'200px'}}>默认值</div> | <div style={{width:'355px'}}>描述</div> |
 | --- | --- | --- | --- |
 | platform | string | 'unpkg' | 指定获取模块元数据的平台 |
 | versionId | string | undefined | 指定拉取的版本号, 对于 unpkg 服务来说，版本号级 package.json 里的 version 值<br />未指定版本的话，总是拉取最新版本模块元数据，如当前用户在灰度名单里，则拉取灰度版本模块元数据 |
 | appendCss | boolean | true | 是否追加模块样式链接到 html 文档里 |
-| cssAppendTypes | CssAppendType[] | ['static', 'build'] | 该配置项在 appendCss 为 true 时有效，表示按要附加哪几种类型的 css 链接到 html 文档上<br />'static' 表示静态 css 链接文件<br/>'build' 表示每次构建新生成的 css 文件 |
+| cssAppendTypes | CssAppendType[] | ['static', 'build', 'relative'] | 该配置项在 appendCss 为 true 时有效，表示按要附加哪几种类型的 css 链接到 html 文档上<br />'static' 表示静态 css 链接文件<br/>'build' 表示每次构建新生成的 css 文件 |
 | apiMode | 'get' \| 'jsonp' | 'jsonp' | api 请求方式 |
 | enableDiskCache | boolean | false | 是否开启硬盘缓存 |
 
-文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues)，关注我的[掘金主页](https://juejin.cn/user/1732486056649880/posts)了解更多 ....\*\* ....
+文档正在拼命建设中，有疑问可联系 [fantasticsoul](https://github.com/fantasticsoul) 或提 [issue](https://github.com/tnfe/hel/issues)，关注我的[掘金主页](https://juejin.cn/user/1732486056649880/posts)了解更多 ...

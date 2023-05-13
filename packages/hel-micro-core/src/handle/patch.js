@@ -6,7 +6,7 @@ import { markElFeature } from './feature';
 
 const { KEY_ASSET_CTX } = helConsts;
 
-function doAppend(nativeAppend, /** @type {HTMLLinkElement | HTMLScriptElement }*/ el) {
+function doAppend(nativeAppend, /** @type {HTMLLinkElement | HTMLScriptElement}*/ el) {
   if (!el || !['LINK', 'SCRIPT'].includes(el.tagName)) {
     return nativeAppend(el);
   }
