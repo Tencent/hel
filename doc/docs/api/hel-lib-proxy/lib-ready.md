@@ -58,7 +58,7 @@ preFetchLib('xxx', { versionId: 'v1-prerelase' });
 
 ### 指定应用名
 
-初始状态下，[应用名与应用组名](docs/api/glossary#应用名与应用组名)是一致的，在存在对同一套代码除了按版本这个维度之外的更多加载场景的诉求时，可指定应用名暴露模块
+初始状态下，[应用名与应用组名](docs/api/basic/glossary#应用名与应用组名)是一致的，在存在对同一套代码除了按版本这个维度之外的更多加载场景的诉求时，可指定应用名暴露模块
 
 ```ts
 libReady('xxx', libProperties, { appName: 'xxx-dev' });
