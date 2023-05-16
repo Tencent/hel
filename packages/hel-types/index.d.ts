@@ -54,6 +54,7 @@ export interface IAssetItemBase {
    * 是否追加当前资源到dom文档树
    */
   append?: boolean;
+  innerText?: string;
 }
 
 export interface ILinkItem extends IAssetItemBase {

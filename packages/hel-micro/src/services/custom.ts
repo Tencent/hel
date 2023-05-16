@@ -1,5 +1,5 @@
 import { commonUtil, helConsts, log } from 'hel-micro-core';
-import type { ILinkItem, IScriptItem } from 'hel-types';
+import type { IAssetItem, ILinkItem, IScriptItem } from 'hel-types';
 import type { ICustom, IHelMeta, IInnerPreFetchOptions } from '../types';
 import { requestGet } from '../util';
 
@@ -119,7 +119,7 @@ export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom i
 }
 
 export async function getCustomMeta(appName: string, custom: ICustom): Promise<IHelMeta> {
-  const { host, appGroupName, skipFetchHelMeta = false, isApiUrl } = custom;
+  const { host, appGroupName, skipFetchHelMeta = false, isApiUrl, parseHtml } = custom;
   const t = Date.now();
 
   if (isApiUrl) {
@@ -142,9 +142,23 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
   } catch (err: any) {
     throw new Error(`${err.message} from ${host}`);
   }
-  const cssData = inner.extractCssList(htmlText, host);
-  const jsData = inner.extractScriptList(htmlText, host);
-  const bodyAssetList = cssData.itemList.concat(jsData.itemList);
+
+  let headAssetList: IAssetItem[] = [];
+  let bodyAssetList: IAssetItem[] = [];
+  let chunkCssSrcList: string[] = [];
+  let chunkJsSrcList: string[] = [];
+  if (parseHtml) {
+    const result = parseHtml(htmlText);
+    headAssetList = result.headAssetList;
+    bodyAssetList = result.bodyAssetList;
+  } else {
+    const cssData = inner.extractCssList(htmlText, host);
+    const jsData = inner.extractScriptList(htmlText, host);
+    chunkCssSrcList = cssData.stringList;
+    chunkJsSrcList = jsData.stringList;
+    bodyAssetList = cssData.itemList.concat(jsData.itemList);
+  }
+
 
   return {
     app: {
@@ -160,10 +174,10 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
       sub_app_version: DEFAULT_ONLINE_VER,
       src_map: {
         webDirPath: host,
-        headAssetList: [],
+        headAssetList,
         bodyAssetList,
-        chunkCssSrcList: cssData.stringList,
-        chunkJsSrcList: jsData.stringList,
+        chunkCssSrcList,
+        chunkJsSrcList,
         staticCssSrcList: [],
         staticJsSrcList: [],
         relativeCssSrcList: [],

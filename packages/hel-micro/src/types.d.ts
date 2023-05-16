@@ -1,5 +1,5 @@
 import type { IControlPreFetchOptions } from 'hel-micro-core';
-import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
+import type { IAssetItem, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -93,6 +93,11 @@ export interface ICustom {
    * 但建议加载线上模块时（非本地联调时），保持 skipFetchHelMeta 为 false 比较好，有利于提高模块加载速度（ 无html解析hel-meta.json过程 ）
    */
   skipFetchHelMeta?: boolean;
+  /**
+   * 自定义的 html 解析函数（ 例如使用 htmlparser2 等第三方库 ）
+   * 当内置的解析规则（ 简单的基于正则匹配 ）不满足时，可设置此函数，通常应对vite构建的现代化应用产物时需要设置此函数
+   */
+  parseHtml?: (htmlText: string) => { headAssetList: IAssetItem[], bodyAssetList: IAssetItem[] };
 }
 
 export interface ILinkInfo {

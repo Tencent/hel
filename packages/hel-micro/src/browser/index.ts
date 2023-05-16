@@ -17,29 +17,42 @@ function isAssetExisted(selectors: string) {
   }
 }
 
-function isExLoaded(attrs: Record<string, any>, tag: string) {
+/**
+ * 识别 data-helappend data-helex 原语来确定资源是否能加载
+ */
+function canAppendByHelMark(attrs: Record<string, any>, tag: string) {
   const ex = attrs['data-helex'];
+  const helAppend = attrs['data-helappend'];
   const g = getGlobalThis();
+
+  if (helAppend === '0') {
+    return false;
+  }
+
+  // check is ex loaded，此功能用于支持需延迟加载的 externals
   if (ex) {
     // @ts-ignore avoid error: type {xxx} was found on type 'typeof globalThis'.
     if (tag === 'script' && g[ex]) {
-      // script 型的 ex，优先查 globalThis 上是否已绑定
-      return true;
+      // script 型的 ex，优先查 globalThis 上是否已绑定，已绑定则不能加载相同 ex 标记的资源了
+      return false;
     }
     // 查 helex 特征值对应的资源是否存在
-    return isAssetExisted(`${tag}[data-helex="${ex}"]`);
+    const isExisted = isAssetExisted(`${tag}[data-helex="${ex}"]`);
+    return !isExisted; // 不存在才加载
   }
-  return false;
+
+  return true;
 }
 
 interface ICreateScriptOptions {
   attrs: IScriptAttrs;
+  innerText?: string;
   appendToBody?: boolean;
   onloadCb?: () => void;
 }
 
 function createScriptElement(options: ICreateScriptOptions) {
-  const { attrs, appendToBody = true, onloadCb } = options;
+  const { attrs, innerText, appendToBody = true, onloadCb } = options;
   const { src, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
   if (!src) {
@@ -50,7 +63,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (isAssetExisted(`script[src="${src}"]`)) {
     return false;
   }
-  if (isExLoaded(restObj, 'script')) {
+  if (!canAppendByHelMark(restObj, 'script')) {
     return false;
   }
 
@@ -58,6 +71,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   el.setAttribute('src', src);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (onloadCb) el.onload = onloadCb;
+  if (innerText) el.innerText = innerText;
 
   if (appendToBody) doc.body.appendChild(el);
   else doc.head.appendChild(el);
@@ -67,16 +81,17 @@ function createScriptElement(options: ICreateScriptOptions) {
 
 interface ICreateLinkOptions {
   attrs: ILinkAttrs;
+  innerText?: string;
   appendToBody?: boolean;
 }
 
 function createLinkElement(options: ICreateLinkOptions) {
-  const { appendToBody = false, attrs } = options;
+  const { appendToBody = false, innerText, attrs } = options;
   const { href, rel, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
   const doc = getGlobalThis().document;
   if (!href) return;
-  if (isExLoaded(restObj, 'link')) {
+  if (!canAppendByHelMark(restObj, 'link')) {
     return false;
   }
 
@@ -84,6 +99,7 @@ function createLinkElement(options: ICreateLinkOptions) {
   el.setAttribute('rel', rel || 'stylesheet');
   el.setAttribute('href', href);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
+  if (innerText) el.innerText = innerText;
 
   if (appendToBody) doc.body.appendChild(el);
   else doc.head.appendChild(el);
@@ -113,14 +129,14 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
 
   assetList.forEach((v) => {
     // 兼容历史元数据，无 append 的话就默认为 true
-    const { tag, attrs, append = true } = v;
+    const { tag, attrs, append = true, innerText = '' } = v;
     if (!append) {
       return;
     }
     // 处理 link 标签
     if (isLinkAttrs(tag, attrs)) {
       // Object.assign is much faster than spread operator
-      const createLinkOptions = { appendToBody, attrs };
+      const createLinkOptions = { appendToBody, attrs, innerText };
       const { href } = attrs;
       // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
       if (href.endsWith('.ico') && v.append !== true) {
@@ -143,7 +159,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
     }
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
-      createScriptElement({ appendToBody, attrs });
+      createScriptElement({ appendToBody, attrs, innerText });
     }
   });
 }
