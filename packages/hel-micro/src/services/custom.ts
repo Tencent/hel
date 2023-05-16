@@ -159,7 +159,6 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
     bodyAssetList = cssData.itemList.concat(jsData.itemList);
   }
 
-
   return {
     app: {
       // @ts-ignore，标记来自 cust 配置
