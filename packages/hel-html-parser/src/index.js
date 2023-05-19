@@ -1,4 +1,4 @@
-import { parseHtml, HTMLParser } from './parser';
+import { HTMLParser, parseHtml } from './parser';
 
 export { parseHtml, HTMLParser };
 

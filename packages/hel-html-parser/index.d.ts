@@ -1,4 +1,3 @@
-
 interface ITagData {
   tag: string;
   attrs: Record<string, string>;

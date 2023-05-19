@@ -5,7 +5,7 @@ const TOKEN_REGEX = /[a-zA-Z0-9\-]/;
 
 export class HTMLParser {
   constructor() {
-    this.input = "";
+    this.input = '';
     this.cur = 0;
   }
 
@@ -42,10 +42,10 @@ export class HTMLParser {
         break;
       }
     } while (!this.eof);
-    return result.join("");
+    return result.join('');
   }
 
-  noop() { }
+  noop() {}
 
   parse(input, options = {}) {
     this.input = input;
@@ -59,8 +59,8 @@ export class HTMLParser {
     const nodes = [];
     do {
       let node;
-      if (this.peek() === "<") {
-        if (this.peek(1) === "/") break;
+      if (this.peek() === '<') {
+        if (this.peek(1) === '/') break;
         node = this.parseElement();
       } else {
         node = this.parseTextNode();
@@ -72,11 +72,11 @@ export class HTMLParser {
 
   parseTextNode() {
     const text = this.consumeWhile(/[^<]/);
-    return text.replace(/[\s\n]+/g, " ");
+    return text.replace(/[\s\n]+/g, ' ');
   }
 
   parseElement() {
-    this.consumeChar("<");
+    this.consumeChar('<');
     const tag = this.parseTag();
     this.onTagOpen(tag);
     this.consumeSpace();
@@ -84,29 +84,29 @@ export class HTMLParser {
 
     const curChar = this.peek();
     const curPrev1Char = this.peek(-1);
-    if (`${curPrev1Char}${curChar}` === "/>") {
+    if (`${curPrev1Char}${curChar}` === '/>') {
       // is self close tag
       const toReturn = {
         tag,
         attrs,
-        children: []
+        children: [],
       };
       this.onTagClose(tag, toReturn);
       return toReturn;
     }
 
-    this.consumeChar(">");
+    this.consumeChar('>');
     const children = this.parseNodes();
-    this.consumeChar("<");
-    this.consumeChar("/");
+    this.consumeChar('<');
+    this.consumeChar('/');
     //  const closeTag = this.parseTag();
     this.parseTag();
     this.consumeSpace();
-    this.consumeChar(">");
+    this.consumeChar('>');
     const toReturn = {
       tag,
       attrs,
-      children
+      children,
     };
     this.onTagClose(tag, toReturn);
     return toReturn;
@@ -119,21 +119,21 @@ export class HTMLParser {
 
   parseAttrs() {
     const attrs = {};
-    while (this.peek() !== ">") {
+    while (this.peek() !== '>') {
       const name = this.parseTag();
       if (!name) {
         this.consumeChar(this.peek());
         continue;
       }
 
-      if (this.peek() === "=") {
-        this.consumeChar("=");
+      if (this.peek() === '=') {
+        this.consumeChar('=');
         this.consumeChar('"');
         const value = this.consumeWhile(/[^"]/);
         this.consumeChar('"');
         attrs[name] = value;
       } else {
-        attrs[name] = "";
+        attrs[name] = '';
       }
       this.consumeSpace();
     }

@@ -1,10 +1,14 @@
 # hel-html-parser
+
 服务于 hel-micro 里为 html entry 解析出 helMetaJson.version.srcMap 的场景，也可以独立使用
+
 > inspred by https://zhuanlan.zhihu.com/p/338772106, fixed self close tag parse bug.
 
 ### 使用方式
-[线上demo](https://codesandbox.io/s/hel-micro-html-parser-kfbo42?file=/src/index.js:0-5153)
-``` ts
+
+[线上 demo](https://codesandbox.io/s/hel-micro-html-parser-kfbo42?file=/src/index.js:0-5153)
+
+```ts
 import { parseHtml } from 'hel-html-parser';
 
 const html = `<html lang="en">
@@ -28,11 +32,11 @@ const html = `<html lang="en">
 const start = Date.now();
 const nodes = parseHtml(html, {
   onTagOpen(name) {
-    console.log("open", name);
+    console.log('open', name);
   },
   onTagClose(name, data) {
-    console.log("close", name, data);
-  }
+    console.log('close', name, data);
+  },
 });
 
 const result = JSON.stringify(nodes, 0, 2);
