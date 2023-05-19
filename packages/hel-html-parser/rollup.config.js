@@ -7,8 +7,8 @@ import pkg from './package.json';
 
 const external = Object.keys(pkg.peerDependencies || {});
 const env = process.env.BUILD_ENV;
-const distFileName = 'hel-micro-core';
-const globalName = 'HelMicroCore';
+const distFileName = 'hel-html-parser';
+const globalName = 'HelHtmlParser';
 
 const env2outputConf = {
   commonjs: {

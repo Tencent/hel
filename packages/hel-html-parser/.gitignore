@@ -1,0 +1,9 @@
+.DS_Store
+.vscode
+.idea
+
+node_modules
+dist
+es
+tmp
+lib

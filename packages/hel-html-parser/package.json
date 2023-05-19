@@ -1,0 +1,44 @@
+{
+  "name": "hel-html-parser",
+  "version": "0.0.1",
+  "description": "simple and fast html parser",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel/tree/main/packages/hel-html-parser",
+    "directory": "packages/hel-html-parser"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src",
+    "index.d.ts",
+    ".babelrc.js",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "rollup -c --environment BUILD_ENV:commonjs",
+    "build:es": "rollup -c --environment BUILD_ENV:es",
+    "build:umd": "rollup -c --environment BUILD_ENV:development",
+    "build:umd:min": "rollup -c --environment BUILD_ENV:production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "hel-types": "^4.3.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-cli": "^6.26.0",
+    "rollup": "^2.23.0"
+  },
+  "bundleDependencies": false,
+  "deprecated": false
+}
