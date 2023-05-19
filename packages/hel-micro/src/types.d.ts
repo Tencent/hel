@@ -150,6 +150,11 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   projectId?: string;
   /**
    * default: false,
+   * 版本数据里是否返回 html_content，此参数仅作用于 semverApi 为 false 时有效，且需要对应后台自己去实现，以达到减少传输数据量的问题
+   */
+  isFullVersion?: boolean;
+  /**
+   * default: false,
    * 是否需要支持 shadow 特性
    */
   shadow?: boolean;

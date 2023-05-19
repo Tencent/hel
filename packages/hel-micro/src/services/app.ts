@@ -120,6 +120,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     enableSyncMeta = defaults.ENABLE_SYNC_META,
     versionId = '',
     projectId = '',
+    isFullVersion = false,
     custom,
     strictMatchVer,
     semverApi,
@@ -149,7 +150,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     return { appInfo: memApp, appVersion: memAppVersion };
   }
 
-  const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
+  const srcInnerOptions = { platform, apiMode, versionId, projectId, isFullVersion, loadOptions: options };
   let mayCachedApp: ICacheData | null = null;
   const tryGetFromRemote = async (allowGet: boolean) => {
     if (allowGet) {
