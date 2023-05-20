@@ -38,6 +38,7 @@ const config = {
     exports: 'named',
     globals: {
       'hel-micro-core': 'HelMicroCore',
+      'hel-html-parser': 'HelHtmlParser',
     },
   },
   plugins: [

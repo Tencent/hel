@@ -96,8 +96,10 @@ export interface ICustom {
   /**
    * 自定义的 html 解析函数（ 例如使用 htmlparser2 等第三方库 ）
    * 当内置的解析规则（ 简单的基于正则匹配 ）不满足时，可设置此函数，通常应对vite构建的现代化应用产物时需要设置此函数
+   * @param htmlText 透传的 html 字符串
+   * @param host 透传的 host，用于帮助过滤掉非构建产生的资源
    */
-  parseHtml?: (htmlText: string) => { headAssetList: IAssetItem[]; bodyAssetList: IAssetItem[] };
+  parseHtml?: (htmlText: string, host: string) => { headAssetList: IAssetItem[]; bodyAssetList: IAssetItem[] };
 }
 
 export interface ILinkInfo {

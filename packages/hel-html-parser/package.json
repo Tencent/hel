@@ -1,6 +1,6 @@
 {
   "name": "hel-html-parser",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "simple and fast html parser",
   "repository": {
     "type": "git",

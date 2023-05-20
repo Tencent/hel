@@ -1,16 +1,22 @@
-//  parse html，inspred by https://zhuanlan.zhihu.com/p/338772106, fixed self close tag parse bug.
+//  parse html，inspred by https://zhuanlan.zhihu.com/p/338772106,
+// fixed self close tag parse bug.
+// fixed including comment parse bug.
 
 const SPACE_REGEX = /\s/;
 const TOKEN_REGEX = /[a-zA-Z0-9\-]/;
+const DOCTYPE_MARK = '<!DOCTYPE html>';
+const COMMENT_START = '<!--';
+const COMMENT_END = '-->';
 
 export class HTMLParser {
   constructor() {
     this.input = '';
+    this.len = 0;
     this.cur = 0;
   }
 
   get eof() {
-    return this.cur >= this.input.length;
+    return this.cur >= this.len;
   }
 
   peek(offset = 0) {
@@ -47,8 +53,31 @@ export class HTMLParser {
 
   noop() {}
 
+  pureInput(/** @type string */ input) {
+    let puredStr = input.trim();
+    if (input.startsWith(DOCTYPE_MARK)) {
+      puredStr = input.substring(DOCTYPE_MARK.length);
+    }
+
+    // 移除 <!-- --> 相关的注释
+    const delComment = (str) => {
+      const commentStartIdx = str.indexOf(COMMENT_START);
+      const commentEndIdx = str.indexOf(COMMENT_END);
+      if (commentStartIdx >= 0 && commentEndIdx >= 0) {
+        const strBeforeComment = str.substring(0, commentStartIdx);
+        const strAfterComment = str.substring(commentEndIdx + COMMENT_END.length);
+        return delComment(`${strBeforeComment}${strAfterComment}`);
+      }
+      return str;
+    };
+
+    puredStr = delComment(puredStr);
+    return puredStr;
+  }
+
   parse(input, options = {}) {
-    this.input = input;
+    this.input = this.pureInput(input);
+    this.len = this.input.length;
     this.onTagOpen = options.onTagOpen || this.noop();
     this.onTagClose = options.onTagClose || this.noop();
     this.cur = 0;

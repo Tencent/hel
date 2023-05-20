@@ -2,7 +2,7 @@
 
 服务于 hel-micro 里为 html entry 解析出 helMetaJson.version.srcMap 的场景，也可以独立使用
 
-> inspred by https://zhuanlan.zhihu.com/p/338772106, fixed self close tag parse bug.
+> 受到此文章 https://zhuanlan.zhihu.com/p/338772106 启发, 优化了自闭合标签无限循环 bug，优化了 `<!DOCTYPE html>` 开头会报错的 bug，优化了包含注释会报错的 bug
 
 ### 使用方式
 

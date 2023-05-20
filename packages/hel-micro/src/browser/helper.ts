@@ -57,3 +57,15 @@ export function getLocalStorage() {
     return mockStorage;
   }
 }
+
+/**
+ * 支持读取 dom attrs 时只有 key 的正确含义
+ * 例如通过设定 defaultValIfOnlyKey 表示 <script data-helappend /> 可拿到值为 '1' 而非 ''
+ */
+export function getDatasetVal(dataset: Record<string, string>, key: string, defaultValIfOnlyKey: string) {
+  const hasKey = Object.prototype.hasOwnProperty.call(dataset, key);
+  if (hasKey) {
+    return dataset[key] || defaultValIfOnlyKey;
+  }
+  return undefined;
+}

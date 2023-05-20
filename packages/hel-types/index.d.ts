@@ -27,6 +27,8 @@ export type TagRelativeLink = 'relativeLink';
 /** 相对路径导入的 homePage 之外的 script 标签，通常由cdn等文件服务提供*/
 export type TagRelativeScript = 'relativeScript';
 
+// export type TagName = TagLink | TagScript | TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript;
+
 /**
  * 这些标签类型默认不会被 sdk 加载，仅表示处于 html 代码里的位置
  * 除非显示标记 data-helappend="1" 会被加载，通常用于紧随主站点加载的私有化部署模式

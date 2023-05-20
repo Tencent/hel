@@ -1,6 +1,6 @@
 {
   "name": "hel",
-  "version": "4.7.7",
+  "version": "4.7.11",
   "description": "",
   "keywords": [],
   "author": "fantasticsoul",
@@ -28,6 +28,7 @@
     "@types/node": ">=12.0.0",
     "@types/react": "^16.8.0",
     "@types/react-dom": "^16.8.0",
+    "hel-html-parser": "workspace:*",
     "hel-lib-proxy": "workspace:*",
     "hel-micro": "workspace:*",
     "hel-micro-core": "workspace:*",

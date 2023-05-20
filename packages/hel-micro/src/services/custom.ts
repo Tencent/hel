@@ -1,21 +1,11 @@
+import { parseHtml } from 'hel-html-parser';
 import { commonUtil, helConsts, log } from 'hel-micro-core';
-import type { IAssetItem, ILinkItem, IScriptItem } from 'hel-types';
+import type { IAssetItem } from 'hel-types';
+import { getDatasetVal } from '../browser/helper';
 import type { ICustom, IHelMeta, IInnerPreFetchOptions } from '../types';
 import { requestGet } from '../util';
 
 const { DEFAULT_ONLINE_VER } = helConsts;
-const type2conf = {
-  js: {
-    endMarks: ['.js', '.ts'] as string[],
-    reg: '(?<=(src="))[^"]*?(?=")',
-    tag: 'script',
-  },
-  css: {
-    endMarks: ['.css'] as string[],
-    reg: '(?<=(href="))[^"]*?(?=")',
-    tag: 'link',
-  },
-} as const;
 const LOCAL_STR = 'http://localhost';
 const LOCAL_127 = 'http://127.0.0.1';
 
@@ -27,53 +17,63 @@ const inner = {
     }
     return src.startsWith(host);
   },
-  extractAssetList(htmlText: string, options: { host: string; type: 'js' | 'css' }) {
-    // TODO: 分析 script style 内部文本（现阶段暂不支持内部文本）
-    // const arr = Array.from(htmlText.matchAll(new RegExp('(?<=\<script\>).*?(?=(\</script\>|$))', 'g')));
-    // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
+  extractAssetList(htmlText: string, host: string) {
+    type Item = { data: { tag: string; attrs: Record<string, string>; innerText: string }; toHead: boolean };
+    let isHeadOpen = true;
+    const headAssetList: IAssetItem[] = [];
+    const bodyAssetList: IAssetItem[] = [];
+    const itemList: Item[] = [];
+    const isValidTag = (tag: string) => ['script', 'link'].includes(tag);
 
-    const { host, type } = options;
-    const { endMarks, tag, reg } = type2conf[type];
-
-    // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
-    // SyntaxError: Invalid regular expression: invalid group specifier name
-    const assetReg = new RegExp(reg, 'ig');
-    const rawList = htmlText.match(assetReg) || [];
-    // 记录sdk 初次加载应用需要的资源描述对象
-    const itemList: Array<ILinkItem | IScriptItem> = [];
-    // 记录所有的资源路径，注意此处只是模拟，实际上通过 custom 方式加载的应用
-    // chunkJsSrcList chunkCssSrcList 信息并不如构建时提取的完整
-    const stringList: string[] = [];
-
-    rawList.forEach((v) => {
-      if (!inner.isSrcMatchHost(v, host)) {
-        return;
-      }
-      if (endMarks.every((endMark) => !v.endsWith(endMark))) {
-        return;
-      }
-
-      stringList.push(v);
-      if (tag === 'script') {
-        const toPush: IScriptItem = { tag, attrs: { src: v } };
-        // TODO: 优化为读取到 module 属性存在就设置 type = 'module'
-        if (v.endsWith('.ts')) {
-          toPush.attrs.type = 'module'; // support esm
+    parseHtml(htmlText, {
+      onTagOpen(tag) {
+        if (isValidTag(tag)) {
+          itemList.push({ data: { tag, attrs: {}, innerText: '' }, toHead: isHeadOpen });
         }
-        itemList.push(toPush);
-      } else {
-        itemList.push({ tag, attrs: { href: v, rel: 'stylesheet' } });
+      },
+      onTagClose(tag, tagData) {
+        if (tag === 'head') isHeadOpen = false;
+        if (!isValidTag(tag)) return;
+        const lastItem = itemList[itemList.length - 1];
+        if (lastItem) {
+          const firstChild = tagData.children[0] || '';
+          if (typeof firstChild === 'string') {
+            lastItem.data.innerText = firstChild;
+          }
+          lastItem.data.attrs = tagData.attrs;
+        }
+      },
+    });
+
+    itemList.forEach(({ data, toHead }) => {
+      const list = toHead ? headAssetList : bodyAssetList;
+      const { src, href, 'data-helex': helEx, rel } = data.attrs;
+      const helAppend = getDatasetVal(data.attrs, 'data-helappend', '1');
+      const url = src || href || '';
+      let append = true;
+      // icon 资源默认不加载
+      // 非构建产生的资源，如未标记 data-helappend="1" 且未标记data-helex="{exName}"，则不加载
+      if (rel === 'icon' || (!inner.isSrcMatchHost(url, host) && helAppend !== '1' && !helEx)) {
+        append = false;
+      }
+      const itemVar: any = { ...data, append };
+      list.push(itemVar);
+    });
+
+    return { headAssetList, bodyAssetList };
+  },
+  getChunkList(assetList: IAssetItem[]) {
+    const chunkCssSrcList: string[] = [];
+    const chunkJsSrcList: string[] = [];
+    assetList.forEach((asset) => {
+      const { href, src } = asset.attrs;
+      const url = href || src || '';
+      if (url) {
+        url.endsWith('.css') ? chunkCssSrcList.push(url) : chunkJsSrcList.push(url);
       }
     });
-    return { itemList, stringList };
-  },
-  extractCssList(htmlText: string, host: string) {
-    const data = inner.extractAssetList(htmlText, { host, type: 'css' });
-    return data;
-  },
-  extractScriptList(htmlText: string, host: string) {
-    const data = inner.extractAssetList(htmlText, { host, type: 'js' });
-    return data;
+
+    return { chunkCssSrcList, chunkJsSrcList };
   },
   extactHelMeta(reply: any) {
     const { code, data, msg } = reply;
@@ -143,21 +143,11 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
     throw new Error(`${err.message} from ${host}`);
   }
 
-  let headAssetList: IAssetItem[] = [];
-  let bodyAssetList: IAssetItem[] = [];
-  let chunkCssSrcList: string[] = [];
-  let chunkJsSrcList: string[] = [];
-  if (parseHtml) {
-    const result = parseHtml(htmlText);
-    headAssetList = result.headAssetList;
-    bodyAssetList = result.bodyAssetList;
-  } else {
-    const cssData = inner.extractCssList(htmlText, host);
-    const jsData = inner.extractScriptList(htmlText, host);
-    chunkCssSrcList = cssData.stringList;
-    chunkJsSrcList = jsData.stringList;
-    bodyAssetList = cssData.itemList.concat(jsData.itemList);
-  }
+  const parseFn = parseHtml || inner.extractAssetList;
+  const result = parseFn(htmlText, host);
+  const headAssetList = result.headAssetList || [];
+  const bodyAssetList = result.bodyAssetList || [];
+  const chunkResult = inner.getChunkList(headAssetList.concat(bodyAssetList));
 
   return {
     app: {
@@ -175,8 +165,8 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
         webDirPath: host,
         headAssetList,
         bodyAssetList,
-        chunkCssSrcList,
-        chunkJsSrcList,
+        chunkCssSrcList: chunkResult.chunkCssSrcList,
+        chunkJsSrcList: chunkResult.chunkJsSrcList,
         staticCssSrcList: [],
         staticJsSrcList: [],
         relativeCssSrcList: [],
