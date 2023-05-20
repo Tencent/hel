@@ -19,6 +19,11 @@ const config = {
   favicon: 'img/hel.ico',
   organizationName: 'facebook', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
+  i18n: {
+    defaultLocale: 'zh-Hans',
+    locales: ['en', 'zh-Hans'],
+    path: 'i18n',
+  },
 
   presets: [
     [
@@ -83,6 +88,10 @@ const config = {
           {
             href: HEL_GIT,
             label: 'GitHub',
+            position: 'right',
+          },
+          {
+            type: 'localeDropdown',
             position: 'right',
           },
         ],

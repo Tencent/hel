@@ -11,7 +11,8 @@
     "build_hel": "pnpm --filter=hel-micro run build",
     "build_proxy": "pnpm --filter=hel-lib-proxy run build",
     "commitlint": "commitlint -e $HUSKY_GIT_PARAMS",
-    "doc": "pnpm --filter=hel-doc run build && rm -rf ../my-opensource/hel-gh-pages/* && cp -r ./doc/build/* ../my-opensource/hel-gh-pages",
+    "cpdoc": "rm -rf ../my-opensource/hel-gh-pages/* && cp -r ./doc/build/* ../my-opensource/hel-gh-pages",
+    "doc": "pnpm --filter=hel-doc run build && npm run cpdoc",
     "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./doc/src/components' --ignore-path .gitignore --ignore-unknown",
     "prepare": "husky install"
   },
@@ -24,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@docusaurus/types": "^2.4.1",
     "@jest/transform": "29",
     "@types/node": ">=12.0.0",
     "@types/react": "^16.8.0",
@@ -36,6 +38,7 @@
     "hel-types": "workspace:*",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
+    "react-is": "^18.2.0",
     "shadow-view-react": "workspace:^1.0.0"
   },
   "devDependencies": {
