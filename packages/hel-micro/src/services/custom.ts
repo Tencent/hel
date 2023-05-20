@@ -1,8 +1,8 @@
 import { parseHtml } from 'hel-html-parser';
 import { commonUtil, helConsts, log } from 'hel-micro-core';
-import type { IAssetItem } from 'hel-types';
-import { getDatasetVal } from '../browser/helper';
-import type { ICustom, IHelMeta, IInnerPreFetchOptions } from '../types';
+import type { IAssetItem, TagName } from 'hel-types';
+import { getDatasetVal, isRelativePath } from '../browser/helper';
+import type { ICustom, IHelMeta, IInnerPreFetchOptions, IParsedNodeItem } from '../types';
 import { requestGet } from '../util';
 
 const { DEFAULT_ONLINE_VER } = helConsts;
@@ -17,18 +17,15 @@ const inner = {
     }
     return src.startsWith(host);
   },
-  extractAssetList(htmlText: string, host: string) {
-    type Item = { data: { tag: string; attrs: Record<string, string>; innerText: string }; toHead: boolean };
+  parseHtml(htmlText: string) {
     let isHeadOpen = true;
-    const headAssetList: IAssetItem[] = [];
-    const bodyAssetList: IAssetItem[] = [];
-    const itemList: Item[] = [];
-    const isValidTag = (tag: string) => ['script', 'link'].includes(tag);
+    const itemList: IParsedNodeItem[] = [];
+    const isValidTag = (tag: string): tag is 'script' | 'link' | 'style' => ['script', 'link', 'style'].includes(tag);
 
     parseHtml(htmlText, {
       onTagOpen(tag) {
         if (isValidTag(tag)) {
-          itemList.push({ data: { tag, attrs: {}, innerText: '' }, toHead: isHeadOpen });
+          itemList.push({ tag, attrs: {}, innerText: '', head: isHeadOpen });
         }
       },
       onTagClose(tag, tagData) {
@@ -38,29 +35,60 @@ const inner = {
         if (lastItem) {
           const firstChild = tagData.children[0] || '';
           if (typeof firstChild === 'string') {
-            lastItem.data.innerText = firstChild;
+            lastItem.innerText = firstChild;
           }
-          lastItem.data.attrs = tagData.attrs;
+          lastItem.attrs = tagData.attrs;
         }
       },
     });
+    return itemList;
+  },
+  convertToAssetList(list: IParsedNodeItem[], host: string) {
+    const headAssetList: IAssetItem[] = [];
+    const bodyAssetList: IAssetItem[] = [];
+    const staticCssSrcList: string[] = [];
+    const staticJsSrcList: string[] = [];
+    const relativeCssSrcList: string[] = [];
+    const relativeJsSrcList: string[] = [];
 
-    itemList.forEach(({ data, toHead }) => {
-      const list = toHead ? headAssetList : bodyAssetList;
-      const { src, href, 'data-helex': helEx, rel } = data.attrs;
-      const helAppend = getDatasetVal(data.attrs, 'data-helappend', '1');
-      const url = src || href || '';
-      let append = true;
-      // icon 资源默认不加载
-      // 非构建产生的资源，如未标记 data-helappend="1" 且未标记data-helex="{exName}"，则不加载
-      if (rel === 'icon' || (!inner.isSrcMatchHost(url, host) && helAppend !== '1' && !helEx)) {
-        append = false;
+    list.forEach((item) => {
+      const { head, attrs, innerText, tag } = item;
+      const list = head ? headAssetList : bodyAssetList;
+      const { src, href, 'data-helex': helEx, rel } = attrs;
+      const helAppend = getDatasetVal(attrs, 'data-helappend', '1');
+
+      if (tag === 'style') {
+        list.push({ tag, attrs, innerText, append: true });
+      } else {
+        const url = src || href || '';
+        const isCss = url.endsWith('.css');
+        const isLink = tag === 'link';
+        if (!url) return;
+        let append = true;
+        const isBuildUrl = inner.isSrcMatchHost(url, host);
+        // icon 资源默认不加载
+        // 非构建产生的资源，如未标记 data-helappend="1" 且未标记data-helex="{exName}"，则不加载
+        if (rel === 'icon' || (!isBuildUrl && helAppend !== '1' && !helEx)) {
+          append = false;
+        }
+
+        let tagVar: TagName = tag;
+        if (!isBuildUrl) {
+          if (isRelativePath(url)) {
+            tagVar = isLink ? 'relativeLink' : 'relativeScript';
+            isCss ? relativeCssSrcList.push(url) : relativeJsSrcList.push(url);
+          } else {
+            tagVar = isLink ? 'staticLink' : 'staticScript';
+            isCss ? staticCssSrcList.push(url) : staticJsSrcList.push(url);
+          }
+        }
+
+        const itemVar: any = { tag: tagVar, attrs, innerText, append };
+        list.push(itemVar);
       }
-      const itemVar: any = { ...data, append };
-      list.push(itemVar);
     });
 
-    return { headAssetList, bodyAssetList };
+    return { headAssetList, bodyAssetList, staticCssSrcList, staticJsSrcList, relativeCssSrcList, relativeJsSrcList };
   },
   getChunkList(assetList: IAssetItem[]) {
     const chunkCssSrcList: string[] = [];
@@ -143,11 +171,10 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
     throw new Error(`${err.message} from ${host}`);
   }
 
-  const parseFn = parseHtml || inner.extractAssetList;
-  const result = parseFn(htmlText, host);
-  const headAssetList = result.headAssetList || [];
-  const bodyAssetList = result.bodyAssetList || [];
-  const chunkResult = inner.getChunkList(headAssetList.concat(bodyAssetList));
+  const parseFn = parseHtml || inner.parseHtml;
+  const nodeList = parseFn(htmlText);
+  const { headAssetList, bodyAssetList, ...restList } = inner.convertToAssetList(nodeList, host);
+  const srcList = inner.getChunkList(headAssetList.concat(bodyAssetList));
 
   return {
     app: {
@@ -165,12 +192,8 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
         webDirPath: host,
         headAssetList,
         bodyAssetList,
-        chunkCssSrcList: chunkResult.chunkCssSrcList,
-        chunkJsSrcList: chunkResult.chunkJsSrcList,
-        staticCssSrcList: [],
-        staticJsSrcList: [],
-        relativeCssSrcList: [],
-        relativeJsSrcList: [],
+        ...srcList,
+        ...restList,
       },
     },
   } as unknown as IHelMeta;

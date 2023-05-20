@@ -26,28 +26,31 @@ export type TagStaticScript = 'staticScript';
 export type TagRelativeLink = 'relativeLink';
 /** 相对路径导入的 homePage 之外的 script 标签，通常由cdn等文件服务提供*/
 export type TagRelativeScript = 'relativeScript';
+/** 内联的 style 标签 */
+export type TagStyle = 'style';
 
-// export type TagName = TagLink | TagScript | TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript;
+export type TagName = TagLink | TagScript | TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript | TagStyle;
 
 /**
  * 这些标签类型默认不会被 sdk 加载，仅表示处于 html 代码里的位置
  * 除非显示标记 data-helappend="1" 会被加载，通常用于紧随主站点加载的私有化部署模式
  * 或显示标记 data-helex="xxx-link"，用于控制需要延迟加载的且只加载一次的 external 资源
  */
-type TagNoAppend = TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript;
+export type TagNoAppend = TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript;
 
-export type ItemTag = TagLink | TagScript | TagNoAppend;
+export type ItemTag = TagLink | TagScript | TagStyle | TagNoAppend;
 
-export interface ILinkAttrs {
-  href: string;
-  /** 新增动态字段，方便将来扩展存储其他属性，目前可能有 rel as crossorigin ... */
+interface IAttrsBase {
+  /** 动态字段，方便将来扩展存储其他属性，有 rel as crossorigin type 等 ... */
   [key: string]: string;
 }
 
-export interface IScriptAttrs {
+export interface ILinkAttrs extends IAttrsBase {
+  href: string;
+}
+
+export interface IScriptAttrs extends IAttrsBase {
   src: string;
-  /** 新增动态字段，方便将来扩展存储其他属性，目前可能有 type crossorigin ... */
-  [key: string]: string;
 }
 
 export interface IAssetItemBase {
@@ -89,8 +92,20 @@ export interface IRelativeScriptItem extends IAssetItemBase {
   attrs: IScriptAttrs;
 }
 
-export type IAssetItem = ILinkItem | IScriptItem | IStaticLinkItem | IStaticScriptItem | IRelativeLinkItem | IRelativeScriptItem;
-export type IAssetItemAttrs = ILinkAttrs | IScriptAttrs;
+export interface IStyleItem extends IAssetItemBase {
+  tag: TagStyle;
+  attrs: IAttrsBase;
+}
+
+export type IAssetItem =
+  | ILinkItem
+  | IScriptItem
+  | IStaticLinkItem
+  | IStaticScriptItem
+  | IRelativeLinkItem
+  | IRelativeScriptItem
+  | IStyleItem;
+export type IAssetItemAttrs = ILinkAttrs | IScriptAttrs | IAttrsBase;
 
 export interface ISrcMap {
   /** index.html 入口文件地址 */

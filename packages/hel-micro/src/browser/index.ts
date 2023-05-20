@@ -1,5 +1,5 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
-import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
+import type { IAssetItem, IAssetItemAttrs, IAttrsBase, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
 import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import { getAssetUrlType } from './helper';
@@ -44,6 +44,13 @@ function canAppendByHelMark(attrs: Record<string, any>, tag: string) {
   return true;
 }
 
+function appendEl(el: HTMLElement, attrs: Record<string, string>, appendToBody: boolean) {
+  const doc = getGlobalThis().document;
+  okeys(attrs).forEach((key) => el.setAttribute(key, attrs[key]));
+  if (appendToBody) doc.body.appendChild(el);
+  else doc.head.appendChild(el);
+}
+
 interface ICreateScriptOptions {
   attrs: IScriptAttrs;
   innerText?: string;
@@ -73,9 +80,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (onloadCb) el.onload = onloadCb;
   if (innerText) el.innerText = innerText;
 
-  if (appendToBody) doc.body.appendChild(el);
-  else doc.head.appendChild(el);
-
+  appendEl(el, restObj, appendToBody);
   return true;
 }
 
@@ -98,11 +103,24 @@ function createLinkElement(options: ICreateLinkOptions) {
   const el = doc.createElement('link');
   el.setAttribute('rel', rel || 'stylesheet');
   el.setAttribute('href', href);
-  okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (innerText) el.innerText = innerText;
 
-  if (appendToBody) doc.body.appendChild(el);
-  else doc.head.appendChild(el);
+  appendEl(el, restObj, appendToBody);
+}
+
+interface ICreateStyleOptions {
+  attrs: IAttrsBase;
+  innerText?: string;
+  appendToBody?: boolean;
+}
+
+function createStyleElement(options: ICreateStyleOptions) {
+  const { appendToBody = false, innerText = '', attrs } = options;
+  const doc = getGlobalThis().document;
+  const el = doc.createElement('style');
+  el.innerText = innerText;
+
+  appendEl(el, attrs, appendToBody);
 }
 
 interface ICreateDomOptions {
@@ -135,7 +153,6 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
     }
     // 处理 link 标签
     if (isLinkAttrs(tag, attrs)) {
-      // Object.assign is much faster than spread operator
       const createLinkOptions = { appendToBody, attrs, innerText };
       const { href } = attrs;
       // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
@@ -160,6 +177,10 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
       createScriptElement({ appendToBody, attrs, innerText });
+    }
+    // 处理 style 标签
+    if (tag === 'style') {
+      createStyleElement({ appendToBody, attrs, innerText });
     }
   });
 }
@@ -203,6 +224,7 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   createAdditionalAssets(allExtraCssList, false);
 
   const optionsCommon = { excludeCssList, webDirPath, appendCss, cssAppendTypes };
+  // Object.assign is much faster than spread operator
   createDomByAssetList(headAssetList, assign(optionsCommon, { appendToBody: false }));
   createDomByAssetList(bodyAssetList, assign(optionsCommon, { appendToBody: true }));
 }

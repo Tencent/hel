@@ -1,5 +1,5 @@
 import type { IControlPreFetchOptions } from 'hel-micro-core';
-import type { IAssetItem, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
+import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface IGetOptionsLoose {
   platform?: string;
@@ -58,6 +58,14 @@ export interface IStyleDataResult {
 }
 
 type HostOrHelMetaUrl = string;
+interface IParsedNodeItem {
+  /** 只需 link script style 三种节点 */
+  tag: 'link' | 'script' | 'style';
+  attrs: Record<string, string>;
+  innerText: string;
+  /** true：资源节点处于 head 里，false：资源节点处于 body 里 */
+  head: boolean;
+}
 
 /**
  * 自定义参数描述对象，通常用于本地联调
@@ -95,11 +103,10 @@ export interface ICustom {
   skipFetchHelMeta?: boolean;
   /**
    * 自定义的 html 解析函数（ 例如使用 htmlparser2 等第三方库 ）
-   * 当内置的解析规则（ 简单的基于正则匹配 ）不满足时，可设置此函数，通常应对vite构建的现代化应用产物时需要设置此函数
+   * 大多数情况下不需要重写此函数，当内置的解析规则（ hel-html-parser ）不能正确解析目标 html 时可设置此函数
    * @param htmlText 透传的 html 字符串
-   * @param host 透传的 host，用于帮助过滤掉非构建产生的资源
    */
-  parseHtml?: (htmlText: string, host: string) => { headAssetList: IAssetItem[]; bodyAssetList: IAssetItem[] };
+  parseHtml?: (htmlText: string) => IParsedNodeItem[];
 }
 
 export interface ILinkInfo {

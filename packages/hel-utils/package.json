@@ -1,7 +1,7 @@
 {
   "name": "hel-utils",
-  "version": "4.7.1",
-  "description": "common util fns for hel-micro-core.",
+  "version": "4.8.1",
+  "description": "common util fns for hel-micro or hel-micro-core.",
   "keywords": [
     "hel",
     "hel-micro",
@@ -12,14 +12,14 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/tnfe/hel.git",
-    "directory": "packages/hel-micro"
+    "directory": "packages/hel-utils"
   },
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
   "main": "lib/index.js",
-  "unpkg": "dist/hel-micro.min.js",
+  "unpkg": "dist/hel-utils.min.js",
   "module": "es/index.js",
   "types": "src/index.ts",
   "files": [
@@ -43,8 +43,8 @@
     "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
   "dependencies": {
-    "hel-micro-core": "^4.7.2",
-    "hel-types": "^4.3.0"
+    "hel-micro-core": "^4.8.0",
+    "hel-types": "^4.3.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -56,8 +56,8 @@
     "rollup": "^2.23.0"
   },
   "peerDependencies": {
-    "hel-micro-core": "^4.7.2",
-    "hel-types": "^4.3.0"
+    "hel-micro-core": "^4.8.0",
+    "hel-types": "^4.3.3"
   },
   "bundleDependencies": [],
   "deprecated": false

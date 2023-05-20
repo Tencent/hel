@@ -94,6 +94,10 @@ export class HTMLParser {
       } else {
         node = this.parseTextNode();
       }
+      if (node === ' ') {
+        // filter ' ' node
+        continue;
+      }
       nodes.push(node);
     } while (!this.eof);
     return nodes;
@@ -113,32 +117,30 @@ export class HTMLParser {
 
     const curChar = this.peek();
     const curPrev1Char = this.peek(-1);
-    if (`${curPrev1Char}${curChar}` === '/>') {
-      // is self close tag
+    const handleTagEnd = (children) => {
+      //  const closeTag = this.parseTag();
+      this.parseTag();
+      this.consumeSpace();
+      this.consumeChar('>');
       const toReturn = {
         tag,
         attrs,
-        children: [],
+        children,
       };
       this.onTagClose(tag, toReturn);
       return toReturn;
+    };
+
+    if (`${curPrev1Char}${curChar}` === '/>') {
+      // is self close tag
+      return handleTagEnd([]);
     }
 
     this.consumeChar('>');
     const children = this.parseNodes();
     this.consumeChar('<');
     this.consumeChar('/');
-    //  const closeTag = this.parseTag();
-    this.parseTag();
-    this.consumeSpace();
-    this.consumeChar('>');
-    const toReturn = {
-      tag,
-      attrs,
-      children,
-    };
-    this.onTagClose(tag, toReturn);
-    return toReturn;
+    return handleTagEnd(children);
   }
 
   parseTag() {

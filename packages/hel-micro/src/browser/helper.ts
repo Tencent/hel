@@ -3,7 +3,7 @@ import storageKeys from '../consts/storageKeys';
 import type { AssetUrlType } from '../types';
 import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
 
-function isRelativePath(path: string) {
+export function isRelativePath(path: string) {
   if (path.startsWith('//')) return false;
   return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
 }
