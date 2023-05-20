@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhel_doc=self.webpackChunkhel_doc||[]).push([[6466],{4753:e=>{e.exports=JSON.parse('{"label":"hel","permalink":"/hel/blog/tags/hel","allTagsPath":"/hel/blog/tags","count":1}')}}]);
