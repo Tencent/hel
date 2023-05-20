@@ -49,7 +49,8 @@ function getCodeHost() {
   // "    at _next (webpack-internal:///./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:31:9)"
   // case 2 codeHost will be 'localhost:3103'
   // at main (http://localhost:3103/static/js/bundle.js:343:60)
-  const codeHost = loc.split('//')[1].split('/')[0];
+  const str = loc.split('//')[1] || ''; // str after double slash
+  const codeHost = str.split('/')[0];
   return codeHost;
 }
 

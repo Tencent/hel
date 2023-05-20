@@ -24,7 +24,7 @@ function getIsoInfo() {
     /** 是否是第一个载入 hel-iso 模块 */
     isFirstMod: __HEL_ISO_FLAG__ === undefined,
     /** 是否是在 hel-micro-core 之前载入的 */
-    isBeforeCore: __MASTER_APP_LOADED__ === undefined,
+    isBeforeCore: __MASTER_APP_LOADED__ === undefined
   };
 }
 function tryMarkFlag() {
@@ -48,7 +48,8 @@ function getCodeHost() {
   // "    at _next (webpack-internal:///./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:31:9)"
   // case 2 codeHost will be 'localhost:3103'
   // at main (http://localhost:3103/static/js/bundle.js:343:60)
-  var codeHost = loc.split('//')[1].split('/')[0];
+  var str = loc.split('//')[1] || ''; // str after double slash
+  var codeHost = str.split('/')[0];
   return codeHost;
 }
 function getIsMaster() {
@@ -102,7 +103,7 @@ var isMasterApp = isMasterApp$1,
   isSubApp = isSubApp$1;
 var index = {
   isSubApp: isSubApp,
-  isMasterApp: isMasterApp,
+  isMasterApp: isMasterApp
 };
 
 export { index as default, isMasterApp, isSubApp };
