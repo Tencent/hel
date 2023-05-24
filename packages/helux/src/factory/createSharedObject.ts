@@ -1,19 +1,22 @@
-import type { Dict, SharedObject } from '../typing';
+import type { Dict, ICreateOptionsType, SharedObject } from '../typing';
 import { buildSharedObject } from './creator';
 
-export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): T {
-  const [sharedState] = buildSharedObject(rawState, false);
+export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T), moduleName?: string): T {
+  const [sharedState] = buildSharedObject(rawState, { moduleName, enableReactive: false });
   return sharedState;
 }
 
-export function createReactiveSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): [T, (partialState: Partial<T>) => void] {
-  const [reactiveSharedState, reactiveSetState] = buildSharedObject(rawState, true);
+export function createReactiveSharedObject<T extends Dict = Dict>(
+  rawState: T | (() => T),
+  moduleName?: string,
+): [T, (partialState: Partial<T>) => void] {
+  const [reactiveSharedState, reactiveSetState] = buildSharedObject(rawState, { moduleName, enableReactive: true });
   return [reactiveSharedState, reactiveSetState];
 }
 
 export function createShared<T extends Dict = Dict>(
   rawState: T | (() => T),
-  enableReactive?: boolean,
+  strBoolOrCreateOptions?: ICreateOptionsType,
 ): {
   state: SharedObject<T>;
   call: <A extends any[] = any[]>(
@@ -22,7 +25,7 @@ export function createShared<T extends Dict = Dict>(
   ) => void;
   setState: (partialState: Partial<T>) => void;
 } {
-  const [state, setState] = buildSharedObject(rawState, enableReactive);
+  const [state, setState] = buildSharedObject(rawState, strBoolOrCreateOptions);
   return {
     state,
     call: (srvFn, ...args) => {

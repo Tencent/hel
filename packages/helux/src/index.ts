@@ -1,19 +1,23 @@
 import { createReactiveSharedObject, createShared, createSharedObject } from './factory/createSharedObject';
+import { ensureHeluxRoot } from './factory/root';
 import { useForceUpdate } from './hooks/useForceUpdate';
 import { useObject } from './hooks/useObject';
 import { useService } from './hooks/useService';
-import { useSharedObject } from './hooks/useSharedObject';
+import { useShared, useSharedObject } from './hooks/useSharedObject';
 
-export { useObject, useService, useForceUpdate, useSharedObject, createSharedObject, createReactiveSharedObject, createShared };
+ensureHeluxRoot();
+
+export { useObject, useService, useForceUpdate, useSharedObject, useShared, createShared, createSharedObject, createReactiveSharedObject };
 
 const toExport = {
   useObject,
   useService,
   useForceUpdate,
   useSharedObject,
+  useShared,
+  createShared,
   createSharedObject,
   createReactiveSharedObject,
-  createShared,
 };
 
 export default toExport;

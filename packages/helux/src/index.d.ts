@@ -4,16 +4,17 @@
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
-import type { Dict, SharedObject } from './typing';
+import type { Dict, ICreateOptionsType, SharedObject } from './typing';
 
 /**
  * 创建共享对象，可透传给 useSharedObject，具体使用见 useSharedObject
  * @param rawState
+ * @param moduleName
  * ```
  * const sharedObj = createSharedObject({a:1, b:2});
  * ```
  */
-export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T)): SharedObject<T>;
+export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T), moduleName?: string): SharedObject<T>;
 
 /**
  *  创建响应式的共享对象，可透传给 useSharedObject
@@ -25,6 +26,7 @@ export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T
  */
 export function createReactiveSharedObject<T extends Dict = Dict>(
   rawState: T | (() => T),
+  moduleName?: string,
 ): [SharedObject<T>, (partialState: Partial<T>) => void];
 
 /**
@@ -38,6 +40,10 @@ export function createReactiveSharedObject<T extends Dict = Dict>(
  *  // ret.state 可透传给 useSharedObject
  *  // ret.setState 可以直接修改状态
  *  // ret.call 可以调用服务函数，并透传上下文
+ *  const ret3 = createShared({ a: 100, b: 2 }, 'demo'); // 指定模块名
+ *
+ *  // 既指定模块名，也设定响应式为true
+ *  const ret4 = createShared({ a: 100, b: 2 }, { moduleName: 'demo', enableReactive: true });
  * ```
  *  以下将举例两种具体的调用方式
  * ```
@@ -60,7 +66,7 @@ export function createReactiveSharedObject<T extends Dict = Dict>(
  */
 export function createShared<T extends Dict = Dict>(
   rawState: T | (() => T),
-  enableReactive?: boolean,
+  strBoolOrCreateOptions?: ICreateOptionsType,
 ): {
   state: SharedObject<T>;
   call: <A extends any[] = any[]>(
@@ -85,6 +91,11 @@ export function useSharedObject<T extends Dict = Dict>(
   sharedObject: T | (() => T),
   enableReactive?: boolean,
 ): [SharedObject<T>, (partialState: Partial<T>) => void];
+
+/**
+ * alias of useSharedObject
+ */
+export const useShared: typeof useSharedObject;
 
 /**
  * 使用普通对象，需注意此接口只接受普通对象，如传递共享对象给它会报错 OBJ_NOT_NORMAL_ERR
@@ -155,9 +166,10 @@ type DefaultExport = {
   useService: typeof useService;
   useSharedObject: typeof useSharedObject;
   useForceUpdate: typeof useForceUpdate;
+  useShared: typeof useSharedObject;
+  createShared: typeof createShared;
   createSharedObject: typeof createSharedObject;
   createReactiveSharedObject: typeof createReactiveSharedObject;
-  createShared: typeof createShared;
 };
 
 declare const defaultExport: DefaultExport;

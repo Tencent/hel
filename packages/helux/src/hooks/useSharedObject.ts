@@ -46,3 +46,6 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
 
   return [sharedState, updater];
 }
+
+// alias of useSharedObject
+export const useShared = useSharedObject;

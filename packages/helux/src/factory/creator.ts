@@ -1,11 +1,26 @@
 import { INTERNAL, SHARED_KEY } from '../consts';
 import { bindInternal, genInternalContainer, getInternal, markSharecKey } from '../helpers/feature';
-import type { Dict } from '../typing';
+import type { Dict, EenableReactive, ICreateOptions, ModuleName } from '../typing';
+import { record } from './root';
 
 export function buildSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
-  enableReactive?: boolean,
+  options?: ModuleName | EenableReactive | ICreateOptions,
 ): [T, (partialState: Partial<T>) => void] {
+  let enableReactive = false;
+  let moduleName = '';
+
+  // for ts check, write 'typeof boolOrCreateOptions' 3 times
+  if (typeof options === 'boolean') {
+    enableReactive = options;
+  }
+  if (typeof options === 'string') {
+    moduleName = options;
+  } else if (options && typeof options === 'object') {
+    enableReactive = options.enableReactive ?? false;
+    moduleName = options.moduleName || '';
+  }
+
   let rawState = stateOrStateFn as T;
   if (typeof stateOrStateFn === 'function') {
     rawState = stateOrStateFn();
@@ -80,5 +95,6 @@ export function buildSharedObject<T extends Dict = Dict>(
     },
   });
 
+  record(moduleName, sharedState);
   return [sharedState, getInternal(sharedState).setState];
 }
