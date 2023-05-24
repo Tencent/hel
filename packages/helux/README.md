@@ -25,12 +25,12 @@ see [oneline demo](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e
 
 ```diff
 import React from 'react';
-+ import { createSharedObject, useSharedObject } from 'helux';
-+ const sharedObj = createSharedObject({a:100, b:2});
++ import { createShared, useShared } from 'helux';
++ const { state: sharedObj } = createShared({a:100, b:2});
 
 function HelloHelux(props: any) {
 -  const [state, setState] = React.useState({ a: 100, b: 2 );
-+  const [state, setState] = useSharedObject(sharedObj);
++  const [state, setState] = useShared(sharedObj);
    return <div>{state.a}</div>; // 当前组件仅依赖a变更才触发重渲染
 }
 ```
