@@ -103,7 +103,7 @@ setSharedObj({ a: 111 }); // 使用此方法修改 a 属性，同样也能触发
 ```ts
 function createShared<T extends Dict = Dict>(
   rawState: T | (() => T),
-  enableReactive?: boolean,
+  strBoolOrCreateOptions?: ICreateOptionsType,
 ): {
   state: SharedObject<T>;
   call: <A extends any[] = any[]>(
@@ -143,27 +143,26 @@ function changeA(a: number, b: number) {
  }
 ```
 
-### useSharedObject
+### useShared
 
 函数签名
 
 ```ts
-function useSharedObject<T extends Dict = Dict>(
-  sharedObject: T,
-  enableReactive?: boolean,
-): [SharedObject<T>, (partialState: Partial<T>) => void];
+function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [SharedObject<T>, (partialState: Partial<T>) => void];
 ```
 
 接收一个共享对象，多个视图里将共享此对象，内部有依赖收集机制，不依赖到的数据变更将不会影响当前组件更新
 
+> `useSharedObject` 和 `useShared` 是同一个函数
+
 ```ts
-const [obj, setObj] = useSharedObject(sharedObj);
+const [obj, setObj] = useShared(sharedObj);
 ```
 
-`useSharedObject`默认返回非响应式状态，如需要使用响应式状态，透传第二位参数为 true 即可
+`useShared`默认返回非响应式状态，如需要使用响应式状态，透传第二位参数为 true 即可
 
 ```ts
-const [obj, setObj] = useSharedObject(sharedObj);
+const [obj, setObj] = useShared(sharedObj);
 // now obj is reactive
 setInterval(() => {
   state.a = Date.now(); // 触发视图更新
