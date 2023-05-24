@@ -21,7 +21,7 @@ see [oneline demo](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e
 
 ## 30s 上手
 
-使用 npm 命令`npm i helux`安装`helux`，然后调用`createSharedObject`创建共享状态，调用`useSharedObject`使用共享状态，that's all，你已接入`helux`来提升局部状态为共享状态. ✨
+使用 npm 命令`npm i helux`安装`helux`，然后调用`createShared`创建共享状态，调用`useShared`使用共享状态，that's all，你已接入`helux`来提升局部状态为共享状态. ✨
 
 ```diff
 import React from 'react';
