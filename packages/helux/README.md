@@ -35,6 +35,16 @@ function HelloHelux(props: any) {
 }
 ```
 
+创建响应式对象
+
+```ts
+const { state: sharedObj } = createShared({ a: 100, b: 2 }, true);
+// or
+const { state: sharedObj } = createShared({ a: 100, b: 2 }, { enableReactive: true });
+
+sharedObj.a++; // 将更新所有使用 `sharedObj.a` 值的组件实例
+```
+
 ## api 详解
 
 极致的简单是 helux 最大的优势，了解以下 6 个 api 后，你可以轻松应付任何复杂场景，最大的魅力在于`useSharedObject`和`useService`两个接口，且看如下 api 介绍
