@@ -62,12 +62,12 @@ function createScriptElement(options: ICreateScriptOptions) {
   const { attrs, innerText, appendToBody = true, onloadCb } = options;
   const { src, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
-  if (!src) {
+  if (!src && !innerText) {
     return false;
   }
 
   const doc = getGlobalThis().document;
-  if (isAssetExisted(`script[src="${src}"]`)) {
+  if (src && isAssetExisted(`script[src="${src}"]`)) {
     return false;
   }
   if (!canAppendByHelMark(restObj, 'script')) {
@@ -75,7 +75,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   }
 
   const el = doc.createElement('script');
-  el.setAttribute('src', src);
+  if (src) el.setAttribute('src', src);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (onloadCb) el.onload = onloadCb;
   if (innerText) el.innerText = innerText;
@@ -95,14 +95,19 @@ function createLinkElement(options: ICreateLinkOptions) {
   const { href, rel, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
   const doc = getGlobalThis().document;
-  if (!href) return;
+  if (!href && !innerText) return;
   if (!canAppendByHelMark(restObj, 'link')) {
     return false;
   }
 
   const el = doc.createElement('link');
-  el.setAttribute('rel', rel || 'stylesheet');
-  el.setAttribute('href', href);
+  if (href) {
+    el.setAttribute('href', href);
+    el.setAttribute('rel', rel || 'stylesheet');
+  } else if (rel) {
+    // 无 href 时，不默认 rel 为 'stylesheet'
+    el.setAttribute('rel', rel);
+  }
   if (innerText) el.innerText = innerText;
 
   appendEl(el, restObj, appendToBody);
