@@ -2,6 +2,7 @@ import { FIRST_UNMOUNT, INTERNAL, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
 import { Dict } from '../typing';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
+const SHARED_KEY_STATE_MAP = new Map<number, Dict>();
 
 export interface IUnmountInfo {
   t: number;
@@ -43,4 +44,13 @@ let keySeed = 0;
 export function markSharedKey(state: Dict) {
   keySeed = keySeed === Number.MAX_SAFE_INTEGER ? 1 : keySeed + 1;
   state[SHARED_KEY] = keySeed;
+  return keySeed;
+}
+
+export function mapSharedState(sharedKey: number, state: Dict) {
+  SHARED_KEY_STATE_MAP.set(sharedKey, state);
+}
+
+export function getSharedState(sharedKey: number) {
+  return SHARED_KEY_STATE_MAP.get(sharedKey);
 }

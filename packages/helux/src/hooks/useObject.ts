@@ -4,14 +4,14 @@ import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
 
-interface IInnerOptions {
+interface IUseObjectLogicOptions {
   isStable?: boolean;
   [key: string | symbol]: any;
 }
 
-export function useObjectInner<T extends Dict = Dict>(
+export function useObjectLogic<T extends Dict = Dict>(
   initialState: T | (() => T),
-  options: IInnerOptions,
+  options: IUseObjectLogicOptions,
 ): [T, (partialState: Partial<T>) => void] {
   const { isStable } = options;
 
@@ -55,5 +55,5 @@ export function useObjectInner<T extends Dict = Dict>(
  * @returns
  */
 export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void] {
-  return useObjectInner(initialState, { isStable });
+  return useObjectLogic(initialState, { isStable });
 }

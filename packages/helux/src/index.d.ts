@@ -4,7 +4,19 @@
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
-import type { Dict, ICreateOptionsType, SharedObject } from './typing';
+import type { Dict, DictN, EffectCb, ICreateOptionsType, SharedObject } from './typing';
+
+type Advance = {
+  /** after calling getDepStats, mem depStats will be cleanup automatically */
+  getDepStats: () => DictN<Array<string>>;
+  getSharedState: (sharedKey: number) => Dict;
+};
+
+/**
+ * @deprecated
+ * unstable currently ( for helux-signal in the future )
+ */
+export const advance: Advance;
 
 /**
  * 创建共享对象，可透传给 useSharedObject，具体使用见 useSharedObject
@@ -161,12 +173,35 @@ export function useService<P extends Dict = Dict, S extends Dict = Dict, T exten
  */
 export function useForceUpdate(): () => void;
 
+/**
+ * 对齐 React.useEffect
+ * 优化了调用逻辑，即 strict 模式与普通模式行为一致，只有一次 mount 与 unmount 产生
+ * @param cb
+ * @param deps
+ */
+export function useEffect(cb: EffectCb, deps?: any[]): void;
+
+/**
+ * 对齐 React.useLayoutEffect
+ * 优化了调用逻辑，即 strict 模式与普通模式行为一致，只有一次 mount 与 unmount 产生
+ * @param cb
+ * @param deps
+ */
+export function useLayoutEffect(cb: EffectCb, deps?: any[]): void;
+
 type DefaultExport = {
+  /**
+ * @deprecated
+ * unstable currently ( for helux-signal in the future )
+ */
+  advance: Advance;
   useObject: typeof useObject;
   useService: typeof useService;
   useSharedObject: typeof useSharedObject;
   useForceUpdate: typeof useForceUpdate;
   useShared: typeof useSharedObject;
+  useEffect: typeof useEffect;
+  useLayoutEffect: typeof useLayoutEffect;
   createShared: typeof createShared;
   createSharedObject: typeof createSharedObject;
   createReactiveSharedObject: typeof createReactiveSharedObject;

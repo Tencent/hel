@@ -1,7 +1,30 @@
 import { INTERNAL, SHARED_KEY } from '../consts';
-import { bindInternal, genInternalContainer, getInternal, markSharedKey } from '../helpers/feature';
-import type { Dict, EenableReactive, ICreateOptions, ModuleName } from '../typing';
+import { bindInternal, genInternalContainer, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
+import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
+import { nodupPush, safeGet } from '../utils';
 import { record } from './root';
+
+let depStats: DictN<Array<string>> = {};
+
+function mapDepStats(sharedKey: number) {
+  const keys = safeGet(depStats, sharedKey, []);
+  return keys;
+}
+
+function recordDep(sharedKey: number, stateKey: string | symbol) {
+  const keys = mapDepStats(sharedKey);
+  nodupPush(keys, stateKey);
+}
+
+export function setShared(sharedList: Dict[]) {
+  sharedList.forEach((shared) => mapDepStats(getSharedKey(shared)));
+}
+
+export function getDepStats() {
+  const curDepStats = depStats;
+  depStats = {};
+  return curDepStats;
+}
 
 export function buildSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
@@ -9,6 +32,7 @@ export function buildSharedObject<T extends Dict = Dict>(
 ): [T, (partialState: Partial<T>) => void] {
   let enableReactive = false;
   let moduleName = '';
+  let enableRecordDep = false;
 
   // for ts check, write 'typeof boolOrCreateOptions' 3 times
   if (typeof options === 'boolean') {
@@ -18,6 +42,7 @@ export function buildSharedObject<T extends Dict = Dict>(
     moduleName = options;
   } else if (options && typeof options === 'object') {
     enableReactive = options.enableReactive ?? false;
+    enableRecordDep = options.enableRecordDep ?? false;
     moduleName = options.moduleName || '';
   }
 
@@ -28,7 +53,7 @@ export function buildSharedObject<T extends Dict = Dict>(
   // let sharedState = Object.create(null);
   // Object.assign(sharedState, rawState); // then safe set internal, but object no proto methods
   let sharedState = rawState;
-  markSharedKey(sharedState);
+  const sharedKey = markSharedKey(sharedState);
   genInternalContainer(sharedState);
 
   if (enableReactive) {
@@ -42,10 +67,18 @@ export function buildSharedObject<T extends Dict = Dict>(
         }
         return true;
       },
+      get(target, key) {
+        if (enableRecordDep) {
+          recordDep(sharedKey, key);
+        }
+        return target[key];
+      },
     });
   } else {
     sharedState = rawState;
   }
+
+  mapSharedState(sharedKey, sharedState);
 
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: Record<string, number[]> = {};

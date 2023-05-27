@@ -4,10 +4,10 @@ import { clearDep, recoverDep, resetReadMap, updateDep } from '../helpers/dep';
 import { getInternal, getRawState } from '../helpers/feature';
 import { buildInsCtx } from '../helpers/ins';
 import type { Dict } from '../typing';
-import { useObjectInner } from './useObject';
+import { useObjectLogic } from './useObject';
 
 export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
-  const [state, setState] = useObjectInner(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
+  const [state, setState] = useObjectLogic(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
   const { current: insCtx } = useRef({
     readMap: {} as any, // 当前渲染完毕所依赖的 key 记录
     readMapPrev: {} as any, // 上一次渲染完毕所依赖的 key 记录
@@ -20,7 +20,7 @@ export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive
   const internal = getInternal(sharedObject);
 
   if (!internal) {
-    throw new Error('OBJ_NOT_SHARED_ERR: input object is not a result returned by createSharedObj!');
+    throw new Error('OBJ_NOT_SHARED_ERR: input object is not a result returned by createShared');
   }
 
   resetReadMap(insCtx);
@@ -47,5 +47,5 @@ export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive
   return [sharedState, updater];
 }
 
-// alias of useShared
+// alias of useShared for compatibility
 export const useSharedObject = useShared;
