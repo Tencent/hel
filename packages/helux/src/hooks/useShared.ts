@@ -6,7 +6,7 @@ import { buildInsCtx } from '../helpers/ins';
 import type { Dict } from '../typing';
 import { useObjectInner } from './useObject';
 
-export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
+export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
   const [state, setState] = useObjectInner(getRawState(sharedObject), { isStable: true, [SKIP_CHECK_OBJ]: true });
   const { current: insCtx } = useRef({
     readMap: {} as any, // 当前渲染完毕所依赖的 key 记录
@@ -47,5 +47,5 @@ export function useSharedObject<T extends Dict = Dict>(sharedObject: T, enableRe
   return [sharedState, updater];
 }
 
-// alias of useSharedObject
-export const useShared = useSharedObject;
+// alias of useShared
+export const useSharedObject = useShared;

@@ -19,4 +19,4 @@ export const LIMIT_SEED = 1000;
 /** limit 检查无删除行为时，扩展 limit 值的增量 */
 export const LIMIT_DELTA = 1000;
 
-export const VER = '1.3.9';
+export const VER = '1.4.0';

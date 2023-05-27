@@ -1,4 +1,6 @@
-export type Dict<T extends any = any> = Record<string, T>;
+export type PrimitiveItem = number | string | symbol;
+
+export type Dict<T extends any = any> = Record<PrimitiveItem, T>;
 
 export type SharedObject<T extends Dict = any> = T;
 
