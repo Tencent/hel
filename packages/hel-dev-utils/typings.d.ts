@@ -134,6 +134,15 @@ export interface FileDesc {
   fileWebPathWithoutHost: string;
 }
 
+export interface IAssetOptions {
+  el: HTMLScriptElement;
+  homePage: string;
+  extractMode: SrcMap;
+  enableRelativePath: boolean;
+  enableAssetInnerText: boolean;
+  innerText: string;
+}
+
 export interface IAssetInfo {
   url: string;
   el: HTMLScriptElement;
@@ -141,6 +150,7 @@ export interface IAssetInfo {
   isNonBuildAndRelative: boolean;
   allowAddToAssetList: boolean;
   canAppend: boolean;
+  innerText: string;
 }
 
 export interface ISubAppBuildDesc {
@@ -190,6 +200,12 @@ export interface IUserExtractOptions {
   distDir?: string;
   /** default: true */
   writeMetaJsonToDist?: boolean;
+  /**
+   * default: false, 针对存在有 innerText 的节点时，是否提取到元数据 srcMap 里，true：提取 innerText 到 srcMap，false：存为外链后放 srcMap
+   * 此参数在针对 vite 产物场景有用，vite 产物里有一些内联的 type='module' 的 script，它们需要被按顺序触发执行，外链后执行顺讯因为网络关系不一定能保证
+   * 设置为 true 后，则 assetItem.innerText 会直接记录内联脚本内容，不再有额外的网络请求去拉取外链资源，执行顺序也就能保证了
+   */
+  enableAssetInnerText?: boolean;
   /** default: true, 是否替换的 dev.js 结尾的文件为 .js */
   enableReplaceDevJs?: boolean;
   /** default: false, 是否允许在 homePage 之外的相对路径的资源存在 */
@@ -218,6 +234,7 @@ export interface IInnerFillAssetListOptions {
   enableReplaceDevJs: IUserExtractOptions['enableReplaceDevJs'];
   enableRelativePath: IUserExtractOptions['enableRelativePath'];
   enablePrefixHomePage: IUserExtractOptions['enablePrefixHomePage'];
+  enableAssetInnerText: IUserExtractOptions['enableAssetInnerText'];
 }
 
 export interface ICreateSubAppOptions {

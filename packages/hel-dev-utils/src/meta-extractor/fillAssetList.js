@@ -1,4 +1,5 @@
 /** @typedef {import('../../typings').SrcMap} SrcMap*/
+/** @typedef {import('../../typings').IAssetOptions} IAssetOptions*/
 /** @typedef {import('../../typings').IAssetInfo} IAssetInfo */
 /** @typedef {import('../../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import fs from 'fs';
@@ -11,6 +12,11 @@ import { pfstr } from '../inner-utils/str';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
+
+/** jsdom 15 里去内联脚本 innerText 取不到，这里用此函数辅助 */
+function getInnerText(/** @type {HTMLElement}} */ dom) {
+  return dom.innerText || dom.innerHTML || '';
+}
 
 function getDatasetVal(dataset, key, defaultValIfOnlyKey) {
   const hasKey = Object.prototype.hasOwnProperty.call(dataset, key);
@@ -27,8 +33,11 @@ function isRelativePath(path) {
 
 function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
   const isLink = tag === 'link';
-  const { isBuildUrl, isNonBuildAndRelative, canAppend, el, url } = assetInfo;
-  const attrs = isLink ? { href: url } : { src: url };
+  const { isBuildUrl, isNonBuildAndRelative, canAppend, el, url, innerText } = assetInfo;
+  let attrs = {};
+  if (url) {
+    attrs = isLink ? { href: url } : { src: url };
+  }
 
   let tagVar = '';
   if (isBuildUrl) {
@@ -40,6 +49,10 @@ function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
   }
 
   const assetItem = { tag: tagVar, append: canAppend, attrs };
+  if (innerText) {
+    assetItem.innerText = innerText;
+  }
+
   const attrNames = el.getAttributeNames();
   attrNames.forEach((name) => {
     // src href 上面已记录真正的目标值，故移除
@@ -54,14 +67,14 @@ function buildAssetItem(tag, /** @type {IAssetInfo} */ assetInfo) {
 let custScriptIdx = 0;
 
 /**
- * @param {object} childDom
+ * @param {HTMLScriptElement | HTMLStyleElement} childDom
  * @param {string} fileType
  * @param {IInnerFillAssetListOptions} options
  */
-async function writeInnerHtml(childDom, fileType, options) {
+async function writeInnerText(childDom, fileType, options) {
   const { homePage, buildDirFullPath } = options;
-  const { innerHTML } = childDom;
-  if (!innerHTML) return '';
+  const innerText = getInnerText(childDom);
+  if (!innerText) return '';
 
   verbose(`found a user customized ${fileType} tag node in html, try extract its content and write them to local fs`);
   custScriptIdx += 1;
@@ -69,20 +82,20 @@ async function writeInnerHtml(childDom, fileType, options) {
   const fileAbsolutePath = `${buildDirFullPath}/${scriptName}`;
   const fileWebPath = `${slash.noEnd(homePage)}/${scriptName}`;
 
-  await writeFile(fileAbsolutePath, innerHTML);
+  await writeFile(fileAbsolutePath, innerText);
   verbose(`write done, the web file will be ${fileWebPath} later`);
   return fileWebPath;
 }
 
 /**
  * @param {string} url
- * @param {IInnerFillAssetListOptions} options
+ * @param {IAssetOptions} options
  */
 function getAssetInfo(url, options) {
-  const { homePage, extractMode, enableRelativePath, el } = options;
+  const { homePage, extractMode, enableRelativePath, enableAssetInnerText, el, innerText } = options;
   const { dataset = {} } = el;
-  // 是构建生成的产物路径
-  const isBuildUrl = url.startsWith(homePage);
+  // 是构建生成的产物路径，无 url 的当做是内联的处理，isBuildUrl 强制为 true
+  const isBuildUrl = url ? url.startsWith(homePage) : true;
   const isRelative = isRelativePath(url);
   // 是 homePage 之外相对路径导入的产物路径
   const isNonBuildAndRelative = !isBuildUrl && isRelative;
@@ -168,6 +181,7 @@ function getAssetInfo(url, options) {
     isNonBuildAndRelative,
     canAppend: helAppend,
     allowAddToAssetList,
+    innerText: enableAssetInnerText ? innerText : '',
   };
 }
 
@@ -177,7 +191,15 @@ function getAssetInfo(url, options) {
  * @param {IInnerFillAssetListOptions} options
  */
 export async function fillAssetList(doms, options) {
-  const { homePage, enableReplaceDevJs = true, enableRelativePath = false, enablePrefixHomePage = false, srcMap, isHead } = options;
+  const {
+    homePage,
+    enableReplaceDevJs = true,
+    enableRelativePath = false,
+    enableAssetInnerText = false,
+    enablePrefixHomePage = false,
+    srcMap,
+    isHead,
+  } = options;
   const {
     headAssetList,
     bodyAssetList,
@@ -193,7 +215,8 @@ export async function fillAssetList(doms, options) {
 
   const len = doms.length;
   const replaceContentList = [];
-  verbose(`extractMode is [${extractMode}]`);
+  verbose(`extractMode is ${extractMode}`);
+  verbose(`enableAssetInnerText is ${enableAssetInnerText}`);
 
   const pushToSrcList = (assetType, /** @type {IAssetInfo} */ assetInfo) => {
     const { isBuildUrl, isNonBuildAndRelative, url } = assetInfo;
@@ -233,9 +256,10 @@ export async function fillAssetList(doms, options) {
   for (let i = 0; i < len; i++) {
     const childDom = doms[i];
     const { tagName, dataset = {} } = childDom;
+    const innerText = getInnerText(childDom);
     let toPushAsset = null;
     let allowAddToAssetList = false;
-    const assetOptions = { el: childDom, homePage, extractMode, enableRelativePath };
+    const assetOptions = { el: childDom, innerText, homePage, extractMode, enableRelativePath, enableAssetInnerText };
 
     if (!['LINK', 'SCRIPT', 'STYLE'].includes(tagName)) {
       continue;
@@ -245,10 +269,11 @@ export async function fillAssetList(doms, options) {
     }
 
     if (tagName === 'LINK') {
-      const { hreflang = '' } = childDom;
-      if (!childDom.href) continue;
+      const { hreflang = '', href: oriHref } = childDom;
+      verbose(`analyze link href:[${oriHref}]`);
+      if (!oriHref) continue;
 
-      let href = mayPrefixHomePage(childDom.href);
+      let href = mayPrefixHomePage(oriHref);
       verbose(`analyze link [${href}]`);
       // 一些使用了老版本cra的项目，这两个href 在修改了 publicPath 后也不被添加前缀，这里做一下修正
       const legacyHrefs = ['/manifest.json', '/favicon.ico'];
@@ -261,7 +286,6 @@ export async function fillAssetList(doms, options) {
 
       const assetInfo = getAssetInfo(href, assetOptions);
       allowAddToAssetList = assetInfo.allowAddToAssetList;
-
       // 供 shadow-dom 或其他需要知道当前应用所有样式列表的场景用
       if (href.endsWith('.css')) {
         pushToSrcList('css', assetInfo);
@@ -269,45 +293,66 @@ export async function fillAssetList(doms, options) {
       toPushAsset = buildAssetItem('link', assetInfo);
     } else if (tagName === 'SCRIPT') {
       const { src } = childDom;
-      let targetSrc = src;
-      if (!targetSrc) {
-        targetSrc = await writeInnerHtml(childDom, 'js', options);
-      }
-      if (!targetSrc) continue;
+      verbose(`analyze script src:[${src}], innerText:[${innerText}]`);
 
-      targetSrc = mayPrefixHomePage(targetSrc);
-      verbose(`analyze script src[${targetSrc}]`);
-      if (enableReplaceDevJs) {
-        // 替换用户的 development 模式的 react 相关包体
-        if (targetSrc.endsWith('react.dev.js')) {
-          const toReplace = targetSrc.replace('react.dev.js', 'react.js');
-          replaceContentList.push({ toMatch: targetSrc, toReplace });
-          targetSrc = toReplace;
-        }
-        // 替换用户的 development 模式的 vue 相关包体
-        if (targetSrc.endsWith('vue.dev.js')) {
-          const toReplace = targetSrc.replace('vue.dev.js', 'vue.js');
-          replaceContentList.push({ toMatch: targetSrc, toReplace });
-          targetSrc = toReplace;
-        }
+      if (!src && !innerText) {
+        continue;
       }
 
-      const assetInfo = getAssetInfo(targetSrc, assetOptions);
-      allowAddToAssetList = assetInfo.allowAddToAssetList;
+      if (!src && innerText && enableAssetInnerText) {
+        verbose('user set enableAssetInnerText = true and found SCRIPT node innerText');
+        const assetInfo = getAssetInfo('', assetOptions);
+        allowAddToAssetList = assetInfo.allowAddToAssetList;
+        toPushAsset = buildAssetItem('script', assetInfo);
+      } else {
+        let targetSrc = src;
+        if (!targetSrc) {
+          targetSrc = await writeInnerText(childDom, 'js', options);
+        }
+        if (!targetSrc) continue;
 
-      pushToSrcList('js', assetInfo);
-      toPushAsset = buildAssetItem('script', assetInfo);
+        targetSrc = mayPrefixHomePage(targetSrc);
+        if (enableReplaceDevJs) {
+          // 替换用户的 development 模式的 react 相关包体
+          if (targetSrc.endsWith('react.dev.js')) {
+            const toReplace = targetSrc.replace('react.dev.js', 'react.js');
+            replaceContentList.push({ toMatch: targetSrc, toReplace });
+            targetSrc = toReplace;
+          }
+          // 替换用户的 development 模式的 vue 相关包体
+          if (targetSrc.endsWith('vue.dev.js')) {
+            const toReplace = targetSrc.replace('vue.dev.js', 'vue.js');
+            replaceContentList.push({ toMatch: targetSrc, toReplace });
+            targetSrc = toReplace;
+          }
+        }
+
+        const assetInfo = getAssetInfo(targetSrc, assetOptions);
+        allowAddToAssetList = assetInfo.allowAddToAssetList;
+
+        pushToSrcList('js', assetInfo);
+        toPushAsset = buildAssetItem('script', assetInfo);
+      }
     } else if (tagName === 'STYLE') {
-      // style 标签转换为 css 文件存起来，以便让 hel-micro 用 link 标签加载
-      let href = await writeInnerHtml(childDom, 'css', options);
-      if (!href) continue;
+      verbose(`analyze style innerText:[${innerText}]`);
 
-      href = mayPrefixHomePage(href);
-      const assetInfo = getAssetInfo(href, assetOptions);
-      allowAddToAssetList = assetInfo.allowAddToAssetList;
+      if (innerText && enableAssetInnerText) {
+        verbose('user set enableAssetInnerText = true and found STYLE node innerText');
+        const assetInfo = getAssetInfo('', assetOptions);
+        allowAddToAssetList = assetInfo.allowAddToAssetList;
+        toPushAsset = buildAssetItem('style', assetInfo);
+      } else {
+        // style 标签转换为 css 文件存起来，以便让 hel-micro 用 link 标签加载
+        let href = await writeInnerText(childDom, 'css', options);
+        if (!href) continue;
 
-      pushToSrcList('css', assetInfo);
-      toPushAsset = buildAssetItem('link', assetInfo);
+        href = mayPrefixHomePage(href);
+        const assetInfo = getAssetInfo(href, assetOptions);
+        allowAddToAssetList = assetInfo.allowAddToAssetList;
+
+        pushToSrcList('css', assetInfo);
+        toPushAsset = buildAssetItem('link', assetInfo);
+      }
     }
 
     if (toPushAsset && allowAddToAssetList) {
