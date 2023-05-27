@@ -191,9 +191,9 @@ export function useLayoutEffect(cb: EffectCb, deps?: any[]): void;
 
 type DefaultExport = {
   /**
- * @deprecated
- * unstable currently ( for helux-signal in the future )
- */
+   * @deprecated
+   * unstable currently ( for helux-signal in the future )
+   */
   advance: Advance;
   useObject: typeof useObject;
   useService: typeof useService;
