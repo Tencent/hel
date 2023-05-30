@@ -17,7 +17,7 @@ helux 是一个鼓励服务注入，并支持响应式变更 react 的全新数�
 
 ![2](https://user-images.githubusercontent.com/7334950/232248704-95532231-ae99-4555-adcd-8d5999a0c5d4.gif)
 
-see [oneline demo](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
+see oneline [demo1](https://codesandbox.io/s/helux-effect-qyv6xz?file=/src/App.tsx)，[demo2](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
 
 ## 30s 上手
 
