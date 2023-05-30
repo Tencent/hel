@@ -7,6 +7,8 @@ const TOKEN_REGEX = /[a-zA-Z0-9\-]/;
 const DOCTYPE_MARK = '<!DOCTYPE html>';
 const COMMENT_START = '<!--';
 const COMMENT_END = '-->';
+const META_END = '</meta>';
+const META_END_LEN = META_END.length;
 
 export class HTMLParser {
   constructor() {
@@ -21,6 +23,15 @@ export class HTMLParser {
 
   peek(offset = 0) {
     return this.input[this.cur + offset];
+  }
+
+  sub(len, start) {
+    const startIdx = start || this.cur;
+    return this.input.substring(startIdx, startIdx + len);
+  }
+
+  moveCur(num) {
+    this.cur += num;
   }
 
   consumeChar(c) {
@@ -117,11 +128,14 @@ export class HTMLParser {
 
     const curChar = this.peek();
     const curPrev1Char = this.peek(-1);
-    const handleTagEnd = (children) => {
+    const handleTagEnd = (children, move = 0) => {
       //  const closeTag = this.parseTag();
       this.parseTag();
       this.consumeSpace();
       this.consumeChar('>');
+      if (move) {
+        this.moveCur(move);
+      }
       const toReturn = {
         tag,
         attrs,
@@ -131,9 +145,16 @@ export class HTMLParser {
       return toReturn;
     };
 
-    if (`${curPrev1Char}${curChar}` === '/>' || (tag === 'meta' && curChar === '>')) {
+    if (`${curPrev1Char}${curChar}` === '/>') {
       // is self close tag
       return handleTagEnd([]);
+    }
+
+    if (tag === 'meta' && curChar === '>') {
+      // handle <meta> or <meta></meta>
+      const endFeature = this.sub(META_END_LEN, this.cur + 1);
+      const move = endFeature === META_END ? META_END_LEN : 0;
+      return handleTagEnd([], move);
     }
 
     this.consumeChar('>');
