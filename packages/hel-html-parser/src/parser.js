@@ -55,8 +55,8 @@ export class HTMLParser {
 
   pureInput(/** @type string */ input) {
     let puredStr = input.trim();
-    if (input.startsWith(DOCTYPE_MARK)) {
-      puredStr = input.substring(DOCTYPE_MARK.length);
+    if (puredStr.startsWith(DOCTYPE_MARK)) {
+      puredStr = puredStr.substring(DOCTYPE_MARK.length);
     }
 
     // 移除 <!-- --> 相关的注释
@@ -131,7 +131,7 @@ export class HTMLParser {
       return toReturn;
     };
 
-    if (`${curPrev1Char}${curChar}` === '/>') {
+    if (`${curPrev1Char}${curChar}` === '/>' || (tag === 'meta' && curChar === '>')) {
       // is self close tag
       return handleTagEnd([]);
     }
