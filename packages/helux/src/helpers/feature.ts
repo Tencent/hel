@@ -1,8 +1,9 @@
-import { FIRST_UNMOUNT, INTERNAL, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
+import { FIRST_UNMOUNT, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
 import { Dict } from '../typing';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 const SHARED_KEY_STATE_MAP = new Map<number, Dict>();
+const INTERMAL_MAP: Dict = {};
 
 export interface IUnmountInfo {
   t: number;
@@ -11,19 +12,17 @@ export interface IUnmountInfo {
   prev: number;
 }
 
+export function getInternalMap() {
+  return INTERMAL_MAP;
+}
+
 export function getUnmountInfoMap() {
   return UNMOUNT_INFO_MAP;
 }
 
-export function genInternalContainer(state: Dict) {
-  if (!state.__proto__[INTERNAL]) {
-    state.__proto__[INTERNAL] = {};
-  }
-}
-
 export function getInternal(state: Dict) {
   const key = getSharedKey(state);
-  return state.__proto__[INTERNAL][key];
+  return INTERMAL_MAP[key];
 }
 
 export function getRawState(state: Dict) {
@@ -37,13 +36,13 @@ export function getSharedKey(state: Dict) {
 
 export function bindInternal(state: Dict, internal: any) {
   const key = getSharedKey(state);
-  state[INTERNAL][key] = internal;
+  INTERMAL_MAP[key] = internal;
 }
 
 let keySeed = 0;
 export function markSharedKey(state: Dict) {
   keySeed = keySeed === Number.MAX_SAFE_INTEGER ? 1 : keySeed + 1;
-  state[SHARED_KEY] = keySeed;
+  state.__proto__[SHARED_KEY] = keySeed;
   return keySeed;
 }
 

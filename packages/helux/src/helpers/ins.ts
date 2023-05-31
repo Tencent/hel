@@ -1,3 +1,5 @@
+import { createOb } from './obj';
+
 let insKeySeed = 0;
 function getInsKey() {
   insKeySeed = insKeySeed === Number.MAX_SAFE_INTEGER ? 1 : insKeySeed + 1;
@@ -9,14 +11,10 @@ export function buildInsCtx(insCtx: any, options: any) {
   const insKey = getInsKey();
   insCtx.insKey = insKey;
   internal.mapInsKeyUpdater(insKey, setState);
-  // TODO: downgrade to defineProperty
-  const proxyedState = new Proxy(state, {
-    get(target, key) {
-      insCtx.readMap[key] = 1;
-      internal.recordDep(key, insCtx.insKey);
-      return target[key];
-    },
-    set(target, key, val) {
+  const proxyedState = createOb(
+    state,
+    (target, key, val) => {
+      // setter
       // @ts-ignore
       target[key] = val;
       if (enableReactive) {
@@ -24,7 +22,13 @@ export function buildInsCtx(insCtx: any, options: any) {
       }
       return true;
     },
-  });
+    (target, key) => {
+      // getter
+      insCtx.readMap[key] = 1;
+      internal.recordDep(key, insCtx.insKey);
+      return target[key];
+    },
+  );
   const updater = internal.setState;
   insCtx.updater = updater;
   insCtx.sharedState = proxyedState;

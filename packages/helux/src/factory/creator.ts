@@ -1,5 +1,6 @@
-import { INTERNAL, SHARED_KEY } from '../consts';
-import { bindInternal, genInternalContainer, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
+import { SHARED_KEY } from '../consts';
+import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
+import { createHeluxObj, createOb } from '../helpers/obj';
 import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
 import { nodupPush, safeGet } from '../utils';
 import { record } from './root';
@@ -50,32 +51,33 @@ export function buildSharedObject<T extends Dict = Dict>(
   if (typeof stateOrStateFn === 'function') {
     rawState = stateOrStateFn();
   }
-  // let sharedState = Object.create(null);
-  // Object.assign(sharedState, rawState); // then safe set internal, but object no proto methods
-  let sharedState = rawState;
-  const sharedKey = markSharedKey(sharedState);
-  genInternalContainer(sharedState);
 
+  let heluxObj = createHeluxObj(rawState);
+  const sharedKey = markSharedKey(heluxObj);
+
+  let sharedState = {} as unknown as T;
   if (enableReactive) {
-    // TODO: downgrade to defineProperty
-    sharedState = new Proxy(rawState, {
-      set(target, key: any, val) {
+    sharedState = createOb(
+      heluxObj,
+      // setter
+      (target, key: any, val) => {
         // @ts-ignore
-        rawState[key] = val;
-        if (![SHARED_KEY, INTERNAL].includes(key)) {
-          getInternal(sharedState).setState({ [key]: val });
+        heluxObj[key] = val;
+        if (SHARED_KEY !== key) {
+          getInternal(heluxObj).setState({ [key]: val });
         }
         return true;
       },
-      get(target, key) {
+      // getter
+      (target, key) => {
         if (enableRecordDep) {
           recordDep(sharedKey, key);
         }
         return target[key];
       },
-    });
+    );
   } else {
-    sharedState = rawState;
+    sharedState = heluxObj;
   }
 
   mapSharedState(sharedKey, sharedState);

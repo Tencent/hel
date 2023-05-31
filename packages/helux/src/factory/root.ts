@@ -1,6 +1,8 @@
 import { VER } from '../consts';
-import { getInternal, getSharedKey } from '../helpers/feature';
+import { getInternal, getInternalMap, getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
+
+const INTERMAL_MAP: Dict = {};
 
 function createRoot() {
   const root = {
@@ -15,6 +17,7 @@ function createRoot() {
     },
     help: {
       mod: {} as Dict, // 与模块相关的辅助信息
+      internalMap: getInternalMap(),
     },
   };
   return root;
