@@ -17,7 +17,7 @@ helux 是一个鼓励服务注入，并支持响应式变更 react 的全新数�
 
 ![2](https://user-images.githubusercontent.com/7334950/232248704-95532231-ae99-4555-adcd-8d5999a0c5d4.gif)
 
-see [oneline demo](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
+see oneline [demo1](https://codesandbox.io/s/helux-effect-qyv6xz?file=/src/App.tsx)，[demo2](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
 
 ## 30s 上手
 
@@ -38,11 +38,13 @@ function HelloHelux(props: any) {
 创建响应式对象
 
 ```ts
-const { state: sharedObj } = createShared({ a: 100, b: 2 }, true);
+const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, true);
 // or
-const { state: sharedObj } = createShared({ a: 100, b: 2 }, { enableReactive: true });
+const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, { enableReactive: true });
 
-sharedObj.a++; // 将更新所有使用 `sharedObj.a` 值的组件实例
+// 以下两种写法均可以更新所有使用 `sharedObj.a` 值的组件实例
+sharedObj.a++; 
+setState({a: sharedObj.a + 1 });
 ```
 
 ## api 详解
