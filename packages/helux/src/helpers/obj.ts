@@ -1,6 +1,3 @@
-/**
- * create observable object
- */
 
 function setProtoOf(obj, proto) {
   obj.__proto__ = proto;
@@ -15,10 +12,14 @@ function mixinProperties(obj, proto) {
   }
   return obj;
 }
+
 // inspired by  https://github.com/wesleytodd/setprototypeof
 /* eslint no-proto: 0 */
 const setProto = Object.setPrototypeOf || ({ __proto__: [] } instanceof Array ? setProtoOf : mixinProperties);
 
+/**
+ * create a object with helux prototype
+ */
 export function createHeluxObj(rawObj?: any) {
   let heluxObj = Object.create(null);
   const protoCopy = { ...Object.prototype };
@@ -29,6 +30,9 @@ export function createHeluxObj(rawObj?: any) {
   return heluxObj;
 }
 
+/**
+ * create observable object
+ */
 export function createOb(rawObj: any, setFn: any, getFn: any) {
   if (typeof Proxy === 'function') {
     return new Proxy(rawObj, {
