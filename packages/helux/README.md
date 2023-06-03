@@ -43,8 +43,8 @@ const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, true);
 const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, { enableReactive: true });
 
 // 以下两种写法均可以更新所有使用 `sharedObj.a` 值的组件实例
-sharedObj.a++; 
-setState({a: sharedObj.a + 1 });
+sharedObj.a++;
+setState({ a: sharedObj.a + 1 });
 ```
 
 ## api 详解

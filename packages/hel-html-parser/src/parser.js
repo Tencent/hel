@@ -8,7 +8,13 @@ const DOCTYPE_MARK = '<!DOCTYPE html>';
 const COMMENT_START = '<!--';
 const COMMENT_END = '-->';
 const META_END = '</meta>';
-const META_END_LEN = META_END.length;
+const LINK_END = '</link>';
+
+const MAY_SELF_CLOSE_TAGS = ['meta', 'link'];
+const TAG_END_MAP = {
+  meta: META_END,
+  link: LINK_END,
+};
 
 export class HTMLParser {
   constructor() {
@@ -150,10 +156,12 @@ export class HTMLParser {
       return handleTagEnd([]);
     }
 
-    if (tag === 'meta' && curChar === '>') {
-      // handle <meta> or <meta></meta>
-      const endFeature = this.sub(META_END_LEN, this.cur + 1);
-      const move = endFeature === META_END ? META_END_LEN : 0;
+    if (MAY_SELF_CLOSE_TAGS.includes(tag) && curChar === '>') {
+      // handle <meta> or <meta></meta>, <link> or <link></link>
+      const endTag = TAG_END_MAP[tag];
+      const endTagLen = endTag.length;
+      const endFeature = this.sub(endTagLen, this.cur + 1);
+      const move = endFeature === endTag ? endTagLen : 0;
       return handleTagEnd([], move);
     }
 
