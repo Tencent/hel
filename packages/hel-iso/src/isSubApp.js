@@ -79,7 +79,8 @@ function getIsMaster() {
 
   // codeHost 判断失败时，再看 microShared
   if (microShared) {
-    const map = microShared.cacheRoot.appGroupName2platform;
+    const { appGroupName2platform, appName2platform } = microShared.cacheRoot;
+    const map = appGroupName2platform || appName2platform || {};
     // 无任何相关子模块数据，一定是主应用
     if (!Object.keys(map).length) {
       return true;

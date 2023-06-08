@@ -83,7 +83,10 @@ function getIsMaster() {
 
   // codeHost 判断失败时，再看 microShared
   if (microShared) {
-    var map = microShared.cacheRoot.appGroupName2platform;
+    var _microShared$cacheRoo = microShared.cacheRoot,
+      appGroupName2platform = _microShared$cacheRoo.appGroupName2platform,
+      appName2platform = _microShared$cacheRoo.appName2platform;
+    var map = appGroupName2platform || appName2platform || {};
     // 无任何相关子模块数据，一定是主应用
     if (!Object.keys(map).length) {
       return true;
