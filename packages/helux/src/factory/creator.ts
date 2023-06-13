@@ -89,6 +89,7 @@ export function buildSharedObject<T extends Dict = Dict>(
     key2InsKeys,
     insKey2Updater,
     setState(partialState: any) {
+      Object.assign(heluxObj, partialState);
       const keys = Object.keys(partialState);
       let allInsKeys: number[] = [];
       keys.forEach((key) => {

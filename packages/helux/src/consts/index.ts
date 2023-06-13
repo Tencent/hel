@@ -13,10 +13,10 @@ export const SECOND_UNMOUNT = 2;
 /** 卸载数据的过期时间 */
 export const EXPIRE_MS = 2000;
 
-/** limit 检查无删除行为时，扩展 limit 值的增量 */
+/** limit 初始值 */
 export const LIMIT_SEED = 1000;
 
 /** limit 检查无删除行为时，扩展 limit 值的增量 */
 export const LIMIT_DELTA = 1000;
 
-export const VER = '2.1.2';
+export const VER = '2.1.3';

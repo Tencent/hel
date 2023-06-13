@@ -177,6 +177,7 @@ export function ensureHelMicroShared() {
     Object.keys(caches).forEach((key) => {
       const cacheNode = caches[key];
       safeGetMap(cacheNode, 'appGroupName2firstVer');
+      safeGetMap(cacheNode, 'appName2isLibAssigned');
       safeGetMap(cacheNode, 'appName2verExtraCssList');
       safeGetMap(cacheNode, 'appName2verCustomData');
       safeGetMap(cacheNode, 'hook');
