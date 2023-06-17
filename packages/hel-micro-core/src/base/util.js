@@ -5,12 +5,35 @@ export function okeys(map) {
 }
 
 function getSearch() {
+  const getLocSearch = (/** @type {Location} */ location) => {
+    const locVar = location || {};
+    let search = locVar.search || '';
+    if (!search) {
+      const hash = loc.hash || '';
+      const hashSearch = hash.split('?')[1] || '';
+      if (hashSearch) {
+        search = `?${hashSearch}`;
+      }
+    }
+    return search;
+  };
+
   try {
-    return getGlobalThis().top?.location?.search || '';
+    return getLocSearch(getGlobalThis()?.top?.location);
   } catch (err) {
-    // 可能是非同域的iframe载入，访问iframe外部变量会报错
-    return getGlobalThis()?.location?.search || '';
+    // 可能是非同域的 iframe 载入，访问 iframe 外部变量导致的报错
+    return getLocSearch(getGlobalThis()?.location);
   }
+}
+
+export function getLsItem(key) {
+  const ls = getGlobalThis()?.localStorage;
+  return ls?.getItem(key);
+}
+
+export function setLsItem(key, val) {
+  const ls = getGlobalThis()?.localStorage;
+  return ls?.setItem(key, val);
 }
 
 export function getSearchObj() {

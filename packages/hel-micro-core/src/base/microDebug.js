@@ -1,5 +1,9 @@
-import { getGlobalThis, getHelSingletonHost } from './globalRef';
-import { getSearchObj, isNull } from './util';
+import { helConsts, logModeEnum } from '../consts';
+import { getHelSingletonHost } from './globalRef';
+import { getLsItem, getSearchObj, isNull, setLsItem } from './util';
+
+const { LS_LOG_FILTER, LS_LOG_MODE } = helConsts;
+const { NONE, LOG, TRACE } = logModeEnum;
 
 export const inner = {
   isIncludeFilter(firstArg, logFilter) {
@@ -13,13 +17,15 @@ export const inner = {
   getLogFilter() {
     return getHelMicroDebug().logFilter;
   },
-  setLogFilter(value) {
+  setLogFilter(value, memVal = true) {
     getHelMicroDebug().logFilter = value;
+    memVal && setLsItem(LS_LOG_FILTER, value);
   },
-  setLogMode(value) {
+  setLogMode(value, memVal = true) {
     const modeNum = parseInt(value, 10);
-    if ([1, 2].includes(modeNum)) {
+    if ([NONE, LOG, TRACE].includes(modeNum)) {
       getHelMicroDebug().logMode = modeNum;
+      memVal && setLsItem(LS_LOG_MODE, modeNum);
     }
   },
   getLogMode() {
@@ -37,15 +43,14 @@ function initMicroDebug() {
   getHelMicroDebug().isInit = true;
   const searchObj = getSearchObj();
   const { hellog, hellogf } = searchObj;
-  const ls = getGlobalThis().localStorage;
 
   // 优先读 url 上的控制参数 hellog，再读 localStorage 里的控制参数
-  const logMode = hellog || ls?.getItem('HelConfig.logMode') || 0;
-  inner.setLogMode(logMode);
+  const logMode = hellog || getLsItem(LS_LOG_MODE) || NONE;
+  inner.setLogMode(logMode, false);
 
   // 优先读 url 上的控制参数 hellogf
-  const logFilter = hellogf || ls?.getItem('HelConfig.logFilter') || '';
-  inner.setLogFilter(logFilter);
+  const logFilter = hellogf || getLsItem(LS_LOG_FILTER) || '';
+  inner.setLogFilter(logFilter, false);
 }
 
 /**
@@ -53,7 +58,7 @@ function initMicroDebug() {
  */
 function makeHelMicroDebug() {
   return {
-    logMode: 0,
+    logMode: NONE,
     logFilter: '',
     isInit: false,
   };
@@ -64,7 +69,7 @@ export function ensureHelMicroDebug() {
   if (!isNull(helMicroDebug)) {
     // 兼容老版本库生成的 __HEL_MICRO_DEBUG__ 对象
     if (helMicroDebug.logMode === undefined) {
-      helMicroDebug.logMode = 0;
+      helMicroDebug.logMode = NONE;
       helMicroDebug.logFilter = '';
     }
     return;
@@ -77,9 +82,9 @@ export function ensureHelMicroDebug() {
   } catch (err) {}
 }
 
-/** 采用一次缓存值后，便不再从search推导，方便单页面应用路由变化后，依然可以打印log */
+/** 采用缓存一次值后便不再从 search 推导的策略，方便单页面应用路由变化后，依然可以打印log */
 export function allowLog() {
-  return inner.getLogMode() !== 0;
+  return inner.getLogMode() !== NONE;
 }
 
 export function getHelMicroDebug() {
@@ -92,7 +97,7 @@ export function log(...args) {
   if (!allowLog()) {
     return;
   }
-  const logFn = inner.getLogMode() === 1 ? console.log : console.trace || console.log;
+  const logFn = inner.getLogMode() === LOG ? console.log : console.trace || console.log;
   const [firstArg, ...rest] = args;
   if (typeof firstArg !== 'string') {
     return logFn(logPrefix, colorDesc, ...args);

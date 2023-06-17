@@ -2,6 +2,12 @@ const PLAT_HEL = 'hel';
 
 const PLAT_UNPKG = 'unpkg';
 
+export const logModeEnum = {
+  NONE: 0,
+  LOG: 1,
+  TRACE: 2,
+};
+
 /**
  * 第一个载入的版本号，后续接口未指定版本时，总是优先载入一个载入的版本号对应的模块，确保优先使用全局已存在的模块
  * 内部很多地方用，这里额外独立暴露一下
@@ -12,12 +18,14 @@ export const DEFAULT_ONLINE_VER = '__default_online_ver__';
 export const DEFAULT_PLAT = PLAT_UNPKG;
 
 export const helConsts = {
-  CORE_VER: '4.8.1',
+  CORE_VER: '4.8.2',
   DEFAULT_API_PREFIX: 'https://unpkg.com',
   DEFAULT_API_URL: '/openapi/v1/app/info',
   DEFAULT_ONLINE_VER,
   DEFAULT_USER_LS_KEY: 'HelUserRtxName',
   DEFAULT_PLAT,
+  LS_LOG_MODE: 'HelConfig.logMode',
+  LS_LOG_FILTER: 'HelConfig.logFilter',
   PLAT_HEL,
   PLAT_UNPKG,
   /** commonData.CSS_STR ，存放样式字符串 map */

@@ -32,14 +32,13 @@ export function buildSharedObject<T extends Dict = Dict>(
   options?: ModuleName | EenableReactive | ICreateOptions,
 ): [T, (partialState: Partial<T>) => void] {
   let enableReactive = false;
-  let moduleName = '';
   let enableRecordDep = false;
+  let moduleName = '';
 
-  // for ts check, write 'typeof boolOrCreateOptions' 3 times
+  // for ts check, write 'typeof options' 3 times
   if (typeof options === 'boolean') {
     enableReactive = options;
-  }
-  if (typeof options === 'string') {
+  } else if (typeof options === 'string') {
     moduleName = options;
   } else if (options && typeof options === 'object') {
     enableReactive = options.enableReactive ?? false;

@@ -19,6 +19,8 @@ export const helConsts: {
   DEFAULT_PLAT: 'unpkg';
   PLAT_UNPKG: 'unpkg';
   PLAT_HEL: 'hel';
+  LS_LOG_MODE: 'HelConfig.logMode';
+  LS_LOG_FILTER: 'HelConfig.logFilter';
   /** commonData.CSS_STR ，存放样式字符串 map */
   KEY_CSS_STR: 'CSS_STR';
   /** commonData.ASSET_CTX ，资源对应的具体上下文 */
