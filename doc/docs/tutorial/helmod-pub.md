@@ -4,13 +4,13 @@ sidebar_position: 4
 
 # 模块发布
 
-js 库、react 组件、vue 组件等发布流程均一样，差异在于`subApp.js`文件的位置不同，js 库、react 组件的`subApp.js`文件在`<rootProject>/configs`目录下，js 库、vue 组件的`subApp.js`文件在`<rootProject>`目录下
+js 库、react 组件、vue 组件等发布流程均一样，差异在于`appInfo.js`文件的位置不同，js 库、react 组件的`appInfo.js`文件在`<rootProject>/configs`目录下，js 库、vue 组件的`appInfo.js`文件在`<rootProject>`目录下
 
 ## 发布到 unpkg
 
-### 调整 subApp 文件
+### 调整 appInfo 文件
 
-打开跟目录`subApp.js`，调整文件内容如下（默认是托管到 unpkg）
+打开根目录`appInfo.js`文件，调整文件内容如下（默认是托管到 unpkg）
 
 ```ts
 const helDevUtils = require('hel-dev-utils');
@@ -50,6 +50,12 @@ https://unpkg.com/<appGroupName>@latest/hel_dist/hel-meta.json
 ```
 
 例如 [https://unpkg.com/hel-tpl-remote-vue-comps@latest/hel_dist/hel-meta.json](https://unpkg.com/hel-tpl-remote-vue-comps@latest/hel_dist/hel-meta.json)
+
+:::caution 注意命令执行顺序
+
+注意命令执行顺序，必须先调整版本号，再执行 build & publish
+
+:::
 
 ### sdk 获取该版本代码
 

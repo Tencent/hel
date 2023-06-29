@@ -1,3 +1,4 @@
+import { RENDER_END } from '../consts';
 import { createOb } from './obj';
 
 let insKeySeed = 0;
@@ -13,8 +14,8 @@ export function buildInsCtx(insCtx: any, options: any) {
   internal.mapInsKeyUpdater(insKey, setState);
   const proxyedState = createOb(
     state,
+    // setter
     (target, key, val) => {
-      // setter
       // @ts-ignore
       target[key] = val;
       if (enableReactive) {
@@ -22,10 +23,12 @@ export function buildInsCtx(insCtx: any, options: any) {
       }
       return true;
     },
+    // getter
     (target, key) => {
-      // getter
       insCtx.readMap[key] = 1;
-      internal.recordDep(key, insCtx.insKey);
+      if (insCtx.renderStatus !== RENDER_END) {
+        internal.recordDep(key, insCtx.insKey);
+      }
       return target[key];
     },
   );

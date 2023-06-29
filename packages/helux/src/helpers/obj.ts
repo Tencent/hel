@@ -30,6 +30,15 @@ export function createHeluxObj(rawObj?: any) {
 }
 
 /**
+ * inject helux prototype to raw object
+ */
+export function injectHeluxProto(rawObj) {
+  const protoCopy = { ...Object.prototype };
+  setProto(rawObj, protoCopy);
+  return rawObj;
+}
+
+/**
  * create observable object
  */
 export function createOb(rawObj: any, setFn: any, getFn: any) {

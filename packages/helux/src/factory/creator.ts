@@ -1,9 +1,16 @@
 import { SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
-import { createHeluxObj, createOb } from '../helpers/obj';
+import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
 import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
 import { nodupPush, safeGet } from '../utils';
 import { record } from './root';
+
+interface IHeluxParams {
+  heluxObj: Dict;
+  rawState: Dict;
+  shouldSync: boolean;
+  sharedKey: number;
+}
 
 let depStats: DictN<Array<string>> = {};
 
@@ -17,22 +24,11 @@ function recordDep(sharedKey: number, stateKey: string | symbol) {
   nodupPush(keys, stateKey);
 }
 
-export function setShared(sharedList: Dict[]) {
-  sharedList.forEach((shared) => mapDepStats(getSharedKey(shared)));
-}
-
-export function getDepStats() {
-  const curDepStats = depStats;
-  depStats = {};
-  return curDepStats;
-}
-
-export function buildSharedObject<T extends Dict = Dict>(
-  stateOrStateFn: T | (() => T),
-  options?: ModuleName | EenableReactive | ICreateOptions,
-): [T, (partialState: Partial<T>) => void] {
+function parseOptions(options?: ModuleName | EenableReactive | ICreateOptions) {
   let enableReactive = false;
   let enableRecordDep = false;
+  let copyObj = false;
+  let enableSyncOriginal = true;
   let moduleName = '';
 
   // for ts check, write 'typeof options' 3 times
@@ -43,18 +39,47 @@ export function buildSharedObject<T extends Dict = Dict>(
   } else if (options && typeof options === 'object') {
     enableReactive = options.enableReactive ?? false;
     enableRecordDep = options.enableRecordDep ?? false;
+    copyObj = options.copyObj ?? false;
+    enableSyncOriginal = options.enableSyncOriginal ?? true;
     moduleName = options.moduleName || '';
   }
 
+  return { enableReactive, enableRecordDep, copyObj, enableSyncOriginal, moduleName };
+}
+
+function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
   let rawState = stateOrStateFn as T;
   if (typeof stateOrStateFn === 'function') {
     rawState = stateOrStateFn();
   }
+  if (!rawState || typeof rawState !== 'object') {
+    throw new Error('ERR_NON_OBJ: pass an non-object to createShared!');
+  }
+  if (getSharedKey(rawState)) {
+    throw new Error('ERR_ALREADY_SHARED: pass a shared object to createShared!');
+  }
 
-  let heluxObj = createHeluxObj(rawState);
+  return rawState;
+}
+
+function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
+  const { copyObj, enableSyncOriginal } = options;
+  let heluxObj;
+  let shouldSync = false;
+  if (copyObj) {
+    shouldSync = enableSyncOriginal;
+    heluxObj = createHeluxObj(rawState);
+  } else {
+    heluxObj = injectHeluxProto(rawState);
+  }
   const sharedKey = markSharedKey(heluxObj);
+  return { rawState, heluxObj, shouldSync, sharedKey };
+}
 
-  let sharedState = {} as unknown as T;
+function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
+  let sharedState: Dict = {};
+  const { rawState, heluxObj, sharedKey, shouldSync } = heluxParams;
+  const { enableReactive, enableRecordDep } = options;
   if (enableReactive) {
     sharedState = createOb(
       heluxObj,
@@ -62,6 +87,10 @@ export function buildSharedObject<T extends Dict = Dict>(
       (target, key: any, val) => {
         // @ts-ignore
         heluxObj[key] = val;
+        if (shouldSync) {
+          rawState[key] = val;
+        }
+
         if (SHARED_KEY !== key) {
           getInternal(heluxObj).setState({ [key]: val });
         }
@@ -78,17 +107,25 @@ export function buildSharedObject<T extends Dict = Dict>(
   } else {
     sharedState = heluxObj;
   }
-
   mapSharedState(sharedKey, sharedState);
+  return sharedState;
+}
 
+function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
+  const { heluxObj, rawState, shouldSync } = heluxParams;
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: Record<string, number[]> = {};
   bindInternal(sharedState, {
-    rawState,
+    rawState: heluxObj, // helux raw state
     key2InsKeys,
     insKey2Updater,
     setState(partialState: any) {
       Object.assign(heluxObj, partialState);
+      if (shouldSync) {
+        Object.assign(rawState, partialState);
+      }
+
+      // find associate ins keys
       const keys = Object.keys(partialState);
       let allInsKeys: number[] = [];
       keys.forEach((key) => {
@@ -97,6 +134,7 @@ export function buildSharedObject<T extends Dict = Dict>(
       });
       // deduplicate
       allInsKeys = Array.from(new Set(allInsKeys));
+      // start update
       allInsKeys.forEach((insKey) => {
         const updater = insKey2Updater[insKey];
         updater && updater(partialState);
@@ -129,7 +167,28 @@ export function buildSharedObject<T extends Dict = Dict>(
       }
     },
   });
+}
 
-  record(moduleName, sharedState);
+export function setShared(sharedList: Dict[]) {
+  sharedList.forEach((shared) => mapDepStats(getSharedKey(shared)));
+}
+
+export function getDepStats() {
+  const curDepStats = depStats;
+  depStats = {};
+  return curDepStats;
+}
+
+export function buildSharedObject<T extends Dict = Dict>(
+  stateOrStateFn: T | (() => T),
+  options?: ModuleName | EenableReactive | ICreateOptions,
+): [T, (partialState: Partial<T>) => void] {
+  const parsedOpts = parseOptions(options);
+  const rawState = parseRawState(stateOrStateFn);
+  const heluxParams = getHeluxParams(rawState, parsedOpts);
+  const sharedState = getSharedState(heluxParams, parsedOpts);
+  bindInternalToShared(sharedState, heluxParams);
+  record(parsedOpts.moduleName, sharedState);
+
   return [sharedState, getInternal(sharedState).setState];
 }
