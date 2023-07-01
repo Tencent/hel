@@ -21,8 +21,8 @@ export interface ICreateOptions {
    * ```
    * const originalObj = { a:1, b: 2 };
    * const { state } = createShared(originalObj, { copyObj: true } );
-   * // 如 copyObj === true, 则 getRawState(state) === originalObj 结果为 false
-   * // 如 copyObj === false, 则 getRawState(state) === originalObj 结果为 true
+   * // 若 copyObj === true, 则 getRawState(state) === originalObj 结果为 false
+   * // 若 copyObj === false, 则 getRawState(state) === originalObj 结果为 true
    * ```
    */
   copyObj?: boolean;

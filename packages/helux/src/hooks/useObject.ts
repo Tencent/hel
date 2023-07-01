@@ -1,5 +1,5 @@
 import React from 'react';
-import { IS_SHARED } from '../consts';
+import { IS_SHARED, SKIP_MERGE } from '../consts';
 import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
@@ -25,18 +25,23 @@ export function useObjectLogic<T extends Dict = Dict>(
   }
 
   const setState = (partialState: Partial<T>) => {
-    if (!unmountRef.current) {
-      if (isStable) {
-        Object.assign(state, partialState);
-        forceUpdate();
-      } else {
-        setFullState((state) => ({ ...state, ...partialState }));
-      }
+    if (unmountRef.current) { // already unmounted
+      return;
     }
+
+    if (!isStable) {
+      return setFullState((state) => ({ ...state, ...partialState }));
+    }
+
+    // start to handle isStable=true situation
+    if (!options[SKIP_MERGE]) {
+      Object.assign(state, partialState);
+    }
+    forceUpdate();
   };
 
   React.useEffect(() => {
-    unmountRef.current = false; // 防止 StrictMode 写为true
+    unmountRef.current = false; // 防止 StrictMode 写为 true
     // cleanup callback，标记组件已卸载
     return () => {
       unmountRef.current = true;

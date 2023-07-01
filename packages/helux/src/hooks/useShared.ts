@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { IS_SHARED, RENDER_END, RENDER_START } from '../consts';
+import { IS_SHARED, SKIP_MERGE, RENDER_END, RENDER_START } from '../consts';
 import { clearDep, recoverDep, resetReadMap, updateDep } from '../helpers/dep';
 import { getInternal, getRawState } from '../helpers/feature';
 import { buildInsCtx } from '../helpers/ins';
@@ -8,7 +8,7 @@ import { useObjectLogic } from './useObject';
 
 export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
   const rawState = getRawState(sharedObject);
-  const [, setState] = useObjectLogic(rawState, { isStable: true, [IS_SHARED]: true });
+  const [, setState] = useObjectLogic(rawState, { isStable: true, [IS_SHARED]: true, [SKIP_MERGE]: true });
   const { current: insCtx } = useRef({
     readMap: {} as any, // 当前渲染完毕所依赖的 key 记录
     readMapPrev: {} as any, // 上一次渲染完毕所依赖的 key 记录
