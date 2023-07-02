@@ -1,6 +1,6 @@
 {
   "name": "helux",
-  "version": "2.1.7",
+  "version": "3.0.0",
   "description": "A React state library that encourages service injection and supports reactive updates",
   "repository": {
     "type": "git",

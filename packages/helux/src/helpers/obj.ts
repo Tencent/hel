@@ -1,9 +1,12 @@
-function setProtoOf(obj, proto) {
+import { Dict } from "../typing";
+import { isFn } from "../utils";
+
+function setProtoOf(obj: Dict, proto: any) {
   obj.__proto__ = proto;
   return obj;
 }
 
-function mixinProperties(obj, proto) {
+function mixinProperties(obj: Dict, proto: any) {
   for (var prop in proto) {
     if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
       obj[prop] = proto[prop];
@@ -32,9 +35,15 @@ export function createHeluxObj(rawObj?: any) {
 /**
  * inject helux prototype to raw object
  */
-export function injectHeluxProto(rawObj) {
-  const protoCopy = { ...Object.prototype };
-  setProto(rawObj, protoCopy);
+export function injectHeluxProto(rawObj: Dict) {
+  if (isFn(rawObj)) {
+    return;
+  }
+
+  const heluxObj = Object.create(null);
+  setProto(heluxObj, Object.prototype);
+  // const protoCopy = { ...Object.prototype };
+  setProto(rawObj, heluxObj);
   return rawObj;
 }
 

@@ -1,16 +1,9 @@
-import { FIRST_UNMOUNT, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
-import { Dict } from '../typing';
+import { SHARED_KEY } from '../consts';
+import { Dict, IUnmountInfo } from '../typing';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 const SHARED_KEY_STATE_MAP = new Map<number, Dict>();
 const INTERMAL_MAP: Dict = {};
-
-export interface IUnmountInfo {
-  t: number;
-  s: typeof FIRST_UNMOUNT | typeof SECOND_UNMOUNT;
-  /** 前一个实例 id */
-  prev: number;
-}
 
 export function getInternalMap() {
   return INTERMAL_MAP;

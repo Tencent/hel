@@ -1,9 +1,11 @@
-import { SHARED_KEY } from '../consts';
-import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
+import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/state';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
-import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
+import { hookApi, staticApi, recordFnDep } from '../helpers/fndep';
+import { runInsUpdater } from '../helpers/ins';
+import type { Dict, DictN, EenableReactive, ICreateOptions, ICreateOptionsFull, IInsCtx, ModuleName } from '../typing';
 import { nodupPush, safeGet } from '../utils';
 import { record } from './root';
+
 
 interface IHeluxParams {
   heluxObj: Dict;
@@ -62,7 +64,7 @@ function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
   return rawState;
 }
 
-function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
+function getHeluxParams(rawState: Dict, options: ICreateOptionsFull): IHeluxParams {
   const { copyObj, enableSyncOriginal } = options;
   let heluxObj;
   let shouldSync = false;
@@ -80,72 +82,84 @@ function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
   let sharedState: Dict = {};
   const { rawState, heluxObj, sharedKey, shouldSync } = heluxParams;
   const { enableReactive, enableRecordDep } = options;
-  if (enableReactive) {
-    sharedState = createOb(
-      heluxObj,
-      // setter
-      (target, key: any, val) => {
-        // @ts-ignore
-        heluxObj[key] = val;
-        if (shouldSync) {
-          rawState[key] = val;
-        }
+  sharedState = createOb(
+    heluxObj,
+    // setter
+    (target: Dict, key: any, val: any) => {
+      // @ts-ignore
+      heluxObj[key] = val;
+      if (shouldSync) {
+        rawState[key] = val;
+      }
+      if (enableReactive) {
+        getInternal(heluxObj).setState({ [key]: val });
+      }
+      return true;
+    },
+    // getter
+    (target: Dict, key: any) => {
+      if (enableRecordDep) {
+        recordDep(sharedKey, key);
+      }
 
-        if (SHARED_KEY !== key) {
-          getInternal(heluxObj).setState({ [key]: val });
-        }
-        return true;
-      },
-      // getter
-      (target, key) => {
-        if (enableRecordDep) {
-          recordDep(sharedKey, key);
-        }
-        return target[key];
-      },
-    );
-  } else {
-    sharedState = heluxObj;
-  }
+      // record computed/watch dep
+      recordFnDep(key);
+
+      return target[key];
+    },
+  );
   mapSharedState(sharedKey, sharedState);
+
   return sharedState;
 }
 
 function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
   const { heluxObj, rawState, shouldSync } = heluxParams;
-  const insKey2Updater: Record<string, any> = {};
+  const insCtxMap = new Map<number, IInsCtx>();
+  // VALKEY_INSKEYS_MAP
   const key2InsKeys: Record<string, number[]> = {};
+
   bindInternal(sharedState, {
     rawState: heluxObj, // helux raw state
     key2InsKeys,
-    insKey2Updater,
+    insCtxMap,
     setState(partialState: any) {
       Object.assign(heluxObj, partialState);
       if (shouldSync) {
         Object.assign(rawState, partialState);
       }
 
+      const valKeys = Object.keys(partialState);
+
       // find associate ins keys
-      const keys = Object.keys(partialState);
       let allInsKeys: number[] = [];
-      keys.forEach((key) => {
-        const insKeys = key2InsKeys[key] || [];
-        allInsKeys = allInsKeys.concat(insKeys);
+      // find associate computed/watch fn ctxs
+      let allStaticFnKeys: number[] = [];
+      let allHookFnKeys: number[] = [];
+
+      valKeys.forEach((key) => {
+        allInsKeys = allInsKeys.concat(key2InsKeys[key] || []);
+        allStaticFnKeys = allStaticFnKeys.concat(staticApi.getDepFnKeys(key));
+
+        const hKeys = hookApi.getDepFnKeys(key);
+        allHookFnKeys = allHookFnKeys.concat(hKeys);
       });
       // deduplicate
       allInsKeys = Array.from(new Set(allInsKeys));
+      allStaticFnKeys = Array.from(new Set(allStaticFnKeys));
+      allHookFnKeys = Array.from(new Set(allHookFnKeys));
+
+      // start execute compute/watch fns
+      allStaticFnKeys.forEach(staticApi.runFn);
+      allHookFnKeys.forEach(hookApi.runFn);
+
       // start update
       allInsKeys.forEach((insKey) => {
-        const updater = insKey2Updater[insKey];
-        updater && updater(partialState);
+        runInsUpdater(insCtxMap.get(insKey), partialState);
       });
     },
     recordDep(key: string, insKey: number) {
-      let insKeys: any[] = key2InsKeys[key];
-      if (!insKeys) {
-        insKeys = [];
-        key2InsKeys[key] = insKeys;
-      }
+      const insKeys: any[] = safeGet(key2InsKeys, key, []);
       if (!insKeys.includes(insKey)) {
         insKeys.push(insKey);
       }
@@ -157,14 +171,11 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
         insKeys.splice(idx, 1);
       }
     },
-    mapInsKeyUpdater(insKey: number, updater: any) {
-      insKey2Updater[insKey] = updater;
+    mapInsCtx(insKey: number, insCtx: IInsCtx) {
+      insCtxMap.set(insKey, insCtx);
     },
-    delInsKeyUpdater(insKey: number) {
-      if (insKey) {
-        // @ts-ignore
-        delete insKey2Updater[insKey];
-      }
+    delInsCtx(insKey: number) {
+      insCtxMap.delete(insKey);
     },
   });
 }

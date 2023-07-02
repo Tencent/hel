@@ -1,5 +1,5 @@
 import { VER } from '../consts';
-import { getInternal, getInternalMap, getSharedKey } from '../helpers/feature';
+import { getInternal, getInternalMap, getSharedKey } from '../helpers/state';
 import type { Dict } from '../typing';
 
 function createRoot() {
@@ -44,3 +44,5 @@ export function record(moduleName: string, sharedState: Dict) {
   rootState[treeKey] = sharedState;
   help.mod[treeKey] = { setState: getInternal(sharedState).setState };
 }
+
+ensureHeluxRoot();
