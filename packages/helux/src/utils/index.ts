@@ -1,4 +1,4 @@
-import type { PrimitiveSymItem, PrimitiveItem, Fn, Dict } from '../typing';
+import type { Dict, Fn, PrimitiveItem, PrimitiveSymItem } from '../typing';
 
 /** safe obj get */
 export function safeGet<T = any>(obj: Record<string | symbol, any>, key: PrimitiveSymItem, defaultValue: T): T {

@@ -1,14 +1,14 @@
-import './factory/root';
-import { createReactiveSharedObject, createShared, createSharedObject } from './factory/createShared';
 import { createComputed } from './factory/createComputed';
+import { createReactiveSharedObject, createShared, createSharedObject } from './factory/createShared';
 import { createWatch } from './factory/createWatch';
+import './factory/root';
 import * as advance from './helpers/advance';
+import { useComputed } from './hooks/useComputed';
 import { useEffect, useLayoutEffect } from './hooks/useEffect';
 import { useForceUpdate } from './hooks/useForceUpdate';
 import { useObject } from './hooks/useObject';
 import { useService } from './hooks/useService';
 import { useShared, useSharedObject } from './hooks/useShared';
-import { useComputed } from './hooks/useComputed';
 import { useWatch } from './hooks/useWatch';
 
 export {

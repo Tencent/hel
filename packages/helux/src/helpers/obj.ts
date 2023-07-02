@@ -1,5 +1,5 @@
-import { Dict } from "../typing";
-import { isFn } from "../utils";
+import { Dict } from '../typing';
+import { isFn } from '../utils';
 
 function setProtoOf(obj: Dict, proto: any) {
   obj.__proto__ = proto;

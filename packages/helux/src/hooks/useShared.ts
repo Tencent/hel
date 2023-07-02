@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import type { Dict } from '../typing';
-import { IS_SHARED, RENDER_END, RENDER_START, SKIP_MERGE, MOUNTED } from '../consts';
+import { IS_SHARED, MOUNTED, RENDER_END, RENDER_START, SKIP_MERGE } from '../consts';
+import { buildInsCtx } from '../helpers/ins';
 import { clearDep, recoverDep, resetReadMap, updateDep } from '../helpers/insdep';
 import { getRawState } from '../helpers/state';
-import { buildInsCtx } from '../helpers/ins';
+import type { Dict } from '../typing';
 import { useObjectLogic } from './useObject';
 
 export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {

@@ -1,11 +1,10 @@
-import { FN_KEY, SHARED_KEY, PROTO_KEY, RENDER_START, NOT_MOUNT, EXPIRE_MS } from '../consts';
-import { Dict, Fn, ScopeType, IFnCtx, FnType } from '../typing';
-import type { IUnmountInfo } from '../typing';
-import { nodupPush, safeMapGet, isFn } from '../utils';
+import { EXPIRE_MS, FN_KEY, NOT_MOUNT, PROTO_KEY, RENDER_START, SHARED_KEY } from '../consts';
 import { injectHeluxProto } from '../helpers/obj';
+import type { IUnmountInfo } from '../typing';
+import { Dict, Fn, FnType, IFnCtx, ScopeType } from '../typing';
+import { isFn, nodupPush, safeMapGet } from '../utils';
 
-const noop = () => { };
-
+const noop = () => {};
 
 function buildApi(scopeType: ScopeType) {
   let cuFnKeySeed = 0;
@@ -18,8 +17,8 @@ function buildApi(scopeType: ScopeType) {
   window[`${scopeType}_data`] = {
     FNKEY_CTX_MAP,
     UNMOUNT_INFO_MAP,
-    VALKEY_FNKEYS_MAP
-  }
+    VALKEY_FNKEYS_MAP,
+  };
 
   const api = {
     markFnKey(fnOrObj: Dict, fnKey?: number) {
@@ -48,7 +47,7 @@ function buildApi(scopeType: ScopeType) {
       return fnOrObj.__proto__[FN_KEY];
     },
 
-    buildFnCtx(options?: { fn?: Fn, fnType?: FnType, fnKey?: number, updater?: any }): IFnCtx {
+    buildFnCtx(options?: { fn?: Fn; fnType?: FnType; fnKey?: number; updater?: any }): IFnCtx {
       const { fn = noop, fnKey = 0, fnType = 'watch', updater } = options || {};
       return {
         fn,
@@ -73,7 +72,8 @@ function buildApi(scopeType: ScopeType) {
       currentRunningFnKey = fnKey;
       const params = { fn, fnType, fnKey };
       let fnCtx = api.buildFnCtx(params);
-      if (fnCtxBase) { // 指向用户透传的 fnCtxBase
+      if (fnCtxBase) {
+        // 指向用户透传的 fnCtxBase
         fnCtx = Object.assign(fnCtxBase, params);
       }
       FNKEY_CTX_MAP.set(fnKey, fnCtx);
@@ -91,7 +91,7 @@ function buildApi(scopeType: ScopeType) {
 
     delFnCtx(fnCtx: IFnCtx) {
       const { depKeys, fnKey } = fnCtx;
-      depKeys.forEach(key => {
+      depKeys.forEach((key) => {
         const fnKeys = VALKEY_FNKEYS_MAP.get(key) || [];
         const idx = fnKeys.indexOf(fnKey);
         if (idx >= 0) {
@@ -130,7 +130,7 @@ function buildApi(scopeType: ScopeType) {
       if (!fnCtx) {
         return;
       }
-      const doRecord = (valKey: string)=>{
+      const doRecord = (valKey: string) => {
         if ([SHARED_KEY, PROTO_KEY].includes(valKey)) {
           return;
         }
@@ -160,7 +160,7 @@ function buildApi(scopeType: ScopeType) {
       const fnKeys = api.getDepFnKeys(valKey);
       const fnCtxs: IFnCtx[] = [];
 
-      fnKeys.forEach(fnKey => {
+      fnKeys.forEach((fnKey) => {
         const ctx = api.getFnCtx(fnKey);
         ctx && fnCtxs.push(ctx);
       });
@@ -206,7 +206,7 @@ function buildApi(scopeType: ScopeType) {
         const fnCtx = api.getFnCtx(fnKey);
         fnCtx && api.recordValKeyDep(fnCtx);
       }
-    }
+    },
   };
 
   return api;

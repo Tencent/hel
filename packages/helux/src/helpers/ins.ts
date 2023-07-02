@@ -1,10 +1,10 @@
-import type { Dict, IFnCtx, IInsCtx } from '../typing';
-import { NOT_MOUNT, RENDER_END, RENDER_START, EXPIRE_MS } from '../consts';
-import { createOb } from './obj';
+import { EXPIRE_MS, NOT_MOUNT, RENDER_END, RENDER_START } from '../consts';
 import { hookApi } from '../helpers/fndep';
 import { getInternal, getRawState } from '../helpers/state';
+import type { Dict, IFnCtx, IInsCtx } from '../typing';
 import { warn } from '../utils';
 import { clearDep } from './insdep';
+import { createOb } from './obj';
 
 let insKeySeed = 0;
 export function getInsKey() {
@@ -92,7 +92,6 @@ export function buildInsComputedResult(result: Dict, fnCtx: IFnCtx) {
       return result[resultKey];
     },
   );
-
 
   return proxyResult;
 }

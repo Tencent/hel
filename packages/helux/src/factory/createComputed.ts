@@ -1,11 +1,11 @@
-import type { Dict, IFnParams, IFnCtx } from '../typing';
-import { isObj, isFn, isPromise, warn } from '../utils';
-import { staticApi, hookApi, recordFnDep } from '../helpers/fndep';
+import { hookApi, recordFnDep, staticApi } from '../helpers/fndep';
 import { createOb, injectHeluxProto } from '../helpers/obj';
+import type { Dict, IFnCtx, IFnParams } from '../typing';
+import { isFn, isObj, isPromise, warn } from '../utils';
 
 export function createComputedLogic<T extends Dict = Dict>(
   computedFn: (params: IFnParams) => T,
-  options: { scopeType: 'static' | 'hook', fnCtxBase?: IFnCtx },
+  options: { scopeType: 'static' | 'hook'; fnCtxBase?: IFnCtx },
 ): IFnCtx {
   const { scopeType, fnCtxBase } = options;
   const isStatic = scopeType === 'static';
@@ -23,7 +23,7 @@ export function createComputedLogic<T extends Dict = Dict>(
   }
 
   // 给 result 和 fn 标记相同的 key
-  injectHeluxProto(result)
+  injectHeluxProto(result);
   api.markFnKey(result, fnCtx.fnKey);
 
   fnCtx.result = result;
@@ -32,7 +32,8 @@ export function createComputedLogic<T extends Dict = Dict>(
 
 export function createComputed<T extends Dict = Dict>(computedFn: (params: IFnParams) => T): T {
   const fnCtx = createComputedLogic<T>(computedFn, { scopeType: 'static' });
-  const proxyResult = createOb(fnCtx.result,
+  const proxyResult = createOb(
+    fnCtx.result,
     // setter
     () => {
       warn('changing computed result is invalid');
@@ -48,4 +49,3 @@ export function createComputed<T extends Dict = Dict>(computedFn: (params: IFnPa
 
   return proxyResult;
 }
-

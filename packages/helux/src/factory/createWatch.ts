@@ -1,11 +1,8 @@
-import type { IFnParams, IFnCtx } from '../typing';
+import { hookApi, staticApi } from '../helpers/fndep';
+import type { IFnCtx, IFnParams } from '../typing';
 import { isFn } from '../utils';
-import { staticApi, hookApi } from '../helpers/fndep';
 
-export function createWatchLogic(
-  watchFn: (fnParams: IFnParams) => void,
-  options: { scopeType: 'static' | 'hook', fnCtxBase?: IFnCtx },
-) {
+export function createWatchLogic(watchFn: (fnParams: IFnParams) => void, options: { scopeType: 'static' | 'hook'; fnCtxBase?: IFnCtx }) {
   const { scopeType, fnCtxBase } = options;
   const isStatic = scopeType === 'static';
   const api = isStatic ? staticApi : hookApi;

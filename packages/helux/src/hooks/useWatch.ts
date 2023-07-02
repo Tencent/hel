@@ -1,9 +1,9 @@
-import { useRef, useEffect, useState } from 'react';
-import { ComputedResult, Dict, ComputedFn } from '../typing';
-import { isFn } from '../utils';
+import { useEffect, useRef, useState } from 'react';
 import { MOUNTED } from '../consts';
-import { hookApi } from '../helpers/fndep';
 import { createWatchLogic } from '../factory/createWatch';
+import { hookApi } from '../helpers/fndep';
+import { ComputedFn, ComputedResult, Dict } from '../typing';
+import { isFn } from '../utils';
 
 export function useWatch<T extends Dict = Dict>(watchFn: ComputedResult<T> | ComputedFn<T>) {
   const fnRef = useRef<any>(null);

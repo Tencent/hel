@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect } from 'react';
-import { ComputedResult, Dict, ComputedFn } from '../typing';
-import { isFn, isObj } from '../utils';
+import { useEffect, useRef, useState } from 'react';
+import { MOUNTED, RENDER_END, RENDER_START } from '../consts';
+import { createComputedLogic } from '../factory/createComputed';
 import { hookApi, staticApi } from '../helpers/fndep';
 import { buildInsComputedResult } from '../helpers/ins';
-import { createComputedLogic } from '../factory/createComputed';
-import { RENDER_END, RENDER_START, MOUNTED } from '../consts';
+import { ComputedFn, ComputedResult, Dict } from '../typing';
+import { isFn, isObj } from '../utils';
 import { useForceUpdate } from './useForceUpdate';
 
 const InvalidInputErr = new Error('ERR_NON_COMPUTED_FN_OR_RESULT: useComputed only accept a static computed result or computed fn');
