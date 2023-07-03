@@ -82,19 +82,22 @@ export type MountStatus = 1 | 2 | 3;
 export interface IFnCtx {
   fn: Fn;
   fnKey: number;
+  /** 中转了此函数返回结果的其他函数 */
+  downstreamFnKeys: number[];
   /** 未挂载 已挂载 已卸载 */
   mountStatus: MountStatus;
   depKeys: string[];
   result: Dict;
   /** work for hook computed fnCtx */
   proxyResult: Dict;
-  isResultWrapped: boolean;
   fnType: FnType;
   scopeType: ScopeType;
   /** work for hook computed fnCtx */
   updater?: Fn;
   /** work for hook computed fnCtx */
   isResultReaded: boolean;
+  /** work for computed result transfer mechanism */
+  isUpstreamResult: boolean;
   /** work for hook computed fnCtx */
   renderStatus: ReanderStatus;
   /** fn ctx created timestamp */

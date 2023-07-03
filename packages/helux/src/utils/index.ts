@@ -42,3 +42,7 @@ export function isPromise(mayObj: any) {
 export function warn(msg: string) {
   console.warn?.(msg);
 }
+
+export function dedupList(list: Array<any>) {
+  return Array.from(new Set(list));
+}

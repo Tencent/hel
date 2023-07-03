@@ -50,7 +50,7 @@ export function injectHeluxProto(rawObj: Dict) {
 /**
  * create observable object
  */
-export function createOb(rawObj: any, setFn: any, getFn: any) {
+export function createOb(rawObj: any, setFn: any, getFn: any, isWrapped?: boolean) {
   if (typeof Proxy === 'function') {
     return new Proxy(rawObj, {
       set(target, key, val) {

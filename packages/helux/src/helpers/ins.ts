@@ -74,7 +74,8 @@ export function buildInsCtx(options: any): IInsCtx {
   return insCtx;
 }
 
-export function buildInsComputedResult(result: Dict, fnCtx: IFnCtx) {
+export function buildInsComputedResult(fnCtx: IFnCtx) {
+  const { result } = fnCtx;
   const proxyResult = createOb(
     result,
     // setter

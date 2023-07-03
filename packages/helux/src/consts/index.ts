@@ -13,7 +13,7 @@ export const SKIP_MERGE = createSymbol('HeluxSkipMerge');
 /** 卸载数据的过期时间（单位：ms） */
 export const EXPIRE_MS = 2000;
 
-export const VER = '3.0.0';
+export const VER = '2.1.7';
 
 export const RENDER_START = '1';
 

@@ -3,7 +3,7 @@ import { runInsUpdater } from '../helpers/ins';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/state';
 import type { Dict, DictN, EenableReactive, ICreateOptions, ICreateOptionsFull, IInsCtx, ModuleName } from '../typing';
-import { nodupPush, safeGet } from '../utils';
+import { dedupList, nodupPush, safeGet } from '../utils';
 import { record } from './root';
 
 interface IHeluxParams {
@@ -138,15 +138,13 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
 
       valKeys.forEach((key) => {
         allInsKeys = allInsKeys.concat(key2InsKeys[key] || []);
-        allStaticFnKeys = allStaticFnKeys.concat(staticApi.getDepFnKeys(key));
-
-        const hKeys = hookApi.getDepFnKeys(key);
-        allHookFnKeys = allHookFnKeys.concat(hKeys);
+        allStaticFnKeys = allStaticFnKeys.concat(staticApi.getDepFnKeys(key, false));
+        allHookFnKeys = allHookFnKeys.concat(hookApi.getDepFnKeys(key, false));
       });
       // deduplicate
-      allInsKeys = Array.from(new Set(allInsKeys));
-      allStaticFnKeys = Array.from(new Set(allStaticFnKeys));
-      allHookFnKeys = Array.from(new Set(allHookFnKeys));
+      allInsKeys = dedupList(allInsKeys);
+      allStaticFnKeys = dedupList(allStaticFnKeys);
+      allHookFnKeys = dedupList(allHookFnKeys);
 
       // start execute compute/watch fns
       allStaticFnKeys.forEach(staticApi.runFn);

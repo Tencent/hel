@@ -13,7 +13,6 @@ export function useComputed<T extends Dict = Dict>(resultOrFn: ComputedResult<T>
   const fnRef = useRef<any>(null);
   const updater = useForceUpdate();
   const [fnCtx] = useState(() => hookApi.buildFnCtx({ updater }));
-  let needUnbox = false;
 
   if (!fnRef.current) {
     // 传入了局部的临时计算函数
@@ -29,17 +28,14 @@ export function useComputed<T extends Dict = Dict>(resultOrFn: ComputedResult<T>
       }
       // 转移输入函数的依赖列表
       fnCtx.depKeys = upstreamFnCtx.depKeys.slice();
-      // 包裹一层 hookVal，方便 createComputedLogic 对返回对象标记 fnKey
-      fnRef.current = () => ({ hookVal: upstreamFnCtx.result });
-      fnCtx.isResultWrapped = true;
-      needUnbox = true;
+      // 做结果中转
+      fnRef.current = () => upstreamFnCtx.result;
     } else {
       throw InvalidInputErr;
     }
     createComputedLogic(fnRef.current, { scopeType: 'hook', fnCtxBase: fnCtx });
 
-    const rawResult = needUnbox ? fnCtx.result.hookVal : fnCtx.result;
-    fnCtx.proxyResult = buildInsComputedResult(rawResult, fnCtx);
+    fnCtx.proxyResult = buildInsComputedResult(fnCtx);
   }
 
   fnCtx.isResultReaded = false;

@@ -2,7 +2,7 @@ import { EXPIRE_MS, FN_KEY, NOT_MOUNT, PROTO_KEY, RENDER_START, SHARED_KEY } fro
 import { injectHeluxProto } from '../helpers/obj';
 import type { IUnmountInfo } from '../typing';
 import { Dict, Fn, FnType, IFnCtx, ScopeType } from '../typing';
-import { isFn, nodupPush, safeMapGet } from '../utils';
+import { dedupList, isFn, nodupPush, safeMapGet } from '../utils';
 
 const noop = () => {};
 
@@ -52,12 +52,13 @@ function buildApi(scopeType: ScopeType) {
       return {
         fn,
         fnKey,
+        downstreamFnKeys: [],
         mountStatus: NOT_MOUNT,
         depKeys: [],
         result: {}, // works for type='computed', always ref to first time returned result by computed fn
         fnType,
         isResultReaded: false,
-        isResultWrapped: false,
+        isUpstreamResult: false,
         scopeType,
         renderStatus: RENDER_START,
         proxyResult: {},
@@ -152,20 +153,26 @@ function buildApi(scopeType: ScopeType) {
       }
     },
 
-    getDepFnKeys(valKey: string) {
-      return VALKEY_FNKEYS_MAP.get(valKey) || [];
-    },
-
-    getDepFnCtxs(valKey: string) {
-      const fnKeys = api.getDepFnKeys(valKey);
-      const fnCtxs: IFnCtx[] = [];
+    getDepFnKeys(valKey: string, needDedup = true) {
+      const fnKeys = VALKEY_FNKEYS_MAP.get(valKey) || [];
+      let finalFnKeys: number[] = [];
+      let isConcat = false;
 
       fnKeys.forEach((fnKey) => {
-        const ctx = api.getFnCtx(fnKey);
-        ctx && fnCtxs.push(ctx);
+        finalFnKeys.push(fnKey);
+        const fnCtx = api.getFnCtx(fnKey);
+        if (fnCtx) {
+          const { downstreamFnKeys } = fnCtx;
+          finalFnKeys = finalFnKeys.concat(downstreamFnKeys);
+          isConcat = true;
+        }
       });
 
-      return fnCtxs;
+      if (needDedup && isConcat) {
+        finalFnKeys = dedupList(finalFnKeys);
+      }
+
+      return finalFnKeys;
     },
 
     runFn(fnKey: number) {
@@ -178,11 +185,12 @@ function buildApi(scopeType: ScopeType) {
       }
 
       const result = fnCtx.fn({ isFirstCall: false });
-      if (fnCtx.fnType === 'computed' && !fnCtx.isResultWrapped) {
+      // 是计算函数，非中转结果
+      if (fnCtx.fnType === 'computed' && !fnCtx.isUpstreamResult) {
         result && Object.assign(fnCtx.result, result);
       }
 
-      // 实例读取了计算结果，且不是未挂载状态，才执行更新
+      // 实例读取了计算结果才执行更新
       if (fnCtx.isResultReaded) {
         fnCtx.updater?.();
       }
