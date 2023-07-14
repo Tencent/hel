@@ -1,12 +1,9 @@
-import { Dict } from '../typing';
-import { isFn } from '../utils';
-
-function setProtoOf(obj: Dict, proto: any) {
+function setProtoOf(obj, proto) {
   obj.__proto__ = proto;
   return obj;
 }
 
-function mixinProperties(obj: Dict, proto: any) {
+function mixinProperties(obj, proto) {
   for (var prop in proto) {
     if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
       obj[prop] = proto[prop];
@@ -35,22 +32,16 @@ export function createHeluxObj(rawObj?: any) {
 /**
  * inject helux prototype to raw object
  */
-export function injectHeluxProto(rawObj: Dict) {
-  if (isFn(rawObj)) {
-    return;
-  }
-
-  const heluxObj = Object.create(null);
-  setProto(heluxObj, Object.prototype);
-  // const protoCopy = { ...Object.prototype };
-  setProto(rawObj, heluxObj);
+export function injectHeluxProto(rawObj) {
+  const protoCopy = { ...Object.prototype };
+  setProto(rawObj, protoCopy);
   return rawObj;
 }
 
 /**
  * create observable object
  */
-export function createOb(rawObj: any, setFn: any, getFn: any, isWrapped?: boolean) {
+export function createOb(rawObj: any, setFn: any, getFn: any) {
   if (typeof Proxy === 'function') {
     return new Proxy(rawObj, {
       set(target, key, val) {

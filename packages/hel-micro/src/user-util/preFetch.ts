@@ -205,7 +205,8 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
   const versionIdList: string[] = [];
   const projectIdList: string[] = [];
   const optionsMap = batchOptions?.preFetchConfigs || {};
-  const getOptions: IBatchOptionsCommon = { ...(batchOptions?.common || {}) };
+  // 因 batchPreFetchLib 默认是私服，所以 semverApi 默认是 false
+  const getOptions: IBatchOptionsCommon = { semverApi: false, ...(batchOptions?.common || {}) };
   const platform = getPlatform(getOptions.platform);
 
   if (appNames.length > 8) {

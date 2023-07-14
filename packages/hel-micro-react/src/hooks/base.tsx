@@ -70,11 +70,10 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
     isFetchExecuteRef.current = true;
     const fetchComp = async () => {
       const comps: any = await preFetchLib(name, restOptions);
-      let renderStyleStr = '';
       if (options.onStyleFetched && !appStyleSrv.isStyleFetched(name, options)) {
         const styleData = await appStyleSrv.fetchAppStyleData(name, options);
         const config: IRemoteCompRenderConfig = { name, controlOptions: options };
-        renderStyleStr = tryTriggerOnStyleFetched(config, styleData);
+        tryTriggerOnStyleFetched(config, styleData);
       }
       if (options.delay) {
         await delay(options.delay);
@@ -86,6 +85,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
       const Comp = RemoteComp || (() => <h3 style={WARN_STYLE}>Invalid compName {compName}</h3>);
       return Comp;
     };
+
     fetchComp()
       .then((Comp) => {
         compRef.current = Comp;

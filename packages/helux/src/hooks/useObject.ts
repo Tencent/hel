@@ -1,6 +1,6 @@
 import React from 'react';
 import { IS_SHARED, SKIP_MERGE } from '../consts';
-import { getSharedKey } from '../helpers/state';
+import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
 
@@ -25,8 +25,7 @@ export function useObjectLogic<T extends Dict = Dict>(
   }
 
   const setState = (partialState: Partial<T>) => {
-    if (unmountRef.current) {
-      // already unmounted
+    if (unmountRef.current) { // already unmounted
       return;
     }
 

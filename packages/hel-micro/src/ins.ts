@@ -63,7 +63,7 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
     } else {
       // 开始处理非 core 层面的函数
       if (fnName === 'batchPreFetchLib') {
-        // 特殊处理 batchPreFetchLib
+        // 特殊处理 batchPreFetchLib 的 batchOptions
         const arg1Var = arg1 || {};
         const common = mergePlatObj(arg1Var.common);
         args[1] = { ...arg1Var, common };

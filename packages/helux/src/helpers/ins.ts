@@ -1,55 +1,22 @@
-import { EXPIRE_MS, NOT_MOUNT, RENDER_END, RENDER_START } from '../consts';
-import { hookApi } from '../helpers/fndep';
-import { getInternal, getRawState } from '../helpers/state';
-import type { Dict, IFnCtx, IInsCtx } from '../typing';
-import { warn } from '../utils';
-import { clearDep } from './insdep';
+import { RENDER_END } from '../consts';
+import { prefixValKey, isSymbol } from '../utils/index';
 import { createOb } from './obj';
 
 let insKeySeed = 0;
-export function getInsKey() {
+function getInsKey() {
   insKeySeed = insKeySeed === Number.MAX_SAFE_INTEGER ? 1 : insKeySeed + 1;
   return insKeySeed;
 }
 
-export function runInsUpdater(insCtx: IInsCtx | undefined, partialState: Dict) {
-  if (!insCtx) return;
-  const { setState, mountStatus, createTime } = insCtx;
-  if (mountStatus === NOT_MOUNT && Date.now() - createTime > EXPIRE_MS) {
-    return clearDep(insCtx);
-  }
-
-  setState(partialState);
-}
-
-export function buildInsCtx(options: any): IInsCtx {
-  const { setState, sharedState, enableReactive } = options;
+export function buildInsCtx(insCtx: any, options: any) {
+  const { internal, setState, state, enableReactive } = options;
   const insKey = getInsKey();
-  const rawState = getRawState(sharedState);
-  const internal = getInternal(sharedState);
-  if (!internal) {
-    throw new Error('ERR_OBJ_NOT_SHARED: input object is not a result returned by createShared');
-  }
-
-  const insCtx: IInsCtx = {
-    readMap: {},
-    readMapPrev: {},
-    readMapStrict: null,
-    insKey,
-    internal,
-    rawState,
-    sharedState,
-    proxyState: {},
-    setState,
-    mountStatus: NOT_MOUNT,
-    renderStatus: RENDER_START,
-    createTime: Date.now(),
-  };
-
-  insCtx.proxyState = createOb(
-    rawState,
+  insCtx.insKey = insKey;
+  internal.mapInsKeyUpdater(insKey, setState);
+  const proxyedState = createOb(
+    state,
     // setter
-    (target: Dict, key: string, val: any) => {
+    (target, key, val) => {
       // @ts-ignore
       target[key] = val;
       if (enableReactive) {
@@ -58,41 +25,21 @@ export function buildInsCtx(options: any): IInsCtx {
       return true;
     },
     // getter
-    (target: Dict, key: string) => {
-      insCtx.readMap[key] = 1;
-      if (insCtx.renderStatus !== RENDER_END) {
-        internal.recordDep(key, insCtx.insKey);
+    (target, key) => {
+      if (isSymbol(key)) {
+        return target[key];
       }
-      // record computed/watch dep
-      hookApi.recordFnDep(key);
+      const depKey = prefixValKey(key, internal.sharedKey);
 
+      insCtx.readMap[depKey] = 1;
+      if (insCtx.renderStatus !== RENDER_END) {
+        internal.recordDep(depKey, insCtx.insKey);
+      }
       return target[key];
     },
   );
-
-  internal.mapInsCtx(insKey, insCtx);
-  return insCtx;
-}
-
-export function buildInsComputedResult(fnCtx: IFnCtx) {
-  const { result } = fnCtx;
-  const proxyResult = createOb(
-    result,
-    // setter
-    () => {
-      warn('changing computed result is invalid');
-      return false;
-    },
-    // getter
-    (target: Dict, resultKey: string) => {
-      if (RENDER_START === fnCtx.renderStatus) {
-        hookApi.recordValKeyDep(fnCtx);
-        fnCtx.isResultReaded = true;
-      }
-
-      return result[resultKey];
-    },
-  );
-
-  return proxyResult;
+  const updater = internal.setState;
+  insCtx.updater = updater;
+  insCtx.sharedState = proxyedState;
+  return { updater, proxyedState };
 }

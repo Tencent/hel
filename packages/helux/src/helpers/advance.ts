@@ -1,2 +1,2 @@
 export { getDepStats } from '../factory/creator';
-export { getSharedState } from './state';
+export { getSharedState } from './feature';
