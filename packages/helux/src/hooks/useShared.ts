@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { IS_SHARED, SKIP_MERGE, RENDER_END, RENDER_START } from '../consts';
+import { IS_SHARED, RENDER_END, RENDER_START, SKIP_MERGE } from '../consts';
 import { clearDep, recoverDep, resetReadMap, updateDep } from '../helpers/dep';
 import { getInternal, getRawState } from '../helpers/feature';
 import { buildInsCtx } from '../helpers/ins';

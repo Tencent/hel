@@ -25,7 +25,8 @@ export function useObjectLogic<T extends Dict = Dict>(
   }
 
   const setState = (partialState: Partial<T>) => {
-    if (unmountRef.current) { // already unmounted
+    if (unmountRef.current) {
+      // already unmounted
       return;
     }
 

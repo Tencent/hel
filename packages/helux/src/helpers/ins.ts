@@ -1,5 +1,5 @@
 import { RENDER_END } from '../consts';
-import { prefixValKey, isSymbol } from '../utils/index';
+import { isSymbol, prefixValKey } from '../utils/index';
 import { createOb } from './obj';
 
 let insKeySeed = 0;

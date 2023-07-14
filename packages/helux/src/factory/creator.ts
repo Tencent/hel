@@ -2,7 +2,7 @@ import { SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
 import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
-import { nodupPush, safeGet, isSymbol, prefixValKey } from '../utils';
+import { isSymbol, nodupPush, prefixValKey, safeGet } from '../utils';
 import { record } from './root';
 
 interface IHeluxParams {
@@ -131,7 +131,7 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
       }
 
       // find associate ins keys
-      const keys = Object.keys(partialState).map(key => prefixValKey(key, sharedKey));
+      const keys = Object.keys(partialState).map((key) => prefixValKey(key, sharedKey));
       let allInsKeys: number[] = [];
       keys.forEach((key) => {
         const insKeys = key2InsKeys[key] || [];
