@@ -126,12 +126,39 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
         </a> 
       </td>
       <td align="center">
+        <a href="https://www.tencentmusic.com" target="_blank">
+          <img width="140px;" src="https://user-images.githubusercontent.com/7334950/253788999-40ca0ea2-e73d-4e7b-b932-162826d5bf97.png"></img>
+        </a>
+        <br/>
+        <a target="_blank" href="https://www.tencentmusic.com">
+          <b>腾讯音乐</b>
+        </a> 
+      </td>
+      <td align="center">
+        <a href="https://docs.qq.com" target="_blank">
+          <img width="140px;" src="https://user-images.githubusercontent.com/7334950/253789181-c4065149-304b-4b1e-bb93-23e1d849f45f.png"></img>
+        </a>
+        <br/>
+        <a target="_blank" href="https://docs.qq.com">
+          <b>腾讯文档</b>
+        </a> 
+      </td>
+      <td align="center">
          <a href="https://news.qq.com/" target="_blank">
           <img width="140px;" src="https://user-images.githubusercontent.com/7334950/197115413-ede5f5fa-70dd-4632-b7f5-f6f8bc167023.png"></img>
         </a>
         <br/>
         <a target="_blank" href="https://news.qq.com/">
           <b>腾讯新闻</b>
+        </a> 
+      </td>
+      <td align="center">
+         <a href="https://gu.qq.com/resource/products/portfolio/m.htm" target="_blank">
+          <img width="140px;" src="https://user-images.githubusercontent.com/7334950/253789148-c42ae516-991f-44df-a366-9b295c306b98.png"></img>
+        </a>
+        <br/>
+        <a target="_blank" href="https://gu.qq.com/resource/products/portfolio/m.htm">
+          <b>腾讯自选股</b>
         </a> 
       </td>
     </tr>
