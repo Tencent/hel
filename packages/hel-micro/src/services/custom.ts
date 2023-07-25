@@ -166,7 +166,10 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
   let htmlText = '';
   try {
     const result = await requestGet(`${host}/index.html?_t=${t}`, false);
-    htmlText = result.reply;
+    htmlText = result.reply || '';
+    if (![200, 304].includes(result.status)) {
+      throw new Error(`status ${result.status}`);
+    }
   } catch (err: any) {
     throw new Error(`${err.message} from ${host}`);
   }

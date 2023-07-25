@@ -93,8 +93,9 @@ export class HTMLParser {
   }
 
   parse(input, options = {}) {
-    this.input = this.pureInput(input);
-    this.len = this.input.length;
+    const inputStr = input || '';
+    this.input = this.pureInput(inputStr);
+    this.len = inputStr.length;
     this.onTagOpen = options.onTagOpen || this.noop();
     this.onTagClose = options.onTagClose || this.noop();
     this.cur = 0;

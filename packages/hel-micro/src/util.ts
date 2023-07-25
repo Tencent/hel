@@ -30,25 +30,25 @@ export async function requestByFetch(url: string, asJson: boolean) {
   const res = await getGlobalThis().fetch(url);
   const { status, url: resUrl } = res;
   if (![200, 304].includes(status)) {
-    return { url: resUrl, reply: null };
+    return { url: resUrl, reply: null, status };
   }
 
   if (asJson) {
     const json = await res.json();
-    return { url: resUrl, reply: json };
+    return { url: resUrl, reply: json, status };
   }
 
   const text = await res.text();
-  return { url: resUrl, reply: text };
+  return { url: resUrl, reply: text, status };
 }
 
 export async function requestByXHR(url: string, asJson: boolean) {
   const res = await xhrFetch(url, { method: 'GET', responseType: asJson ? 'json' : 'text' });
   const { status, data, url: resUrl = '' } = res;
   if (status === 400) {
-    return { url: resUrl, reply: null };
+    return { url: resUrl, reply: null, status };
   }
-  return { url: resUrl, reply: data };
+  return { url: resUrl, reply: data, status };
 }
 
 export async function requestGet(url: string, asJson = true) {
