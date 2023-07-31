@@ -25,7 +25,7 @@ see doc： https://tnfe.github.io/hel
 
 用户可参考[模块开发教程](https://tnfe.github.io/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的 hel 远程模块
 
-| 示例名称/功能 | 使用示范 | 模板地址 | 模板描述 | 托管位置 |
+| 示例名称/功能 | 在线示例 | 模板地址 | 模板描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
 | 远程 ts 库 | [预加载+静态导入](https://codesandbox.io/s/hel-lodash-zf8jh8) | [remote-lib-ts](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-lib/) |
 | 远程 react js 组件 | <div>[预加载+静态导入](https://codesandbox.io/s/demo-load-remote-react-comp-prefetch-7f87q4?file=/src/index.js)</div> [懒加载shadow](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-react-comps/) |
