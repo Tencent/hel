@@ -263,6 +263,10 @@ export interface ICreateSubAppOptions {
    * 是否是语义化api格式的cdn链接
    */
   semverApi?: boolean;
+  /**
+   * default: 'hel_dist'
+   */
+  distDir?: string;
 }
 
 export interface ICheckOptions {

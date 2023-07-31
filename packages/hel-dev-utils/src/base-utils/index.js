@@ -77,11 +77,11 @@ export function getHelProcessEnvParams() {
  * @returns
  */
 export function getHelEnvParams(pkg, options = {}) {
-  const { platform, homePage: userCustomHomePage, handleHomePage = true, npmCdnType } = options;
+  const { platform, distDir, homePage: userCustomHomePage, handleHomePage = true, npmCdnType } = options;
   let cdnHomePage = '';
   // 计算 unpkg 平台 的 homePage 值，此时如果透传了 homePage，表示 unpkg 为私服
   if (platform === 'unpkg' && handleHomePage) {
-    cdnHomePage = getNpmCdnHomePage(pkg, { npmCdnType, homePage: userCustomHomePage });
+    cdnHomePage = getNpmCdnHomePage(pkg, { distDir, npmCdnType, homePage: userCustomHomePage });
   }
 
   // 来自 process.env 的值优先级最高

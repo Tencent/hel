@@ -19,6 +19,7 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
       npmCdnType: cst.DEFAULT_NPM_CDN_TYPE,
       handleHomePage: true,
       semverApi: cst.DEFAULT_SEMVER_API,
+      distDir: cst.HEL_DIST_DIR,
     },
     userOptions || {},
   );
@@ -66,6 +67,6 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
       const finalPathOrUrl = base.getPublicPathOrUrl(pathOrUrl, needEndSlash);
       return finalPathOrUrl;
     },
-    distDir: cst.HEL_DIST_DIR,
+    distDir: optionsVar.distDir,
   };
 }
