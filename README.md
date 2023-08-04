@@ -170,12 +170,6 @@ console.log(m.myUtils.num.random(500);) // 获得随机数
 
 <img width="896" alt="image" src="https://user-images.githubusercontent.com/7334950/196099777-f0cd3b9b-bcd5-4a88-9d15-62da4a62fe6e.png">
 
-## 赞助
-
-如果`hel-micro`对你的项目带来了帮助，欢迎赞助我们，以便让我们为你提供更好的服务
-
-<img width="360" alt="image" src="https://tnfe.gtimg.com/image/nwk868dzb8_1683267949173.jpeg">
-
 ## 👅License
 
 hel-micro is released under the MIT License. http://www.opensource.org/licenses/mit-license
