@@ -64,9 +64,9 @@ interface IUseOptionsCommon {
    */
   onStyleFetched?: (params: IStyleDataResult) => void | string;
   /**
-   * 异步加载组件过程的过度组件
+   * 异步加载组件过程的过度组件（允许传组件实例）
    */
-  Skeleton?: AnyCompOrNull;
+  Skeleton?: AnyCompOrNull | React.ReactElement;
   /**
    * default: ()=> <h1>HelMicroComp error {errMsg}</h1>
    * 渲染出现错误时的 Error 组件

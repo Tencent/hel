@@ -1,11 +1,11 @@
 import { appStyleSrv, logicSrv, preFetchLib } from 'hel-micro';
 import React, { forwardRef, useMemo } from 'react';
-import BuildInSkeleton from '../components/BuildInSkeleton';
 import EmptyView from '../components/EmptyView';
 import RemoteCompRender from '../components/RemoteCompRender';
 import { ensureOptionsDefault, tryTriggerOnStyleFetched } from '../components/share';
 import defaults from '../consts/defaults';
 import type { GetSubVal, IInnerUseRemoteCompOptions, IRemoteCompRenderConfig, IUseRemoteLibCompOptions } from '../types';
+import { getSkeletonComp } from '../util';
 import { delay, isEqual, useForceUpdate } from './share';
 
 const { WARN_STYLE } = defaults;
@@ -64,7 +64,7 @@ export function useRemoteLibCompLogic(name: string, compName: string, options: I
   restOptions.platform = restOptions.platform || 'unpkg';
   const forceUpdate = useForceUpdate();
   const isFetchExecuteRef = React.useRef(false);
-  const compRef = React.useRef((Skeleton || BuildInSkeleton) as any);
+  const compRef = React.useRef(getSkeletonComp(Skeleton) as any);
 
   if (!isFetchExecuteRef.current) {
     isFetchExecuteRef.current = true;

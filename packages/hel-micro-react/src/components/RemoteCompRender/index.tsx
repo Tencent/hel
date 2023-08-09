@@ -1,7 +1,7 @@
 import { appParamSrv } from 'hel-micro';
 import React from 'react';
 import type { IRemoteCompRenderConfig } from '../../types';
-import BuildInSkeleton from '../BuildInSkeleton';
+import { getSkeletonEl } from '../../util';
 import MayShadowComp from '../MayShadowComp';
 import { ensureOptionsDefault } from '../share';
 import useLoadRemoteModule from './useLoadRemoteModule';
@@ -18,9 +18,7 @@ export default function RemoteCompRender(props: IRemoteCompRenderConfig) {
 
   const { errMsg, RemoteModule, styleStr, styleUrlList, moduleReady } = useLoadRemoteModule(renderConfig);
   if (!moduleReady) {
-    const Skeleton = controlOptions.Skeleton || BuildInSkeleton;
-    // @ts-ignore
-    return <Skeleton />;
+    return getSkeletonEl(controlOptions.Skeleton);
   }
 
   if (errMsg) {

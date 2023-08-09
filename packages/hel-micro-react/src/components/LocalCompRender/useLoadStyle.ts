@@ -3,7 +3,7 @@ import React from 'react';
 import defaults from '../../consts/defaults';
 import * as baseShareHooks from '../../hooks/share';
 import type { ILocalCompProps } from '../../types';
-import BuildInSkeleton from '../BuildInSkeleton';
+import { getSkeletonComp } from '../../util';
 import * as share from '../share';
 
 const { LOADED, NOT_LOAD } = helLoadStatus;
@@ -23,7 +23,7 @@ export default function useLoadStyle(props: ILocalCompProps) {
   const fetchStyleStatusRef = React.useRef(NOT_LOAD);
   const { errMsg, styleStr } = state;
 
-  const SkeletonView = props.Skeleton || BuildInSkeleton;
+  const SkeletonView = getSkeletonComp(props.Skeleton);
   const passCtx = { fetchStyleStatusRef, setState, SkeletonView };
 
   // 拉取模块过程中产生错误

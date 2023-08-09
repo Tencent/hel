@@ -11,6 +11,18 @@ import type {
 import { useRemoteCompLogic, useRemoteLibCompLogic } from './base';
 
 /**
+ * RemoteComp 写法是为了允许出现以下4种情况
+ * 1 传ref <Comp ref={xxxx} />
+ * 2 传孩子 <Comp> xxx </Comp>
+ * 2 动态挂新属性 Comp.SubComp = xxx;
+ * 4 允许组件上再次传泛型 <Comp<{a:number}> />，如在 useRemoteComp 里传了泛型，再次传的泛型会被之前传给 useRemoteComp 的泛型所约束
+ */
+export type RemoteComp<P extends AnyRecord = AnyRecord, R extends any = any> = (<CP extends P>(
+  props: CP & { ref?: React.MutableRefObject<R | undefined>; children?: React.ReactNode },
+) => React.ReactElement<CP, any>) &
+  AnyRecord;
+
+/**
  * 获取 hel-lib-proxy 由 libReady 接口弹射的 react ui 组件
  * 拿到的组件渲染时可自动享受到 shadow-dom 样式隔离能力
  * @param name - 应用名
@@ -18,13 +30,13 @@ import { useRemoteCompLogic, useRemoteLibCompLogic } from './base';
  * @param options
  * @returns
  */
-export function useRemoteComp<T extends any = React.ForwardRefExoticComponent<any>>(
+export function useRemoteComp<P extends AnyRecord = AnyRecord, R extends any = any>(
   name: string,
   compName: string,
   options?: IUseRemoteCompOptions,
 ) {
   const { Comp } = useRemoteCompLogic(name, compName, options || {});
-  return Comp as T;
+  return Comp as RemoteComp<P, R>;
 }
 
 /**
@@ -38,20 +50,20 @@ export function useRemoteComp<T extends any = React.ForwardRefExoticComponent<an
  *  }
  * ```
  */
-export function useRemoteCompAndSubVal<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
+export function useRemoteCompAndSubVal<P extends AnyRecord = AnyRecord, R extends any = any>(
   name: string,
   compName: string,
   options?: IUseRemoteCompOptions,
 ) {
   const CompAndSubVal = useRemoteCompLogic(name, compName, options || {});
-  return CompAndSubVal as { Comp: T; getSubVal: GetSubVal; getSubVals: GetSubVals };
+  return CompAndSubVal as { Comp: RemoteComp<P, R>; getSubVal: GetSubVal; getSubVals: GetSubVals };
 }
 
 /**
  * 使用不携带任何样式的原始组件，用户可透传 onStyleFetched 自己做 shadow 实现
  * 区别于 useRemoteLibComp，该函数会保证样式不追加到文档上
  */
-export function useRemotePureComp<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
+export function useRemotePureComp<P extends AnyRecord = AnyRecord, R extends any = any>(
   name: string,
   compName: string,
   options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow'>,
@@ -63,7 +75,7 @@ export function useRemotePureComp<T extends any = React.ForwardRefExoticComponen
   };
 
   const { Comp } = useRemoteCompLogic(name, compName, targetOptions);
-  return Comp as T;
+  return Comp as RemoteComp<P, R>;
 }
 
 /**
@@ -71,7 +83,7 @@ export function useRemotePureComp<T extends any = React.ForwardRefExoticComponen
  * 区别于 useRemoteLibComp ，该函数会保证样式不追加到文档上
  * 区别于 useRemotePureComp ，该函数直接基于 preFetchLib 实现，调用性能开销会少于 useRemotePureComp
  */
-export function useRemotePureLibComp<T extends any = React.ForwardRefExoticComponent<any> & AnyRecord>(
+export function useRemotePureLibComp<P extends AnyRecord = AnyRecord, R extends any = any>(
   name: string,
   compName: string,
   options?: Omit<IUseRemoteLibCompOptions, 'appendCss'>,
@@ -79,7 +91,7 @@ export function useRemotePureLibComp<T extends any = React.ForwardRefExoticCompo
   const targetOptions: IUseRemoteLibCompOptions = { ...(options || {}), appendCss: false };
 
   const Comp = useRemoteLibCompLogic(name, compName, targetOptions);
-  return Comp as T;
+  return Comp as RemoteComp<P, R>;
 }
 
 /**
@@ -101,16 +113,24 @@ export function useRemote2Comps<T extends Len2StrArr | Readonly<Len2StrArr>>(nam
  * 该钩子函数跳过所有 shadow 判断的附加逻辑，直接基于 preFetchLib 获取远程组件，
  * 调用性能开销会少于 useRemoteComp，返回的组件一定是非 shadow 模式渲染的组件
  */
-export function useRemoteLibComp(name: string, compName: string, options?: IUseRemoteLibCompOptions) {
+export function useRemoteLibComp<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: IUseRemoteLibCompOptions,
+) {
   const Comp = useRemoteLibCompLogic(name, compName, options || {});
-  return Comp;
+  return Comp as RemoteComp<P, R>;
 }
 
 /**
  * @deprecated
  * 对应上 MicroAppLegacy
  */
-export function useRemoteLegacyComp(name: string, compName: string, options?: IUseRemoteCompOptions) {
+export function useRemoteLegacyComp<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: IUseRemoteCompOptions,
+) {
   const { Comp } = useRemoteCompLogic(name, compName, { ...(options || {}), shadow: true, isLegacy: true });
-  return Comp;
+  return Comp as RemoteComp<P, R>;
 }

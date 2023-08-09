@@ -2,6 +2,7 @@ import * as core from 'hel-micro-core';
 import * as apis from './apis';
 import { createInstance } from './ins';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
+export type { RemoteComp } from './hooks/index';
 export * from './types';
 export { createInstance };
 

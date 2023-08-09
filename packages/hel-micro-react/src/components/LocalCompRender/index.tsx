@@ -1,7 +1,7 @@
 import React from 'react';
 import defaults from '../../consts/defaults';
 import type { ILocalCompProps } from '../../types';
-import BuildInSkeleton from '../BuildInSkeleton';
+import { getSkeletonEl } from '../../util';
 import ForgetPassComp from '../ForgetPassComp';
 import MayShadowComp, { IMayShadowProps } from '../MayShadowComp';
 import useLoadStyle from './useLoadStyle';
@@ -14,8 +14,7 @@ export default function LocalCompRender(props: ILocalCompProps) {
 
   const { errMsg, styleStr, styleUrlList, moduleReady } = useLoadStyle(props);
   if (!moduleReady) {
-    const Skeleton = props.Skeleton || BuildInSkeleton;
-    return <Skeleton />;
+    return getSkeletonEl(props.Skeleton);
   }
   if (errMsg) {
     return <h3 style={defaults.WARN_STYLE}>Hel LocalComp error: {errMsg}</h3>;

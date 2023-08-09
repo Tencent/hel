@@ -5,8 +5,8 @@ import React from 'react';
 import defaults from '../consts/defaults';
 import { useForceUpdate } from '../hooks/share';
 import type { IHelContext, IRemoteCompRenderConfig } from '../types';
+import { getSkeletonEl } from '../util';
 import { getStaticShadowBodyRef } from '../wrap';
-import BuildInSkeleton from './BuildInSkeleton';
 import ShadowBody, { getHostData, getShadowBodyReadyEvName, tryMountStaticShadowBody } from './ShadowBody';
 
 const { SHADOW_HOST_NAME, SHADOW_BODY_NAME } = defaults;
@@ -153,8 +153,7 @@ function MayShadowComp(props: IMayShadowProps) {
     // 确保 show 模式下透传给子组件的 helContext 的 getShadowAppRoot 方法一定能够活动 shawRoot 引用
     let uiContent: React.ReactNode = '';
     if (!isShadowRefsReady()) {
-      const SkeletonComp = Skeleton || BuildInSkeleton;
-      uiContent = <SkeletonComp />;
+      uiContent = getSkeletonEl(Skeleton);
     } else {
       uiContent = <Comp {...passedProps} />;
     }

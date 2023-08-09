@@ -8,6 +8,8 @@ js 库、react 组件、vue 组件等发布流程均一样，差异在于`appInf
 
 ## 发布到 unpkg
 
+以下示例以发布一个[vue 组件](https://github.com/hel-eco/hel-tpl-remote-vue-comp)来给用户提供参考
+
 ### 调整 appInfo 文件
 
 打开根目录`appInfo.js`文件，调整文件内容如下（默认是托管到 unpkg）
@@ -16,7 +18,7 @@ js 库、react 组件、vue 组件等发布流程均一样，差异在于`appInf
 const helDevUtils = require('hel-dev-utils');
 const pkg = require('./package.json');
 
-const subApp = helDevUtils.createVue2SubApp(pkg, { npmCdnType: 'unpkg' });
+const subApp = helDevUtils.createVueSubApp(pkg, { npmCdnType: 'unpkg' });
 
 module.exports = subApp;
 ```
@@ -74,20 +76,20 @@ async function main() {
 
 ## 发布到自定义文件服务
 
-### 调整 subApp 文件
+### 调整 appInfo 文件
 
-打开跟目录`subApp.js`，调整文件内容如下
+打开根目录`appInfo.js`，调整文件内容如下
 
-> 此处以`github.io`托管为例，用户可传入自己的**文件服务托管路径**，以下示例代码见[仓库](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
+> 此处以`github.io`托管为例，用户可传入自己的**文件服务托管路径**（也可以是 cdn），以下示例代码见[仓库](https://github.com/hel-eco/hel-tpl-remote-vue-comp)
 
 ```ts
 const helDevUtils = require('hel-dev-utils');
 const pkg = require('./package.json');
 
 // deploy to github.io
-const subApp = helDevUtils.createVue2SubApp(pkg, { homePage: 'https://hel-eco.github.io/hel-tpl-remote-vue-comp/as_v1' });
+const appInfo = helDevUtils.createVueSubApp(pkg, { homePage: 'https://hel-eco.github.io/hel-tpl-remote-vue-comp/as_v1' });
 
-module.exports = subApp;
+module.exports = appInfo;
 ```
 
 此处可请求到这个地址的包体的代码如下（[线上示例](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295)）

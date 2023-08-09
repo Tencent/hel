@@ -2,7 +2,7 @@ import { appStyleSrv, core, logicSrv } from 'hel-micro';
 import React from 'react';
 import * as baseShareHooks from '../../hooks/share';
 import type { IInnerUseRemoteCompOptions, IRemoteCompRenderConfig } from '../../types';
-import BuildInSkeleton from '../BuildInSkeleton';
+import { getSkeletonComp } from '../../util';
 import * as share from '../share';
 
 const { merge2List } = core.commonUtil;
@@ -52,7 +52,7 @@ export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   const isLoadAppStyleExecutingRef = React.useRef(false);
   const { errMsg, shadowStyleStr, isShadowStyleStrFetched } = state;
 
-  const SkeletonView = Skeleton || BuildInSkeleton;
+  const SkeletonView = getSkeletonComp(Skeleton);
   const passCtx = { isLoadAppDataExecutingRef, isLoadAppStyleExecutingRef, setState, SkeletonView };
 
   // 拉取模块过程中产生错误
