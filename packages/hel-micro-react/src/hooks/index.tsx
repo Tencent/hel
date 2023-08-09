@@ -11,15 +11,14 @@ import type {
 import { useRemoteCompLogic, useRemoteLibCompLogic } from './base';
 
 /**
- * RemoteComp 写法是为了允许出现以下4种情况
+ * RemoteComp 写法是为了允许出现以下3种情况
  * 1 传ref <Comp ref={xxxx} />
  * 2 传孩子 <Comp> xxx </Comp>
- * 2 动态挂新属性 Comp.SubComp = xxx;
- * 4 允许组件上再次传泛型 <Comp<{a:number}> />，如在 useRemoteComp 里传了泛型，再次传的泛型会被之前传给 useRemoteComp 的泛型所约束
+ * 3 动态挂新属性 Comp.SubComp = xxx;
  */
-export type RemoteComp<P extends AnyRecord = AnyRecord, R extends any = any> = (<CP extends P>(
-  props: CP & { ref?: React.MutableRefObject<R | undefined>; children?: React.ReactNode },
-) => React.ReactElement<CP, any>) &
+export type RemoteComp<P extends AnyRecord = AnyRecord, R extends any = any> = ((
+  props: P & { ref?: React.MutableRefObject<R | undefined>; children?: React.ReactNode },
+) => React.ReactElement<P, any>) &
   AnyRecord;
 
 /**
