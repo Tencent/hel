@@ -49,23 +49,13 @@ export function patchAppendChild() {
   helMicroShared.nativeHeadAppend = nativeHeadAppend;
   helMicroShared.nativeBodyAppend = nativeBodyAppend;
 
-  let elAp = gs.Element.prototype.appendChild;
-  const apMap = { head: null, body: null };
   // 兼容一些第三方库对 Element.prototype.appendChild 打了补丁的情况
-  const getAppend = (nativeAppend, bindTarget, nodeName) => {
-    const gEl = gs.Element;
-    if (!gEl) return nativeAppend;
-
-    const curAp = gEl.prototype.appendChild;
-    // 确保 Element.prototype.appendChild 未被替换
-    if (apMap[nodeName] && elAp === curAp) return apMap[nodeName];
-
-    elAp = curAp;
-    apMap[nodeName] = gEl.prototype.appendChild.bind(bindTarget);
-    return apMap[nodeName];
+  const getAppend = function getAppend(nativeAppend, bindTarget) {
+    const el = gs.Element;
+    return el ? el.prototype.appendChild.bind(bindTarget) : nativeAppend;
   };
 
   // replace appendChild
-  doc.head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head, 'head'), el);
-  doc.body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body, 'body'), el);
+  doc.head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head), el);
+  doc.body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body), el);
 }
