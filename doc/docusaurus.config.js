@@ -4,16 +4,28 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+function aLink(href, label) {
+  const labelVar = label || href;
+  return `<a rel="noopener noreferer" target="_blank" href="${href}" style="text-decoration:none !important;color:white !important;">${labelVar}</a>`;
+}
+
 const HEL_GIT = 'https://github.com/tnfe/hel';
+const COPY_RIGHT = `
+Copyright © 1998 - ${new Date().getFullYear()} Tencent. All Rights Reserved.
+${aLink('https://www.qq.com/contract.shtml', '服务协议')} |
+${aLink('https://www.qq.com/contract.shtml', '隐私保护声明')}
+腾讯公司 | 版权所有 | ${aLink('https://beian.miit.gov.cn/#/Integrated/index', '主体备案号粤B2-20090059')}
+<div style="padding-top:8px;">公司地址：深圳市南山区电海街道麻岭社区科技中一路勝讯大厦35层<span style="padding-left:28px;">联系电活： 4006 700 700</span></div>
+`;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'hel-micro',
   tagline: '模块联邦sdk化，免构建、热更新、工具链无关的微模块方案',
-  // url: 'https://your-docusaurus-test-site.com',
-  // baseUrl: '/',
-  url: 'https://tnfe.github.io',
+  url: 'https://helmicro.com',
   baseUrl: '/hel/',
+  // url: 'https://tnfe.github.io',
+  // baseUrl: '/hel/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/hel.ico',
@@ -135,7 +147,8 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Tencent PCG TNTWeb.`,
+        // copyright: `Copyright © 1998 - ${new Date().getFullYear()} Tencent. All Rights Reserved. 备案号: 粤 B2-20090059-1618`,
+        copyright: COPY_RIGHT,
       },
       prism: {
         theme: lightCodeTheme,
