@@ -24,9 +24,12 @@ export interface IOptions {
   allowDup?: boolean;
   platform?: Platform;
   /**
-   * 不传递的 sdk 会从加载模块的 url 链接推导当前模块运行时对应的版本
+   * 透传的版本号，不传递的 sdk 会从加载模块的 url 链接推导当前模块运行时对应的版本号
    */
   versionId?: string;
+  /**
+   * 透传的应用名，不传递的 sdk 会从加载模块的 url 链接推导当前模块运行时对应的应用名
+   */
   appName?: string;
 }
 
