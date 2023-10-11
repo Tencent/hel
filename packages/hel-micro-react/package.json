@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-react",
-  "version": "3.10.6",
+  "version": "3.10.7",
   "description": "react implementation of hel-micro",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "dependencies": {
     "@types/react": ">=16.0.0",
     "@types/react-dom": ">=16.0.0",
-    "hel-micro": "^3.13.19",
-    "hel-micro-core": "^3.13.9",
+    "hel-micro": "^3.13.20",
+    "hel-micro-core": "^3.13.10",
     "hel-types": "^3.8.3",
     "react": ">=16.10.2",
     "react-dom": ">=16.10.2",

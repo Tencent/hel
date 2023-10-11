@@ -23,6 +23,14 @@ export interface IOptions {
    */
   allowDup?: boolean;
   platform?: Platform;
+  /**
+   * 透传的版本号，透传后 hel-micro-core 在加载子应用时就不会从触发加载的js链接里去推导版本号了
+   */
+  versionId?: string;
+  /**
+   * 透传的应用名，透传后 hel-micro-core 在加载子应用时就不会从触发加载的js链接里去推导应用名了
+   */
+  appName?: string;
 }
 
 export interface IExposeLibOptions {

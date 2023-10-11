@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.13.5",
+  "version": "3.13.6",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -37,7 +37,7 @@
     ]
   },
   "dependencies": {
-    "hel-micro-core": "^3.13.9",
+    "hel-micro-core": "^3.13.10",
     "hel-types": "^3.8.3"
   },
   "devDependencies": {

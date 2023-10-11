@@ -105,7 +105,8 @@ export function getJsRunLocation() {
     throw new Error('getJsRunLocation');
   } catch (err) {
     const stackArr = err.stack.split('\n');
-    loc = stackArr[stackArr.length - 1] || '';
+    // firefox 下 len-1 取不到，需要取 len-2
+    loc = stackArr[len - 1] || stackArr[len - 2] || '';
   }
   return loc;
 }
