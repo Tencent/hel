@@ -38,8 +38,7 @@
     "hel-types": "workspace:*",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "react-is": "^18.2.0",
-    "shadow-view-react": "workspace:^1.0.0"
+    "react-is": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
