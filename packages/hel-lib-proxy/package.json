@@ -1,6 +1,6 @@
 {
   "name": "hel-lib-proxy",
-  "version": "3.13.7",
+  "version": "3.13.8",
   "description": "load you lib as a proxy object",
   "keywords": [
     "hel-lib-proxy"
@@ -53,7 +53,7 @@
     "rollup-plugin-typescript": "^1.0.1"
   },
   "peerDependencies": {
-    "hel-micro-core": "^3.13.9",
+    "hel-micro-core": "^3.13.11",
     "hel-types": "^3.8.3"
   },
   "bundleDependencies": false,
