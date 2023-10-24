@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const paths = require('./paths');
-const subAppInfo = require('./subApp');
 
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
@@ -16,11 +15,11 @@ if (!NODE_ENV) {
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 const dotenvFiles = [
   `${paths.dotenv}.${NODE_ENV}.local`,
-  `${paths.dotenv}.${NODE_ENV}`,
   // Don't include `.env.local` for `test` environment
   // since normally you expect tests to produce the same
   // results for everyone
   NODE_ENV !== 'test' && `${paths.dotenv}.local`,
+  `${paths.dotenv}.${NODE_ENV}`,
   paths.dotenv,
 ].filter(Boolean);
 
@@ -84,6 +83,9 @@ function getClientEnvironment(publicUrl) {
         WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
         WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
         WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
+        // Whether or not react-refresh is enabled.
+        // It is defined here so it is available in the webpackHotDevClient.
+        FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
       },
     );
   // Stringify all values so we can feed into webpack DefinePlugin
@@ -96,9 +98,5 @@ function getClientEnvironment(publicUrl) {
 
   return { raw, stringified };
 }
-
-process.env.REACT_APP_BUILD_TIME = new Date().toLocaleString();
-process.env.REACT_APP_HEL_APP_NAME = subAppInfo.name;
-process.env.REACT_APP_IS_SUB_APP = process.env.IS_SUB_APP || '';
 
 module.exports = getClientEnvironment;

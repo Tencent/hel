@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "src",
     "target": "es5",
     "outDir": "lib-js",
     "noEmit": false,
@@ -11,13 +11,12 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["jest"],
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
-  "include": ["src/**/*"],
-  "exclude": []
+  "include": ["src"]
 }

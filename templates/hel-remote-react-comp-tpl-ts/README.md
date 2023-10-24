@@ -1,6 +1,6 @@
-## remote-react-comps-tpl
+## hel-tpl-remote-react-comps-ts
 
-最简单的远程 react 组件模板 codesandbox: https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0?file=/src/App.js
+最简单的远程 react 组件模板(ts) codesandbox: https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0?file=/src/App.js
 
 ### 发布 npm
 

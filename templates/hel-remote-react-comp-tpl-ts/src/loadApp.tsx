@@ -1,5 +1,4 @@
-import * as comps from 'components';
-import React from 'react';
+import comps from 'components';
 import ReactDOM from 'react-dom';
 
 function getHostNode(id = 'root') {

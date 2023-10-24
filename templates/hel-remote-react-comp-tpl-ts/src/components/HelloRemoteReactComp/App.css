@@ -1,5 +1,16 @@
+/* @helstart hel-tpl-remote-react-comps-ts @helend */
+/* TODO: use webpack style plugin to mark where the style content comes from */
+body {
+  background-color: red;
+}
+
 .App {
   text-align: center;
+  border: 53px solid red;
+}
+
+.MarkRemotComp {
+  background-color: red;
 }
 
 .App-logo {
@@ -32,6 +43,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

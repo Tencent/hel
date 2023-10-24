@@ -1,13 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-STATUS.md
-
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
-.vscode
-.idea
 
 # testing
 /coverage
@@ -22,14 +18,14 @@ hel_proxy
 hel_proxy_es
 # ts源码替换相对相对路径后端文件
 lib
-
-tmp
 # ts项目的中间编译js代码产物
 lib-js
 
+tmp
+
+
 # production
 /build
-/lib/*
 
 # misc
 .DS_Store
@@ -38,9 +34,8 @@ lib-js
 .env.test.local
 .env.production.local
 
-debug.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-TIPME.md
+pnpm-lock.yaml
+tnpm

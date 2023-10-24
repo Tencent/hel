@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 // const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
 const { cst } = require('hel-dev-utils');
-const subApp = require('./subApp');
+const appInfo = require('./appInfo');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
@@ -27,8 +27,11 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 // 此处传入的url值仅为了方便另一个项目可以基于当前模块的wed-dev-server调试当前模块代码，端口号对齐 npm run start 里的 PORT
 // 它不会影响流水线的 publicUrl 值，因为 hel-dev-utils 内部发现流水线设置的 process.env.HEL_APP_HOME_PAGE 时，
 // 会优先采用 HEL_APP_HOME_PAGE 值作为 publicUrl，覆盖掉这里的默认值
-const publicUrlOrPath = subApp.getPublicPathOrUrl('http://localhost:3103');
+const publicUrlOrPath = appInfo.getPublicPathOrUrl('http://localhost:3103');
 console.log(`publicUrlOrPath is ${publicUrlOrPath} `);
+
+// const buildPath = process.env.BUILD_PATH || 'build';
+const buildPath = cst.HEL_DIST_DIR;
 
 const moduleFileExtensions = ['web.mjs', 'mjs', 'web.js', 'js', 'web.ts', 'ts', 'web.tsx', 'tsx', 'json', 'web.jsx', 'jsx'];
 
@@ -43,26 +46,25 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
-const appIndexJsFile = process.env.BUNDLE === 'true' ? 'lib-js/entrance/libProperties' : 'src/index';
-const appSrcDir = process.env.BUNDLE === 'true' ? 'lib-js' : 'src';
-const buildDir = process.env.BUNDLE === 'true' ? cst.HEL_BUNDLE_DIR : cst.HEL_DIST_DIR;
-
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
-  appBuild: resolveApp(buildDir),
+  appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, appIndexJsFile),
+  appIndexJs: resolveModule(resolveApp, 'src/index'),
   appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp(appSrcDir),
+  appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),
   proxySetup: resolveApp('src/setupProxy.js'),
   appNodeModules: resolveApp('node_modules'),
+  appWebpackCache: resolveApp('node_modules/.cache'),
+  appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
+  swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
 };
 
