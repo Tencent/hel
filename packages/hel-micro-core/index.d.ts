@@ -295,6 +295,17 @@ export interface IPlatformConfigFull extends IPlatformConfigInitFull {
   origin: IPlatformConfig;
 }
 
+export interface IGlobalConfigFull {
+  /**
+   * 某些容器型微前端框架会对append打补丁，且打的目标不一样，有的是 Element.appendChild，有的是 head 和 body 上那个
+   * 会导致 hel-micro 加载js资源报错，遇到此情况需要用户人工设定 append 句柄
+   */
+  headAppend: null,
+  bodyAppend: null,
+}
+
+export type IGlobalConfig = Partial<IGlobalConfigFull>;
+
 export interface SharedCache extends IPlatformConfigFull {
   isConfigOverwrite: boolean;
   isOriginInitCalled: boolean;
@@ -362,6 +373,12 @@ export interface SharedCache extends IPlatformConfigFull {
 export function initPlatformConfig(config: IPlatformConfig, platform?: Platform): void;
 
 export function getPlatformConfig(platform?: Platform): IPlatformConfigFull;
+
+/**
+ * 设定一些全局配置，如 headAppend, bodyAppend
+ * @see https://github.com/tnfe/hel/issues/82
+ */
+export function initGlobalConfig(config: IGlobalConfig): void;
 
 /**
  * calling isSubApp is unsafe, cause it will return wrong result when they were lift up to webpack

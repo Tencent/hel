@@ -49,13 +49,25 @@ export function patchAppendChild() {
   helMicroShared.nativeHeadAppend = nativeHeadAppend;
   helMicroShared.nativeBodyAppend = nativeBodyAppend;
 
-  // 兼容一些第三方库对 Element.prototype.appendChild 打了补丁的情况
-  const getAppend = function getAppend(nativeAppend, bindTarget) {
-    const el = gs.Element;
+  // 兼容一些第三方库对 Element.prototype.appendChild 打了补丁的情况（如micro-app）
+  const getAppend = function getAppend(nativeAppend, bindTarget, loc) {
+    const { patchedHeadAppend, patchedBodyAppend } = helMicroShared;
+    const isHead = loc === 'head';
+    if (patchedHeadAppend && isHead) { // 如果用户手动传递了 headAppend 句柄
+      return patchedHeadAppend;
+    }
+    if (patchedBodyAppend && !isHead) { // 如果用户手动传递了 bodyAppend 句柄
+      return patchedBodyAppend;
+    }
+    if (gs.__POWERED_BY_WUJIE__) { // 兼容 wujie
+      return nativeAppend;
+    }
+
+    const el = gs.Element; // 某些框架会代理 Element，如 micro-app
     return el ? el.prototype.appendChild.bind(bindTarget) : nativeAppend;
   };
 
   // replace appendChild
-  doc.head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head), el);
-  doc.body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body), el);
+  doc.head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head, 'head'), el);
+  doc.body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body, 'body'), el);
 }

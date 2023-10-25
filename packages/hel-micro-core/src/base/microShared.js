@@ -137,6 +137,9 @@ function makeHelMicroShared() {
     isStyleObInit: false,
     nativeHeadAppend: null,
     nativeBodyAppend: null,
+    /** 记录用户传递的句柄 */
+    patchedHeadAppend: null,
+    patchedBodyAppend: null,
     createFeature: getJsRunLocation(),
     eventBus: innerEventBus,
     userEventBus,

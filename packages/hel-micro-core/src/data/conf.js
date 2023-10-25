@@ -1,8 +1,11 @@
 /** @typedef {import('../../index').IPlatformConfigFull} IPlatformConfigFull */
+/** @typedef {import('../../index').IPlatformConfig} IPlatformConfig */
+/** @typedef {import('../../index').IGlobalConfig} IGlobalConfig */
 /** @typedef {import('../../index').SharedCache} SharedCache */
 import { log } from '../base/microDebug';
+import { getHelMicroShared } from '../base/microShared';
 import { safeAssign } from '../base/util';
-import { getCacheRoot, getPlatform, getSharedCache } from '../wrap/cache';
+import { getPlatform, getSharedCache } from '../wrap/cache';
 
 /**
  * 提取无其他杂项的配置对象
@@ -56,13 +59,18 @@ export function getPlatformConfig(iPlatform) {
   return getPureConfig(cache, true);
 }
 
+export function initGlobalConfig(/** @type {IGlobalConfig} */config) {
+  getHelMicroShared().patchedHeadAppend = config.headAppend || null;
+  getHelMicroShared().patchedBodyAppend = config.bodyAppend || null;
+}
+
 /**
  *
  * @param {IPlatformConfig} config
  * @param {string} [iPlatform ]
  * @returns
  */
-export function initPlatformConfig(/** @type {import('../index').IPlatformConfig} */ config, iPlatform) {
+export function initPlatformConfig(/** @type {IPlatformConfig} */ config, iPlatform) {
   const cache = getSharedCache(iPlatform);
   const pureConfig = getPureConfig(config);
   if (cache.isConfigOverwrite) {
