@@ -5,7 +5,7 @@
 import { log } from '../base/microDebug';
 import { getHelMicroShared } from '../base/microShared';
 import { safeAssign } from '../base/util';
-import { getPlatform, getSharedCache } from '../wrap/cache';
+import { getCacheRoot, getPlatform, getSharedCache } from '../wrap/cache';
 
 /**
  * 提取无其他杂项的配置对象
@@ -59,7 +59,7 @@ export function getPlatformConfig(iPlatform) {
   return getPureConfig(cache, true);
 }
 
-export function initGlobalConfig(/** @type {IGlobalConfig} */config) {
+export function initGlobalConfig(/** @type {IGlobalConfig} */ config) {
   getHelMicroShared().patchedHeadAppend = config.headAppend || null;
   getHelMicroShared().patchedBodyAppend = config.bodyAppend || null;
 }

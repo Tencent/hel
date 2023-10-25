@@ -53,13 +53,16 @@ export function patchAppendChild() {
   const getAppend = function getAppend(nativeAppend, bindTarget, loc) {
     const { patchedHeadAppend, patchedBodyAppend } = helMicroShared;
     const isHead = loc === 'head';
-    if (patchedHeadAppend && isHead) { // 如果用户手动传递了 headAppend 句柄
+    if (patchedHeadAppend && isHead) {
+      // 如果用户手动传递了 headAppend 句柄
       return patchedHeadAppend;
     }
-    if (patchedBodyAppend && !isHead) { // 如果用户手动传递了 bodyAppend 句柄
+    if (patchedBodyAppend && !isHead) {
+      // 如果用户手动传递了 bodyAppend 句柄
       return patchedBodyAppend;
     }
-    if (gs.__POWERED_BY_WUJIE__) { // 兼容 wujie
+    if (gs.__POWERED_BY_WUJIE__) {
+      // 兼容 wujie
       return nativeAppend;
     }
 
