@@ -21,7 +21,7 @@ function makeBodyMountNode(name: string, nodeId: string) {
   return div;
 }
 
-class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
+class ShadowBody extends React.Component<{ id: string; [key: string]: any }> {
   node: null | HTMLDivElement = null;
 
   constructor(props: any) {
@@ -39,7 +39,7 @@ class ShadowBody extends React.Component<{ id: string;[key: string]: any }> {
     const { node, props } = this;
     const { ShadowView, ...restProps } = props;
     // 正常情况下，这句话的判断不会成立，此处为了让 tsc 编译通过
-    if (!node) return <h1>node not ready</h1> as React.ReactNode;
+    if (!node) return (<h1>node not ready</h1>) as React.ReactNode;
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错）
     return ReactDOM.createPortal(<ShadowView {...restProps} />, node);
   }

@@ -4,11 +4,11 @@
 <img width="620px" alt="hel-logo"  src="https://user-images.githubusercontent.com/7334950/186912479-463a6788-41fd-474d-83ed-08314909d70d.png" />
 </p>
 
-## [Doc](https://tnfe.github.io/hel)
+## [Doc](https://helmicro.com)
 
 **hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案 ❤️
 
-see doc： https://tnfe.github.io/hel
+see doc： https://helmicro.com
 
 ## 文章
 
@@ -23,7 +23,7 @@ see doc： https://tnfe.github.io/hel
 
 ## 模板
 
-用户可参考[模块开发教程](https://tnfe.github.io/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的 hel 远程模块
+用户可参考[模块开发教程](https://helmicro.com/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的 hel 远程模块
 
 | 示例名称/功能 | 在线示例 | 模板地址 | 模板描述 | 托管位置 |
 | --- | --- | --- | --- | --- |
@@ -43,7 +43,7 @@ see doc： https://tnfe.github.io/hel
 | hel-antd | [codesandbox](https://codesandbox.io/s/hel-demo-use-antd-tjy3ep) | [gihub](https://github.com/hel-eco/hel-antd) | antd 远程包 | [unpkg](https://unpkg.com/hel-antd/) |
 | hel-tdesign-react | [codesandbox](https://codesandbox.io/s/hel-demo-use-tedesign-nw8bfb) | [gihub](https://github.com/hel-eco/hel-tdesign-react) | tdesign-react 远程包 | [unpkg](https://unpkg.com/hel-tdesign-react/) |
 
-## [Why hel-micro](https://tnfe.github.io/hel)
+## [Why hel-micro](https://helmicro.com/hel)
 
 接入快、0 入侵、简单易用： ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
 
