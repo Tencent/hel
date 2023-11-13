@@ -8,7 +8,7 @@
 
 **hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案 ❤️
 
-see doc： https://helmicro.com
+see doc： https://helmicro.com or https://tencent.github.io/hel
 
 ## 文章
 
