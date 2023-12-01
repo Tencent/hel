@@ -20,6 +20,7 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
   const { needMemo = true, platform, versionId, shadow, isCompPropsEqual } = ensuredOptions;
 
   const factory = () => {
+    // @ts-ignore
     const Comp = forwardRef((compProps: React.PropsWithoutRef<any>, reactRef: React.Ref<any>) => {
       return <RemoteCompRender name={name} controlOptions={ensuredOptions} compProps={compProps} reactRef={reactRef} />;
     });

@@ -1,4 +1,4 @@
-import type { IPreFetchOptionsBase, IStyleDataResult } from 'hel-micro';
+import type { IPreFetchOptionsBase, IStyleDataResult } from 'hel-micro/src/types';
 import type { Platform } from 'hel-types';
 import React from 'react';
 

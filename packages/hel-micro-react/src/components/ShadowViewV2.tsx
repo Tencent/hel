@@ -69,5 +69,6 @@ export default function ShadowViewV2(props: IShadowViewImplProps) {
   );
 
   const elProps = { ref: shadowHostRef, style: { transitionDuration, ...style }, data };
+  // @ts-ignore
   return React.createElement(tagName, elProps, uiContent);
 }

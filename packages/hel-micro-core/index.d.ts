@@ -297,11 +297,12 @@ export interface IPlatformConfigFull extends IPlatformConfigInitFull {
 
 export interface IGlobalConfigFull {
   /**
+   * default: null
    * 某些容器型微前端框架会对append打补丁，且打的目标不一样，有的是 Element.appendChild，有的是 head 和 body 上那个
    * 会导致 hel-micro 加载js资源报错，遇到此情况需要用户人工设定 append 句柄
    */
-  headAppend: null;
-  bodyAppend: null;
+  headAppend: any;
+  bodyAppend: any;
 }
 
 export type IGlobalConfig = Partial<IGlobalConfigFull>;

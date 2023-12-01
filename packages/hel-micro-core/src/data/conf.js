@@ -60,8 +60,23 @@ export function getPlatformConfig(iPlatform) {
 }
 
 export function initGlobalConfig(/** @type {IGlobalConfig} */ config) {
-  getHelMicroShared().patchedHeadAppend = config.headAppend || null;
-  getHelMicroShared().patchedBodyAppend = config.bodyAppend || null;
+  const shared = getHelMicroShared();
+  const { nativeHeadAppend, nativeBodyAppend } = shared;
+  const headAppend = config.headAppend || null;
+  const bodyAppend = config.bodyAppend || null;
+
+  const errTip = (label) => `pass same ${label} handle, hel will ignore it for avlid 'Maximum call stack size exceeded'`;
+  if (headAppend && headAppend === nativeHeadAppend) {
+    console.error(errTip('headAppend'));
+  } else {
+    shared.patchedHeadAppend = headAppend;
+  }
+
+  if (bodyAppend && bodyAppend === nativeBodyAppend) {
+    console.error(errTip('bodyAppend'));
+  } else {
+    shared.patchedBodyAppend = bodyAppend;
+  }
 }
 
 /**

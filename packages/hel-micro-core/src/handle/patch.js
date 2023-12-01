@@ -33,8 +33,14 @@ function doAppend(nativeAppend, /** @type {HTMLLinkElement | HTMLScriptElement}*
 }
 
 export function patchAppendChild() {
-  const helMicroShared = getHelMicroShared();
   const gs = getGlobalThis();
+  // 当前阶段 qiankun 不做任何补丁，否则会导致一切一些莫名的bug，例如 react 组件切换 unmountAtNode 报错
+  // 意味着当前阶段 beforeAppend 机制无作用
+  if (gs.__POWERED_BY_QIANKUN__) {
+    return;
+  }
+
+  const helMicroShared = getHelMicroShared();
   const doc = gs.document;
   let nativeHeadAppend = helMicroShared.nativeHeadAppend;
   let nativeBodyAppend = helMicroShared.nativeBodyAppend;
@@ -61,8 +67,8 @@ export function patchAppendChild() {
       // 如果用户手动传递了 bodyAppend 句柄
       return patchedBodyAppend;
     }
+    // 兼容 wujie
     if (gs.__POWERED_BY_WUJIE__) {
-      // 兼容 wujie
       return nativeAppend;
     }
 

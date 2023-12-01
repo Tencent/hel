@@ -18,4 +18,5 @@ helDevUtils.extractHelMetaJson({
   appHomePage: process.env.HEL_APP_HOME_PAGE,
   buildDirFullPath: path.join(__dirname, '../hel_dist'),
   packageJson,
+  // enableAssetInnerText: true,
 });

@@ -74,7 +74,7 @@ export function tryMountStaticShadowBody(props: any, config: IRemoteCompRenderCo
   const mountNode = makeBodyMountNode(name, 'StaticShadowBodyBox');
   const evName = getShadowBodyReadyEvName(name, controlOptions);
   const ShadowViewImpl = controlOptions.ShadowViewImpl || ShadowView;
-  const uiShadowView = (
+  const uiShadowView: any = (
     // @ts-ignore，暂时避免 react-18 的类型误报问题（18版本之前此处不会报错：其实例类型 "ShadowView" 不是有效的 JSX 元素）
     <ShadowViewImpl
       {...{
@@ -92,6 +92,7 @@ export function tryMountStaticShadowBody(props: any, config: IRemoteCompRenderCo
     const root = controlOptions.createRoot(mountNode);
     root.render(uiShadowView);
   } else {
+    // @ts-ignore
     ReactDOM.render(uiShadowView, mountNode);
   }
 }
