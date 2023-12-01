@@ -104,8 +104,8 @@ export function nbalert(mayLineBreakStr, alertInDev = true) {
   const g = getGlobalThis();
   const str = nbstr(mayLineBreakStr);
   const alert = g.alert || noop;
-  if (alertInDev && g.location) {
-    g.location.port && alert(str);
+  if (alertInDev) {
+    g.location?.port && alert(str);
     return;
   }
   alert(str);
