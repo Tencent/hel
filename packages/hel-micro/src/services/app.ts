@@ -196,7 +196,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
 }
 
 async function getAppWithFallback(appName: string, options: IInnerPreFetchOptions): Promise<{ data: ICacheData | null; err: string }> {
-  const { isFirstCall = true } = options;
+  const { isFirstCall = true, enableDiskCacheForErr = defaults.ENABLE_DISK_CACHE_FOR_ERR } = options;
   try {
     const data = await getAppFromRemoteOrLocal(appName, options);
     return { data, err: '' };
@@ -209,17 +209,22 @@ async function getAppWithFallback(appName: string, options: IInnerPreFetchOption
     if (getFallbackHook(options)) {
       return { data: null, err: err.message };
     }
+
+    let data = null;
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
-    const data = await getDiskCachedApp(appName, options);
-    if (!data) {
-      throw err;
+    if (enableDiskCacheForErr) {
+      data = await getDiskCachedApp(appName, options);
+      if (!data) {
+        throw err;
+      }
+      commonUtil.nbalert(`
+        [Dev mode alert err only]: ${err.message}, hel-micro will try use cached data to keep your app works well,
+        please check your network if this behavior is not as you expected! you can also set enableDiskCacheForErr = false
+        to skip reusing cached data.
+      `);
     }
 
-    commonUtil.nbalert(`
-      ${err.message}, hel-micro will try use cached data to keep your app works well,
-      please check your network if this behavior is not as you expected!
-    `);
-    return { data, err: '' };
+    return { data, err };
   }
 }
 

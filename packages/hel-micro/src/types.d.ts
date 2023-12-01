@@ -206,6 +206,13 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * 为 false ，则总是同步的拉最新的应用数据
    */
   enableDiskCache?: boolean;
+  /**
+   * default: true
+   * ```text
+   * enable disk cache or not while error occurred
+   * ```
+   */
+  enableDiskCacheForErr?: boolean;
   /** default: true
    * 当设置硬盘缓存 enableDiskCache 为 true 且发现了已缓存元数据时，此参数才有效，
    * 表示是否发起延迟请求去异步地同步一下最新的元数据，

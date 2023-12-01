@@ -2,6 +2,7 @@ const toExport = {
   SHADOW: true,
   SET_STYLE_AS_STRING: true,
   ENABLE_DISK_CACHE: false,
+  ENABLE_DISK_CACHE_FOR_ERR: true,
   ENABLE_SYNC_META: true,
   STORAGE_TYPE: 'localStorage',
   ENABLE_APPEND_CSS: true,
