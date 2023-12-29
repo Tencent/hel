@@ -210,7 +210,7 @@ async function getAppWithFallback(appName: string, options: IInnerPreFetchOption
       return { data: null, err: err.message };
     }
 
-    let data = null;
+    let data: ICacheData | null = null;
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
     if (enableDiskCacheForErr) {
       data = await getDiskCachedApp(appName, options);
