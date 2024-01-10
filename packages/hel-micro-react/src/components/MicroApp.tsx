@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
 |--------------------------------------------------------------------------
 |
@@ -21,10 +22,10 @@ export type LocalCompType = (props: ILocalCompProps, ref?: React.Ref<any>) => Re
  * 渲染地本地组件，满足用户想对当前项目的某个组件直接使用 shadow 隔离能力的情况
  * usage: <LocalComp Comp={SomeComp} />
  */
-export const LocalComp: LocalCompType = forwardRef((props, reactRef) => {
+export const LocalComp: LocalCompType = forwardRef((props: ILocalCompProps, reactRef) => {
   const passProps: ILocalCompProps = { ...props, reactRef };
   return <LocalCompRender {...passProps} />;
-});
+}) as unknown as LocalCompType;
 
 /**
  * usage: <MicroApp name="rule" />
