@@ -1,20 +1,20 @@
-import * as apis from './apis';
-import * as ins from './ins';
 import type {
+  CommonUtil as t13,
   IAppAndVer as t1,
   IControlPreFetchOptions as t2,
+  IGetOptions as t10,
+  IGetStyleOptions as t12,
+  IGetVerOptions as t11,
+  IGlobalConfig as t9,
+  IGlobalConfigFull as t8,
   IHelMeta as t3,
-  IPlatformConfigInitFull as t4,
-  IShouldUseGray as t5,
   IPlatformConfig as t6,
   IPlatformConfigFull as t7,
-  IGlobalConfigFull as t8,
-  IGlobalConfig as t9,
-  IGetOptions as t10,
-  IGetVerOptions as t11,
-  IGetStyleOptions as t12,
-  CommonUtil as t13,
+  IPlatformConfigInitFull as t4,
+  IShouldUseGray as t5,
 } from 'hel-micro-core';
+import * as apis from './apis';
+import * as ins from './ins';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase, IStyleDataResult } from './types';
 
 /** 暂时解决部分 v3 版本用户升级到 v4 后，原来使用 helMicro.core.IAppAndVer 标准类型出错的问题 */
@@ -33,7 +33,6 @@ export namespace core {
   export type IGetStyleOptions = t12;
   export type CommonUtil = t13;
 }
-
 
 export const {
   VER,
