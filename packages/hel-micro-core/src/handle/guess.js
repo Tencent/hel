@@ -1,6 +1,6 @@
 import { log } from '../base/microDebug';
 import { getJsRunLocation } from '../base/util';
-import { DEFAULT_ONLINE_VER,DEFAULT_PLAT } from '../consts';
+import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 export function tryGetVersion(appGroupName, platform) {
