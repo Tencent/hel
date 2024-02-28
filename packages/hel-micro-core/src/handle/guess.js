@@ -1,11 +1,11 @@
 import { log } from '../base/microDebug';
 import { getJsRunLocation } from '../base/util';
-import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
+import { DEFAULT_ONLINE_VER,DEFAULT_PLAT } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
-  // 用户串改过的话，可能是：at c (https://{user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/...)
+  // 如果用户调整过，可能是：at c (https://{user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/...)
   const loc = getJsRunLocation();
   log(`[[ core:tryGetVersion ]] may include source > ${loc}`);
 
@@ -31,8 +31,14 @@ export function tryGetVersion(appGroupName, platform) {
     }
 
     // [ 'unpkg.com' , 'hel-lodash@1.1.0' , ... ]
+    // [ 'unpkg.com' , '@someScope', 'xxx@1.1.0' , ... ]
     if (platform === DEFAULT_PLAT) {
-      return strList[1].split('@')[1] || callerSpecifiedVer;
+      let atStrIdx = 1;
+      if (restStr.indexOf('@') !== restStr.lastIndexOf('@')) {
+        atStrIdx = 2;
+      }
+      const tmpList = strList[atStrIdx].split('@');
+      return tmpList[1] || callerSpecifiedVer;
     }
 
     // 走默认的规则： {cdn_host_name}/{platform}/{appname_prefixed_version}，取下标2对应元素作为版本号

@@ -216,7 +216,7 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
 }
 
 /**
- * 生成请求的 unpkg 平台的请求信息
+ * 生成请求语义化版本的请求信息（ 如请求 unpkg jsdelivr ）
  */
 export async function prepareSemverRequestInfo(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, loadOptions } = getOptions;

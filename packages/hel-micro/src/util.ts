@@ -21,8 +21,10 @@ export async function getSemverLatestVer(appName: string, apiPrefix: string) {
   // 会先经过 302 重定向到一个 404 请求地址后，即可拿到最新的版本号
   const comment = 'try_detect_latest_ver';
   const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${comment}_${Date.now()}`);
-  const [, includeVer] = url.split('@');
-  const [ver] = includeVer.split('/');
+  // 可能 appName 也包含 @ 符号，故 verStr 取 strArr 最后一个元素去推导
+  const strArr = url.split('@');
+  const includeVerStr = strArr[strArr.length - 1];
+  const [ver] = includeVerStr.split('/');
   return ver;
 }
 
