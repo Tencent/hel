@@ -7,6 +7,14 @@ import { getAssetUrlType } from './helper';
 const { noop, okeys } = commonUtil;
 const assign = Object.assign;
 
+/**
+ * hel-iso 4.4.0+ 会读取此变量，用于辅助判断载入的应用是否是子应用
+ */
+function markHelLoadAssetsFlag() {
+  const g: any = getGlobalThis();
+  g.__HEL_LOAD_ASSETS_FLAG__ = 1;
+}
+
 function isAssetExisted(selectors: string) {
   try {
     const doc = getGlobalThis()?.document;
@@ -194,6 +202,7 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
  * 加载应用首屏的各项资源
  */
 export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions: IInnerPreFetchOptions) {
+  markHelLoadAssetsFlag();
   // 重命名，避免 @typescript-eslint/naming-convention 警告
   const { additional_scripts: additionalScripts = [], additional_body_scripts: additionalBodyScripts = [] } = app;
   const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList = [] } = version.src_map;

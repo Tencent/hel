@@ -7,6 +7,8 @@
 node_modules
 build
 dist
+es
+lib
 tmp
 TIMME.md
 package-lock.json

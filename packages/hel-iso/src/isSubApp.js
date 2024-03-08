@@ -18,8 +18,14 @@ function getGlobalThis() {
 }
 
 function getIsoInfo() {
-  const { __HEL_ISO_FLAG__, __MASTER_APP_LOADED__ } = getGlobalThis();
+  const { __HEL_LOAD_ASSETS_FLAG__, __HEL_ISO_FLAG__, __MASTER_APP_LOADED__ } = getGlobalThis();
   return {
+    /**
+     * v4.4.0 之后新增 __HEL_LOAD_ASSETS_FLAG__ 来判断当前应用是否是子应用，要求 hel-micro 包 >= 4.9.2
+     * 是否 hel-micro 里的 isLoadAssets 已调用，true 表示已调用，则此时载入的 hel-iso 包所属应用可当做子应用
+     * （注：此判断成立的前提条件是要求子应用必须在入口文件头部导入 hel-iso 包）
+     */
+    isLoadAssetsCalled: __HEL_LOAD_ASSETS_FLAG__ === 1,
     /** 是否是第一个载入 hel-iso 模块 */
     isFirstMod: __HEL_ISO_FLAG__ === undefined,
     /** 是否是在 hel-micro-core 之前载入的 */
@@ -57,7 +63,13 @@ function getCodeHost() {
 function getIsMaster() {
   const globalThis = getGlobalThis();
   const { location, __HEL_MICRO_SHARED__: microShared } = globalThis;
-  const { isFirstMod, isBeforeCore } = info;
+  const { isFirstMod, isBeforeCore, isLoadAssetsCalled } = info;
+
+  if (isLoadAssetsCalled) {
+    return false;
+  }
+
+  // TODO: 后续所有 demo 升级 hel-micro >= 4.9.2 之后，可删除以下所有逻辑，仅用 isLoadAssetsCalled 即可
 
   // 如果不是第一个载入的，一定是子模块
   if (!isFirstMod) {
