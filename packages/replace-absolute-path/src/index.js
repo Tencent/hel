@@ -23,7 +23,7 @@ const innerUtil = {
     return count;
   },
   isImportLine(line) {
-    const strList = line.split(' ').filter(item => !!item);
+    const strList = line.split(' ').filter((item) => !!item);
     return strList[0] === 'import';
   },
   judgeLineEnd(line) {
@@ -37,10 +37,12 @@ const innerUtil = {
     if (innerUtil.isImportLine(line)) {
       // --->   import { xx } from
       if (!hasSemicolon) {
-        if (innerUtil.strCount(line, '\'') === 2) { // import { xx } from './a/b'
+        if (innerUtil.strCount(line, "'") === 2) {
+          // import { xx } from './a/b'
           return true;
         }
-        if (innerUtil.strCount(line, '"') === 2) { // import { xx } from "./a/b"
+        if (innerUtil.strCount(line, '"') === 2) {
+          // import { xx } from "./a/b"
           return true;
         }
         return false; // import { xx } from
@@ -70,12 +72,11 @@ const innerUtil = {
     return false;
   },
   DEFAULT_EXTS: ['.js', '.ts', '.jsx', '.tsx', '.vue'],
-  noop: () => { },
+  noop: () => {},
   isWin: () => {
     return os.type() == 'Windows_NT';
-  }
+  },
 };
-
 
 function safePush(map, key, value) {
   let list = map[key];
@@ -86,18 +87,17 @@ function safePush(map, key, value) {
   list.push(value);
 }
 
-
 function getRelativePrefix(level) {
   if (level === 1) {
     return './';
   } else {
     let prefix = '';
-    new Array(level - 1).fill('').forEach(() => prefix += '../');
+    new Array(level - 1).fill('').forEach(() => (prefix += '../'));
     return prefix;
   }
 }
 
-function getFileExt(/** @type string */fullPathFilename) {
+function getFileExt(/** @type string */ fullPathFilename) {
   const filenameList = fullPathFilename.split('/');
   const filename = filenameList[filenameList.length - 1];
   if (filename.startsWith('.')) {
@@ -112,14 +112,14 @@ function getFileExt(/** @type string */fullPathFilename) {
 
   const [basename, ...extList] = strList;
   return {
-    fullExt: `.${extList.join('.')}`,  // .d.ts , .controller.ts , .js, , .ts , .jsx , .tsx etc
-    simpleExt: `.${extList[extList.length - 1]}`,  // .js, , .ts , .jsx , .tsx etc
+    fullExt: `.${extList.join('.')}`, // .d.ts , .controller.ts , .js, , .ts , .jsx , .tsx etc
+    simpleExt: `.${extList[extList.length - 1]}`, // .js, , .ts , .jsx , .tsx etc
   };
 }
 
 function pureAlias(alias) {
   const pured = {};
-  Object.keys(alias).forEach(key => {
+  Object.keys(alias).forEach((key) => {
     const val = alias[key];
     let targetKey = key;
     if (targetKey.endsWith('/*')) {
@@ -160,7 +160,6 @@ function pureAlias(alias) {
  * @param {()=>void} [options.afterReplaced] - 替换结束后的动作
  */
 async function replaceRelativePath(options) {
-
   // 由 getFirstLevelDirs 算出
   const firstLevelDirs = [];
 
@@ -172,7 +171,7 @@ async function replaceRelativePath(options) {
 
   const fullPath2lineList = {};
   const fileWriteEvent = {
-    cb: () => { },
+    cb: () => {},
     emit: (...args) => {
       fileWriteEvent.cb(...args);
     },
@@ -225,7 +224,7 @@ async function replaceRelativePath(options) {
 
     // 将映射的相对路径转为实际相对路径
     // 例如：@lib/xx/yy ---> my-comps/modules/xx/yy
-    Object.keys(_alias).forEach(userPathPrefix => {
+    Object.keys(_alias).forEach((userPathPrefix) => {
       const realPathPrefix = _alias[userPathPrefix];
       if (modPath.startsWith(userPathPrefix)) {
         modPath = `${realPathPrefix}${modPath.substring(userPathPrefix.length)}`;
@@ -295,7 +294,7 @@ async function replaceRelativePath(options) {
             importEndLineIndex = tmpLineIndex;
             break;
           }
-        };
+        }
 
         // 始终未找到，就不做任何替换了
         if (!importEndLine) {
@@ -303,14 +302,13 @@ async function replaceRelativePath(options) {
         }
 
         return { shouldBeenReplaced: true, line: importEndLine, lineIndex: importEndLineIndex };
-
       }
 
       return { shouldBeenReplaced: false, line: '', lineIndex: curLineIndex };
     };
 
     // 遍历文件的行数据，开始做处理
-    lineList.forEach((/** @type string */oriLine, idx) => {
+    lineList.forEach((/** @type string */ oriLine, idx) => {
       // 已有计算好的替换数据，直接替换
       const cachedReplaceLine = lineIdx2ReplaceLine[idx];
       if (cachedReplaceLine) {
@@ -320,8 +318,8 @@ async function replaceRelativePath(options) {
 
       const { shouldBeenReplaced, line, lineIndex } = getReplaceLineData(idx);
       if (shouldBeenReplaced) {
-        let firstQuoteIdx = line.indexOf('\'');
-        let lastQuoteIdx = line.lastIndexOf('\'');
+        let firstQuoteIdx = line.indexOf("'");
+        let lastQuoteIdx = line.lastIndexOf("'");
         // 用户可能使用双引号引入其他模块
         if (firstQuoteIdx === -1 && lastQuoteIdx === -1) {
           firstQuoteIdx = line.indexOf('"');
@@ -334,7 +332,8 @@ async function replaceRelativePath(options) {
         }
 
         const { firstQuote, modPath, lastQuote, matchedKeyword } = getPathInfo(line, firstQuoteIdx, lastQuoteIdx);
-        if (matchedKeyword) { // services
+        if (matchedKeyword) {
+          // services
           // 'services/xxx/yyy' -->  xxx/yyy
           const [, restStr = ''] = modPath.split(`${matchedKeyword}/`);
           const restPath = restStr ? `/${restStr}${lastQuote}` : `${lastQuote}`;
@@ -357,7 +356,6 @@ async function replaceRelativePath(options) {
       }
     });
   }
-
 
   function mayAppendContentToFileHead(options) {
     const { fullPath } = options;
@@ -397,7 +395,8 @@ async function replaceRelativePath(options) {
             shouldRewrite = true;
           }
 
-          if (shouldRewrite) { // 筛选出来为需要重写的文件后，再查看有没有在排除名单里
+          if (shouldRewrite) {
+            // 筛选出来为需要重写的文件后，再查看有没有在排除名单里
             if (_excludeExts.includes(ext) || _excludeExts.includes(fullExt)) {
               shouldRewrite = false;
             }
@@ -432,12 +431,11 @@ async function replaceRelativePath(options) {
     _traverseAllFiles(dirPath, level);
   }
 
-
   getFirstLevelDirs(inputDir);
   if (inputDir !== outputDir) {
     const makeCmd = (cmd) => {
       const shx = innerUtil.isWin() ? 'shx ' : '';
-      return `${shx}${cmd}`
+      return `${shx}${cmd}`;
     };
 
     if (!fs.existsSync(outputDir)) {
@@ -448,7 +446,7 @@ async function replaceRelativePath(options) {
   }
   traverseAllFiles(outputDir, 1);
 
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     fileWriteEvent.on(() => {
       // 所有文件都写入完毕
       if (fileWriteEndCount === fileCount) {
