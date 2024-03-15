@@ -24,7 +24,7 @@ const innerUtil = {
   },
   isImportLine(line) {
     const strList = line.split(' ').filter((item) => !!item);
-    return strList[0] === 'import';
+    return strList[0] === 'import' || strList[0] === 'export';
   },
   judgeLineEnd(line) {
     /** @type string */

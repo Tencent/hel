@@ -1,21 +1,45 @@
-# hel-iso
+# replace-absolute-path
 
-当 `hel-micro`、`hel-micro-core` 包体被提升到 exnternal 里载入时，`isSubApp`判断会失效，可独立安装此包来调用 `isSubApp` 函数
+ - usage:
+```js
+const fs = require('fs');
+const replacePath = require('replace-absolute-path');
 
-## bofore
-
-```ts
-import { isSubApp } from 'hel-micro';
-// or
-import { isSubApp } from 'hel-lib-proxy';
+(async function () {
+  const srcDir = path.resolve(__dirname, '../src');
+  const libDir = path.resolve(__dirname, '../lib');
+  replacePath({
+    inputDir: srcDir,
+    outputDir: libDir,
+    // includeExts: replacePath.DEFAULT_EXTS.concat(['.md']),
+    afterReplaced: () => {
+      console.log('--------------------------------------------------------------------------');
+      console.log('|  all files import statements has been transformed to relative path ^_^  |');
+      console.log('--------------------------------------------------------------------------');
+    },
+  });
+})()
 ```
 
-## after
+now your file import statements changed
+```js
+// if current file position is /src/components/Editor/index.js
+// config file position is /src/config.js
 
-```ts
-import { isSubApp } from 'hel-iso';
-// or just import in entry file first line
-import 'hel-iso';
+import xx from 'configs/xx'; 
+// change to
+import xx from '../../configs/xx';
 
-// then you can call isSubApp that can return right result in any other files
+export { default as xx } from 'configs/xx'; 
+// change to
+export { default as xx } from '../../configs/xx';
+
+import {
+  xx
+} from 'configs/xx';
+// change to
+import {
+  xx
+} from '../../configs/xx';
 ```
+
