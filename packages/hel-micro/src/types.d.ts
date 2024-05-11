@@ -82,6 +82,11 @@ export interface ICustom {
    */
   host: HostOrHelMetaUrl;
   /**
+   * default: true
+   * 非 hel-meta.json 结尾的 host 会自动拼接上 /index.html 后缀，如不想拼接此后缀，可设置为 false
+   */
+  attachHostSuffix?: boolean;
+  /**
    * default: false
    * 在 host 末尾为 hel-meta.json 时，sdk 默认将此链接当做可以获取到元数据的请求api，其他的则不会（或当作页面去动态解析出元数据）
    * 如用户认为设置的 host 是元数据的请求api，则可设置此参数为 true

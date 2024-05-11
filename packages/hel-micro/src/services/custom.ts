@@ -147,7 +147,7 @@ export function isCustomValid(custom: IInnerPreFetchOptions['custom']): custom i
 }
 
 export async function getCustomMeta(appName: string, custom: ICustom): Promise<IHelMeta> {
-  const { host, appGroupName, skipFetchHelMeta = false, isApiUrl, parseHtml } = custom;
+  const { host, appGroupName, skipFetchHelMeta = false, isApiUrl, parseHtml, attachHostSuffix = true } = custom;
   const t = Date.now();
 
   if (isApiUrl) {
@@ -165,7 +165,8 @@ export async function getCustomMeta(appName: string, custom: ICustom): Promise<I
 
   let htmlText = '';
   try {
-    const result = await requestGet(`${host}/index.html?_t=${t}`, false);
+    const pageUrl = attachHostSuffix ? `${host}/index.html?_t=${t}` : host;
+    const result = await requestGet(pageUrl, false);
     htmlText = result.reply || '';
     if (![200, 304].includes(result.status)) {
       throw new Error(`status ${result.status}`);
