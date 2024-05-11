@@ -22,7 +22,27 @@ const innerUtil = {
     const count = str.split(subStr).length - 1;
     return count;
   },
-  isImportLine(line) {
+  isImportExportLine(line) {
+    const trimed = line.trim();
+    const isExportStartsWith = (key) => trimed.startsWith(`export ${key}`) || trimed.startsWith(`export  ${key}`);
+
+    // 以下导出语句不做处理
+    if (
+      isExportStartsWith('interface')
+      || isExportStartsWith('const')
+      || isExportStartsWith('enum')
+      || isExportStartsWith('function')
+      || isExportStartsWith('async')
+      || isExportStartsWith('default')
+    ) {
+      return false;
+    }
+
+    // 非 export type {} from 'xxxx'; 语句
+    if (isExportStartsWith('type') && !trimed.includes(' from ')) {
+      return false;
+    }
+
     const strList = line.split(' ').filter((item) => !!item);
     return strList[0] === 'import' || strList[0] === 'export';
   },
@@ -34,7 +54,11 @@ const innerUtil = {
     const hasDoubleBackSlash = doubleBackSlashIdx >= 0;
     const hasSemicolon = semicolonIdx >= 0;
 
-    if (innerUtil.isImportLine(line)) {
+    if (pureTmpLine === '}' || pureTmpLine === '};') {
+      return true;
+    }
+
+    if (innerUtil.isImportExportLine(line)) {
       // --->   import { xx } from
       if (!hasSemicolon) {
         if (innerUtil.strCount(line, "'") === 2) {
@@ -75,6 +99,12 @@ const innerUtil = {
   noop: () => {},
   isWin: () => {
     return os.type() == 'Windows_NT';
+  },
+  /** 移除文件名的格式后缀 */
+  delFilenameFmt(filename) {
+    const arr = filename.split('.');
+    arr.splice(arr.length - 1);
+    return arr.join('.');
   },
 };
 
@@ -147,7 +177,6 @@ function pureAlias(alias) {
 }
 
 /**
- *
  * @param {object} options
  * @param {string} [options.inputDir] - 输入目录
  * @param {string} [options.outputDir] - 输出目录，如想覆盖掉输入目录里的原始内容，可将输出目录设置为和输入目录一样的值
@@ -157,11 +186,14 @@ function pureAlias(alias) {
  * @param {(options:{fullPath:string, fileName:string, fileExt:string, fileFullExt: string})=>string} [options.appendToFileHead] - default: null
  * @param {boolean} [options.autoAttachEOL] - default:true
  * @param {object} [options.alias] - default:{} ，相对路径别名映射关系，例如 {'@lib':'xx/yy'}，表示 '@lib' 相对路径对应源码根目录里实际相对路径是 'xx/yy' 目录
+ * 如对应顶层目录，可写为 {'@lib':''}
+ * @param {object} [options.extraDirs] - default:{} ，额外的一级目录，指源码根目录之外的其他目录, key 目录名称，value 目录全路径
  * @param {()=>void} [options.afterReplaced] - 替换结束后的动作
  */
 async function replaceRelativePath(options) {
-  // 由 getFirstLevelDirs 算出
+  // 由 getFirstLevelDirsAndFiles 算出
   const firstLevelDirs = [];
+  const firstLevelFiles = [];
 
   let _includeExts = innerUtil.DEFAULT_EXTS; // 如设置我，表示包含所有文件
   let _excludeExts = [];
@@ -191,6 +223,7 @@ async function replaceRelativePath(options) {
     appendToFileHead = null,
     autoAttachEOL = true,
     alias = {},
+    extraDirs = {},
   } = optionsVar;
 
   _includeExts = includeExts;
@@ -204,11 +237,11 @@ async function replaceRelativePath(options) {
     throw new Error('miss outputDir, you can set outputDir equal to inputDir explicitly if you want to rewrite original files');
   }
 
-  function matchKeyword(str) {
+  function matchKeyword(str, names) {
     let matchedKeyword = '';
-    const len = firstLevelDirs.length;
+    const len = names.length;
     for (let i = 0; i < len; i++) {
-      const keyword = firstLevelDirs[i];
+      const keyword = names[i];
       if (str.startsWith(keyword)) {
         matchedKeyword = keyword;
         break;
@@ -227,20 +260,33 @@ async function replaceRelativePath(options) {
     Object.keys(_alias).forEach((userPathPrefix) => {
       const realPathPrefix = _alias[userPathPrefix];
       if (modPath.startsWith(userPathPrefix)) {
-        modPath = `${realPathPrefix}${modPath.substring(userPathPrefix.length)}`;
+        // 配置为 { '@ttt': '' }, 期望转换格式形如：@ttt/xx/yy ---> xx/yy
+        if (!realPathPrefix) {
+          modPath = modPath.substring(userPathPrefix.length + 1);
+        } else {
+          modPath = `${realPathPrefix}${modPath.substring(userPathPrefix.length)}`;
+        }
       }
     });
-    const matchedKeyword = matchKeyword(modPath);
+    const matchedKeyword = matchKeyword(modPath, firstLevelDirs) || matchKeyword(modPath, firstLevelFiles);
     return { firstQuote, modPath, lastQuote, matchedKeyword };
   }
 
-  function getFirstLevelDirs(srcPath) {
+  function getFirstLevelDirsAndFiles(srcPath, optionExtraDirs) {
     const filenames = fs.readdirSync(srcPath);
     filenames.forEach(function (name) {
       const fullPath = `${srcPath}/${name}`;
       const stats = fs.statSync(fullPath);
       if (stats.isDirectory()) {
         firstLevelDirs.push(name);
+      } else {
+        firstLevelFiles.push(innerUtil.delFilenameFmt(name));
+      }
+    });
+
+    optionExtraDirs.forEach((dir) => {
+      if (!firstLevelDirs.includes(dir)) {
+        firstLevelDirs.push(dir);
       }
     });
   }
@@ -265,7 +311,7 @@ async function replaceRelativePath(options) {
         return { shouldBeenReplaced: false, line: '', lineIndex: curLineIndex };
       }
 
-      if (innerUtil.isImportLine(curLine)) {
+      if (innerUtil.isImportExportLine(curLine)) {
         const isCurLineEnd = innerUtil.judgeLineEnd(curLine);
         if (isCurLineEnd) {
           return { shouldBeenReplaced: true, line: curLine, lineIndex: curLineIndex };
@@ -301,6 +347,15 @@ async function replaceRelativePath(options) {
           return { shouldBeenReplaced: false, line: '', lineIndex: 0 };
         }
 
+        // 特殊处理如下导出方式
+        // export {
+        //   xxx,
+        //   yyy,
+        // }
+        if (!(importEndLine.includes(" from '") || importEndLine.includes(' from "'))) {
+          return { shouldBeenReplaced: false, line: '', lineIndex: 0 };
+        }
+
         return { shouldBeenReplaced: true, line: importEndLine, lineIndex: importEndLineIndex };
       }
 
@@ -332,6 +387,8 @@ async function replaceRelativePath(options) {
         }
 
         const { firstQuote, modPath, lastQuote, matchedKeyword } = getPathInfo(line, firstQuoteIdx, lastQuoteIdx);
+        // console.log('modPath', modPath);
+        // console.log('matchedKeyword', matchedKeyword);
         if (matchedKeyword) {
           // services
           // 'services/xxx/yyy' -->  xxx/yyy
@@ -339,6 +396,7 @@ async function replaceRelativePath(options) {
           const restPath = restStr ? `/${restStr}${lastQuote}` : `${lastQuote}`;
           const newLine = `${firstQuote}${getRelativePrefix(level)}${matchedKeyword}${restPath}`;
           const replaceLine = `${newLine}${os.EOL}`;
+          // console.log('replaceLine', replaceLine);
           if (idx === lineIndex) {
             fWrite.write(replaceLine);
             return;
@@ -431,7 +489,8 @@ async function replaceRelativePath(options) {
     _traverseAllFiles(dirPath, level);
   }
 
-  getFirstLevelDirs(inputDir);
+  const dirNames = Object.keys(extraDirs);
+  getFirstLevelDirsAndFiles(inputDir, dirNames);
   if (inputDir !== outputDir) {
     const makeCmd = (cmd) => {
       const shx = innerUtil.isWin() ? 'shx ' : '';
@@ -443,6 +502,16 @@ async function replaceRelativePath(options) {
     }
     await exec(makeCmd(`rm -rf ${outputDir}/*`));
     await exec(makeCmd(`cp -r ${inputDir}/* ${outputDir}`));
+
+    const len = dirNames.length;
+    if (len) {
+      for (let i = 0; i < len; i++) {
+        const key = dirNames[i];
+        const dirFullPath = extraDirs[key];
+        // 复制额外目录（包含目录自身）到输出目录下
+        await exec(makeCmd(`cp -r ${dirFullPath} ${outputDir}`));
+      }
+    }
   }
   traverseAllFiles(outputDir, 1);
 
