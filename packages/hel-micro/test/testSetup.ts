@@ -78,7 +78,7 @@ setGlobalThis(
         appendChild: noop,
       },
       cookie: '',
-      createElement: () => ({}),
+      createElement: () => ({ setAttribute: noop }),
       getElementById: noop,
       getElementsByTagName: noop,
     },

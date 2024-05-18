@@ -1,4 +1,4 @@
-import { IAssetItem } from 'hel-types';
+import { IAssetItem, ISubAppVersion } from 'hel-types';
 
 interface IMakeVersionOptions {
   versionId?: string;
@@ -107,5 +107,5 @@ export default function makeVersion(options?: IMakeVersionOptions) {
     plugin_ver: '2.2.2',
     create_at: '2022-06-01T18:29:18.000Z',
     update_at: '2022-06-01T18:29:18.000Z',
-  };
+  } as unknown as ISubAppVersion;
 }

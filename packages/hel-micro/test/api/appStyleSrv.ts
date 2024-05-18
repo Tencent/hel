@@ -11,9 +11,9 @@ runTest(({ api, describe, util, semverApi, platform }) => {
     test('appStyleSrv should not be null', () => {
       expect(appStyleSrv).toBeTruthy();
       expect(appStyleSrv.fetchStyleByUrlList).toBeInstanceOf(Function);
-      expect(appStyleSrv.fetchStyleStr).toBeInstanceOf(Function);
-      expect(appStyleSrv.getStyleStr).toBeInstanceOf(Function);
-      expect(appStyleSrv.getStyleUrlList).toBeInstanceOf(Function);
+      expect(appStyleSrv.fetchAppStyleData).toBeInstanceOf(Function);
+      expect(appStyleSrv.getAppStyleStr).toBeInstanceOf(Function);
+      expect(appStyleSrv.getAppCssList).toBeInstanceOf(Function);
       expect(appStyleSrv.isStyleFetched).toBeInstanceOf(Function);
     });
 
@@ -27,23 +27,23 @@ runTest(({ api, describe, util, semverApi, platform }) => {
       expect(str).toBe('html{width:100%;height:100%;}body{font-size:12px;}p{padding:1px;}');
     });
 
-    test('fetchStyleStr', async () => {
+    test('fetchAppStyleData', async () => {
       await preFetchLib('remote-vue-comps-tpl');
-      const str = await appStyleSrv.fetchStyleStr('remote-vue-comps-tpl');
+      const res = await appStyleSrv.fetchAppStyleData('remote-vue-comps-tpl', { cssListToStr: true });
+      expect(res.renderStyleStr).toBe('html{width:100%;height:100%;}body{font-size:12px;}p{padding:1px;}');
+    });
+
+    test('getAppStyleStr', async () => {
+      await preFetchLib('remote-vue-comps-tpl');
+      const str = appStyleSrv.getAppStyleStr('remote-vue-comps-tpl');
       expect(str).toBe('html{width:100%;height:100%;}body{font-size:12px;}p{padding:1px;}');
     });
 
-    test('getStyleStr', async () => {
+    test('getAppCssList', async () => {
       await preFetchLib('remote-vue-comps-tpl');
-      const str = appStyleSrv.getStyleStr('remote-vue-comps-tpl');
-      expect(str).toBe('html{width:100%;height:100%;}body{font-size:12px;}p{padding:1px;}');
-    });
-
-    test('getStyleUrlList', async () => {
-      await preFetchLib('remote-vue-comps-tpl');
-      const list = appStyleSrv.getStyleUrlList('remote-vue-comps-tpl');
-      expect(list).toBeTruthy();
-      expect(list.length).toBe(2);
+      const res = appStyleSrv.getAppCssList('remote-vue-comps-tpl');
+      expect(res.buildCssList).toBeTruthy();
+      expect(res.buildCssList.length).toBe(2);
     });
 
     test('isStyleFetched with preFetchLib', async () => {
