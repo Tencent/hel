@@ -1,0 +1,11 @@
+.DS_Store
+.vscode
+
+TIPME.md
+
+node_modules
+dist
+es
+lib
+tmp
+coverage
