@@ -1,5 +1,28 @@
 import { getGlobalThis } from './globalRef';
 
+export function getOB() {
+  const gs = getGlobalThis();
+  // @ts-ignore
+  return gs.MutationObserver || gs.WebKitMutationObserver || gs.MozMutationObserver;
+}
+
+/**
+ * 经测试 nodeList.find(node => node.tagName === 'BODY')
+ * 可能在某些浏览器报错，故抽象为 for 循环语法方便多处复用
+ */
+export function findNode(/** @type NodeList */ nodeList, tagName) {
+  let targetNode = null;
+  const len = nodeList.length;
+  for (let i = 0; i < len; i++) {
+    const node = nodeList[i];
+    if (node.tagName === tagName) {
+      targetNode = node;
+      break;
+    }
+  }
+  return targetNode;
+}
+
 export function okeys(map) {
   return Object.keys(map);
 }
@@ -9,7 +32,7 @@ function getSearch() {
     const locVar = location || {};
     let search = locVar.search || '';
     if (!search) {
-      const hash = loc.hash || '';
+      const hash = locVar.hash || '';
       const hashSearch = hash.split('?')[1] || '';
       if (hashSearch) {
         search = `?${hashSearch}`;

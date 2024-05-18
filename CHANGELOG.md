@@ -1,5 +1,15 @@
 # Change Log
 
+[released] - 2024-05-18
+
+发布 `hel-micro`，版本`4.9.4`，特性包含：
+
+- 新增 `nativeParse` 方法，本地联调时优先采用 `nativeParse` 替代 `hel-html-parser`
+
+发布 `hel-micro`，版本`4.9.1`，特性包含：
+
+- `handle/patch` 模块里新增 `body` 可能为 `undefined` 判断
+
 [released] - 2023-03-26
 
 发布 `hel-micro`，版本`3.13.17`，特性包含：

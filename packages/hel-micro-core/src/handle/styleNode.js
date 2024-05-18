@@ -1,6 +1,7 @@
 import { disableNode, setDataset } from '../base/commonUtil';
 import { getGlobalThis } from '../base/globalRef';
 import { getHelMicroShared } from '../base/microShared';
+import { getOB } from '../base/util';
 import { commonDataUtil } from '../data/common';
 import { evName, getHelEventBus } from '../data/event';
 
@@ -119,8 +120,7 @@ export function obStyleTagInsert() {
   helMicroShared.isStyleObInit = true;
 
   const ignoreStyleTagMap = commonDataUtil.getIgnoreStyleTagMap();
-  // @ts-ignore
-  const MutationObserver = globalThis.MutationObserver || globalThis.WebKitMutationObserver || globalThis.MozMutationObserver;
+  const MutationObserver = getOB();
   if (!MutationObserver) return;
   const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {

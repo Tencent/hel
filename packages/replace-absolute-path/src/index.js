@@ -106,6 +106,12 @@ const innerUtil = {
     arr.splice(arr.length - 1);
     return arr.join('.');
   },
+  async runCmd(cmdStr) {
+    const shx = innerUtil.isWin() ? 'shx ' : '';
+    const targetCmd = `${shx}${cmdStr}`;
+    const res = await exec(targetCmd);
+    return res;
+  },
 };
 
 function safePush(map, key, value) {
@@ -492,16 +498,11 @@ async function replaceRelativePath(options) {
   const dirNames = Object.keys(extraDirs);
   getFirstLevelDirsAndFiles(inputDir, dirNames);
   if (inputDir !== outputDir) {
-    const makeCmd = (cmd) => {
-      const shx = innerUtil.isWin() ? 'shx ' : '';
-      return `${shx}${cmd}`;
-    };
-
     if (!fs.existsSync(outputDir)) {
-      await exec(makeCmd(`mkdir ${outputDir}`));
+      await innerUtil.runCmd(`mkdir ${outputDir}`);
     }
-    await exec(makeCmd(`rm -rf ${outputDir}/*`));
-    await exec(makeCmd(`cp -r ${inputDir}/* ${outputDir}`));
+    await innerUtil.runCmd(`rm -rf ${outputDir}/*`);
+    await innerUtil.runCmd(`cp -r ${inputDir}/* ${outputDir}`);
 
     const len = dirNames.length;
     if (len) {
@@ -509,7 +510,7 @@ async function replaceRelativePath(options) {
         const key = dirNames[i];
         const dirFullPath = extraDirs[key];
         // 复制额外目录（包含目录自身）到输出目录下
-        await exec(makeCmd(`cp -r ${dirFullPath} ${outputDir}`));
+        await innerUtil.runCmd(`cp -r ${dirFullPath} ${outputDir}`);
       }
     }
   }
@@ -532,5 +533,7 @@ async function replaceRelativePath(options) {
 replaceRelativePath.replaceRelativePath = replaceRelativePath;
 
 replaceRelativePath.DEFAULT_EXTS = innerUtil.DEFAULT_EXTS;
+
+replaceRelativePath.util = innerUtil;
 
 module.exports = replaceRelativePath;

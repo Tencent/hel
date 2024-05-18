@@ -1,5 +1,6 @@
 import { getGlobalThis } from '../base/globalRef';
 import { getHelMicroShared } from '../base/microShared';
+import { findNode, getOB } from '../base/util';
 import { helConsts } from '../consts';
 import { getCommonData } from '../data/common';
 import { markElFeature } from './feature';
@@ -51,9 +52,36 @@ export function patchAppendChild() {
   const { head, body } = doc;
   // record may native appendChild, use bind to avoid Illegal invocation
   nativeHeadAppend = head.appendChild.bind(head);
-  nativeBodyAppend = body.appendChild.bind(body);
   helMicroShared.nativeHeadAppend = nativeHeadAppend;
-  helMicroShared.nativeBodyAppend = nativeBodyAppend;
+
+  if (body) {
+    nativeBodyAppend = body.appendChild.bind(body);
+    helMicroShared.nativeBodyAppend = nativeBodyAppend;
+  } else {
+    // 可能 js 脚本在 head 里被引入并执行，此时 body 对象为 undefined，
+    // 需要用 MutationObserver 监听到 body 被插入然后做相关替换
+    const MutationObserver = getOB();
+    const observer = new MutationObserver(function (mutations) {
+      let body;
+      for (let i = 0; i < mutations.length; i++) {
+        const { addedNodes } = mutations[i];
+        body = findNode(addedNodes, 'BODY');
+        if (body) break;
+      }
+
+      if (body) {
+        nativeBodyAppend = body.appendChild.bind(body);
+        helMicroShared.nativeBodyAppend = nativeBodyAppend;
+        body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body, 'body'), el);
+        observer.disconnect();
+      }
+    });
+
+    const htmlNode = findNode(doc.childNodes, 'HTML');
+    if (htmlNode) {
+      observer.observe(htmlNode, { childList: true });
+    }
+  }
 
   // 兼容一些第三方库对 Element.prototype.appendChild 打了补丁的情况（如micro-app）
   const getAppend = function getAppend(nativeAppend, bindTarget, loc) {
@@ -77,6 +105,8 @@ export function patchAppendChild() {
   };
 
   // replace appendChild
-  doc.head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head, 'head'), el);
-  doc.body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body, 'body'), el);
+  head.appendChild = (el) => doAppend(getAppend(nativeHeadAppend, head, 'head'), el);
+  if (body) {
+    body.appendChild = (el) => doAppend(getAppend(nativeBodyAppend, body, 'body'), el);
+  }
 }

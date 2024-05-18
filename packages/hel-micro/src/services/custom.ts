@@ -1,5 +1,5 @@
 import { parseHtml } from 'hel-html-parser';
-import { commonUtil, helConsts, log } from 'hel-micro-core';
+import { commonUtil, getGlobalThis, helConsts, log } from 'hel-micro-core';
 import type { IAssetItem, TagName } from 'hel-types';
 import { getDatasetVal, isRelativePath } from '../browser/helper';
 import type { ICustom, IHelMeta, IInnerPreFetchOptions, IParsedNodeItem } from '../types';
@@ -8,6 +8,30 @@ import { requestGet } from '../util';
 const { DEFAULT_ONLINE_VER } = helConsts;
 const LOCAL_STR = 'http://localhost';
 const LOCAL_127 = 'http://127.0.0.1';
+
+const tags: Array<IParsedNodeItem['tag']> = ['script', 'link', 'style'];
+
+function nativeParse(htmlText: string) {
+  const { DOMParser } = getGlobalThis();
+  let doc = new DOMParser().parseFromString(htmlText, 'text/html');
+  const itemList: IParsedNodeItem[] = [];
+
+  const findNodeItem = (el: HTMLElement, head: boolean, tag: IParsedNodeItem['tag']) => {
+    el.querySelectorAll(tag).forEach((item) => {
+      const names = item.getAttributeNames();
+      const attrs: Record<string, string> = {};
+      names.forEach((name) => {
+        const val = item.getAttribute(name);
+        if (val !== null) attrs[name] = val;
+      });
+      itemList.push({ head, tag, attrs, innerText: item.innerText });
+    });
+  };
+
+  tags.forEach((tag) => findNodeItem(doc.head, true, tag));
+  tags.forEach((tag) => findNodeItem(doc.body, false, tag));
+  return itemList;
+}
 
 const inner = {
   isSrcMatchHost(src: string, host: string) {
@@ -18,9 +42,13 @@ const inner = {
     return src.startsWith(host);
   },
   parseHtml(htmlText: string) {
+    if (getGlobalThis().DOMParser) {
+      return nativeParse(htmlText);
+    }
+
     let isHeadOpen = true;
     const itemList: IParsedNodeItem[] = [];
-    const isValidTag = (tag: string): tag is 'script' | 'link' | 'style' => ['script', 'link', 'style'].includes(tag);
+    const isValidTag = (tag: string): tag is IParsedNodeItem['tag'] => (tags as string[]).includes(tag);
 
     parseHtml(htmlText, {
       onTagOpen(tag) {
