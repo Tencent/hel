@@ -41,8 +41,12 @@ export function tryGetVersion(appGroupName, platform) {
       return tmpList[1] || callerSpecifiedVer;
     }
 
-    // 走默认的规则： {cdn_host_name}/{platform}/{appname_prefixed_version}，取下标2对应元素作为版本号
-    return strList[2] || callerSpecifiedVer;
+    // 走默认的规则，应对hel默认构建的链接，或用户调整过的链接2种情况
+    // {cdn_host_name}/{platform}/{appname_prefixed_version}
+    // {user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/
+    const [, verStartStr] = restStr.split(`/${platform}/`);
+    const [verInUrl] = verStartStr.split('/');
+    return verInUrl || callerSpecifiedVer;
   }
 
   // 在微容器里运行时，js全是在VM里初始化的，此时拿不到具体的加载链接了

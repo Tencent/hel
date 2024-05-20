@@ -1,5 +1,15 @@
 # Change Log
 
+[released] - 2024-05-20
+
+发布 `hel-micro`，版本`4.9.5`，特性包含：
+
+- 升级依赖 `hel-micro-core` 版本到 `4.9.2`
+
+发布 `hel-micro-core`，版本`4.9.2`，特性包含：
+
+- 优化 `tryGetVersion` 函数
+
 [released] - 2024-05-18
 
 发布 `hel-micro`，版本`4.9.4`，特性包含：
