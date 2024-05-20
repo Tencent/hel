@@ -1,6 +1,6 @@
-import { log } from '../core/microDebug';
 import { getVerLib, getVerLoadStatus, setVerLoadStatus } from '../core';
 import { helLoadStatus } from '../core/consts';
+import { log } from '../core/microDebug';
 import loadApp from './loadApp';
 import waitAppEmit from './waitAppEmit';
 
@@ -31,4 +31,7 @@ export async function preFetchLib(appName: string, options: IPrefetchOptions) {
     loadAssetsStarter = await loadApp(appName, { ...options, controlLoadAssets: true });
   }
 
+  // 正在加载中，等待模块获取
+  emitApp = await waitAppEmit(appName, options, loadAssetsStarter);
+  log(`[[ ${preFetchLib} ]] return fetch&emit app:`, appName, options, emitApp);
 }

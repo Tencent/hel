@@ -66,4 +66,3 @@ export function log(p1, p2, p3, p4) {
 
   logFn(`${logPrefix} ${p1}`, colorDesc, p2, p3, p4);
 }
-

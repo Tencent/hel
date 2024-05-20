@@ -1,5 +1,13 @@
 import { getHelMicroShared, makeCacheNode } from './microShared';
 
+export function getHelEventBus() {
+  return getHelMicroShared().eventBus;
+}
+
+export function getUserEventBus() {
+  return getHelMicroShared().userEventBus;
+}
+
 export function getCacheRoot() {
   return getHelMicroShared().cacheRoot;
 }

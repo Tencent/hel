@@ -1,6 +1,6 @@
-import { safeGetMap, setSubMapValue } from './util';
-import { DEFAULT_ONLINE_VER, helLoadStatus } from './consts';
 import { getSharedCache } from './cache';
+import { DEFAULT_ONLINE_VER, helLoadStatus } from './consts';
+import { safeGetMap, setSubMapValue } from './util';
 
 const innerUtil = {
   getCustomData(appName, customKey, options) {

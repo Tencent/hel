@@ -1,8 +1,8 @@
-import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from './consts';
 import { getSharedCache } from './cache';
-import { safeGetMap } from './util';
-import { log } from './microDebug';
+import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from './consts';
 import dataUtil from './dataUtil';
+import { log } from './microDebug';
+import { safeGetMap } from './util';
 
 export function getVerLoadStatus(appName, options) {
   return dataUtil.getVerLoadStatus(appName, 'appName2verLoadStatus', options);

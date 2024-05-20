@@ -1,6 +1,5 @@
 import { getGlobalThis } from './globalRef';
 
-
 function getSearch() {
   const getLocSearch = (/** @type {Location} */ location) => {
     const locVar = location || {};

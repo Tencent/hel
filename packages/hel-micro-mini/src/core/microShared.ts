@@ -4,13 +4,7 @@ import { helConsts } from './consts';
 import { getGlobalThis } from './globalRef';
 import { inner } from './microDebug';
 
-const {
-  DEFAULT_API_URL,
-  PLAT_HEL,
-  PLAT_UNPKG,
-  DEFAULT_API_PREFIX,
-  CORE_VER,
-} = helConsts;
+const { DEFAULT_API_URL, PLAT_HEL, PLAT_UNPKG, DEFAULT_API_PREFIX, CORE_VER } = helConsts;
 ensureHelMicroShared();
 
 function makeOriginOptions(presetOptions?: any) {
