@@ -22,10 +22,12 @@ interface Response<T extends any = any> {
 export function getXHRIns() {
   let xhr;
   const { XMLHttpRequest, ActiveXObject } = getGlobalThis();
-  if (XMLHttpRequest) { // 标准浏览器
+  if (XMLHttpRequest) {
+    // 标准浏览器
     xhr = new XMLHttpRequest();
-  } else if (ActiveXObject) { // 旧版IE
-    xhr = new ActiveXObject("Microsoft.XMLHTTP");
+  } else if (ActiveXObject) {
+    // 旧版IE
+    xhr = new ActiveXObject('Microsoft.XMLHTTP');
   }
   return xhr;
 }
@@ -85,7 +87,7 @@ class XHR {
     req.onerror = (e) => wrapErrResult(e);
     req.onabort = (e) => wrapErrResult(e);
     req.ontimeout = (e) => wrapErrResult(e);
-    req.onprogress = () => { };
+    req.onprogress = () => {};
   }
 
   async request<T extends any = any>(url: string, method?: string): Promise<Response<T>> {
