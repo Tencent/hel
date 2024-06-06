@@ -29,7 +29,7 @@ import type {
   VersionId,
 } from '../types';
 
-const { getObjsVal } = commonUtil;
+const { getObjsVal, purify } = commonUtil;
 
 const { ENABLE_DISK_CACHE, ENABLE_SYNC_META, STORAGE_TYPE } = defaults;
 
@@ -185,6 +185,7 @@ interface IBatchOptionsCommon {
   storageType?: IBatchPreFetchLibOptions['storageType'];
   versionIdList?: string[];
   projectIdList?: string[];
+  branchIdList?: string[];
 }
 
 interface IBatchOptions {
@@ -202,12 +203,14 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
   appNames: BatchAppNames,
   batchOptions?: IBatchOptions,
 ): Promise<T> {
-  const versionIdList: string[] = [];
-  const projectIdList: string[] = [];
   const optionsMap = batchOptions?.preFetchConfigs || {};
   // 因 batchPreFetchLib 默认是私服，所以 semverApi 默认是 false
-  const getOptions: IBatchOptionsCommon = { semverApi: false, ...(batchOptions?.common || {}) };
-  const platform = getPlatform(getOptions.platform);
+  const commonOptions: IBatchOptionsCommon = { semverApi: false, ...(batchOptions?.common || {}) };
+  const platform = getPlatform(commonOptions.platform);
+  const { versionIdList = [], projectIdList = [], branchIdList = [] } = commonOptions;
+  const targetVerList: string[] = [];
+  const targetProjList: string[] = [];
+  const targetBranchList: string[] = [];
 
   if (appNames.length > 8) {
     throw new Error('only support 8 appName at most!'); // 当前最多只支持最多拉8个
@@ -216,34 +219,44 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
   let appDataList: IHelMeta[] = [];
   const shouldFetchAppNames: string[] = [];
   const ensuredOptionsMap: Record<string, IBatchPreFetchLibOptions> = {};
-  for (const name of appNames) {
-    const oriOptions = optionsMap[name];
-    let options: IPreFetchLibOptions = { platform };
-    if (!oriOptions || typeof oriOptions === 'string') {
-      options.versionId = (oriOptions as string) || '';
-    } else if (oriOptions) {
-      options = { ...oriOptions, ...options };
+  for (const idx in appNames) {
+    const name = appNames[idx];
+    const customOptions = optionsMap[name];
+    let options: IInnerPreFetchOptions = {
+      platform,
+      versionId: versionIdList[idx] || '',
+      projectId: projectIdList[idx] || '',
+      branchId: branchIdList[idx] || '',
+    };
+    if (typeof customOptions === 'string' && customOptions) {
+      options.versionId = customOptions;
+    } else if (typeof customOptions === 'object' && customOptions) {
+      options = { ...options, ...purify(customOptions) };
+      options.platform = platform; // 平台值优先使用 common 设定值
     }
     ensuredOptionsMap[name] = options;
 
-    options.enableDiskCache = getObjsVal([options, getOptions], 'enableDiskCache', ENABLE_DISK_CACHE);
-    options.enableSyncMeta = getObjsVal([options, getOptions], 'enableSyncMeta', ENABLE_SYNC_META);
-    options.storageType = getObjsVal([options, getOptions], 'storageType', STORAGE_TYPE);
+    options.enableDiskCache = getObjsVal([options, commonOptions], 'enableDiskCache', ENABLE_DISK_CACHE);
+    options.enableSyncMeta = getObjsVal([options, commonOptions], 'enableSyncMeta', ENABLE_SYNC_META);
+    options.storageType = getObjsVal([options, commonOptions], 'storageType', STORAGE_TYPE);
     const appData = await getAppFromRemoteOrLocal(name, options, { callRemote: false });
 
     if (!appData) {
-      versionIdList.push(options.versionId || '');
-      projectIdList.push(options.projectId || '');
       shouldFetchAppNames.push(name);
+      // for ts check, add || ''
+      targetVerList[idx] = options.versionId || '';
+      targetProjList[idx] = options.projectId || '';
+      targetBranchList[idx] = options.branchId || '';
     }
   }
-  getOptions.versionIdList = versionIdList;
-  getOptions.projectIdList = projectIdList;
 
-  if (getOptions.semverApi) {
+  commonOptions.versionIdList = targetVerList;
+  commonOptions.projectIdList = targetProjList;
+  commonOptions.branchIdList = targetBranchList;
+  if (commonOptions.semverApi) {
     appDataList = await Promise.all(shouldFetchAppNames.map((name) => apiSrv.getSubAppAndItsVersion(name, ensuredOptionsMap[name])));
   } else {
-    appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, getOptions);
+    appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, commonOptions);
   }
 
   // 设置到内存里，方便后续 preFetchLib 执行时可以跳过请求阶段

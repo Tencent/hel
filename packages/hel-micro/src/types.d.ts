@@ -163,10 +163,13 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    */
   versionId?: string;
   /**
-   * 该配置仅针对 helpack 平台有效（hel-pack对其做了实现）
-   *
+   * 该配置仅针对 helpack 平台有效（helpack对其做了实现）
    */
   projectId?: string;
+  /**
+   * 该配置仅针对 helpack 平台有效，同时存在 branchId 和 projectId 时，会优先采用 projectId
+   */
+  branchId?: string;
   /**
    * default: false,
    * 版本数据里是否返回 html_content，此参数仅作用于 semverApi 为 false 时有效，且需要对应后台自己去实现，以达到减少传输数据量的问题
@@ -221,7 +224,7 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /** default: true
    * 当设置硬盘缓存 enableDiskCache 为 true 且发现了已缓存元数据时，此参数才有效，
    * 表示是否发起延迟请求去异步地同步一下最新的元数据，
-   * 如设置了 enableDiskCache 为 true 且 enableSyncMeta 为 false 时，如已存在缓存元数据 sdk 则会一直使用该缓存
+   * 如设置了 enableDiskCache 为 true 且 enableSyncMeta 为 false 时，如已存在缓存元数据 sdk 则会一直使用该缓存，
    * 为了让 sdk 重新最新元数据，可调用 appMetaSrv.clearDiskCachedApp(appName) 来人工清除缓存数据
    */
   enableSyncMeta?: boolean;

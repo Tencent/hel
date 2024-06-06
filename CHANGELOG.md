@@ -1,5 +1,11 @@
 # Change Log
 
+[released] - 2024-06-06
+
+发布 `hel-micro`，版本`4.9.6`，特性包含：
+
+- `preFetchLib` 支持透传 `branchId`，服务于平台自定义请求
+
 [released] - 2024-05-20
 
 发布 `hel-micro`，版本`4.9.5`，特性包含：

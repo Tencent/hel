@@ -27,11 +27,11 @@ export interface IHelGetOptionsBase {
 
 export interface IHelGetOptions extends IHelGetOptionsBase {
   versionId?: string;
+  /** 仅服务于平台自定义请求 */
   projectId?: string;
+  /** 仅服务于平台自定义请求，同时存在 branchId 和 projectId 时，会优先采用 projectId */
+  branchId?: string;
   loadOptions?: IInnerPreFetchOptions;
-  /** 仅服务于自定义的 batch 模式 */
-  versionIdList?: string[];
-  projectIdList?: string[];
 }
 
 export type BatchGetFn = (passCtx: {
@@ -40,9 +40,14 @@ export type BatchGetFn = (passCtx: {
   innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IHelMeta[]>;
 }) => Promise<IHelMeta[]> | IHelMeta[];
 
-export interface IHelBatchGetOptions extends IHelGetOptions {
+export interface IHelBatchGetOptions extends IHelGetOptionsBase {
   batchGetFn?: BatchGetFn;
+  versionIdList?: string[];
+  projectIdList?: string[];
+  branchIdList?: string[];
 }
+
+type IInnerHelGetOptions = IHelBatchGetOptions & IHelGetOptions;
 
 /** 内部用的工具函数 */
 const inner = {
@@ -156,8 +161,18 @@ async function getSemverUrl(apiHost: string, appName: string, versionId: string,
 /**
  * 生成请求的自定义平台的请求信息
  */
-export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], getOptions: IHelGetOptions) {
-  const { versionId, projectId, apiMode, isFullVersion = false, versionIdList = [], projectIdList = [], loadOptions = {} } = getOptions;
+export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], getOptions: IInnerHelGetOptions) {
+  const {
+    versionId,
+    projectId,
+    branchId,
+    apiMode,
+    isFullVersion = false,
+    versionIdList = [],
+    projectIdList = [],
+    branchIdList = [],
+    loadOptions = {},
+  } = getOptions;
   const platform = getPlatform(getOptions.platform);
 
   // trust me, appName will be reassign later
@@ -165,12 +180,14 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   let urlAppName = appName;
   let urlVersion = versionId;
   let urlProjId = projectId;
+  let urlBranchId = branchId;
   let isBatch = false;
   if (Array.isArray(appNameOrNames)) {
     [appName] = appNameOrNames;
     urlAppName = appNameOrNames.join(',');
     urlVersion = versionIdList.join(',');
     urlProjId = projectIdList.join(',');
+    urlBranchId = branchIdList.join(',');
     isBatch = true;
   }
 
@@ -209,6 +226,7 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   url = inner.appendSearchKV(url, 'userName', userName);
   url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
+  url = inner.appendSearchKV(url, 'branch', urlBranchId);
   url = inner.appendSearchKV(url, 'gray', grayVar);
   url = inner.appendSuffix(url, apiSuffix);
 

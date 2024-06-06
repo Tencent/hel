@@ -120,6 +120,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     enableSyncMeta = defaults.ENABLE_SYNC_META,
     versionId = '',
     projectId = '',
+    branchId,
     isFullVersion = false,
     custom,
     strictMatchVer,
@@ -143,6 +144,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   // TODO : semverApi 下沉到 isEmitVerMatchInputVer 里面
   if (
     !semverApi
+    && !branchId
     && memApp
     && memAppVersion
     && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
@@ -150,11 +152,11 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     return { appInfo: memApp, appVersion: memAppVersion };
   }
 
-  const srcInnerOptions = { platform, apiMode, versionId, projectId, isFullVersion, loadOptions: options };
+  const srvInnerOptions = { platform, apiMode, versionId, projectId, branchId, isFullVersion, loadOptions: options };
   let mayCachedApp: ICacheData | null = null;
   const tryGetFromRemote = async (allowGet: boolean) => {
     if (allowGet) {
-      const remoteApp = await getAndCacheApp(appName, srcInnerOptions);
+      const remoteApp = await getAndCacheApp(appName, srvInnerOptions);
       return remoteApp;
     }
     return null;
