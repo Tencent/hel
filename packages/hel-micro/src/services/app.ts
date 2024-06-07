@@ -84,6 +84,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     enableSyncMeta = defaults.ENABLE_SYNC_META,
     versionId = '',
     projectId = '',
+    branchId,
     custom,
     strictMatchVer,
   } = options;
@@ -94,6 +95,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   if (isCustomValid(custom)) {
     const { app, version } = await getCustomMeta(appName, custom);
     cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
+    core.setAppPlatform(app.app_group_name, platform);
     return { appInfo: app, appVersion: version };
   }
 
@@ -103,6 +105,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   // 优先从内存获取
   if (
     platform !== PLAT_UNPKG
+    && !branchId
     && memApp
     && memAppVersion
     && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
@@ -110,11 +113,11 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     return { appInfo: memApp, appVersion: memAppVersion };
   }
 
-  const srcInnerOptions = { platform, apiMode, versionId, projectId, loadOptions: options };
+  const srvInnerOptions = { platform, apiMode, versionId, projectId, branchId, loadOptions: options };
   let mayCachedApp: ICacheData | null = null;
   const tryGetFromRemote = async (allowGet: boolean) => {
     if (allowGet) {
-      const remoteApp = await getAndCacheApp(appName, srcInnerOptions);
+      const remoteApp = await getAndCacheApp(appName, srvInnerOptions);
       return remoteApp;
     }
     return null;
@@ -149,7 +152,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   // 但是依然强烈建议给 exposeLib 、libReady 显式指定平台值，避免用户通过 preFetchLib 引入了多平台的同名包体时
   // 出现推导错误的情况出现
   if (mayCachedApp) {
-    core.setAppPlatform(appName, platform);
+    core.setAppPlatform(mayCachedApp.appInfo.app_group_name, platform);
   }
 
   return mayCachedApp;

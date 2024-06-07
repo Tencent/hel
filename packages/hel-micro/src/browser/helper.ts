@@ -1,6 +1,22 @@
 import storageKeys from '../consts/storageKeys';
 import { getGlobalThis } from '../deps/helMicroCore';
+import type { AssetUrlType } from '../types';
 import { getIndexedDBFactory, IndexedDBStorage } from './indexeddb';
+
+function isRelativePath(path: string) {
+  if (path.startsWith('//')) return false;
+  return path.startsWith('/') || path.startsWith('./') || path.startsWith('../');
+}
+
+export function getAssetUrlType(webDirPath: string, url: string): AssetUrlType {
+  if (url.startsWith(webDirPath)) {
+    return 'build'; // 是构建生成的 css 文件
+  }
+  if (isRelativePath(url)) {
+    return 'relative';
+  }
+  return 'static';
+}
 
 export function getIndexedDB() {
   if (!getIndexedDBFactory()) return null;

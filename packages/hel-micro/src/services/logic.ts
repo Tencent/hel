@@ -1,4 +1,5 @@
 import { PLAT_UNPKG } from '../consts/logic';
+import type { IGetOptions } from '../deps/helMicroCore';
 import {
   getAppMeta,
   getPlatform,
@@ -7,7 +8,6 @@ import {
   getVerExtraCssList,
   getVerLib,
   getVersion,
-  IGetOptions,
   libReady,
   log,
   setAppMeta,

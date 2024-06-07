@@ -1,130 +1,65 @@
 import { getGlobalThis } from '../deps/helMicroCore';
 import type { IAssetItem, IAssetItemAttrs, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from '../deps/helTypes';
-import type { CssAppendType, IChangeAttrs, IInnerPreFetchOptions, ILinkInfo, IScriptInfo } from '../types';
-import { getAllExtraCssList, helLinkId, helScriptId, merge2List, noop } from '../util';
+import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
+import { getAllExtraCssList, merge2List, noop, okeys } from '../util';
+import { getAssetUrlType } from './helper';
 
-/**
- * 做一下净化处理
- * @param domBaseURI - http://localhost:3000/ or http://localhost:3000/xx/yy/copyright
- * @returns
- */
-function pureDomBaseURI(domBaseURI: string) {
-  // http://localhost:3000/xx/yy/copyright --> localhost:3000/xx/yy/copyright
-  const [protocolStr, restStr] = domBaseURI.split('//');
-
-  const arr = restStr.split('/'); // arr2[0]---> localhost:3000
-  // 'http:' + '//' + 'localhost:3000' + '/';
-  return `${protocolStr}//${arr[0]}/`;
-}
-
-/**
- *
- * @param dom
- * @param src - /xx/yy/static/js/runtime-main.fe4e0898.js
- * @returns
- */
-function isDomSrcEqualSrc(dom: HTMLScriptElement, src: string) {
-  /**
-    if same origin
-    dom.src http://localhost:3000/xx/yy/static/js/runtime-main.fe4e0898.js
-    dom.baseURI http://localhost:3000/
-
-    if different origin
-    dom.src https://xxx.cdn.com/js/libs/lib-name/lib-bundle-v1.0.0.min.js
-    dom.baseURI http://localhost:3000/
-   *
-   */
-  const domSrc = dom.src;
-  const domBaseURI = pureDomBaseURI(dom.baseURI);
-
-  let toCompareSrc = domSrc;
-  if (domSrc.startsWith(domBaseURI)) {
-    // if no length - 1:  toCompareSrc will be "xx/yy/static/js/runtime-main.fe4e0898.js"
-    // but src is "/xx/yy/static/js/runtime-main.fe4e0898.js"
-    toCompareSrc = domSrc.substring(domBaseURI.length - 1);
-  }
-  return toCompareSrc === src;
-}
-
-function isScriptExisted(scriptId: string, src: string) {
-  // avoid error: '#helScript_@xxx/yyy' is not a valid selector.
-  const doc = getGlobalThis()?.document;
-  let result = false;
-  if (!doc) {
-    return result;
-  }
-
+function isAssetExisted(selectors: string) {
   try {
-    // 为跳过其他错误干扰正常运行，此处不适合单独 try querySelectorAll
-    const doms = doc.querySelectorAll(`#${scriptId}`);
-    const len = doms.length;
-    for (let i = 0; i < len; i++) {
-      const dom = doms[i];
-      if (dom.nodeName === 'SCRIPT' && isDomSrcEqualSrc(dom as HTMLScriptElement, src)) {
-        result = true;
-        break;
-      }
-    }
-
-    return result;
+    const doc = getGlobalThis()?.document;
+    const el = doc.querySelector(selectors);
+    return !!el;
   } catch (err: any) {
-    return result;
+    return false;
   }
 }
 
-function tryCallChangeAttrs(
-  tag: 'link' | 'script',
-  tryOptions: {
-    appName: string;
-    appGroupName: string;
-    el: HTMLLinkElement | HTMLScriptElement;
-    attrs: ILinkAttrs | IScriptAttrs;
-    changeAttrs?: IChangeAttrs;
-  },
-) {
-  const { changeAttrs } = tryOptions;
-  if (changeAttrs) {
-    const { appName, appGroupName, el, attrs } = tryOptions;
-    const isLink = <Tag extends 'link' | 'script'>(
-      tag: Tag,
-      info: { el: HTMLLinkElement | HTMLScriptElement; attrs: ILinkAttrs | IScriptAttrs },
-    ): info is Tag extends 'link' ? ILinkInfo : IScriptInfo => {
-      noop(info);
-      return tag === 'link';
-    };
-    changeAttrs(el, { appName, appGroupName, attrs, tag, isLink });
+function isExLoaded(attrs: Record<string, any>, tag: string) {
+  const ex = attrs['data-helex'];
+  const g = getGlobalThis();
+  if (ex) {
+    // @ts-ignore, avoid error: expression of type 'any' can't be used to index type 'typeof globalThis'
+    if (tag === 'script' && g[ex]) {
+      // script 型的 ex，优先查 globalThis 上是否已绑定
+      return true;
+    }
+    // 查 helex 特征值对应的资源是否存在
+    return isAssetExisted(`${tag}[data-helex="${ex}"]`);
   }
+  return false;
 }
 
 interface ICreateScriptOptions {
   attrs: IScriptAttrs;
   appGroupName: string;
   appendToBody?: boolean;
-  changeAttrs?: IChangeAttrs;
   onloadCb?: () => void;
 }
 
 function createScriptElement(appName: string, options: ICreateScriptOptions) {
-  const { attrs, appendToBody = true, appGroupName, onloadCb, changeAttrs } = options;
-  const { src } = attrs;
+  noop(appName);
+  const { attrs, appendToBody = true, onloadCb } = options;
+  const { src, ...rest } = attrs;
+  const restObj: Record<string, any> = rest;
   if (!src) {
     return false;
   }
 
   const doc = getGlobalThis().document;
-  const scriptId = helScriptId(appName);
-  if (isScriptExisted(scriptId, src)) {
+  if (isAssetExisted(`script[src="${src}"]`)) {
+    return false;
+  }
+  if (isExLoaded(restObj, 'script')) {
     return false;
   }
 
-  const scriptDom = doc.createElement('script');
-  scriptDom.id = scriptId;
-  scriptDom.src = src;
-  if (onloadCb) scriptDom.onload = onloadCb;
-  tryCallChangeAttrs('script', { appName, appGroupName, el: scriptDom, attrs, changeAttrs });
+  const el = doc.createElement('script');
+  el.setAttribute('src', src);
+  okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
+  if (onloadCb) el.onload = onloadCb;
 
-  if (appendToBody) doc.body.appendChild(scriptDom);
-  else doc.head.appendChild(scriptDom);
+  if (appendToBody) doc.body.appendChild(el);
+  else doc.head.appendChild(el);
 
   return true;
 }
@@ -133,24 +68,26 @@ interface ICreateLinkOptions {
   attrs: ILinkAttrs;
   appGroupName: string;
   appendToBody?: boolean;
-  changeAttrs?: IChangeAttrs;
 }
 
 function createLinkElement(appName: string, options: ICreateLinkOptions) {
-  const { appGroupName, appendToBody = false, attrs, changeAttrs } = options;
-  const { href, rel, as } = attrs;
+  noop(appName);
+  const { appendToBody = false, attrs } = options;
+  const { href, rel, ...rest } = attrs;
+  const restObj: Record<string, any> = rest;
   const doc = getGlobalThis().document;
   if (!href) return;
+  if (isExLoaded(restObj, 'link')) {
+    return false;
+  }
 
-  const linkDom = doc.createElement('link');
-  linkDom.id = helLinkId(appName);
-  linkDom.rel = rel || 'stylesheet';
-  linkDom.href = href;
-  if (as) linkDom.as = as;
-  tryCallChangeAttrs('link', { appName, appGroupName, el: linkDom, attrs, changeAttrs });
+  const el = doc.createElement('link');
+  el.setAttribute('rel', rel || 'stylesheet');
+  el.setAttribute('href', href);
+  okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
 
-  if (appendToBody) doc.body.appendChild(linkDom);
-  else doc.head.appendChild(linkDom);
+  if (appendToBody) doc.body.appendChild(el);
+  else doc.head.appendChild(el);
 }
 
 interface ICreateDomOptions {
@@ -158,17 +95,9 @@ interface ICreateDomOptions {
   webDirPath: string;
   appendToBody: boolean;
   appendCss: boolean;
-  cssAppendTypes: CssAppendType[];
+  cssAppendTypes: AssetUrlType[];
   excludeCssList: string[];
-  changeAttrs?: IChangeAttrs;
 }
-
-const getCssType = (webDirPath: string, cssUrl: string): CssAppendType => {
-  if (cssUrl.startsWith(webDirPath)) {
-    return 'build'; // 是构建生成的新css文件
-  }
-  return 'static';
-};
 
 // 相比 as 写法，谓词可直接将 attrs 类型缩小并适用于整个 if block 块里
 function isLinkAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is ILinkAttrs {
@@ -182,23 +111,27 @@ function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAt
 }
 
 function createDomByAssetList(appName: string, assetList: IAssetItem[], options: ICreateDomOptions) {
-  const { appGroupName, appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList, changeAttrs } = options;
+  const { appGroupName, appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList } = options;
 
   assetList.forEach((v) => {
-    const { tag, attrs } = v;
+    // 兼容历史元数据，无 append 的话就默认为 true
+    const { tag, attrs, append = true } = v;
+    if (!append) {
+      return;
+    }
     // 处理 link 标签
     if (isLinkAttrs(tag, attrs)) {
-      const createLinkOptions = { appGroupName, appendToBody, attrs, changeAttrs };
+      const createLinkOptions = { appGroupName, appendToBody, attrs };
       const { href } = attrs;
-      // .ico 文件默认不加载
-      if (href.endsWith('.ico')) {
+      // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
+      if (href.endsWith('.ico') && v.append !== true) {
         return;
       }
 
       if (href.endsWith('.css')) {
         if (
           appendCss
-          && cssAppendTypes.includes(getCssType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
+          && cssAppendTypes.includes(getAssetUrlType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
           && !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
         ) {
           createLinkElement(appName, createLinkOptions);
@@ -211,7 +144,7 @@ function createDomByAssetList(appName: string, assetList: IAssetItem[], options:
     }
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
-      createScriptElement(appName, { appGroupName, appendToBody, attrs, changeAttrs });
+      createScriptElement(appName, { appGroupName, appendToBody, attrs });
     }
   });
 }
@@ -228,13 +161,7 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     additional_body_scripts: additionalBodyScripts = [],
   } = app;
   const { headAssetList = [], bodyAssetList = [], webDirPath, chunkCssSrcList = [] } = version.src_map;
-  const {
-    useAdditionalScript = false,
-    appendCss = true,
-    changeAttrs,
-    cssAppendTypes = ['static', 'build'],
-    getExcludeCssList,
-  } = loadOptions;
+  const { useAdditionalScript = false, appendCss = true, cssAppendTypes = ['static', 'build'], getExcludeCssList } = loadOptions;
   const allExtraCssList = getAllExtraCssList(loadOptions);
   const allCssList = merge2List(allExtraCssList, chunkCssSrcList);
   const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
@@ -243,10 +170,12 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
     if (!scripts) return;
     // 严格按照顺序创建
     for (const scriptUrl of scripts) {
-      if (scriptUrl.endsWith('.css') && appendCss && !excludeCssList.includes(scriptUrl)) {
-        createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl, rel: 'stylesheet' }, changeAttrs });
+      if (scriptUrl.endsWith('.css')) {
+        if (appendCss && !excludeCssList.includes(scriptUrl)) {
+          createLinkElement(name, { appGroupName, appendToBody, attrs: { href: scriptUrl } });
+        }
       } else {
-        createScriptElement(name, { appGroupName, appendToBody, attrs: { src: scriptUrl }, changeAttrs });
+        createScriptElement(name, { appGroupName, appendToBody, attrs: { src: scriptUrl } });
       }
     }
   };
@@ -258,7 +187,7 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
 
   createAdditionalScripts(allExtraCssList, false);
 
-  const optionsCommon = { appGroupName, excludeCssList, webDirPath, appendCss, cssAppendTypes, changeAttrs };
+  const optionsCommon = { appGroupName, excludeCssList, webDirPath, appendCss, cssAppendTypes };
   createDomByAssetList(name, headAssetList, { appendToBody: false, ...optionsCommon });
   createDomByAssetList(name, bodyAssetList, { appendToBody: true, ...optionsCommon });
 }

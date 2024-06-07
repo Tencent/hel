@@ -30,10 +30,11 @@ export function getMetaDataUrl(
     /** default: 'http'， 在 node 环境里使用 http 请求不会存在证书过期问题，故协议类型默认值为 http */
     protocol?: 'http' | 'https';
     projectId?: string;
+    branchId?: string;
   },
 ): string {
-  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId } = options || {};
-  let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, apiMode, projectId });
+  const { versionId, platform, apiMode = API_NORMAL_GET, protocol = 'http', projectId, branchId } = options || {};
+  let { url } = innerApiSrv.prepareHelPlatRequestInfo(appName, { platform, versionId, branchId, apiMode, projectId });
   if (protocol === 'http') {
     url = url.replace('https:', 'http:');
   }

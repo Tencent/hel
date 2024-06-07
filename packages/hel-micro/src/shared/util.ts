@@ -28,7 +28,7 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
 
   // 用在线版本或灰度版本比较
   if (!inputVer && appMeta) {
-    const { online_version, build_version } = appMeta;
+    const { online_version: onlineVer, build_version: buildVer } = appMeta;
     // 判断 projectId 是否传入，传入的话看 proj_ver.map[projectId].o 的值是否存在且是否和 emitVer 相等
     if (projectId) {
       const verMap = appMeta.proj_ver?.map || {};
@@ -36,10 +36,10 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
       if (config) {
         // 后台是按 p1 项目灰度版本 --> p2 应用灰度版本 --> p3 项目线上版本 优先级依次降低返回的版本
         // 这里的匹配规则和后台严格对应上
-        return emitVer === config.b || emitVer === build_version || emitVer === config.o;
+        return emitVer === config.b || emitVer === buildVer || emitVer === config.o;
       }
     }
-    return emitVer === online_version || emitVer === build_version;
+    return emitVer === onlineVer || emitVer === buildVer;
   }
 
   return emitVer === inputVer;

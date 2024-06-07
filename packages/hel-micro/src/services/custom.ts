@@ -4,27 +4,36 @@ import { noop, requestGet } from '../util';
 
 const type2conf = {
   js: {
-    endMark: '.js',
+    endMarks: ['.js', '.ts'],
     reg: '(?<=(src="))[^"]*?(?=")',
     tag: 'script',
     attrKey: 'src',
   },
   css: {
-    endMark: '.css',
+    endMarks: ['.css'],
     reg: '(?<=(href="))[^"]*?(?=")',
     tag: 'link',
     attrKey: 'href',
   },
 };
+const LOCAL_STR = 'http://localhost';
+const LOCAL_127 = 'http://127.0.0.1';
 
 const inner = {
+  isSrcMatchHost(src: string, host: string) {
+    // 支持 custom 设定 localhost 或 127 时，能相互匹配
+    if (host.startsWith(LOCAL_STR) || host.startsWith(LOCAL_127)) {
+      return src.startsWith(LOCAL_STR) || src.startsWith(LOCAL_127);
+    }
+    return src.startsWith(host);
+  },
   extractAssetList(htmlText: string, options: { host: string; type: 'js' | 'css' }) {
     // TODO: 分析 script style 内部文本（现阶段暂不支持内部文本）
     // const arr = Array.from(htmlText.matchAll(new RegExp('(?<=\<script\>).*?(?=(\</script\>|$))', 'g')));
     // arr.forEach(item=> console.log(item[0])); // item[0] 即内部文本
 
     const { host, type } = options;
-    const { endMark, tag, reg, attrKey } = type2conf[type];
+    const { endMarks, tag, reg, attrKey } = type2conf[type];
 
     // 此处不能采用 const reg = /(?<=(src="))[^"]*?(?=")/ig 写法，谨防 safari 浏览器报错
     // SyntaxError: Invalid regular expression: invalid group specifier name
@@ -33,9 +42,18 @@ const inner = {
     const targetList: any[] = [];
 
     rawList.forEach((v) => {
-      if (!v.startsWith(host)) return;
-      if (!v.endsWith(endMark)) return;
-      targetList.push({ tag, attrs: { [attrKey]: v } });
+      if (!inner.isSrcMatchHost(v, host)) {
+        return;
+      }
+      if (endMarks.every((endMark) => !v.endsWith(endMark))) {
+        return;
+      }
+      const toPush = { tag, attrs: { [attrKey]: v } };
+      // TODO: 优化为读取到 module 属性存在就设置 type = 'module'
+      if (v.endsWith('.ts')) {
+        toPush.attrs.type = 'module'; // support esm
+      }
+      targetList.push(toPush);
     });
     return targetList;
   },
@@ -62,7 +80,8 @@ export async function getCustomMeta(appName: string, custom: ICustom) {
   const t = Date.now();
   if (!skipFetchHelMeta) {
     try {
-      const { reply } = await requestGet(`${host}/hel-meta.json?_t=${t}`);
+      const helMetaUrl = host.endsWith('hel-meta.json') ? host : `${host}/hel-meta.json?_t=${t}`;
+      const { reply } = await requestGet(helMetaUrl);
       if (reply) {
         reply.app.__fromCust = true;
         return reply;

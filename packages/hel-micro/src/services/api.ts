@@ -23,10 +23,9 @@ export interface IHelGetOptionsBase {
 export interface IHelGetOptions extends IHelGetOptionsBase {
   versionId?: string;
   projectId?: string;
+  /** 仅服务于平台自定义请求，同时存在 branchId 和 projectId 时，会优先采用 projectId */
+  branchId?: string;
   loadOptions?: IInnerPreFetchOptions;
-  /** 仅服务于batch模式 */
-  versionIdList?: string[];
-  projectIdList?: string[];
 }
 
 export type BatchGetFn = (passCtx: {
@@ -35,9 +34,15 @@ export type BatchGetFn = (passCtx: {
   innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IAppAndVer[]>;
 }) => Promise<IAppAndVer[]> | IAppAndVer[];
 
-export interface IHelBatchGetOptions extends IHelGetOptions {
+export interface IHelBatchGetOptions extends IHelGetOptionsBase {
   batchGetFn?: BatchGetFn;
+  /** 仅服务于batch模式 */
+  versionIdList?: string[];
+  projectIdList?: string[];
+  branchIdList?: string[];
 }
+
+type IInnerHelGetOptions = IHelBatchGetOptions & IHelGetOptions;
 
 /** 内部用的工具函数 */
 const inner = {
@@ -139,15 +144,17 @@ async function getUnpkgUrl(apiHost: string, appName: string, versionId: string, 
 /**
  * 生成请求的 hel-pack 平台的请求信息
  */
-export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], getOptions: IHelGetOptions) {
+export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], getOptions: IInnerHelGetOptions) {
   const {
     versionId,
     projectId,
+    branchId,
     platform,
     apiMode,
     isFullVersion = false,
     versionIdList = [],
     projectIdList = [],
+    branchIdList = [],
     loadOptions,
   } = getOptions;
 
@@ -156,12 +163,14 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   let urlAppName = appName;
   let urlVersion = versionId;
   let urlProjId = projectId;
+  let urlBranchId = branchId;
   let isBatch = false;
   if (Array.isArray(appNameOrNames)) {
     [appName] = appNameOrNames;
     urlAppName = appNameOrNames.join(',');
     urlVersion = versionIdList.join(',');
     urlProjId = projectIdList.join(',');
+    urlBranchId = branchIdList.join(',');
     isBatch = true;
   }
 
@@ -170,7 +179,7 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   const userName = getUserName?.({ platform: targetPlatform, appName }) || guessUserName(userLsKey || apiSrvConst.USER_KEY);
 
   const grayFn = loadOptions?.shouldUseGray || shouldUseGray;
-  const grayResult = grayFn?.({ appName });
+  const grayResult = grayFn?.();
   let grayVar = '';
   if (typeof grayResult === 'boolean') {
     grayVar = grayResult ? '1' : '0';
@@ -192,6 +201,7 @@ export function prepareHelPlatRequestInfo(appNameOrNames: string | string[], get
   url = inner.appendSearchKV(url, 'userName', userName);
   url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
+  url = inner.appendSearchKV(url, 'branch', urlBranchId);
   url = inner.appendSearchKV(url, 'gray', grayVar);
   url = inner.appendSuffix(url, apiSuffix);
 
@@ -262,9 +272,9 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, apiMode, loadOptions } = getOptions;
   const { getSubAppAndItsVersionFn, platform: targetPlatform } = getPlatformConfig(platform);
-  const { url, userName } = await prepareRequestInfo(appName, getOptions);
   // 如用户在 preFetchLib 或 init 时定义了 getSubAppAndItsVersionFn 函数，则走用户的自定义函数
   const getFn = loadOptions?.getSubAppAndItsVersionFn || getSubAppAndItsVersionFn;
+  const { url, userName } = await prepareRequestInfo(appName, getOptions);
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {

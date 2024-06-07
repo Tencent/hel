@@ -45,7 +45,7 @@ export const { resetGlobalThis } = core;
  */
 const eventBus = core.getUserEventBus();
 
-core.log(`hel-micro ${defaultsCst.VER}`);
+core.log(`hel-micro ver ${defaultsCst.VER}`);
 
 const toExport = {
   preFetchLib,

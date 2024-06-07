@@ -1,12 +1,12 @@
-import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed, IShouldUseGray } from './deps/helMicroCore';
-import type { ApiMode, ILinkAttrs, IScriptAttrs, ISubAppVersion, Platform } from './deps/helTypes';
+import type { IGetSubAppAndItsVersionFn, IOnFetchMetaFailed } from './deps/helMicroCore';
+import type { ApiMode, ISubAppVersion, Platform } from './deps/helTypes';
 
 export interface IGetOptionsLoose {
   platform?: string;
   versionId?: string;
 }
 
-export type CssAppendType = 'static' | 'build';
+export type AssetUrlType = 'build' | 'static' | 'relative';
 
 export type AnyRecord = Record<string, any>;
 
@@ -65,47 +65,6 @@ export interface ICustom {
   skipFetchHelMeta?: boolean;
 }
 
-export interface ILinkInfo {
-  el: HTMLLinkElement;
-  attrs: ILinkAttrs;
-}
-
-export interface IScriptInfo {
-  el: HTMLScriptElement;
-  attrs: IScriptAttrs;
-}
-
-export interface IIsLink {
-  <Tag extends 'link' | 'script'>(
-    tag: Tag,
-    info: { el: HTMLLinkElement | HTMLScriptElement; attrs: ILinkAttrs | IScriptAttrs },
-  ): info is Tag extends 'link' ? ILinkInfo : IScriptInfo;
-}
-
-export interface IChangeAttrsFnCtx {
-  appName: string;
-  appGroupName: string;
-  /** 原始的属性对象 */
-  attrs: ILinkAttrs | IScriptAttrs;
-  tag: 'link' | 'script';
-  /**
-   * 提供给用户的辅助函数，辅助缩窄 el 和 attrs 的类型，方便在 if else 块使用
-   * ```ts
-   * const info = { el, attrs };
-   * if (isLink(tag, info)) {
-   *   // now info.el type: HTMLLinkElement, info.attrs type: ILinkAttrs
-   * } else {
-   *   // now info.el type: HTMLScriptElement, info.attrs type: IScriptAttrs
-   * }
-   * ```
-   */
-  isLink: IIsLink;
-}
-
-export interface IChangeAttrs {
-  (el: HTMLLinkElement | HTMLScriptElement, fnCtx: IChangeAttrsFnCtx): void;
-}
-
 export interface IPreFetchOptionsBase {
   /**
    * 是否严格匹配版本，未配置的话默认走 平台配置默认值 true
@@ -123,16 +82,21 @@ export interface IPreFetchOptionsBase {
    */
   projectId?: string;
   /**
+   * 该配置仅针对 helpack 平台有效，同时存在 branchId 和 projectId 时，会优先采用 projectId
+   */
+  branchId?: string;
+  /**
    * default: true
    */
   appendCss?: boolean;
   /**
-   * default: ['static', 'build']
+   * default: ['static', 'relative', 'build']
    * 该配置项在 appendCss 为 true 时有效，表示按要附加哪几种类型的 css 链接到 html 文档上
-   * 'static' 表示链接的静态css文件
+   * 'static' 表示homePage之外 绝对路径导入的css文件
+   * 'relative' 表示homePage之外 相对路径导入的css文件
    * 'build' 表示每次构建新生成的css文件
    */
-  cssAppendTypes?: Array<CssAppendType>;
+  cssAppendTypes?: Array<AssetUrlType>;
   /**
    * 默认 []
    * 返回的要排除的 css 链接列表，这些 css 将不会附加到 html 文档上
@@ -184,21 +148,11 @@ export interface IPreFetchOptionsBase {
    */
   skip404Sniff?: boolean;
   /**
-   * 直接操作回调参数 el 添加属性即可，例如
-   * ```ts
-   *  el.setAttribute('crossorigin', 'anonymous');
-   *  // or
-   *  el.crossOrigin = 'anonymous'; // 不推荐此方法，推荐使用 setAttribute 修改属性
-   * ```
-   * 如需查看更多信息，可查看第二位参数 fnCtx ( 可查类型 IChangeAttrsFnCtx )
-   */
-  changeAttrs?: IChangeAttrs;
-  /**
    * sdk端控制是否下发灰度版本，不定义次函数走后台内置的灰度规则
    * true：强制返回灰度版本，false：强制返回线上版本
    * 定义了此函数，返回true或false都会覆盖掉后台内置的灰度规则，返回 null 依然还是会走后台内置的灰度规则
    */
-  shouldUseGray?: IShouldUseGray;
+  shouldUseGray?: () => boolean | null;
 }
 
 export interface IInnerPreFetchOptions extends IPreFetchOptionsBase {

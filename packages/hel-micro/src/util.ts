@@ -45,14 +45,6 @@ export function purify(obj: Record<string, any>, isValueValid?: (val: any) => bo
   return pureObj;
 }
 
-export function helScriptId(appName: string) {
-  return `helScript_${appName}`;
-}
-
-export function helLinkId(appName: string) {
-  return `helLink_${appName}`;
-}
-
 interface NullDef {
   nullValues?: any[];
   /** {} 算不算空，true算空 */

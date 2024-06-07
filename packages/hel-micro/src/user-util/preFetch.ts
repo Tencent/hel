@@ -16,6 +16,7 @@ import type {
   IPreFetchLibOptions,
   VersionId,
 } from '../types';
+import { purify } from '../util';
 
 type LoadAssetsStarter = (() => void) | null;
 
@@ -151,6 +152,7 @@ interface IBatchPreFetchLibCommon {
   storageType?: IBatchPreFetchLibOptions['storageType'];
   versionIdList?: string[];
   projectIdList?: string[];
+  branchIdList?: string[];
 }
 
 /**
@@ -167,11 +169,13 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
     common?: IBatchPreFetchLibCommon;
   },
 ): Promise<T> {
-  const versionIdList: string[] = [];
-  const projectIdList: string[] = [];
   const optionsMap = batchOptions?.preFetchConfigs || {};
-  const getOptions: IBatchPreFetchLibCommon = { ...(batchOptions?.common || {}) };
-  const platform = getDefaultPlatform(getOptions.platform);
+  const commonOptions: IBatchPreFetchLibCommon = { ...(batchOptions?.common || {}) };
+  const platform = getDefaultPlatform(commonOptions.platform);
+  const { versionIdList = [], projectIdList = [], branchIdList = [] } = commonOptions;
+  const targetVerList: string[] = [];
+  const targetProjList: string[] = [];
+  const targetBranchList: string[] = [];
 
   if (platform === PLAT_UNPKG) {
     throw new Error('only support platform hel!');
@@ -182,39 +186,56 @@ export async function batchPreFetchLib<T extends AnyRecord[] = AnyRecord[]>(
 
   const shouldFetchAppNames: string[] = [];
   const ensuredOptionsMap: Record<string, IBatchPreFetchLibOptions> = {};
+  let idx = 0;
+  // why hot for in: for..in loops iterate over the entire prototype chain, which is virtually never what you want
   for (const name of appNames) {
-    const oriOptions = optionsMap[name];
-    let options: IPreFetchLibOptions = {};
-    if (!oriOptions || typeof oriOptions === 'string') {
-      options.versionId = (oriOptions as string) || '';
-    } else if (oriOptions) {
-      options = { ...oriOptions };
+    const customOptions = optionsMap[name];
+    let options: IInnerPreFetchOptions = {
+      platform,
+      versionId: versionIdList[idx] || '',
+      projectId: projectIdList[idx] || '',
+      branchId: branchIdList[idx] || '',
+    };
+
+    if (typeof customOptions === 'string' && customOptions) {
+      options.versionId = customOptions;
+    } else if (typeof customOptions === 'object' && customOptions) {
+      options = { ...options, ...purify(customOptions) };
+      options.platform = platform; // 平台值优先使用 common 设定值
     }
     ensuredOptionsMap[name] = options;
 
-    options.enableDiskCache = options.enableDiskCache ?? getOptions.enableDiskCache ?? defaults.ENABLE_DISK_CACHE;
-    options.enableSyncMeta = options.enableSyncMeta ?? getOptions.enableSyncMeta ?? defaults.ENABLE_SYNC_META;
-    options.storageType = options.storageType ?? getOptions.storageType ?? defaults.STORAGE_TYPE;
+    options.enableDiskCache = options.enableDiskCache ?? commonOptions.enableDiskCache ?? defaults.ENABLE_DISK_CACHE;
+    options.enableSyncMeta = options.enableSyncMeta ?? commonOptions.enableSyncMeta ?? defaults.ENABLE_SYNC_META;
+    options.storageType = options.storageType ?? commonOptions.storageType ?? defaults.STORAGE_TYPE;
     const appData = await getAppFromRemoteOrLocal(name, options, { callRemote: false });
 
     if (!appData) {
-      versionIdList.push(options.versionId || '');
-      projectIdList.push(options.projectId || '');
       shouldFetchAppNames.push(name);
+      // for ts check, add || ''
+      targetVerList[idx] = options.versionId || '';
+      targetProjList[idx] = options.projectId || '';
+      targetBranchList[idx] = options.branchId || '';
     }
+    idx += 1;
   }
 
-  getOptions.versionIdList = versionIdList;
-  getOptions.projectIdList = projectIdList;
+  commonOptions.versionIdList = versionIdList;
+  commonOptions.projectIdList = projectIdList;
+  commonOptions.branchIdList = targetBranchList;
 
-  const appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, getOptions);
+  const appDataList = await apiSrv.batchGetSubAppAndItsVersion(shouldFetchAppNames, commonOptions);
   // 设置到内存里，方便后续 preFetchLib 执行时可以跳过请求阶段
   appDataList.forEach(({ app, version }) => {
     const loadOptions = ensuredOptionsMap[app.name] || {};
     cacheApp(app, { appVersion: version, platform, toDisk: loadOptions.enableDiskCache, loadOptions });
   });
 
-  const tasks = appNames.map((name) => preFetchLib(name, ensuredOptionsMap[name]));
+  const tasks = appNames.map((name) => {
+    // 刻意剔除 branchId，让 preFetchLib 内部逻辑能命中 cacheApp 逻辑生成的缓存
+    const { branchId, ...rest } = ensuredOptionsMap[name];
+    return preFetchLib(name, rest);
+  });
   const mods = await Promise.all(tasks);
   // @ts-ignore, trust user specified AnyRecord[]
   return mods;
