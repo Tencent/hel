@@ -8,14 +8,15 @@ interface IVerMatchOptions {
   strictMatchVer?: boolean;
   platform?: Platform;
   projectId?: string;
+  branchId?: string;
 }
+const fnMark = '[[ isEmitVerMatchInputVer ]]';
 
 /**
  * @returns true，匹配成功，false，匹配失败
  */
 export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOptions) {
-  const fnMark = '[[ isEmitVerMatchInputVer ]]';
-  const { platform, emitVer, inputVer, projectId } = options;
+  const { branchId, platform, emitVer, inputVer, projectId } = options;
   const strictMatchVer = alt.getVal(platform, 'strictMatchVer', [options.strictMatchVer]);
 
   const appMeta = getAppMeta(appName, platform);
@@ -32,6 +33,12 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
 
   // 用在线版本或灰度版本比较
   if (!inputVer && appMeta) {
+    // 存在分支id的话，采取总是相信子模块的策略
+    if (branchId) {
+      log(`${fnMark} found branchId ${branchId}`);
+      return true;
+    }
+
     const { online_version, build_version } = appMeta;
     // 判断 projectId 是否传入，传入的话看 proj_ver.map[projectId].o 的值是否存在且是否和 emitVer 相等
     if (projectId) {

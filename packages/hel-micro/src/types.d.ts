@@ -4,6 +4,7 @@ import type { ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion } from 'hel-type
 export interface IGetOptionsLoose {
   platform?: string;
   versionId?: string;
+  branchId?: string;
 }
 
 export type AssetUrlType = 'build' | 'static' | 'relative';
@@ -42,6 +43,7 @@ export interface IPlatAndVer {
 export interface IWaitStyleReadyOptions extends IPlatAndVer {
   platform: string;
   versionId: string;
+  branchId?: string;
   strictMatchVer?: boolean;
 }
 

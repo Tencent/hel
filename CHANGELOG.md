@@ -1,5 +1,11 @@
 # Change Log
 
+[released] - 2024-06-11
+
+发布 `hel-micro`，版本`4.9.7`，特性包含：
+
+- `isEmitVerMatchInputVer` 支持透传 `branchId` 做更准确的判断，避免 `waitAppReady` 函数一直处于等待状态
+
 [released] - 2024-06-06
 
 发布 `hel-micro`，版本`4.9.6`，特性包含：

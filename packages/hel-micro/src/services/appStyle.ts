@@ -102,11 +102,11 @@ const inner = {
     await new Promise((resolve) => {
       handleStyleFetched = (styleInfo: IEmitStyleInfo) => {
         const { appName: emitAppName, platform: emitPlatform, versionId: emitVer } = styleInfo;
-        const { versionId: inputVer, platform, strictMatchVer } = options;
+        const { branchId, versionId: inputVer, platform, strictMatchVer } = options;
         if (
           emitAppName !== appName
           || emitPlatform !== platform
-          || !isEmitVerMatchInputVer(appName, { platform, emitVer, inputVer, strictMatchVer })
+          || !isEmitVerMatchInputVer(appName, { branchId, platform, emitVer, inputVer, strictMatchVer })
         ) {
           return;
         }
@@ -142,7 +142,7 @@ const inner = {
 
   async fetchStyleData(appName: string, options: IFetchStyleOptions) {
     const platAndVer = getPlatAndVer(appName, options);
-    const { extraStyleStr = '', cssListToStr, extraCssList = [] } = options;
+    const { extraStyleStr = '', cssListToStr, extraCssList = [], strictMatchVer, branchId } = options;
     const { validCssList, onlyUseAppCssList, buildCssList, initExtraCssList, appCssList } = inner.computeStyleData(appName, options);
 
     // renderStyleStr 为渲染用到的样式字符串
@@ -165,7 +165,7 @@ const inner = {
 
       // 有其他上层调用已经触发样式获取逻辑，这里调用 waitStyleReady 等待样式获取动作完成即可
       if (status === LOADING) {
-        await inner.waitStyleReady(appName, { ...platAndVer, strictMatchVer: options.strictMatchVer });
+        await inner.waitStyleReady(appName, { ...platAndVer, strictMatchVer, branchId });
         appStyleStr = core.getAppStyleStr(appName, platAndVer) || '';
       } else if (status === NOT_LOAD) {
         core.setVerStyleStrStatus(appName, LOADING, platAndVer);

@@ -142,7 +142,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
   const appMeta = getAppMeta(appName, platform);
 
-  const { custom, trust } = preFetchOptions;
+  const { branchId, custom, trust } = preFetchOptions;
   const fixData = (fixOptions: IFixOptions) => {
     try {
       const shouldNext = isLib
@@ -181,7 +181,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
 
   const logStillWait = () => log(`${fnMark} still wait ${appPathDesc} emitted (appInfo,toMatch):`, appInfo, toMatch);
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
-  const toMatch = { platform, emitVer, inputVer, projectId, strictMatchVer };
+  const toMatch = { branchId, platform, emitVer, inputVer, projectId, strictMatchVer };
   if (appName !== emitAppName || !isEmitVerMatchInputVer(appName, toMatch)) {
     return logStillWait();
   }
