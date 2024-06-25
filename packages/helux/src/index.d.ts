@@ -119,9 +119,13 @@ export const useShared: typeof useSharedObject;
  * ```
  * 需注意此接口只接受普通对象，如传递共享对象给它会报错 OBJ_NOT_NORMAL_ERR
  * @param initialState
+ * @param isStable - 是否返回稳定对象
  * @returns
  */
-export function useObject<T extends Dict = Dict>(initialState: T | (() => T)): [T, (partialState: Partial<T>) => void];
+export function useObject<T extends Dict = Dict>(
+  initialState: T | (() => T),
+  isStable?: boolean,
+): [T, (partialState: Partial<T>) => void];
 
 /**
  * 使用服务注入模式开发 react 组件，可配和`useObject`和`useSharedObject`同时使用，详细使用方式见在线示例：
