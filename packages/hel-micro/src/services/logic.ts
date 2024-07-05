@@ -135,8 +135,15 @@ interface IJudgeOptions {
 }
 export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, preFetchOptions: IInnerPreFetchOptions) {
   const fnMark = '[[ judgeAppReady ]]';
-  log(`${fnMark} receive emitApp(appInfo):`, appInfo);
   const { versionId: inputVer = '', projectId, appName, platform, next, error, isLib, strictMatchVer } = options;
+  log(`${fnMark} receive emit app and judge (emitAppInfo, judgeOptions):`, appInfo, {
+    inputVer,
+    projectId,
+    appName,
+    platform,
+    isLib,
+    strictMatchVer,
+  });
   const inputPlatform = getPlatform(platform);
   const { appName: emitAppName, appGroupName, platform: emitPlatform = inputPlatform, versionId: emitVer } = appInfo;
   const appPathDesc = `${platform}/${appName}/${inputVer}`;
@@ -179,7 +186,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
     return next();
   }
 
-  const logStillWait = () => log(`${fnMark} still wait ${appPathDesc} emitted (appInfo,toMatch):`, appInfo, toMatch);
+  const logStillWait = () => log(`${fnMark} still wait ${appPathDesc} to be emitted (emitAppInfo,toMatch):`, appInfo, toMatch);
   // 啥也不做，等待平台值匹配、应用名匹配的那个事件发射上来
   const toMatch = { branchId, platform, emitVer, inputVer, projectId, strictMatchVer };
   if (appName !== emitAppName || !isEmitVerMatchInputVer(appName, toMatch)) {

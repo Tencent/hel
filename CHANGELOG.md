@@ -1,5 +1,11 @@
 # Change Log
 
+[released] - 2024-07-05
+
+发布 `hel-micro`，版本`4.9.8`，特性包含：
+
+- 优化`judgeAppReady`内部打印函数，提供更多的信息给开发者
+
 [released] - 2024-06-11
 
 发布 `hel-micro`，版本`4.9.7`，特性包含：
