@@ -95,15 +95,21 @@ function getAppCacheKey(appName: string) {
 }
 
 async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
-  if (options.storageType === 'indexedDB') {
-    const indexedDBStorage = getIndexedDB();
-    if (indexedDBStorage) {
-      const appCache = await indexedDBStorage.getItem<ICacheData>(getAppCacheKey(appName));
-      return appCache;
+  try {
+    const appKey = getAppCacheKey(appName);
+    if (options.storageType === 'indexedDB') {
+      const indexedDBStorage = getIndexedDB();
+      if (indexedDBStorage) {
+        const appCache = await indexedDBStorage.getItem<ICacheData>(appKey);
+        return appCache;
+      }
     }
+    const appCacheStr = getLocalStorage().getItem(appKey);
+    return commonUtil.safeParse(appCacheStr || '', null);
+  } catch (err: any) {
+    console.error(err);
+    return null;
   }
-  const appCacheStr = getLocalStorage().getItem(getAppCacheKey(appName));
-  return commonUtil.safeParse(appCacheStr || '', null);
 }
 
 export async function clearDiskCachedApp(appName: string) {
@@ -255,7 +261,7 @@ export function cacheApp(
       try {
         getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
       } catch (err: any) {
-        core.log('save localStorage failed');
+        core.log(`save localStorage failed: ${err.message}`);
       }
     };
     if (loadOptions.storageType === 'indexedDB') {

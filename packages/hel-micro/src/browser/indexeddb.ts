@@ -37,11 +37,12 @@ function createContext(): IDbInfo {
  * @returns
  */
 export function getIndexedDBFactory() {
-  if (!('indexedDB' in getGlobalThis())) {
+  const gs = getGlobalThis();
+  if (!('indexedDB' in gs)) {
     console.warn('The current browser is not support indexedDB!');
     return null;
   }
-  return getGlobalThis().indexedDB;
+  return gs.indexedDB;
 }
 
 export class IndexedDBStorage {
@@ -171,8 +172,7 @@ export class IndexedDBStorage {
     return false;
   }
 
-  async getObjectStore(mode?: IDBTransactionMode): Promise<IDBObjectStore> {
-    const dbInfo = await this.getDbInfo();
+  getObjectStore(dbInfo: IDbInfo, mode?: IDBTransactionMode): IDBObjectStore {
     const { name, db, storeName } = dbInfo;
     if (!db) {
       throw new Error(`get ${storeName} objectStore failed in ${name} database`);
@@ -190,36 +190,33 @@ export class IndexedDBStorage {
     };
   }
 
-  getItem<Value extends any = any>(key: string) {
+  async getItem<Value extends any = any>(key: string) {
+    const dbInfo = await this.getDbInfo();
+    const objectStore = this.getObjectStore(dbInfo);
+    const req = objectStore.get(key);
+
     return new Promise<Value | null>((resolve, reject) => {
-      this.getObjectStore()
-        .then((objectStore) => {
-          const req = objectStore.get(key);
-          this.attachHandler(req, resolve, reject);
-        })
-        .catch(reject);
+      this.attachHandler(req, resolve, reject);
     });
   }
 
-  setItem<T extends any = any>(key: string, value: T) {
+  async setItem<T extends any = any>(key: string, value: T) {
+    const dbInfo = await this.getDbInfo();
+    const objectStore = this.getObjectStore(dbInfo, 'readwrite');
+    const req = objectStore.put(value, key);
+
     return new Promise<T>((resolve, reject) => {
-      this.getObjectStore('readwrite')
-        .then((objectStore) => {
-          const req = objectStore.put(value, key);
-          this.attachHandler(req, resolve, reject);
-        })
-        .catch(reject);
+      this.attachHandler(req, resolve, reject);
     });
   }
 
-  removeItem<T extends any = any>(key: string) {
+  async removeItem<T extends any = any>(key: string) {
+    const dbInfo = await this.getDbInfo();
+    const objectStore = this.getObjectStore(dbInfo, 'readwrite');
+    const req = objectStore.delete(key);
+
     return new Promise<T>((resolve, reject) => {
-      this.getObjectStore('readwrite')
-        .then((objectStore) => {
-          const req = objectStore.delete(key);
-          this.attachHandler(req, resolve, reject);
-        })
-        .catch(reject);
+      this.attachHandler(req, resolve, reject);
     });
   }
 

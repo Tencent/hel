@@ -21,28 +21,20 @@ export function getAssetUrlType(webDirPath: string, url: string): AssetUrlType {
 export function getIndexedDB() {
   if (!getIndexedDBFactory()) return null;
 
-  const indexedDBIns = new IndexedDBStorage({
-    name: storageKeys.DATABASE_NAME,
-    storeName: storageKeys.STORE_NAME,
-  });
-
-  function setItem<T extends any = any>(key: string, value: T) {
-    return indexedDBIns.setItem<T>(key, value);
+  try {
+    const indexedDBIns = new IndexedDBStorage({
+      name: storageKeys.DATABASE_NAME,
+      storeName: storageKeys.STORE_NAME,
+    });
+    return {
+      setItem: <T extends any = any>(key: string, value: T) => indexedDBIns.setItem<T>(key, value),
+      getItem: <T extends any = any>(key: string) => indexedDBIns.getItem<T>(key),
+      removeItem: <T extends any = any>(key: string) => indexedDBIns.removeItem<T>(key),
+    };
+  } catch (err: any) {
+    console.error(`new IndexedDBStorage error: ${err.message}`);
+    return null;
   }
-
-  function getItem<T extends any = any>(key: string) {
-    return indexedDBIns.getItem<T>(key);
-  }
-
-  function removeItem<T extends any = any>(key: string) {
-    return indexedDBIns.removeItem<T>(key);
-  }
-
-  return {
-    getItem,
-    setItem,
-    removeItem,
-  };
 }
 
 // avoid mock js-dom warn:
