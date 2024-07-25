@@ -1,0 +1,15 @@
+# 单据号码
+tosr_no: TOSR-1-202212201532401263
+
+account_mappings:
+  fantasticsoul: fancyzhong
+
+# 每个仓库的对应信息
+opensource_repository_information:
+  tencentopen_url: https://github.com/Tencent/hel
+  tencentopen_name: hel-micro
+  status: ongoing
+  owner: fancyzhong
+  follower: fancyzhong,ruikunai
+  internal_id:
+  internal_url:
