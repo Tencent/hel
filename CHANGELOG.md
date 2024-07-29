@@ -1,4 +1,8 @@
 # Change Log
+[released] - 2024-07-29
+发布 `hel-micro`，版本`4.9.10`，特性包含：
+
+- 优化`preFetchLib`接口，支持透传`getCacheKey`函数自定义缓存key生成方式
 
 [released] - 2024-07-05
 

@@ -7,7 +7,7 @@ import defaults from '../consts/defaults';
 import storageKeys from '../consts/storageKeys';
 import { getPlatform } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { IInnerPreFetchOptions } from '../types';
+import type { GetCacheKey, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
@@ -90,13 +90,15 @@ function getPlatformAndApiMode(specifiedPlatform?: Platform, specifiedApiMode?: 
   return { platform, apiMode };
 }
 
-function getAppCacheKey(appName: string) {
-  return `${storageKeys.LS_CACHE_APP_PREFIX}.${appName}`;
+function getAppCacheKey(appName: string, getCacheKey?: GetCacheKey) {
+  const innerKey = `${storageKeys.LS_CACHE_APP_PREFIX}.${appName}`;
+  const key = getCacheKey?.({ appName, innerKey }) || innerKey;
+  return key;
 }
 
 async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
   try {
-    const appKey = getAppCacheKey(appName);
+    const appKey = getAppCacheKey(appName, options.getCacheKey);
     if (options.storageType === 'indexedDB') {
       const indexedDBStorage = getIndexedDB();
       if (indexedDBStorage) {
@@ -112,12 +114,13 @@ async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions)
   }
 }
 
-export async function clearDiskCachedApp(appName: string) {
+export async function clearDiskCachedApp(appName: string, getCacheKey?: GetCacheKey) {
   const indexedDBStorage = getIndexedDB();
+  const cacheKey = getAppCacheKey(appName, getCacheKey);
   if (indexedDBStorage) {
-    await indexedDBStorage.removeItem(getAppCacheKey(appName));
+    await indexedDBStorage.removeItem(cacheKey);
   }
-  getLocalStorage().removeItem(getAppCacheKey(appName));
+  getLocalStorage().removeItem(cacheKey);
 }
 
 export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPreFetchOptions, fnOptions?: { callRemote?: boolean }) {
@@ -257,9 +260,10 @@ export function cacheApp(
   const appName = appMeta.name;
   // 写 disk
   if (toDisk) {
+    const cacheKey = getAppCacheKey(appName, loadOptions.getCacheKey);
     const saveToLocalStorage = () => {
       try {
-        getLocalStorage().setItem(getAppCacheKey(appName), JSON.stringify({ appInfo, appVersion }));
+        getLocalStorage().setItem(cacheKey, JSON.stringify({ appInfo, appVersion }));
       } catch (err: any) {
         core.log(`save localStorage failed: ${err.message}`);
       }
@@ -267,7 +271,7 @@ export function cacheApp(
     if (loadOptions.storageType === 'indexedDB') {
       const indexedDBStorage = getIndexedDB();
       if (indexedDBStorage) {
-        indexedDBStorage.setItem(getAppCacheKey(appName), { appInfo, appVersion }).catch((err: any) => {
+        indexedDBStorage.setItem(cacheKey, { appInfo, appVersion }).catch((err: any) => {
           core.log(`save indexeddb failed, use localStorage instead, err: ${err.message}`);
           saveToLocalStorage();
         });

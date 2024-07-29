@@ -1,6 +1,6 @@
 import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 import { API_NORMAL_GET } from '../consts/logic';
-import type { IHelMeta } from '../types';
+import type { GetCacheKey, IHelMeta } from '../types';
 import type { IGetVerOptions, IHelGetOptions } from './api';
 import * as innerApiSrv from './api';
 import * as innerAppSrv from './app';
@@ -48,12 +48,12 @@ export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions
   return url;
 }
 
-export async function clearDiskCachedApp(appNameOrNames: string | string[]) {
+export async function clearDiskCachedApp(appNameOrNames: string | string[], getCacheKey?: GetCacheKey) {
   if (Array.isArray(appNameOrNames)) {
     const tasks: Array<Promise<any>> = [];
-    appNameOrNames.forEach((name) => tasks.push(innerAppSrv.clearDiskCachedApp(name)));
+    appNameOrNames.forEach((name) => tasks.push(innerAppSrv.clearDiskCachedApp(name, getCacheKey)));
     await Promise.all(tasks);
   } else {
-    await innerAppSrv.clearDiskCachedApp(appNameOrNames);
+    await innerAppSrv.clearDiskCachedApp(appNameOrNames, getCacheKey);
   }
 }

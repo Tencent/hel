@@ -158,6 +158,15 @@ export interface IChangeAttrsFnCtx {
   isLink: IIsLink;
 }
 
+export interface IGetCacheKeyParams {
+  /** 应用名 */
+  appName: string;
+  /** 内部生成的 key，供参考 */
+  innerKey: string;
+}
+
+export type GetCacheKey = (params: IGetCacheKeyParams) => string;
+
 export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
   /**
    * 指定拉取的版本号
@@ -223,10 +232,15 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * ```
    */
   enableDiskCacheForErr?: boolean;
+  /**
+   * default: undefined
+   * 此配置仅当 enableDiskCache=true 时有效，允许用户自定义缓存 key 生成方式
+   */
+  getCacheKey?: GetCacheKey;
   /** default: true
-   * 当设置硬盘缓存 enableDiskCache 为 true 且发现了已缓存元数据时，此参数才有效，
+   * 当设置硬盘缓存 enableDiskCache=true 且发现了已缓存元数据时，此参数才有效，
    * 表示是否发起延迟请求去异步地同步一下最新的元数据，
-   * 如设置了 enableDiskCache 为 true 且 enableSyncMeta 为 false 时，如已存在缓存元数据 sdk 则会一直使用该缓存，
+   * 当设置了 enableDiskCache=true 且 enableSyncMeta=false 时，如已存在缓存元数据 sdk 则会一直使用该缓存，
    * 为了让 sdk 重新最新元数据，可调用 appMetaSrv.clearDiskCachedApp(appName) 来人工清除缓存数据
    */
   enableSyncMeta?: boolean;
