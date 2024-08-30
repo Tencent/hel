@@ -32,6 +32,7 @@ see doc： https://helmicro.com or https://tencent.github.io/hel
 | 远程 react ts 组件 | [懒加载 shadow](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-react-comps-ts/) |
 | 远程 vue2 js 组件 | [预加载+静态导入](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295?file=/src/components/HelloWorld.vue) <div>[懒加载](https://codesandbox.io/s/demo-load-remote-vue-comp-async-cqllv0?file=/src/components/HelloWorld.vue)</div> | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack 开发与打包 | <div>[unpkg](https://unpkg.com/hel-tpl-remote-vue-comps/)、</div> <div>[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html)、</div> [unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
 | 远程 vue3 ts 组件 | [预加载](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack 开发，webpack 打包 | [unpkg](https://unpkg.com/hel-tpl-remote-vue3-comps-ts/) |
+| 远程 vue3 ts 组件 | [预加载](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [hel-tpl-remote-vue3-comps-vite](https://github.com/decadef20/hel-lib-vue-comps-vite) | vite 开发与打包 | unpkg |
 
 ## 实战
 
