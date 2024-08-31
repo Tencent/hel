@@ -39,6 +39,8 @@ export default function renderApp(options: IRenderAppOptions) {
     } else if (createRoot) {
       // 也支持用户透传 createRoot 句柄来适配 react-18 渲染
       const root = createRoot(hostNode);
+      // avoid error: TS2786: 'App' cannot be used as a JSX component
+      // @ts-ignore
       root.render(<App />);
     } else {
       // @ts-ignore 因18版本react类型有问题，此处暂时让第三方引用编译到此处不报类型错误
