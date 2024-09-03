@@ -1,4 +1,4 @@
-import { SHARED_KEY, IS_SERVER } from '../consts';
+import { IS_SERVER, SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
 import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
@@ -116,7 +116,7 @@ function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
 }
 
 function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
-  if(!IS_SERVER) return;
+  if (!IS_SERVER) return;
 
   const { heluxObj, rawState, shouldSync, sharedKey } = heluxParams;
   const insKey2Updater: Record<string, any> = {};

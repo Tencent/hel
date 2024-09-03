@@ -1,4 +1,4 @@
-import { VER, GLOBAL_REF, IS_SERVER } from '../consts';
+import { GLOBAL_REF, IS_SERVER, VER } from '../consts';
 import { getInternal, getInternalMap, getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 

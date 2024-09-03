@@ -1,4 +1,4 @@
-import { EXPIRE_MS, FIRST_UNMOUNT, LIMIT_DELTA, LIMIT_SEED, SECOND_UNMOUNT, IS_SERVER } from '../consts';
+import { EXPIRE_MS, FIRST_UNMOUNT, IS_SERVER, LIMIT_DELTA, LIMIT_SEED, SECOND_UNMOUNT } from '../consts';
 import type { Dict } from '../typing';
 import { getUnmountInfoMap } from './feature';
 
@@ -52,7 +52,7 @@ interface IRocoverDepOptions {
  * recover dep
  */
 export function recoverDep(insKey: number, options: IRocoverDepOptions) {
-  if(IS_SERVER) return;
+  if (IS_SERVER) return;
 
   let info = UNMOUNT_INFO_MAP.get(insKey);
   if (info) {
@@ -81,7 +81,7 @@ export function recoverDep(insKey: number, options: IRocoverDepOptions) {
  * clear dep
  */
 export function clearDep(insKey: number, readMap: Dict<number>, internal: any) {
-  if(IS_SERVER) return;
+  if (IS_SERVER) return;
 
   // del dep before unmount
   Object.keys(readMap).forEach((key) => internal.delDep(key, insKey));
@@ -91,7 +91,7 @@ export function clearDep(insKey: number, readMap: Dict<number>, internal: any) {
 }
 
 export function updateDep(insCtx: any, internal: any) {
-  if(IS_SERVER) return;
+  if (IS_SERVER) return;
 
   const { insKey, readMap, readMapPrev } = insCtx;
   Object.keys(readMapPrev).forEach((prevKey) => {

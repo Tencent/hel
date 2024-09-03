@@ -1,5 +1,5 @@
 import React from 'react';
-import { IS_SHARED, SKIP_MERGE, IS_SERVER } from '../consts';
+import { IS_SERVER, IS_SHARED, SKIP_MERGE } from '../consts';
 import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';

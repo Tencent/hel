@@ -1,6 +1,6 @@
-import { FIRST_UNMOUNT, SECOND_UNMOUNT, SHARED_KEY, IS_SERVER } from '../consts';
-import { fakeInternal } from '../utils/fake';
+import { FIRST_UNMOUNT, IS_SERVER, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
 import type { Dict } from '../typing';
+import { fakeInternal } from '../utils/fake';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 const SHARED_KEY_STATE_MAP = new Map<number, Dict>();
