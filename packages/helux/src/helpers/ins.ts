@@ -1,4 +1,4 @@
-import { RENDER_END } from '../consts';
+import { RENDER_END, IS_SERVER } from '../consts';
 import { isSymbol, prefixValKey } from '../utils/index';
 import { createOb } from './obj';
 
@@ -13,7 +13,7 @@ export function buildInsCtx(insCtx: any, options: any) {
   const insKey = getInsKey();
   insCtx.insKey = insKey;
   internal.mapInsKeyUpdater(insKey, setState);
-  const proxyedState = createOb(
+  const proxyedState = IS_SERVER ? state : createOb(
     state,
     // setter
     (target, key, val) => {
@@ -38,7 +38,7 @@ export function buildInsCtx(insCtx: any, options: any) {
       return target[key];
     },
   );
-  const updater = internal.setState;
+  const updater = IS_SERVER ? setState : internal.setState;
   insCtx.updater = updater;
   insCtx.sharedState = proxyedState;
   return { updater, proxyedState };

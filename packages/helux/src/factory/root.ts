@@ -1,4 +1,4 @@
-import { VER } from '../consts';
+import { VER, GLOBAL_REF, IS_SERVER } from '../consts';
 import { getInternal, getInternalMap, getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 
@@ -23,21 +23,25 @@ function createRoot() {
 
 function getHeluxRoot(): ReturnType<typeof createRoot> {
   // @ts-ignore
-  return window.__HELUX__;
+  return GLOBAL_REF.__HELUX__;
 }
 
 export function ensureHeluxRoot() {
   // @ts-ignore
-  if (!window.__HELUX__) {
+  if (!GLOBAL_REF.__HELUX__) {
     // @ts-ignore
-    window.__HELUX__ = createRoot();
+    GLOBAL_REF.__HELUX__ = createRoot();
   }
 }
 
 export function record(moduleName: string, sharedState: Dict) {
+  if (IS_SERVER) {
+    return;
+  }
+
   const { rootState, help } = getHeluxRoot();
   const treeKey = moduleName || getSharedKey(sharedState);
-  if (rootState[treeKey] && !window.location.port) {
+  if (rootState[treeKey] && !GLOBAL_REF.location.port) {
     return console.error(`moduleName ${moduleName} duplicate!`);
   }
   // may hot replace for dev mode or add new mod

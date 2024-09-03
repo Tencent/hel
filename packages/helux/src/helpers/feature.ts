@@ -1,5 +1,6 @@
-import { FIRST_UNMOUNT, SECOND_UNMOUNT, SHARED_KEY } from '../consts';
-import { Dict } from '../typing';
+import { FIRST_UNMOUNT, SECOND_UNMOUNT, SHARED_KEY, IS_SERVER } from '../consts';
+import { fakeInternal } from '../utils/fake';
+import type { Dict } from '../typing';
 
 const UNMOUNT_INFO_MAP = new Map<number, IUnmountInfo>();
 const SHARED_KEY_STATE_MAP = new Map<number, Dict>();
@@ -21,11 +22,13 @@ export function getUnmountInfoMap() {
 }
 
 export function getInternal(state: Dict) {
+  if (IS_SERVER) return fakeInternal;
   const key = getSharedKey(state);
   return INTERMAL_MAP[key];
 }
 
 export function getRawState(state: Dict) {
+  if (IS_SERVER) return state;
   const internal = getInternal(state);
   return internal.rawState;
 }

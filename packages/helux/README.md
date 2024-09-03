@@ -1,8 +1,8 @@
-# helux
+# helux-mini
 
-helux 是一个鼓励服务注入，并支持响应式变更 react 的全新数据流方案，为了更符合现在流行的 DDD 围绕业务构建领域模型而生。
+helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全新数据流方案，为了更符合现在流行的 DDD 围绕业务构建领域模型而生。
 
-> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`.
+> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`，现降`2.*`版本独立为`helux-mini`来发布
 
 它拥有以下优势：
 
@@ -21,11 +21,11 @@ see oneline [demo1](https://codesandbox.io/s/helux-effect-qyv6xz?file=/src/App.t
 
 ## 30s 上手
 
-使用 npm 命令`npm i helux`安装`helux`，然后调用`createShared`创建共享状态，调用`useShared`使用共享状态，that's all，你已接入`helux`来提升局部状态为共享状态. ✨
+使用 npm 命令`npm i helux-mini`安装`helux-mini`，然后调用`createShared`创建共享状态，调用`useShared`使用共享状态，that's all，你已接入`helux-mini`来提升局部状态为共享状态. ✨
 
 ```diff
 import React from 'react';
-+ import { createShared, useShared } from 'helux';
++ import { createShared, useShared } from 'helux-mini';
 + const { state: sharedObj } = createShared({a:100, b:2});
 
 function HelloHelux(props: any) {

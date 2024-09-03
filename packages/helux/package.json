@@ -1,11 +1,11 @@
 {
-  "name": "helux",
-  "version": "2.2.1",
+  "name": "helux-mini",
+  "version": "1.0.0",
   "description": "A React state library that encourages service injection and supports reactive updates",
   "repository": {
     "type": "git",
     "url": "https://github.com/tnfe/hel.git",
-    "directory": "packages/helux"
+    "directory": "packages/helux-mini"
   },
   "license": "MIT",
   "author": {

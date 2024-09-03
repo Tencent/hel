@@ -1,5 +1,5 @@
 import React from 'react';
-import { IS_SHARED, SKIP_MERGE } from '../consts';
+import { IS_SHARED, SKIP_MERGE, IS_SERVER } from '../consts';
 import { getSharedKey } from '../helpers/feature';
 import type { Dict } from '../typing';
 import { useForceUpdate } from './useForceUpdate';
@@ -20,7 +20,7 @@ export function useObjectLogic<T extends Dict = Dict>(
   const forceUpdate = useForceUpdate();
 
   // initialState can not be a shared object if options's IS_SHARED symbol value is not true
-  if (!options[IS_SHARED] && getSharedKey(initialState)) {
+  if (!IS_SERVER && !options[IS_SHARED] && getSharedKey(initialState)) {
     throw new Error('ERR_OBJ_NOT_NORMAL: can not pass a shared object to useObject!');
   }
 
