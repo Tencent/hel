@@ -214,7 +214,7 @@ import { Button } from 'hel-antd';
 
 ## 自定义 cdn
 
-hel-micro 默认采用的是`unpkg`文件 cdn 服务，如有自建的`unpkg`私服，可调整打包策略注入自己的 cdn 服务前缀，只需要修改`config/subApp.js`即可
+hel-micro 默认采用的是`unpkg`文件 cdn 服务，如有自建的`unpkg`私服，可调整打包策略注入自己的 cdn 服务前缀，只需要修改`config/appInfo.js`即可
 
 ```diff
 - const subApp = helDevUtils.createReactSubApp(pkg, { npmCdnType: 'unpkg' });
