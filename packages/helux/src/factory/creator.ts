@@ -116,7 +116,9 @@ function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
 }
 
 function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
-  if (!IS_SERVER) return;
+  if (IS_SERVER) {
+    return;
+  }
 
   const { heluxObj, rawState, shouldSync, sharedKey } = heluxParams;
   const insKey2Updater: Record<string, any> = {};
