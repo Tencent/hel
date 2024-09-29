@@ -7,10 +7,15 @@ export {
   useRemote2Comps,
   useRemoteComp,
   useRemoteCompAndSubVal,
+  useRemoteCompAndSubValStatus,
+  useRemoteCompStatus,
   useRemoteLegacyComp,
   useRemoteLibComp,
+  useRemoteLibCompStatus,
   useRemotePureComp,
+  useRemotePureCompStatus,
   useRemotePureLibComp,
+  useRemotePureLibCompStatus,
 } from './hooks';
 export { useExecuteCallbackOnce, useForceUpdate } from './hooks/share';
 export { default as renderApp } from './process/renderApp';

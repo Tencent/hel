@@ -20,7 +20,7 @@ function getStyleList(name: string, options: IInnerUseRemoteCompOptions) {
   return list;
 }
 
-function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, passCtx: { [key: string]: any }) {
+function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions) {
   const { isLib, compName } = options;
   const emitApp = logicSrv.getLibOrApp(appName, options);
 
@@ -36,7 +36,7 @@ function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions, p
     }
     const libComp = libRoot[compName];
     if (!libComp) {
-      passCtx.setState({ errMsg: `comp [${compName}] not exist` });
+      throw new Error(`comp [${compName}] of ${appName} not exist`);
     }
     return libComp;
   }
@@ -61,9 +61,13 @@ export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
   }
 
   // 模块还未缓存，是首次获取
-  let RemoteModule = getRemoteModule(name, controlOptions, passCtx);
-  if (!RemoteModule) {
-    return share.fetchRemoteModule(config, passCtx);
+  let RemoteModule = getRemoteModule(name, controlOptions);
+  try {
+    if (!RemoteModule) {
+      return share.fetchRemoteModule(config, passCtx);
+    }
+  } catch (err: any) {
+    return share.getErrResult(config.controlOptions.Error, err.message);
   }
 
   // 组件已获取完毕，需获取样式字符串，则继续执行 fetchRemoteAppStyle

@@ -21,6 +21,8 @@ export type GetSubVal = <T extends any = any>(subCompName: string, waitVal?: any
 
 export type GetSubVals = <T extends AnyRecord = AnyRecord>(subCompNames: string[], waitVal?: any) => T;
 
+export type CompStatus = { isReady: boolean; err: Error | null };
+
 /**
  * 默认：false
  *

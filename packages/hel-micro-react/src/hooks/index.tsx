@@ -1,6 +1,7 @@
 import type {
   AnyComp,
   AnyRecord,
+  CompStatus,
   GetSubVal,
   GetSubVals,
   IUseRemoteCompOptions,
@@ -8,7 +9,7 @@ import type {
   Len2StrArr,
   ObjectFromList,
 } from '../types';
-import { useRemoteCompLogic, useRemoteLibCompLogic } from './base';
+import { useRemoteCompLogic, useRemoteCompStatusLogic, useRemoteLibCompLogic } from './base';
 
 /**
  * RemoteComp 写法是为了允许出现以下3种情况
@@ -39,6 +40,18 @@ export function useRemoteComp<P extends AnyRecord = AnyRecord, R extends any = a
 }
 
 /**
+ * 在 useRemoteComp 基础上返回执行状态和错误
+ */
+export function useRemoteCompStatus<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: IUseRemoteCompOptions,
+) {
+  const { Comp, isReady, err } = useRemoteCompStatusLogic(name, compName, options || {});
+  return { Comp, isReady, err } as { Comp: RemoteComp<P, R> } & CompStatus;
+}
+
+/**
  * 某些组件下面挂载了子组件并导出，如 Tabs 下有 Tabs.TabPane，此时可调用 getSubVal 函数获得子组件
  * 类型 T 拼接 AnyRecord 是为了让用户在代理对象下补子属性时 ts 编译能够通过
  * ```ts
@@ -59,6 +72,18 @@ export function useRemoteCompAndSubVal<P extends AnyRecord = AnyRecord, R extend
 }
 
 /**
+ * 在 useRemoteCompAndSubVal 基础上返回执行状态和错误
+ */
+export function useRemoteCompAndSubValStatus<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: IUseRemoteCompOptions,
+) {
+  const CompAndSubVal = useRemoteCompStatusLogic(name, compName, options || {});
+  return CompAndSubVal as { Comp: RemoteComp<P, R>; getSubVal: GetSubVal; getSubVals: GetSubVals } & CompStatus;
+}
+
+/**
  * 使用不携带任何样式的原始组件，用户可透传 onStyleFetched 自己做 shadow 实现
  * 区别于 useRemoteLibComp，该函数会保证样式不追加到文档上
  */
@@ -67,14 +92,22 @@ export function useRemotePureComp<P extends AnyRecord = AnyRecord, R extends any
   compName: string,
   options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow'>,
 ) {
-  const targetOptions: IUseRemoteCompOptions = {
-    ...(options || {}),
-    shadow: false,
-    appendCss: false,
-  };
-
+  const targetOptions: IUseRemoteCompOptions = { ...(options || {}), shadow: false, appendCss: false };
   const { Comp } = useRemoteCompLogic(name, compName, targetOptions);
   return Comp as RemoteComp<P, R>;
+}
+
+/**
+ * 在 useRemotePureComp 基础上返回执行状态和错误
+ */
+export function useRemotePureCompStatus<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: Omit<IUseRemoteCompOptions, 'appendCss' | 'shadow'>,
+) {
+  const targetOptions: IUseRemoteCompOptions = { ...(options || {}), shadow: false, appendCss: false };
+  const { Comp, isReady, err } = useRemoteCompStatusLogic(name, compName, targetOptions);
+  return { Comp, isReady, err } as { Comp: RemoteComp<P, R> } & CompStatus;
 }
 
 /**
@@ -88,9 +121,21 @@ export function useRemotePureLibComp<P extends AnyRecord = AnyRecord, R extends 
   options?: Omit<IUseRemoteLibCompOptions, 'appendCss'>,
 ) {
   const targetOptions: IUseRemoteLibCompOptions = { ...(options || {}), appendCss: false };
-
-  const Comp = useRemoteLibCompLogic(name, compName, targetOptions);
+  const { Comp } = useRemoteLibCompLogic(name, compName, targetOptions);
   return Comp as RemoteComp<P, R>;
+}
+
+/**
+ * 在 useRemotePureLibComp 基础上返回执行状态和错误
+ */
+export function useRemotePureLibCompStatus<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: Omit<IUseRemoteLibCompOptions, 'appendCss'>,
+) {
+  const targetOptions: IUseRemoteLibCompOptions = { ...(options || {}), appendCss: false };
+  const { Comp, isReady, err } = useRemoteLibCompLogic(name, compName, targetOptions);
+  return { Comp, isReady, err } as { Comp: RemoteComp<P, R> } & CompStatus;
 }
 
 /**
@@ -117,8 +162,20 @@ export function useRemoteLibComp<P extends AnyRecord = AnyRecord, R extends any 
   compName: string,
   options?: IUseRemoteLibCompOptions,
 ) {
-  const Comp = useRemoteLibCompLogic(name, compName, options || {});
+  const { Comp } = useRemoteLibCompLogic(name, compName, options || {});
   return Comp as RemoteComp<P, R>;
+}
+
+/**
+ * 在 useRemoteLibComp 基础上返回执行状态和错误
+ */
+export function useRemoteLibCompStatus<P extends AnyRecord = AnyRecord, R extends any = any>(
+  name: string,
+  compName: string,
+  options?: IUseRemoteLibCompOptions,
+) {
+  const { Comp, isReady, err } = useRemoteLibCompLogic(name, compName, options || {});
+  return { Comp, isReady, err } as { Comp: RemoteComp<P, R> } & CompStatus;
 }
 
 /**
