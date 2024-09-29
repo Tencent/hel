@@ -84,7 +84,8 @@ export function useRemoteCompStatusLogic(name: string, compName: string, options
   const WrappedComp = useMemo(factory, [name, compName, platform, versionId, shadow, isReady, err]);
 
   return {
-    Comp: WrappedComp,
+    // 出现错误时，RemoteCompRender 指向一个错误展示组件
+    Comp: err ? RemoteCompRender : WrappedComp,
     isReady,
     err,
     getSubVal,
