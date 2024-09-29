@@ -60,9 +60,10 @@ export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {
     return share.getErrResult(config.controlOptions.Error, errMsg);
   }
 
-  // 模块还未缓存，是首次获取
-  let RemoteModule = getRemoteModule(name, controlOptions);
+  let RemoteModule: any = null;
   try {
+    RemoteModule = getRemoteModule(name, controlOptions);
+    // 模块还未缓存，是首次获取
     if (!RemoteModule) {
       return share.fetchRemoteModule(config, passCtx);
     }
