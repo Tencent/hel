@@ -20,11 +20,16 @@ export const {
   useExecuteCallbackOnce,
   useForceUpdate,
   useRemoteComp,
+  useRemoteCompStatus,
   useRemotePureComp,
+  useRemotePureCompStatus,
   useRemoteCompAndSubVal,
+  useRemoteCompAndSubValStatus,
   useRemote2Comps,
   useRemoteLibComp,
+  useRemoteLibCompStatus,
   useRemotePureLibComp,
+  useRemotePureLibCompStatus,
   useRemoteLegacyComp,
 } = apis;
 
