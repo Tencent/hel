@@ -151,9 +151,11 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
 
   // 优先从内存获取（非语义化api、未传递分支时获取的 memAppVersion 才是有意义的，可进入此逻辑做判断）
   // TODO : semverApi 下沉到 isEmitVerMatchInputVer 里面
-  const compareMem = !semverApi && !branchId && memApp && memAppVersion;
+  const compareMem = !semverApi && !branchId;
   if (
     compareMem
+    && memApp
+    && memAppVersion
     && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
   ) {
     return { appInfo: memApp, appVersion: memAppVersion };
