@@ -19,7 +19,8 @@ function makePlatObj(platform, arg: any) {
 function injectArg2Plat(fn: any, platform: string, considerStr?: boolean) {
   return (...args: any[]) => {
     const [arg1, arg2] = args;
-    if (considerStr && typeof arg2 === 'string') {
+    // 第二位参数类型可以为 string 时，单独处理
+    if (considerStr && (typeof arg2 === 'string' || arg2 === undefined)) {
       return fn(arg1, arg2 || platform);
     }
     return fn(arg1, makePlatObj(platform, arg2));

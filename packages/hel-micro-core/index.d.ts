@@ -223,6 +223,8 @@ export interface IControlPreFetchOptions {
     userName: string;
     versionId: string | undefined;
     url: string;
+    /** 可能存在的 shouldUseGray 函数的返回结果 */
+    needGrayVer: boolean | null;
     /** 内部请求句柄 */
     innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IHelMeta>;
   }) => Promise<IHelMeta> | IHelMeta;

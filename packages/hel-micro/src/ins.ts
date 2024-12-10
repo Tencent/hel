@@ -18,9 +18,9 @@ const ignoreKeys = ['eventBus', 'getExtraData', 'setExtraData', 'bindExternals',
 const coreRules = {
   // 不需要处理的
   ignoreFns: ['tryGetAppName', 'log', 'commonUtil', 'getCommonData', 'setCommonData', 'setGlobalThis'],
-  // 这些函数仅1个参数，第1位参数是平台值
+  // 这些函数仅1个参数，第1位参数是平台值字符串
   arg1PlatFns: ['getPlatformConfig', 'getSharedCache'],
-  // 这些函数共2个参数，第2位参数是平台值
+  // 这些函数共2个参数，第2位参数是平台值字符串
   arg2PlatFns: ['initPlatformConfig', 'getAppMeta', 'setAppMeta', 'tryGetVersion', 'setAppPlatform'],
   // 这些函数共2个参数，第2位参数是平台值对象
   arg2PlatObjFns: [] as string[],
@@ -31,6 +31,8 @@ const preFetchFns = ['preFetchLib', 'preFetchApp'];
 const injectSemverApiFns = ['getSubAppMeta', 'getMetaDataUrl'];
 // 这些函数第1位参数是平台值对象
 const arg1PlatObjFns = ['emitApp', 'init'];
+// 这些函数第2位参数是平台值字符串
+const arg2PlatFns = ['getAppCacheKey'];
 
 function injectPlat(platform: string, injectOptions: IInjectOptions) {
   const { fnName, fn, isCore, preFetchOptions } = injectOptions;
@@ -79,6 +81,8 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
         args[1] = mergePlatObj({ semverApi, ...purify(arg1 || {}) });
       } else if (arg1PlatObjFns.includes(fnName)) {
         args[0] = mergePlatObj(arg0);
+      } else if (arg2PlatFns.includes(fnName)) {
+        args[1] = arg1 || platform;
       } else {
         // 剩余的统一按第2位参数是包含平台值的对象来处理
         args[1] = mergePlatObj(arg1);

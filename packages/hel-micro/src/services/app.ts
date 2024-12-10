@@ -4,16 +4,16 @@ import * as alt from '../alternative';
 import { loadAppAssets } from '../browser';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
-import storageKeys from '../consts/storageKeys';
 import { getPlatform } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
 import type { GetCacheKey, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
+import { innerGetAppCacheKey, innerGetDiskCachedApp } from './appCache';
 import { getCustomMeta, isCustomValid } from './custom';
 
-const { commonUtil, helConsts } = core;
+const { commonUtil, helConsts, log } = core;
 const { KEY_ASSET_CTX } = helConsts;
 
 interface ISrvInnerOptions {
@@ -90,33 +90,9 @@ function getPlatformAndApiMode(specifiedPlatform?: Platform, specifiedApiMode?: 
   return { platform, apiMode };
 }
 
-function getAppCacheKey(appName: string, getCacheKey?: GetCacheKey) {
-  const innerKey = `${storageKeys.LS_CACHE_APP_PREFIX}.${appName}`;
-  const key = getCacheKey?.({ appName, innerKey }) || innerKey;
-  return key;
-}
-
-async function getDiskCachedApp(appName: string, options: IInnerPreFetchOptions): Promise<ICacheData | null> {
-  try {
-    const appKey = getAppCacheKey(appName, options.getCacheKey);
-    if (options.storageType === 'indexedDB') {
-      const indexedDBStorage = getIndexedDB();
-      if (indexedDBStorage) {
-        const appCache = await indexedDBStorage.getItem<ICacheData>(appKey);
-        return appCache;
-      }
-    }
-    const appCacheStr = getLocalStorage().getItem(appKey);
-    return commonUtil.safeParse(appCacheStr || '', null);
-  } catch (err: any) {
-    console.error(err);
-    return null;
-  }
-}
-
-export async function clearDiskCachedApp(appName: string, getCacheKey?: GetCacheKey) {
+export async function clearDiskCachedApp(appName: string, getCacheKey?: GetCacheKey, platform?: string) {
   const indexedDBStorage = getIndexedDB();
-  const cacheKey = getAppCacheKey(appName, getCacheKey);
+  const cacheKey = innerGetAppCacheKey(appName, getCacheKey, platform);
   if (indexedDBStorage) {
     await indexedDBStorage.removeItem(cacheKey);
   }
@@ -173,15 +149,18 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
 
   // 允许使用硬盘缓存的情况下，尝试优先从硬盘获取
   if (enableDiskCache) {
-    mayCachedApp = await getDiskCachedApp(appName, options);
+    mayCachedApp = await innerGetDiskCachedApp(appName, options);
     if (!mayCachedApp) {
+      log('[[ getAppFromRemoteOrLocal ]] get meta from disk but failed!');
       mayCachedApp = await tryGetFromRemote(callRemote);
     } else {
       const { appInfo, appVersion } = mayCachedApp;
+      log('[[ getAppFromRemoteOrLocal ]] disk meta:', mayCachedApp);
 
       // 缓存无效，从远端获取，（注：enableDiskCache = true 情况下，未指定 versionId 时，总是相信本地缓存是最新的）
       if (versionId && appVersion.sub_app_version !== versionId) {
         mayCachedApp = await tryGetFromRemote(callRemote);
+        log('[[ getAppFromRemoteOrLocal ]] remote meta:', mayCachedApp);
       } else {
         // 将硬盘缓存数据写回到内存
         cacheApp(appInfo, { appVersion, platform, toDisk: false, loadOptions: options });
@@ -224,7 +203,7 @@ async function getAppWithFallback(appName: string, options: IInnerPreFetchOption
     let data: ICacheData | null = null;
     // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
     if (enableDiskCacheForErr) {
-      data = await getDiskCachedApp(appName, options);
+      data = await innerGetDiskCachedApp(appName, options);
       if (!data) {
         throw err;
       }
@@ -243,6 +222,7 @@ export async function getAppAndVersion(appName: string, options: IHelGetOptions)
   const { platform, apiMode } = getPlatformAndApiMode(options.platform, options.apiMode);
   const fixedOptions = { ...options, platform, apiMode };
   const { app: appInfo, version: appVersion } = await apiSrv.getSubAppAndItsVersion(appName, fixedOptions);
+  log('[[ getAppAndVersion ]] result:', { app: appInfo, version: appVersion });
   if (!appVersion) {
     throw new Error('no version found or builded');
   }
@@ -262,7 +242,7 @@ export function cacheApp(
   const appName = appMeta.name;
   // 写 disk
   if (toDisk) {
-    const cacheKey = getAppCacheKey(appName, loadOptions.getCacheKey);
+    const cacheKey = innerGetAppCacheKey(appName, loadOptions.getCacheKey);
     const saveToLocalStorage = () => {
       try {
         getLocalStorage().setItem(cacheKey, JSON.stringify({ appInfo, appVersion }));

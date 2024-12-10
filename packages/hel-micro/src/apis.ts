@@ -1,6 +1,7 @@
 export * as core from 'hel-micro-core';
 export { VER } from './consts/ver';
 export { default as emitApp } from './process/emitApp';
+export { getAppCacheKey, getCachedAppMeta } from './services/appCache';
 export * as appMetaSrv from './services/appMeta';
 export * as appParamSrv from './services/appParam';
 export * as appStyleSrv from './services/appStyle';

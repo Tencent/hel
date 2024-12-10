@@ -1,4 +1,4 @@
-import { commonUtil, helConsts } from 'hel-micro-core';
+import { commonUtil, helConsts, log } from 'hel-micro-core';
 import type { ApiMode, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 import type { PreFetchKey } from '../alternative';
 import * as alt from '../alternative';
@@ -311,12 +311,12 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
     return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version), metaUrl };
   };
 
+  // 走用户定义的 getSubAppAndItsVersionFn 函数获取数据，用户可在函数里自己预埋的元数据
   if (getFn) {
-    const fnParams = { platform, appName, userName, versionId, url, innerRequest };
-    const data = (await Promise.resolve(getFn(fnParams))) as {
-      app: ISubApp;
-      version: ISubAppVersion;
-    };
+    const needGrayVer = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions.shouldUseGray);
+    const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
+    log('[[ getSubAppAndItsVersion ]] fnParams:', fnParams);
+    const data = (await Promise.resolve(getFn(fnParams))) as IHelMeta;
     return { app: ensureApp(data.app), version: ensureVersion(data.version) };
   }
 

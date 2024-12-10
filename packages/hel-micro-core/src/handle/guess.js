@@ -44,7 +44,7 @@ export function tryGetVersion(appGroupName, platform) {
     // 走默认的规则，应对hel默认构建的链接，或用户调整过的链接2种情况
     // {cdn_host_name}/{platform}/{appname_prefixed_version}
     // {user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/
-    const [, verStartStr] = restStr.split(`/${platform}/`);
+    const [, verStartStr = ''] = restStr.split(`/${platform}/`);
     const [verInUrl] = verStartStr.split('/');
     return verInUrl || callerSpecifiedVer;
   }

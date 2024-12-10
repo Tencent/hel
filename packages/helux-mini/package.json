@@ -4,7 +4,7 @@
   "description": "A React state library that encourages service injection and supports reactive updates",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnfe/hel.git",
+    "url": "https://github.com/Tencent/hel/tree/main/packages/helux-mini",
     "directory": "packages/helux-mini"
   },
   "license": "MIT",

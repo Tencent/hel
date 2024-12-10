@@ -5,12 +5,11 @@
  * @since 2021-06-06
  */
 import * as apis from './apis';
-import { createInstance } from './ins';
+import * as ins from './ins';
 export * from './typings';
-export { createInstance };
 
+export const { createInstance } = ins;
 export const { VER, libReady, exposeLib, getLib, isSubApp, isMasterApp, eventBus, appReady, exposeApp } = apis;
-
 export default {
   VER,
   libReady,

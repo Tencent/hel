@@ -1,25 +1,23 @@
 {
-  "name": "hel-micro",
-  "version": "4.10.0",
-  "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
+  "name": "p-guard",
+  "version": "0.0.1",
+  "description": "Make JavaScript functions run concurrently more efficiently.",
   "keywords": [
-    "hel",
-    "hel-micro",
-    "module federation",
-    "module federation sdk"
+    "concurrency promise",
+    "concurrency"
   ],
   "bugs": "https://github.com/tnfe/hel/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnfe/hel.git",
-    "directory": "packages/hel-micro"
+    "url": "https://github.com/Tencent/hel/tree/main/packages/p-guard",
+    "directory": "packages/p-guard"
   },
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
   "main": "lib/index.js",
-  "unpkg": "dist/hel-micro.min.js",
+  "unpkg": "dist/p-guard.min.js",
   "module": "es/index.js",
   "types": "src/index.ts",
   "files": [
@@ -42,25 +40,12 @@
     "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
     "test": "pnpm --filter=hel-micro-core run build:commonjs && jest"
   },
-  "dependencies": {
-    "hel-html-parser": "^1.1.2",
-    "hel-micro-core": "^4.9.3",
-    "hel-types": "^4.3.3"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.12.10",
-    "@types/qs": "^6.9.7",
     "babel-cli": "^6.26.0",
-    "fake-indexeddb": "4.0.1",
-    "qs": "^6.11.0",
     "rollup": "^2.23.0"
   },
-  "peerDependencies": {
-    "hel-html-parser": "^1.1.2",
-    "hel-micro-core": "^4.9.3",
-    "hel-types": "^4.3.3"
-  },
+  "peerDependencies": {},
   "bundleDependencies": [],
   "deprecated": false
 }

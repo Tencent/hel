@@ -48,12 +48,12 @@ export function getMetaDataUrl(appName: string, options?: IGetMetaDataUrlOptions
   return url;
 }
 
-export async function clearDiskCachedApp(appNameOrNames: string | string[], getCacheKey?: GetCacheKey) {
+export async function clearDiskCachedApp(appNameOrNames: string | string[], getCacheKey?: GetCacheKey, platform?: string) {
   if (Array.isArray(appNameOrNames)) {
     const tasks: Array<Promise<any>> = [];
-    appNameOrNames.forEach((name) => tasks.push(innerAppSrv.clearDiskCachedApp(name, getCacheKey)));
+    appNameOrNames.forEach((name) => tasks.push(innerAppSrv.clearDiskCachedApp(name, getCacheKey, platform)));
     await Promise.all(tasks);
   } else {
-    await innerAppSrv.clearDiskCachedApp(appNameOrNames, getCacheKey);
+    await innerAppSrv.clearDiskCachedApp(appNameOrNames, getCacheKey, platform);
   }
 }

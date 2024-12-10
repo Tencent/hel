@@ -13,6 +13,8 @@ export type AnyRecord = Record<string, any>;
 
 export type VersionId = string;
 
+export type StorageType = 'localStorage' | 'indexedDB';
+
 /**
  * default: false
  * 谨慎设置此选项！当设置为 true 时，
@@ -248,7 +250,7 @@ export interface IPreFetchOptionsBase extends Partial<IControlPreFetchOptions> {
    * default: localStorage
    * 选择本地缓存的类型是 localStorage 还是 indexedDB
    */
-  storageType?: 'localStorage' | 'indexedDB';
+  storageType?: StorageType;
   /** preFetchLib 获取到的lib为空时的钩子函数，如返回了具体的模块对象，可作为补偿 */
   onLibNull?: (appName, params: { versionId?: VersionId }) => Record<string, any> | void;
   custom?: ICustom;
