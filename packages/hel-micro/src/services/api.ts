@@ -267,9 +267,9 @@ export async function prepareRequestInfo(appName: string, getOptions: IHelGetOpt
  * 准备请求版本数据的 url 链接
  */
 async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOptions) {
-  const { apiMode, appName, isFullVersion = false, semverApi = true } = getOptions;
+  const { apiMode, appName, isFullVersion = false, semverApi = true, apiPrefix, getUrl } = getOptions;
   const platform = getPlatform(getOptions.platform);
-  const apiHost = alt.getVal(platform, 'apiPrefix');
+  const apiHost = apiPrefix || alt.getVal(platform, 'apiPrefix');
   const apiSuffix = alt.getVal(platform, 'apiSuffix');
   const apiPathOfApp = alt.getVal(platform, 'apiPathOfApp');
   const apiPathOfAppVersion = alt.getVal(platform, 'apiPathOfAppVersion');
@@ -289,6 +289,8 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
     url = inner.appendSearchKV(url, 'name', appName);
     url = inner.appendSuffix(url, apiSuffix);
   }
+
+  url = getUrl?.(url) || url;
 
   return url;
 }
@@ -331,6 +333,13 @@ export interface IGetVerOptions {
   platform?: Platform;
   /** 默认 false，是否获取 html_content */
   isFullVersion?: boolean;
+  /** api 请求域名前缀，不定义的话走全局定义的 apiPrefix */
+  apiPrefix?: string;
+  /**
+   * innerUrl 是内部生成的请求 url，供用户参考，如不适用可透传此函数替换掉，
+   * 此函数不返回任何值的话会继续使用 innerUrl 来发起请求
+   */
+  getUrl?: (innerUrl: string) => string | void;
 }
 
 /**
