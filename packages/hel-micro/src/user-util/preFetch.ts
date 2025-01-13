@@ -7,6 +7,8 @@ import {
   helEvents,
   helLoadStatus,
   log,
+  perfMark,
+  perfPeek,
   setVerLoadStatus,
 } from 'hel-micro-core';
 import type { IEmitAppInfo } from 'hel-types';
@@ -28,10 +30,14 @@ import type {
   IPreFetchLibOptions,
   VersionId,
 } from '../types';
+import { perfEnd, perfStart } from '../util';
 
 const { getObjsVal, purify } = commonUtil;
 
 const { ENABLE_DISK_CACHE, ENABLE_SYNC_META, STORAGE_TYPE } = defaults;
+const pLib = 'preFetchLib';
+const pApp = 'preFetchApp';
+const pLogic = 'preFetch';
 
 type LoadAssetsStarter = (() => void) | null;
 
@@ -95,7 +101,7 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
   let emitApp: null | IEmitAppInfo = null;
   const { versionId, platform, isLib, strictMatchVer, semverApi } = preFetchOptions;
   const fixedInnerOptions = { ...preFetchOptions };
-  const fnName = isLib ? 'preFetchLib' : 'preFetchApp';
+  const fnName = isLib ? pLib : pApp;
   try {
     // 用户未传的话走平台默认值 true
     fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', [strictMatchVer]);
@@ -125,10 +131,12 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
     if (currentLoadStatus !== helLoadStatus.LOADING) {
       setVerLoadStatus(appName, helLoadStatus.LOADING, fixedInnerOptions);
       loadAssetsStarter = await loadApp(appName, { ...fixedInnerOptions, controlLoadAssets: true });
+      perfPeek(pLogic, 'loadApp');
     }
 
     // 正在加载中，等待模块获取
     emitApp = await waitAppEmit(appName, preFetchOptions, loadAssetsStarter);
+    perfPeek(pLogic, 'waitAppEmit');
     log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
     return { emitApp, msg: '' };
   } catch (err: any) {
@@ -149,6 +157,9 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
  * ```
  */
 export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: string, options?: IPreFetchLibOptions | VersionId): Promise<T> {
+  perfMark(pLogic);
+  const perfLabel = `${pLib}(${appName})`;
+  const seq = perfStart(perfLabel, true);
   const targetOpts = makePreFetchOptions(true, options);
   const { emitApp, msg } = await innerPreFetch(appName, targetOpts);
   let appProperties = emitApp?.appProperties;
@@ -159,9 +170,11 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
       appProperties = fallbackLib;
     }
   }
+  perfEnd(perfLabel, seq);
+  perfPeek(pLogic, 'end', true);
   if (!appProperties) {
     const details = msg ? ` details : ${msg}` : '';
-    throw new Error(`preFetchLib ${appName} fail from ${targetOpts.platform}, it may be an invalid module!${details}`);
+    throw new Error(`${pLib} ${appName} fail from ${targetOpts.platform}, it may be an invalid module!${details}`);
   }
   return appProperties as unknown as T;
 }
@@ -171,8 +184,10 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
  * 由中间层ui适配库自己实现，如 hel-micro-react 的 renderApp
  */
 export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | VersionId) {
+  perfMark(pLogic);
   const targetOpts = makePreFetchOptions(false, options);
   const appInfo = await innerPreFetch(appName, targetOpts);
+  perfPeek(pLogic, 'end', true);
   return appInfo?.emitApp || null;
 }
 

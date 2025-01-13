@@ -40,13 +40,11 @@ function handleStyleAdded(/** @type {HTMLElement} */ node, ignoreStyleTagMap) {
   const { tagName, innerText, href } = node;
   if (!['STYLE', 'LINK'].includes(tagName)) return;
 
-  // is style tag or link tag
-  const isStyleTag = tagName === 'STYLE';
-  if (tagName === 'STYLE' && !innerText) {
-    return;
-  }
-
-  if (isStyleTag) {
+  // process style tag
+  if (tagName === 'STYLE') {
+    if (!innerText) {
+      return;
+    }
     const markStart = innerText.indexOf(HEL_CSS_MARK_START);
     // starts with '/* @helstart '
     if (markStart < 0) {

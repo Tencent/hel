@@ -453,6 +453,15 @@ export function log(...args: any[]): void;
 
 export function allowLog(): boolean;
 
+/** 标记耗时开始处，对同一个 label 只能有效调用一次，调用 clearPerfMark 后可再次标记  */
+export function perfMark(label: string): void;
+
+/** 对相同的label统计耗时，按 subLabel 来区分不同的打点位置 */
+export function perfPeek(label: string, subLabel: string, clear?: boolean): void;
+
+/** 清除标记耗时开始处 */
+export function clearPerfMark(label: string): void;
+
 export function getGlobalThis(): typeof globalThis;
 
 /**

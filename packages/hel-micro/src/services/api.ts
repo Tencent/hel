@@ -112,6 +112,7 @@ async function executeGet<T extends any = any>(
 
     return ret;
   } catch (err: any) {
+    perfEnd(perfLabel);
     return { data: null, code: '404', msg: err.message };
   }
 }
@@ -267,7 +268,7 @@ export async function prepareRequestInfo(appName: string, getOptions: IHelGetOpt
  * 准备请求版本数据的 url 链接
  */
 async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOptions) {
-  const { apiMode, appName, isFullVersion = false, semverApi = true, apiPrefix, getUrl } = getOptions;
+  const { apiMode, appName, isFullVersion = false, semverApi = true, apiPrefix = '', getUrl } = getOptions;
   const platform = getPlatform(getOptions.platform);
   const apiHost = apiPrefix || alt.getVal(platform, 'apiPrefix');
   const apiSuffix = alt.getVal(platform, 'apiSuffix');
@@ -275,7 +276,6 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
   const apiPathOfAppVersion = alt.getVal(platform, 'apiPathOfAppVersion');
 
   let url = '';
-
   if (semverApi) {
     url = await getSemverUrl(apiHost, appName, versionId);
   } else {
@@ -299,14 +299,14 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
  * 获取子应用和它的最新在线版本
  */
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
-  const { versionId, platform, apiMode, loadOptions } = getOptions;
-  const getFn = alt.getFn(platform, 'getSubAppAndItsVersionFn', loadOptions?.getSubAppAndItsVersionFn);
+  const { versionId, platform, apiMode, loadOptions = {} } = getOptions;
+  const getFn = alt.getFn(platform, 'getSubAppAndItsVersionFn', loadOptions.getSubAppAndItsVersionFn);
   const { url, userName } = await prepareRequestInfo(appName, getOptions);
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const metaUrl = custUrl || url;
-    const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions?.semverApi });
+    const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions.semverApi });
     if (0 !== parseInt(reply.code, 10) || !reply) {
       throw new Error(reply?.msg || 'getSubAppAndItsVersion err');
     }

@@ -35,9 +35,10 @@ function doAppend(nativeAppend, /** @type {HTMLLinkElement | HTMLScriptElement}*
 
 export function patchAppendChild() {
   const gs = getGlobalThis();
-  // 当前阶段 qiankun 不做任何补丁，否则会导致一切一些莫名的bug，例如 react 组件切换 unmountAtNode 报错
-  // 意味着当前阶段 beforeAppend 机制无作用
-  if (gs.__POWERED_BY_QIANKUN__) {
+  // 当前阶段 qiankun 不做任何补丁，否则会导致一切一些莫名的 bug，例如 react 组件切换 unmountAtNode 报错，
+  // 如有特殊需要，载入hel包体之前，设置 __DISABLE_HEL_MONKEY_PATCH__=true 也可以禁止补丁行为，
+  // 禁止意味着 beforeAppendAssetNode 钩子不在起作用
+  if (gs.__POWERED_BY_QIANKUN__ || gs.__DISABLE_HEL_MONKEY_PATCH__) {
     return;
   }
 

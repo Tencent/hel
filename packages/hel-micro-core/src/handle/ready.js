@@ -1,3 +1,4 @@
+import { perfPeek } from '../base/microDebug';
 import { helEvents, helLoadStatus } from '../consts';
 import { setEmitApp } from '../data/app';
 import { getAppPlatform } from '../data/conf';
@@ -6,6 +7,8 @@ import { setEmitLib } from '../data/lib';
 import { getAppMeta } from '../data/meta';
 import { setVerLoadStatus } from '../data/status';
 import { tryGetAppName, tryGetVersion } from './guess';
+
+const pLogic = 'preFetch';
 
 export function libReady(appGroupName, appProperties, options = {}) {
   const platform = options.platform || getAppPlatform(appGroupName);
@@ -33,6 +36,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
   setEmitLib(appName, emitLib, { appGroupName, platform });
   setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
+  perfPeek(pLogic, 'libReady');
   eventBus.emit(helEvents.SUB_LIB_LOADED, emitLib);
 }
 
@@ -45,5 +49,6 @@ export function appReady(appGroupName, Comp, emitOptions = {}) {
   setEmitApp(appName, emitApp);
   setVerLoadStatus(appName, helLoadStatus.LOADED, { versionId, platform });
   const eventBus = getHelEventBus();
+  perfPeek(pLogic, 'appReady');
   eventBus.emit(helEvents.SUB_APP_LOADED, emitApp);
 }

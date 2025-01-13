@@ -54,7 +54,7 @@ export function resetGlobalThis(globalThis) {
  */
 export const { getPlatform, getSharedCache } = cacheWrap;
 
-export const { getHelMicroDebug: getHelDebug, allowLog, log } = debugMod;
+export const { getHelMicroDebug: getHelDebug, allowLog, log, perfMark, perfPeek, clearPerfMark } = debugMod;
 
 export const { getGlobalThis, setGlobalThis } = globalRef;
 

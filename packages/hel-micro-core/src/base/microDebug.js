@@ -111,3 +111,27 @@ export function log(...args) {
   }
   logFn(...logParams);
 }
+
+const labelTimes = {};
+
+export function perfMark(label) {
+  if (!allowLog() || labelTimes[label]) {
+    return;
+  }
+  labelTimes[label] = Date.now();
+}
+
+export function perfPeek(label, subLabel, clear) {
+  if (!allowLog() || !labelTimes[label]) {
+    return;
+  }
+  const start = labelTimes[label];
+  log(`[[ PerfCheck ]] (${label}/${subLabel}) costs ${Date.now() - start} ms`);
+  if (clear) {
+    clearPerfMark(label);
+  }
+}
+
+export function clearPerfMark(label) {
+  labelTimes[label] = 0;
+}

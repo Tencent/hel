@@ -2,15 +2,23 @@ import { allowLog, commonUtil, getGlobalThis } from 'hel-micro-core';
 import xhrFetch from './browser/xhr';
 import type { IInnerPreFetchOptions } from './types';
 
-export function perfStart(label: string) {
+let seq = 0;
+
+export function perfStart(label: string, addSeq?: boolean) {
+  let seqStr = '';
   if (allowLog()) {
-    console.time(label);
+    if (addSeq) {
+      seq += 1;
+      seqStr = `_${seq}`;
+    }
+    console.time(`${label}${seqStr}`);
   }
+  return seqStr;
 }
 
-export function perfEnd(label: string) {
+export function perfEnd(label: string, seq?: string) {
   if (allowLog()) {
-    console.timeEnd(label);
+    console.timeEnd(`${label}${seq || ''}`);
   }
 }
 
