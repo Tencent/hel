@@ -13,7 +13,6 @@ export function makeNoopAny(result) {
   return () => result;
 }
 
-
 /** noopAny 默认返回 {}, 如不满足使用场景可基于 makeNoopAny 来定制 */
 export function noopAny() {
   return {};
@@ -31,7 +30,7 @@ export function noopObj() {
   return {};
 }
 
-export function noopVoid() { }
+export function noopVoid() {}
 
 /**
  * 创建 noop async 函数，内置的 noopStrAsync、noopNumAsync、noopObjAsync、noopVoidAsync 不满足使用场景时，
@@ -62,4 +61,4 @@ export async function noopObjAsync() {
   return {};
 }
 
-export async function noopVoidAsync() { }
+export async function noopVoidAsync() {}
