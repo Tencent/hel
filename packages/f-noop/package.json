@@ -1,7 +1,7 @@
 {
-  "name": "f-noop",
-  "version": "0.0.1",
-  "description": "supply noop fn or noop fn maker.",
+  "name": "f-noop-test",
+  "version": "0.0.3",
+  "description": "Function does nothing, this lib supply noop fn or noop fn maker.",
   "keywords": [
     "noop fn",
     "noop fn maker"
@@ -17,14 +17,16 @@
     "name": "fantasticsoul"
   },
   "main": "lib/index.js",
-  "unpkg": "dist/p-guard.min.js",
+  "unpkg": "dist/f-noop.min.js",
   "module": "es/index.js",
-  "types": "src/index.ts",
+  "types": "index.d.ts",
+  "type": "module",
   "files": [
     "dist",
     "lib",
     "es",
     "src",
+    "index.d.ts",
     "README.md",
     "tsconfig.json"
   ],

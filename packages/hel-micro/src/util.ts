@@ -1,8 +1,9 @@
-import { allowLog, commonUtil, getGlobalThis } from 'hel-micro-core';
+import { allowLog, commonUtil, getGlobalThis, log } from 'hel-micro-core';
 import xhrFetch from './browser/xhr';
 import type { IInnerPreFetchOptions } from './types';
 
 let seq = 0;
+const detectMark = 'try_detect_latest_ver';
 
 export function perfStart(label: string, addSeq?: boolean) {
   let seqStr = '';
@@ -23,17 +24,20 @@ export function perfEnd(label: string, seq?: string) {
 }
 
 /**
- * 默认请求 unpkg
+ * 默认请求 unpkg，会先经过 302 重定向到一个 404 请求地址后，即可拿到最新的版本号
  */
 export async function getSemverLatestVer(appName: string, apiPrefix: string) {
-  // 会先经过 302 重定向到一个 404 请求地址后，即可拿到最新的版本号
-  const comment = 'try_detect_latest_ver';
-  const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${comment}_${Date.now()}`);
-  // 可能 appName 也包含 @ 符号，故 verStr 取 strArr 最后一个元素去推导
-  const strArr = url.split('@');
-  const includeVerStr = strArr[strArr.length - 1];
-  const [ver] = includeVerStr.split('/');
-  return ver;
+  try {
+    const { url } = await requestGet(`${apiPrefix}/${appName}@latest/${detectMark}_${Date.now()}`);
+    // 可能 appName 也包含 @ 符号，故 verStr 取 strArr 最后一个元素去推导
+    const strArr = url.split('@');
+    const includeVerStr = strArr[strArr.length - 1];
+    const [ver] = includeVerStr.split('/');
+    return ver;
+  } catch (err: any) {
+    log('[[ getSemverLatestVer ]] returns ver(latest) due to error:', err.message);
+    return 'latest';
+  }
 }
 
 export async function requestByFetch(url: string, asJson: boolean) {

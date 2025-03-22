@@ -201,7 +201,8 @@ export interface IUserExtractOptions {
   /** default: true */
   writeMetaJsonToDist?: boolean;
   /**
-   * default: false, 针对存在有 innerText 的节点时，是否提取到元数据 srcMap 里，true：提取 innerText 到 srcMap，false：存为外链后放 srcMap
+   * default: true，（ 自>=5.1.0 版本之后，调整为 true， 避免vite mjs 产物出现一些不可预期的错误 ）
+   * 针对存在有 innerText 的节点时，是否提取到元数据 srcMap 里，true：提取 innerText 到 srcMap，false：存为外链后放 srcMap
    * 此参数在针对 vite 产物场景有用，vite 产物里有一些内联的 type='module' 的 script，它们需要被按顺序触发执行，外链后执行顺讯因为网络关系不一定能保证
    * 设置为 true 后，则 assetItem.innerText 会直接记录内联脚本内容，不再有额外的网络请求去拉取外链资源，执行顺序也就能保证了
    */

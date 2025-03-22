@@ -2,11 +2,6 @@
  * @file 一系列占位空函数
  */
 
-/** 此函数用于消除 unused vars 警告 */
-function noopArgs(...args: any[]) {
-  return args;
-}
-
 /**
  * 创建 noop 函数，内置的 noopStr、noopNum、noopObj、noopVoid 不满足使用场景时，可用此函数来创建新的 noop 函数
  * @example
@@ -14,37 +9,29 @@ function noopArgs(...args: any[]) {
  * const noopCat = makeNoopAny({ name: 'cat' });
  * ```
  */
-export function makeNoopAny<T = any>(result?: T) {
-  return (...args: any[]): T => {
-    noopArgs(args);
-    return result;
-  };
+export function makeNoopAny(result) {
+  return () => result;
 }
 
+
 /** noopAny 默认返回 {}, 如不满足使用场景可基于 makeNoopAny 来定制 */
-export function noopAny(...args: any[]): any {
-  noopArgs(args);
+export function noopAny() {
   return {};
 }
 
-export function noopStr(...args: any[]) {
-  noopArgs(args);
+export function noopStr() {
   return '';
 }
 
-export function noopNum(...args: any[]) {
-  noopArgs(args);
+export function noopNum() {
   return 0;
 }
 
-export function noopObj<T = Record<string, any>>(...args: any[]): T {
-  noopArgs(args);
-  return {} as unknown as T;
+export function noopObj() {
+  return {};
 }
 
-export function noopVoid(...args: any[]) {
-  noopArgs(args);
-}
+export function noopVoid() { }
 
 /**
  * 创建 noop async 函数，内置的 noopStrAsync、noopNumAsync、noopObjAsync、noopVoidAsync 不满足使用场景时，
@@ -54,34 +41,25 @@ export function noopVoid(...args: any[]) {
  * const noopCatAsync = makeNoopAnyAsync({ name: 'cat' });
  * ```
  */
-export function makeNoopAnyAsync<T = any>(result?: T) {
-  return async (...args: any[]): Promise<T> => {
-    noopArgs(args);
-    return result;
-  };
+export function makeNoopAnyAsync(result) {
+  return async () => result;
 }
 
 /** noopAnyAsync 默认返回 {}, 如不满足使用场景可基于 makeNoopAnyAsync 来定制 */
-export async function noopAnyAsync(...args: any[]): Promise<any> {
-  noopArgs(args);
+export async function noopAnyAsync() {
   return {};
 }
 
-export async function noopStrAsync(...args: any[]) {
-  noopArgs(args);
+export async function noopStrAsync() {
   return '';
 }
 
-export async function noopNumAsync(...args: any[]) {
-  noopArgs(args);
+export async function noopNumAsync() {
   return 0;
 }
 
-export async function noopObjAsync<T = Record<string, any>>(...args: any[]): Promise<T> {
-  noopArgs(args);
-  return {} as unknown as T;
+export async function noopObjAsync() {
+  return {};
 }
 
-export async function noopVoidAsync(...args: any[]) {
-  noopArgs(args);
-}
+export async function noopVoidAsync() { }

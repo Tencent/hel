@@ -97,6 +97,8 @@ export function getLibOrApp(appName: string, innerOptions: IInnerPreFetchOptions
   if (isCustomValid(custom)) {
     // 处于调试模式时，应用名可置换为用户人工设定的组名，以便让一个组名对应多个应用名的模式下，本地调试依然生效
     targetName = custom.appGroupName || appName;
+    // 调试模式下需把版本匹配置为 false
+    newGetOptions.strictMatchVer = false;
   }
 
   const appMeta = getAppMeta(targetName, platform);
@@ -167,16 +169,20 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
     // 额外判断 appGroupName 是否存在，防止 appGroupName 是 undefined
     const isGroupNameValid = () => appGroupName && (appGroupName === appName || appGroupName === customAppGroupName);
     if (enable && host) {
+      log(`${fnMark} judge for custom:`, custom);
+      const mayNext = (canNext: boolean) => {
+        log(`${fnMark} custom conf ${canNext ? '' : 'mis'}match current emit app!`);
+        canNext && next();
+      };
+
       // 非 trust 模式下，组名有效才识别为当前调用所需模块
       if (!trust) {
-        isGroupNameValid() && next();
-        return;
+        return mayNext(isGroupNameValid());
       }
 
       // trust 模式会强行复制远程模块为当前调用所需要模块，同时会为远程补齐缺失数据，开发者需要知道并承担其危险后果！
       const shouldNext = fixData({ versionId: inputVer, platform: inputPlatform, emitPlatform, emitVer });
-      shouldNext && next();
-      return;
+      return mayNext(shouldNext);
     }
   }
 

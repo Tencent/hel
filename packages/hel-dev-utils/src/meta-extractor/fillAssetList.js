@@ -195,7 +195,7 @@ export async function fillAssetList(doms, options) {
     homePage,
     enableReplaceDevJs = true,
     enableRelativePath = false,
-    enableAssetInnerText = false,
+    enableAssetInnerText = true,
     enablePrefixHomePage = false,
     srcMap,
     isHead,
