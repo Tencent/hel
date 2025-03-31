@@ -74,7 +74,7 @@ function useWatchSytleChange(props: IMayShadowProps, options: any) {
     if (shadow) {
       let staticRefReadyEv = '';
       let staticRefCb = null;
-      const staticRef = getStaticShadowBodyRef(name, controlOptions)
+      const staticRef = getStaticShadowBodyRef(name, controlOptions);
       if (!staticRef) {
         staticRefReadyEv = getShadowBodyReadyEvName(name, controlOptions);
         staticRefCb = () => {
@@ -172,7 +172,12 @@ function MayShadowComp(props: IMayShadowProps) {
           推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
         {controlOptions.mountShadowBodyForRef && (
-          <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onInsBodyShadowRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
+          <ShadowBody
+            tagName={SHADOW_BODY_NAME}
+            onShadowRootReady={onInsBodyShadowRootReady}
+            ShadowView={ShadowViewImpl}
+            {...commonProps}
+          />
         )}
         <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onInsShadowRootReady} {...commonProps}>
           {uiContent}

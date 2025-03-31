@@ -167,7 +167,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   if (custom) {
     const { enable = true, host, appGroupName: customAppGroupName, trust = false } = custom;
     // 额外判断 appGroupName 是否存在，防止 appGroupName 是 undefined
-    const isGroupNameValid = () => (appGroupName && (appGroupName === appName || appGroupName === customAppGroupName));
+    const isGroupNameValid = () => appGroupName && (appGroupName === appName || appGroupName === customAppGroupName);
     if (enable && host) {
       log(`${fnMark} judge for custom:`, custom);
       const mayNext = (canNext: boolean) => {

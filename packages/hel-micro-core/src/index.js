@@ -85,8 +85,14 @@ export const { getAppStyleStr, setAppStyleStr, getVerExtraCssList, setVerExtraCs
 export const { tryGetVersion, tryGetAppName } = guess;
 
 export const {
-  getPlatformConfig, getAppPlatform, setAppPlatform, setAppPlatformByAppName, getAppPlatformByAppName,
-  initPlatformConfig, originInit, initGlobalConfig,
+  getPlatformConfig,
+  getAppPlatform,
+  setAppPlatform,
+  setAppPlatformByAppName,
+  getAppPlatformByAppName,
+  initPlatformConfig,
+  originInit,
+  initGlobalConfig,
 } = conf;
 
 export const { getHelEventBus, getUserEventBus, evName } = event;

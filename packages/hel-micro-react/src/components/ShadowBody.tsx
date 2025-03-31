@@ -59,10 +59,7 @@ export function getShadowBodyReadyEvName(name: string, options: IGetVerOptions) 
 export function tryMountStaticShadowBody(props: any, config: IRemoteCompRenderConfig) {
   const { name, controlOptions } = config;
   // 【已存在】或【正在挂载中】都不能在挂载新的 StaticShadowBody
-  if (
-    wrap.getStaticShadowBodyRef(name, controlOptions)
-    || wrap.getStaticShadowBodyStatus(name, controlOptions)
-  ) {
+  if (wrap.getStaticShadowBodyRef(name, controlOptions) || wrap.getStaticShadowBodyStatus(name, controlOptions)) {
     return;
   }
   wrap.setStaticShadowBodyStatus(name, 1, controlOptions);

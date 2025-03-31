@@ -9,10 +9,10 @@ import { IShadowViewImplProps } from '../types';
   Its return type 'ReactPortal' is not a valid JSX element.
   Type 'ReactPortal' is missing the following properties from type 'Element': isRootInsert, isComment
 */
-const ShadowContent: any = (props: any) =>{
+const ShadowContent: any = (props: any) => {
   const { children, root } = props;
   return ReactDOM.createPortal(children, root);
-}
+};
 
 export default function ShadowViewV2(props: IShadowViewImplProps) {
   const {
