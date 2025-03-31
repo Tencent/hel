@@ -475,15 +475,31 @@ export function setGlobalThis(mockGlobalThis: any, merge?: boolean);
 export function resetGlobalThis(mockGlobalThis: any);
 
 /**
- * 优先获取用户为某个应用单独设定的平台值，目前设定的时机有 preFetch、preFetchLib 时指定的平台值
+ * 优先获取用户为某个应用组单独设定的平台值，目前设定的时机有 preFetch、preFetchLib 时指定的平台值
  * @returns
  */
 export function getAppPlatform(appGroupName: string): Platform;
 
 /**
- * 记录完就返回应用的所属平台值
+ * 记录完就返回应用组的所属平台值
+ * @param overwrite 是否强写, default: false
+ * true: 无论是否有平台值都覆盖掉
+ * false: 仅当没有对应平台值时才写入
  */
-export function setAppPlatform(appGroupName: string, platform?: Platform): Platform;
+export function setAppPlatform(appGroupName: string, platform?: Platform, overwrite?: boolean): Platform;
+
+/**
+ * 记录完就返回应用的所属平台值
+ * @param overwrite 是否强写, default: false
+ * true: 无论是否有平台值都覆盖掉
+ * false: 仅当没有对应平台值时才写入
+ */
+export function setAppPlatformByAppName(appName: string, platform?: Platform, overwrite?: boolean): Platform;
+
+/**
+ * 优先获取用户为某个应用组单独设定的平台值
+ */
+export function getAppPlatformByAppName(appName: string): Platform;
 
 export interface IGetCustomDataOptions {
   customKey: string;

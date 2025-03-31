@@ -36,6 +36,7 @@ export function useRemoteCompLogic(name: string, compName: string, options: IInn
   const factory = () => {
     // @ts-ignore
     const Comp = forwardRef((compProps: React.PropsWithoutRef<any>, reactRef: React.Ref<any>) => {
+      // @ts-ignore
       return <RemoteCompRender name={name} controlOptions={ensuredOptions} compProps={compProps} reactRef={reactRef} />;
     });
     // 用户不显式设置 needMemo 为 false 的话，会自动使用 React.memo 包裹远程组件做默认优化

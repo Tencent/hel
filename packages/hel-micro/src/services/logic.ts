@@ -167,7 +167,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
   if (custom) {
     const { enable = true, host, appGroupName: customAppGroupName, trust = false } = custom;
     // 额外判断 appGroupName 是否存在，防止 appGroupName 是 undefined
-    const isGroupNameValid = () => appGroupName && (appGroupName === appName || appGroupName === customAppGroupName);
+    const isGroupNameValid = () => (appGroupName && (appGroupName === appName || appGroupName === customAppGroupName));
     if (enable && host) {
       log(`${fnMark} judge for custom:`, custom);
       const mayNext = (canNext: boolean) => {
@@ -177,7 +177,7 @@ export function judgeAppReady(appInfo: IEmitAppInfo, options: IJudgeOptions, pre
 
       // 非 trust 模式下，组名有效才识别为当前调用所需模块
       if (!trust) {
-        return mayNext(isGroupNameValid());
+        return mayNext(isGroupNameValid() as boolean);
       }
 
       // trust 模式会强行复制远程模块为当前调用所需要模块，同时会为远程补齐缺失数据，开发者需要知道并承担其危险后果！

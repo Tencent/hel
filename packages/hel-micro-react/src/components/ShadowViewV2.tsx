@@ -3,7 +3,13 @@ import ReactDOM from 'react-dom';
 import { useForceUpdate } from '../hooks/share';
 import { IShadowViewImplProps } from '../types';
 
-function ShadowContent(props: any) {
+/**
+  avoid ts error:
+  TS2786: 'ShadowContent' cannot be used as a JSX component.
+  Its return type 'ReactPortal' is not a valid JSX element.
+  Type 'ReactPortal' is missing the following properties from type 'Element': isRootInsert, isComment
+*/
+const ShadowContent: any = (props: any) =>{
   const { children, root } = props;
   return ReactDOM.createPortal(children, root);
 }

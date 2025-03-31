@@ -25,15 +25,15 @@ export interface IMayShadowProps {
 
 function getPassedProps(
   renderConfig: IRemoteCompRenderConfig,
-  shadowAppRootRef: React.RefObject<any>,
-  shadowBodyRootRef: React.RefObject<any>,
+  insShadowRootRef: React.RefObject<any>,
+  insBodyShadowRootRef: React.RefObject<any>,
 ) {
   const { name, controlOptions, compProps = {}, reactRef } = renderConfig;
   const { platform, versionId, isLegacy = false, ignoreHelContext = false } = controlOptions;
   const staticShadowBodyRootRef = getStaticShadowBodyRef(name, controlOptions);
   // 供用户的  Select Picker Modal 等组件设置 Container 之用，以便安全的渲染到 shadow-dom 里
-  const getShadowAppRoot = () => shadowAppRootRef.current || null;
-  const getShadowBodyRoot = () => shadowBodyRootRef.current || null;
+  const getShadowAppRoot = () => insShadowRootRef.current || null;
+  const getShadowBodyRoot = () => insBodyShadowRootRef.current || null;
   const getStaticShadowBodyRoot = () => staticShadowBodyRootRef;
   const getEnsuredBodyRoot = () => getShadowBodyRoot() || getStaticShadowBodyRoot() || getGlobalThis()?.document.body || null;
   // 组件内jsx内部的 children 优先级高于组件属性上里传递的 children
@@ -43,8 +43,8 @@ function getPassedProps(
     platform,
     name,
     versionId,
-    getShadowAppRoot,
-    getShadowBodyRoot,
+    getShadowAppRoot, // 获取实例自身顶层外部的 shadow 根节点
+    getShadowBodyRoot, // 获取伴随实例创建到body下的 shadow 根节点
     getStaticShadowBodyRoot,
     getEnsuredBodyRoot,
   };
@@ -72,9 +72,9 @@ function useWatchSytleChange(props: IMayShadowProps, options: any) {
 
   React.useEffect(() => {
     if (shadow) {
-      const staticRef = getStaticShadowBodyRef(name, controlOptions);
       let staticRefReadyEv = '';
       let staticRefCb = null;
+      const staticRef = getStaticShadowBodyRef(name, controlOptions)
       if (!staticRef) {
         staticRefReadyEv = getShadowBodyReadyEvName(name, controlOptions);
         staticRefCb = () => {
@@ -127,25 +127,26 @@ function MayShadowComp(props: IMayShadowProps) {
   const appGroupName = meta?.app_group_name || '';
   const data = getHostData(name, controlOptions);
 
-  const shadowAppRootRef = React.useRef(null);
-  const shadowBodyRootRef = React.useRef(null);
+  const insShadowRootRef = React.useRef(null); // 包裹组件实例自身 的 shadow 节点
+  const insBodyShadowRootRef = React.useRef(null); // 伴随组件实例创建到 body 下的 shadow 节点
   const forceUpdate = useForceUpdate();
+  // 是否 staticShadowRoot、 refRootShadowRoot、refBodyShadowRoot 都准备就绪
   const isShadowRefsReady = () => {
     const staticRef = getStaticShadowBodyRef(name, controlOptions);
-    return shadowAppRootRef.current && (controlOptions.mountShadowBodyForRef ? shadowBodyRootRef.current : true) && staticRef;
+    return staticRef && insShadowRootRef.current && (controlOptions.mountShadowBodyForRef ? insBodyShadowRootRef.current : true);
   };
   const tryForceUpdate = () => {
     isShadowRefsReady() && forceUpdate();
   };
-  const onShadowAppRootReady = (shadowRoot) => {
-    shadowAppRootRef.current = shadowRoot;
+  const onInsShadowRootReady = (shadowRoot) => {
+    insShadowRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const onShadowBodyRootReady = (shadowRoot) => {
-    shadowBodyRootRef.current = shadowRoot;
+  const onInsBodyShadowRootReady = (shadowRoot) => {
+    insBodyShadowRootRef.current = shadowRoot;
     tryForceUpdate();
   };
-  const passedProps = getPassedProps(renderConfig, shadowAppRootRef, shadowBodyRootRef);
+  const passedProps = getPassedProps(renderConfig, insShadowRootRef, insBodyShadowRootRef);
   useWatchSytleChange(props, { appGroupName, data, tryForceUpdate });
 
   if (shadow) {
@@ -164,18 +165,18 @@ function MayShadowComp(props: IMayShadowProps) {
     const commonProps = { id: name, data, style: shadowWrapStyle, styleSheets, styleContent, shadowDelay };
     return (
       <>
-        <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onShadowAppRootReady} {...commonProps}>
-          {uiContent}
-        </ShadowViewImpl>
         {/*
-          在body上为子应用挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
+          在body上为应用或组件挂一个 shadow 容器，方便子应用的 Select Picker Modal 等组件设置 Container 时，
           可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
           为性能考虑，默认不跟随组件实例挂载一个shadow 容器，会在组件初始实例化时生成一个静态 shadow 容器
           推荐用户优化考虑使用静态 shadow 容器，见代码 tryMountStaticShadowBody
        */}
         {controlOptions.mountShadowBodyForRef && (
-          <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onShadowBodyRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
+          <ShadowBody tagName={SHADOW_BODY_NAME} onShadowRootReady={onInsBodyShadowRootReady} ShadowView={ShadowViewImpl} {...commonProps} />
         )}
+        <ShadowViewImpl tagName={SHADOW_HOST_NAME} onShadowRootReady={onInsShadowRootReady} {...commonProps}>
+          {uiContent}
+        </ShadowViewImpl>
       </>
     );
   }

@@ -123,9 +123,27 @@ export function getAppPlatform(appGroupName) {
 }
 
 /**
+ * hel-micro innerPreFetch 会调用此接口提前记录一下应用组名对应的版本号
+ */
+export function setAppPlatform(appGroupName, platform, overwrite) {
+  const map = getCacheRoot().appGroupName2platform;
+  if (overwrite || !map[appGroupName]) {
+    map[appGroupName] = platform;
+  }
+  return getAppPlatform(appGroupName);
+}
+
+export function getAppPlatformByAppName(appName) {
+  return getCacheRoot().appName2platform[appName] || getPlatform();
+}
+
+/**
  * hel-micro innerPreFetch 会调用此接口提前记录一下应用名对应的版本号
  */
-export function setAppPlatform(appGroupName, platform) {
-  getCacheRoot().appGroupName2platform[appGroupName] = platform;
-  return getAppPlatform(appGroupName);
+export function setAppPlatformByAppName(appName, platform, overwrite) {
+  const map = getCacheRoot().appName2platform;
+  if (overwrite || !map[appName]) {
+    map[appName] = platform;
+  }
+  return getAppPlatformByAppName(appName);
 }

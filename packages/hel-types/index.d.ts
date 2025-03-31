@@ -5,7 +5,10 @@
  * 3.0 之后不再限定 'hel' | 'unpkg'，支持后续 hel 包管理平台私有部署
  */
 
-/** 平台值，如果用户不显示指定的话，优先取 helMicro.init 设定的平台值，未设定的话内网包默认为 hel，外网包默认为 unpkg */
+/**
+ * 平台值，如果用户不显示指定的话，优先取 helMicro.init 设定的平台值，未设定的话内网包默认为 hel，外网包默认为 unpkg，
+ * 也支持用户自己扩展的其他平台值
+ */
 export type Platform = string;
 
 /**

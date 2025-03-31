@@ -119,6 +119,7 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
     const { app, version } = await getCustomMeta(appName, custom);
     cacheApp(app, { appVersion: version, platform, toDisk: false, loadOptions: options });
     core.setAppPlatform(app.app_group_name, platform);
+    core.setAppPlatformByAppName(appName, platform);
     return { appInfo: app, appVersion: version };
   }
 
@@ -179,7 +180,9 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   // 但是依然强烈建议给 exposeLib 、libReady 显式指定平台值，避免用户通过 preFetchLib 引入了多平台的同名包体时
   // 出现推导错误的情况出现
   if (mayCachedApp) {
-    core.setAppPlatform(mayCachedApp.appInfo.app_group_name, platform);
+    const { app_group_name: groupName, name } = mayCachedApp.appInfo;
+    core.setAppPlatform(groupName, platform);
+    core.setAppPlatformByAppName(name, platform);
   }
 
   return mayCachedApp;

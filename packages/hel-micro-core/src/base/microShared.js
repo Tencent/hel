@@ -114,12 +114,15 @@ function makeHelMicroShared() {
      */
     platform: PLAT_HEL,
     platformHint: 'the platform value here does not make any sense!',
-    /** 1.4+ 新增，用于记录 preFetchLib 时显示传递了 platform 值，供 hel-lib-proxy 使用，
+    /** 1.4+ 新增，用于记录 preFetchLib 时显式传递了 platform 值，供 hel-lib-proxy 或其他地方使用，
      * 方便多平台共同加载包体场景下， exposeLib 接口如果未显式的传递平台值，能尽量正确推测出应用对应的 platform 值
      * 但是这里依然推荐用户 exposeLib 传递具体的平台值，避免推测错误
      */
     appName2platform: {},
-    /** 取代 appName2platform，后续 appName2platform 会移出 */
+    /**
+     * 最近一个加载的组名对应的平台名，仅用于兜底推导，出现多平台同组名包时，此推导结果可能是错误的，
+     * 此时建议用户调用相关接口时都显式的传递平台值
+     */
     appGroupName2platform: {},
     /** @type {Record<string, ReturnType<typeof makeCacheNode>>} */
     caches: {

@@ -259,10 +259,11 @@ export interface IHelContext {
   name: string;
   versionId: string;
   /**
-   * shadow 模式下组件自身挂载的 shadow-dom 节点
+   * shadow 模式下组件实例自身挂载的 shadow-dom 节点
    */
   getShadowAppRoot: () => React.ReactHTMLElement<any> | null;
   /**
+   * 获取伴随组件实例创建到 body 下的 shadow 根节点，
    * 当做远程组件内部的 Select Picker Modal 等组件设置 Container 时，
    * 可以调用 getShadowBodyRoot 来设置挂载节点，以确保它们也能够渲染到 shadow-dom 里，从而保证样式隔离
    * 注意：非shadow 模式渲染，获取不到 shadow root 的
