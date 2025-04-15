@@ -59,6 +59,17 @@ function appendEl(el: HTMLElement, attrs: Record<string, string>, appendToBody: 
   else doc.head.appendChild(el);
 }
 
+function setInnerText(el: HTMLScriptElement, innerText: string) {
+  // 优先追加为 textContent 属性值，避免无效的 html 元素产生
+  // @see https://github.com/Tencent/hel/issues/105
+  // https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+  if (el.textContent === '') {
+    el.textContent = innerText;
+  } else {
+    el.innerText = innerText;
+  }
+}
+
 interface ICreateScriptOptions {
   attrs: IScriptAttrs;
   innerText?: string;
@@ -86,7 +97,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (src) el.setAttribute('src', src);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (onloadCb) el.onload = onloadCb;
-  if (innerText) el.innerText = innerText;
+  if (innerText) setInnerText(el, innerText);
 
   appendEl(el, restObj, appendToBody);
   return true;
