@@ -64,7 +64,7 @@ export interface IMonoDevInfo {
   /**
    * externals 映射配置
    */
-  appExternals: Record<string, string>,
+  appExternals: Record<string, string>;
   /**
    * 各应用（或子模块）的大仓开发配置
    */
