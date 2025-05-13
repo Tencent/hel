@@ -19,40 +19,33 @@ export interface IHelModConf {
     prod?: string;
   };
   /**
-   * default: IMonoDevInfo.devHostname
-   * 当前hel模块本地联调时的域名
-   */
-  devHostname?: string;
-  /**
    * hel应用（模块）所属平台
    * default: 'unpkg'
    */
   platform?: string;
 }
 
-export interface IMonoAppConf {
+export interface IMonoAppBaseConf {
   /**
    * 应用启动端口
    */
   port: number;
   /**
-   * 应用相对路径别名
+   * default: IMonoDevInfo.devHostname
+   * 当前hel模块本地联调时的域名
    */
-  alias?: string;
+  devHostname?: string;
   /**
    * hel应用（模块）相关配置
    */
   hel?: IHelModConf;
 }
 
-export interface IEnsuredMonoAppConf {
-  port: number;
-  hel: IHelModConf;
+export interface IMonoAppConf extends IMonoAppBaseConf {
   /**
-   * default: IMonoInjectedDevInfo.devHostname
-   * 当前hel模块本地联调时的域名
+   * 应用相对路径别名
    */
-  devHostname?: string;
+  alias?: string;
 }
 
 export type MonoAppConfs = Record<string, IMonoAppConf>;
@@ -87,6 +80,6 @@ export interface IMonoInjectedDevInfo {
   /**
    * 各应用（或子模块）的大仓开发配置
    */
-  appConfs: Record<string, IEnsuredMonoAppConf>;
+  appConfs: Record<string, IMonoAppBaseConf>;
   devHostname: string;
 }
