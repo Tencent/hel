@@ -6,7 +6,7 @@ import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import defaults from '../consts/defaults';
 import { getPlatform } from '../shared/platform';
 import { isEmitVerMatchInputVer } from '../shared/util';
-import type { GetCacheKey, IInnerPreFetchOptions } from '../types';
+import type { GetCacheKey, IHelMeta, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
@@ -246,9 +246,10 @@ export function cacheApp(
   // 写 disk
   if (toDisk) {
     const cacheKey = innerGetAppCacheKey(appName, loadOptions.getCacheKey);
+    const toSave: IHelMeta = { app: appInfo, version: appVersion };
     const saveToLocalStorage = () => {
       try {
-        getLocalStorage().setItem(cacheKey, JSON.stringify({ appInfo, appVersion }));
+        getLocalStorage().setItem(cacheKey, JSON.stringify(toSave));
       } catch (err: any) {
         core.log(`save localStorage failed: ${err.message}`);
       }
@@ -256,7 +257,7 @@ export function cacheApp(
     if (loadOptions.storageType === 'indexedDB') {
       const indexedDBStorage = getIndexedDB();
       if (indexedDBStorage) {
-        indexedDBStorage.setItem(cacheKey, { appInfo, appVersion }).catch((err: any) => {
+        indexedDBStorage.setItem(cacheKey, toSave).catch((err: any) => {
           core.log(`save indexeddb failed, use localStorage instead, err: ${err.message}`);
           saveToLocalStorage();
         });
@@ -273,7 +274,7 @@ export function cacheApp(
     const meta = core.getAppMeta(appName, platform);
     // @ts-ignore, inject __setByLatest
     if (meta?.__setByLatest !== true) {
-      // @ts-ignore, inject __setByLatest，确保未设置版本好的调用写入 appMeta 后，后续其他版本的调用不在写入新的 appMeta
+      // @ts-ignore, inject __setByLatest，确保未设置版本号的调用写入 appMeta 后，后续其他版本的调用不在写入新的 appMeta
       appMeta = !loadOptions.versionId ? { ...appMeta, __setByLatest: true } : appMeta;
       core.setAppMeta(appMeta, platform);
     }
