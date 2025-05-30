@@ -3,15 +3,10 @@
     "module": "commonjs",
     "outDir": "lib",
     "target": "ES2017",
-    "lib": [
-      "ES2016",
-      "DOM"
-    ],
+    "lib": ["ES2016", "DOM"],
     "baseUrl": "./src",
     "moduleResolution": "node",
     "esModuleInterop": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }
