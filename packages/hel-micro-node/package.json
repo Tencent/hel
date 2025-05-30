@@ -1,0 +1,55 @@
+{
+  "name": "hel-micro-node",
+  "version": "0.0.1",
+  "description": "hel-micro node sdk.",
+  "keywords": [
+    "hel",
+    "hel-micro",
+    "hel-micro-node",
+    "module federation",
+    "module federation sdk"
+  ],
+  "bugs": "https://github.com/tnfe/hel/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnfe/hel.git",
+    "directory": "packages/hel-micro-node"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "lib/index.js",
+  "unpkg": "dist/hel-micro-node.min.js",
+  "module": "es/index.js",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint ./src --ext ts,tsx",
+    "lint_fix": "eslint ./src --ext ts,tsx --fix",
+    "lint_test": "eslint ./test --ext ts,tsx",
+    "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
+    "test": "pnpm --filter=hel-micro-node run build:commonjs && jest"
+  },
+  "dependencies": {
+    "hel-types": "^4.3.3"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "babel-cli": "^6.26.0",
+    "rollup": "^2.23.0"
+  },
+  "peerDependencies": {
+    "hel-types": "^4.3.3"
+  },
+  "bundleDependencies": [],
+  "deprecated": false
+}

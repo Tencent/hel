@@ -1,0 +1,24 @@
+{
+  "name": "hel-fetch-file",
+  "version": "0.0.1",
+  "description": "download file by url (fork from npm/download and optimize it)",
+  "license": "ISC",
+  "author": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "archive-type": "^4.0.0",
+    "content-disposition": "^0.5.2",
+    "decompress": "^4.2.1",
+    "ext-name": "^5.0.0",
+    "file-type": "^11.1.0",
+    "filenamify": "^3.0.0",
+    "get-stream": "^4.1.0",
+    "got": "^8.3.1",
+    "make-dir": "^2.1.0",
+    "p-event": "^2.1.0",
+    "pify": "^4.0.1"
+  }
+}
