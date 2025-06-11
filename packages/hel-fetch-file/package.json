@@ -1,6 +1,6 @@
 {
   "name": "hel-fetch-file",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "download file by url (fork from npm/download and optimize it)",
   "license": "ISC",
   "author": "",

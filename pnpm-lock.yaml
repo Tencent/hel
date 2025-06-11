@@ -249,6 +249,63 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
 
+  packages/hel-hello:
+    devDependencies:
+      '@babel/core':
+        specifier: ^7.12.10
+        version: 7.27.3
+      '@babel/preset-env':
+        specifier: ^7.12.11
+        version: 7.27.2(@babel/core@7.27.3)
+      '@types/jest':
+        specifier: ^27.5.0
+        version: 27.5.2
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.27.0
+        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.8.4))(eslint@8.57.1)(typescript@4.8.4)
+      '@typescript-eslint/parser':
+        specifier: ^5.27.0
+        version: 5.62.0(eslint@8.57.1)(typescript@4.8.4)
+      babel-cli:
+        specifier: ^6.26.0
+        version: 6.26.0
+      cross-env:
+        specifier: ^7.0.2
+        version: 7.0.3
+      eslint:
+        specifier: ^8.23.1
+        version: 8.57.1
+      jest:
+        specifier: ^28.1.0
+        version: 28.1.3(@types/node@20.5.1)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4))
+      rollup:
+        specifier: ^2.23.0
+        version: 2.79.2
+      rollup-plugin-babel:
+        specifier: ^4.4.0
+        version: 4.4.0(@babel/core@7.27.3)(rollup@2.79.2)
+      rollup-plugin-commonjs:
+        specifier: ^10.1.0
+        version: 10.1.0(rollup@2.79.2)
+      rollup-plugin-eslint:
+        specifier: ^7.0.0
+        version: 7.0.0
+      rollup-plugin-node-resolve:
+        specifier: ^5.2.0
+        version: 5.2.0(rollup@2.79.2)
+      rollup-plugin-terser:
+        specifier: ^7.0.2
+        version: 7.0.2(rollup@2.79.2)
+      rollup-plugin-uglify:
+        specifier: ^6.0.4
+        version: 6.0.4(rollup@2.79.2)
+      ts-jest:
+        specifier: ^28.0.1
+        version: 28.0.8(@babel/core@7.27.3)(@jest/types@28.1.3)(babel-jest@28.1.3(@babel/core@7.27.3))(jest@28.1.3(@types/node@20.5.1)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4)))(typescript@4.8.4)
+      typescript:
+        specifier: 4.8.4
+        version: 4.8.4
+
   packages/hel-html-parser:
     dependencies:
       hel-types:
@@ -818,10 +875,10 @@ importers:
         version: 4.4.0
       hel-lib-proxy:
         specifier: ^4.7.2
-        version: 4.10.0(hel-micro-core@4.11.0(hel-types@4.3.3))(hel-types@4.3.3)
+        version: 4.10.0(hel-micro-core@4.11.0(hel-types@4.3.4))(hel-types@4.3.4)
       hel-micro:
         specifier: ^4.7.9
-        version: 4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.3))(hel-types@4.3.3)
+        version: 4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.4))(hel-types@4.3.4)
       react:
         specifier: '>=16.8.0'
         version: 18.3.1
@@ -6375,6 +6432,9 @@ packages:
 
   hel-types@4.3.3:
     resolution: {integrity: sha512-Oluh82FIi0XvM1kfXYpYqZ9j70hHVrLEDEeWc3Hf9yl1eYDKBlomTXppXN7cQN9yn82+3Mk7BYrJx8D/Y63CjA==}
+
+  hel-types@4.3.4:
+    resolution: {integrity: sha512-DDjEJNZcoU+VlFUBPFSgiamwaZlpCPhJGolfPcPGQ/DjaE4Ci40G6HOASfH/1/YdAj2ruyfCfRlja0T2VwolOw==}
 
   history@4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
@@ -13721,7 +13781,7 @@ snapshots:
       '@types/node': 20.5.1
       chalk: 4.1.2
       cosmiconfig: 8.3.6(typescript@4.8.4)
-      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@4.8.4))(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4))(typescript@4.8.4)
+      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@4.8.3))(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.8.3))(typescript@4.8.4)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -17687,7 +17747,7 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@4.8.4))(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4))(typescript@4.8.4):
+  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@4.8.3))(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.8.3))(typescript@4.8.4):
     dependencies:
       '@types/node': 20.5.1
       cosmiconfig: 8.3.6(typescript@4.8.4)
@@ -19504,7 +19564,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@4.1.6(eslint@6.8.0)(typescript@4.8.4)(webpack@4.42.0):
     dependencies:
-      '@babel/code-frame': 7.10.4
+      '@babel/code-frame': 7.27.1
       chalk: 2.4.2
       micromatch: 3.1.10(supports-color@6.1.0)
       minimatch: 3.1.2
@@ -20131,14 +20191,18 @@ snapshots:
 
   hel-iso@4.4.0: {}
 
-  hel-lib-proxy@4.10.0(hel-micro-core@4.11.0(hel-types@4.3.3))(hel-types@4.3.3):
+  hel-lib-proxy@4.10.0(hel-micro-core@4.11.0(hel-types@4.3.4))(hel-types@4.3.4):
     dependencies:
-      hel-micro-core: 4.11.0(hel-types@4.3.3)
-      hel-types: 4.3.3
+      hel-micro-core: 4.11.0(hel-types@4.3.4)
+      hel-types: 4.3.4
 
   hel-micro-core@4.11.0(hel-types@4.3.3):
     dependencies:
       hel-types: 4.3.3
+
+  hel-micro-core@4.11.0(hel-types@4.3.4):
+    dependencies:
+      hel-types: 4.3.4
 
   hel-micro@4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.3))(hel-types@4.3.3):
     dependencies:
@@ -20146,7 +20210,15 @@ snapshots:
       hel-micro-core: 4.11.0(hel-types@4.3.3)
       hel-types: 4.3.3
 
+  hel-micro@4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.4))(hel-types@4.3.4):
+    dependencies:
+      hel-html-parser: 1.1.2
+      hel-micro-core: 4.11.0(hel-types@4.3.4)
+      hel-types: 4.3.4
+
   hel-types@4.3.3: {}
+
+  hel-types@4.3.4: {}
 
   history@4.10.1:
     dependencies:
@@ -25868,6 +25940,23 @@ snapshots:
       make-error: 1.3.6
       semver: 7.7.2
       typescript: 4.8.3
+      yargs-parser: 21.1.1
+    optionalDependencies:
+      '@babel/core': 7.27.3
+      '@jest/types': 28.1.3
+      babel-jest: 28.1.3(@babel/core@7.27.3)
+
+  ts-jest@28.0.8(@babel/core@7.27.3)(@jest/types@28.1.3)(babel-jest@28.1.3(@babel/core@7.27.3))(jest@28.1.3(@types/node@20.5.1)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4)))(typescript@4.8.4):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 28.1.3(@types/node@20.5.1)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.8.4))
+      jest-util: 28.1.3
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.7.2
+      typescript: 4.8.4
       yargs-parser: 21.1.1
     optionalDependencies:
       '@babel/core': 7.27.3

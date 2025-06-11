@@ -1,5 +1,5 @@
-export function download(url: string, dist?: string, options?: any): void;
+export function fetchFile(url: string, dist?: string, options?: any): void;
 
-declare const defaultExport: typeof download;
+declare const defaultExport: typeof fetchFile;
 
 export default defaultExport;

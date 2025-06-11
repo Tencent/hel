@@ -163,6 +163,30 @@ export interface ISrcMap {
    * 所有依据 homePage 构建生成的其他类型的资源文件列表
    */
   otherSrcList: string[];
+  /**
+   * 服务端模块文件列表，2025-04-19 新增此字段，因旧数据可能没有，故此处使用问号表示可能为空，
+   * 当产物没有 srvModSrcList 时，importMod 会自动使用 chunkJsSrcList 作为文件列表。
+   * 注：srvModSrcList 和 chunkJsSrcList 同时存在表示这个模块时即服务于前端 hel-micro sdk
+   * 也服务于后端 hel-micro-node sdk
+   */
+  srvModSrcList?: string[];
+  /** server 端入口文件 */
+  /**
+   * server 端入口文件，不设置时，会自动从 srvModSrcList 里推导，当 srvModSrcList 产物里包含多路径导出时，
+   * 建议构建产物里设置 srvModSrcIndex，避免 hel-micro-node sdk 推导错误
+   */
+  srvModSrcIndex?: string;
+  /**
+   * default: false,
+   * true：表示当前元数据仅表示 server 模块，此时产物的网络文件路径可全部写入到 chunkJsSrcList 列表里，
+   * hel-micro-node 会优先读取 chunkJsSrcList 作为 server 模块文件源，没有再降级读 srvModSrcList；
+   *
+   * false：表示当前元数据产物里既有浏览器模块文件列表也服务于后台模块文件列表，此时 hel-micro-node 只会
+   * 读取 srvModSrcList 作为后台模块的文件源，hel-micro 则读取 chunkJsSrcList 等其他文件列表作为前端模块文件源
+   *
+   * 打包时请谨慎设置此值，除非确信这个模块只服务于后台场景
+   */
+  isSrvModOnly?: boolean;
 }
 
 export interface IProjVer {

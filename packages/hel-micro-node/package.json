@@ -9,10 +9,10 @@
     "module federation",
     "module federation sdk"
   ],
-  "bugs": "https://github.com/tnfe/hel/issues",
+  "bugs": "https://github.com/Tencent/hel/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnfe/hel.git",
+    "url": "https://github.com/Tencent/hel.git",
     "directory": "packages/hel-micro-node"
   },
   "license": "MIT",

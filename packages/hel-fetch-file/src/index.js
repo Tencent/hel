@@ -57,7 +57,7 @@ const getFilename = (res, data) => {
   return filename;
 };
 
-module.exports = (uri, output, opts) => {
+const fetchFile = (uri, output, opts) => {
   if (typeof output === 'object') {
     opts = output;
     output = null;
@@ -102,3 +102,7 @@ module.exports = (uri, output, opts) => {
 
   return stream;
 };
+
+fetchFile.default = fetchFile;
+
+module.exports = fetchFile;
