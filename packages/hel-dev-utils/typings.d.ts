@@ -174,7 +174,37 @@ export interface ISubAppBuildDesc {
 
 /** 用户自定义的各种提取选项 */
 export interface IUserExtractOptions {
+  /**
+   * 构建产物放置目录的全路径
+   */
   buildDirFullPath: string;
+  /**
+ * defaut: ()=>false,
+ * 返回 true 表示文件属于 server 端产物，文件路径会记录到 srvModSrcList 数组里
+ * 返回 false 则按照之前的逻辑记录到 chunkCssSrcList 或 chunkJsSrcList
+ */
+  matchSrvModFile?: (fileDesc: FileDesc) => boolean;
+  /**
+   * defaut: ()=>false,
+   * 返回 true 表示文件是 server 端产物的入口文件，文件路径会记录到 srvModSrcIndex ，
+   * 注：只有 matchSrvModFile 判断为 true 为文件才会进入此函数，
+   * 多次执行的话 srvModSrcIndex 值会被覆盖，
+   */
+  matchSrvModFileIndex?: (fileDesc: FileDesc) => boolean;
+  /**
+   * default: ()=>true，
+   * 返回 true 表示包含此文件，未被随后用户自定义的 matchExcludedFile 排除掉时，该文件的路径会记录 version.src_map 下
+   * 注：内部先执行 matchIncludedFile，再执行 matchExcludedFile
+   */
+  matchIncludedFile?: (fileDesc: FileDesc) => boolean;
+  /**
+   * default: ()=>false，
+   * 返回 true 表示排除此文件，该文件的路径不会记录 version.src_map 下的任何节点里，
+   * 内部会先执行 matchIncludedFile，再执行 matchExcludedFile，
+   * 如某文件 a.js 在 matchIncludedFile 里就返回 false 表示不包含了，
+   * 则 a.js 不会有机会进入到 matchExcludedFile 里再次做判断
+   */
+  matchExcludedFile?: (fileDesc: FileDesc) => boolean;
   packageJson: Record<string, any>;
   /**
    * @deprecated
@@ -236,6 +266,10 @@ export interface IInnerFillAssetListOptions {
   enableRelativePath: IUserExtractOptions['enableRelativePath'];
   enablePrefixHomePage: IUserExtractOptions['enablePrefixHomePage'];
   enableAssetInnerText: IUserExtractOptions['enableAssetInnerText'];
+  matchSrvModFile: IUserExtractOptions['matchSrvModFile'];
+  matchSrvModFileIndex: IUserExtractOptions['matchSrvModFileIndex'];
+  matchIncludedFile: IUserExtractOptions['matchIncludedFile'];
+  matchExcludedFile: IUserExtractOptions['matchExcludedFile'];
 }
 
 export interface ICreateSubAppOptions {

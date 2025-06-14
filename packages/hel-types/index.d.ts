@@ -208,6 +208,11 @@ export interface ISubApp {
   id: number;
   /** app 名称，同时也是浏览器的访问入口凭证 */
   name: string;
+  /**
+   * 辅助 hel-micro sdk 发起请求时将获取的元数据写入到对应 platform 目录下
+   * 辅助 hel-micro-node sdk 将网络文件列表写入到本地时，创建带有对应 platform 前缀的模块根目录
+   */
+  platform: string;
   app_group_name: string;
   /** 当前线上正使用的版本 */
   online_version: string;

@@ -369,6 +369,11 @@ export async function fillAssetList(doms, options) {
 export async function fillAssetListByDist(options) {
   const { homePage, srcMap, buildDirFullPath } = options;
   const fileFullPathList = getAllFilePath(buildDirFullPath);
+  const matchSrvModFile = options.matchSrvModFile || (() => false);
+  const matchSrvModFileIndex = options.matchSrvModFileIndex || (() => false);
+  const matchIncludedFile = options.matchIncludedFile || (() => true);
+  const matchExcludedFile = options.matchExcludedFile || (() => false);
+
   verbose('filePathList', fileFullPathList);
 
   fileFullPathList.forEach((fileAbsolutePath) => {
@@ -379,8 +384,22 @@ export async function fillAssetListByDist(options) {
     // 拼出 web 路径
     const fileWebPath = `${slash.noEnd(homePage)}${slash.start(filePathUnderBuild)}`;
 
-    // 补上剩余的 css 文件路径
-    if (fileWebPath.endsWith('.css')) {
+    // 非包含的文件，忽略掉
+    if (!matchIncludedFile(item)) {
+      return;
+    }
+    // 在包含的文件里需排除的文件，忽略掉
+    if (matchExcludedFile(item)) {
+      return;
+    }
+    // 是 server 端需要的文件
+    if (matchSrvModFile(item)) {
+      noDupPush(srcMap.srvModSrcList, fileWebPath);
+      if (matchSrvModFileIndex(item)) {
+        srcMap.srvModSrcIndex = fileWebPath;
+      }
+    } else if (fileWebPath.endsWith('.css')) {
+      // 补上剩余的 css 文件路径
       noDupPush(srcMap.chunkCssSrcList, fileWebPath);
     } else if (fileWebPath.endsWith('.js')) {
       noDupPush(srcMap.chunkJsSrcList, fileWebPath);

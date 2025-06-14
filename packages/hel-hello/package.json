@@ -1,6 +1,6 @@
 {
   "name": "hel-hello",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "say hello to hel",
   "repository": {
     "type": "git",
@@ -28,13 +28,16 @@
     "build:es": "rollup -c --environment BUILD_ENV:es",
     "build:umd": "rollup -c --environment BUILD_ENV:development",
     "build:umd:min": "rollup -c --environment BUILD_ENV:production",
+    "build:hel": "node ./scripts/buildHel.js",
     "lint": "eslint ./src --ext ts,tsx",
     "lint_fix": "eslint ./src --ext ts,tsx --fix",
     "lint_test": "eslint ./test --ext ts,tsx",
     "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
     "test": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@rollup/plugin-typescript": "^12.1.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -44,6 +47,7 @@
     "babel-cli": "^6.26.0",
     "cross-env": "^7.0.2",
     "eslint": "^8.23.1",
+    "hel-dev-utils": "^5.1.0",
     "jest": "^28.1.0",
     "rollup": "^2.23.0",
     "rollup-plugin-babel": "^4.4.0",
@@ -55,7 +59,6 @@
     "ts-jest": "^28.0.1",
     "typescript": "4.8.4"
   },
-  "peerDependencies": {},
   "bundleDependencies": [],
   "deprecated": false
 }
