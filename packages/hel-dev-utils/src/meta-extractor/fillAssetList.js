@@ -5,11 +5,11 @@
 import fs from 'fs';
 import util from 'util';
 import { slash } from '../base-utils/index';
+import { makeFileDescList } from '../inner-utils';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull } from '../inner-utils/obj';
 import { pfstr } from '../inner-utils/str';
-import { makeFileDescList } from '../inner-utils';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
