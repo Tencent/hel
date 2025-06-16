@@ -51,6 +51,5 @@ export async function parseIndexHtml(extractOptions) {
   verbose(`parse app [${name}] index.html file done!`);
   verbose('replaceContentListOfHead: ', replaceContentListOfHead);
   verbose('replaceContentLisOfBody: ', replaceContentLisOfBody);
-  verbose('parsedRet: ', parsedRet);
   return parsedRet;
 }

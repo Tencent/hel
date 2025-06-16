@@ -179,10 +179,10 @@ export interface IUserExtractOptions {
    */
   buildDirFullPath: string;
   /**
- * defaut: ()=>false,
- * 返回 true 表示文件属于 server 端产物，文件路径会记录到 srvModSrcList 数组里
- * 返回 false 则按照之前的逻辑记录到 chunkCssSrcList 或 chunkJsSrcList
- */
+   * defaut: ()=>false,
+   * 返回 true 表示文件属于 server 端产物，文件路径会记录到 srvModSrcList 数组里
+   * 返回 false 则按照之前的逻辑记录到 chunkCssSrcList 或 chunkJsSrcList
+   */
   matchSrvModFile?: (fileDesc: FileDesc) => boolean;
   /**
    * defaut: ()=>false,

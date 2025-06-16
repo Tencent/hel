@@ -105,7 +105,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
             version = versionMakeOnPipeline;
           }
         }
-      } catch (err) { }
+      } catch (err) {}
 
       if (!version) {
         // 自定义 homePage 后，版本未必能推导出来，降级为使用 package.json 版本号

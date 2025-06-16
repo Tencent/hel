@@ -37,5 +37,6 @@ export default async function extractHelMetaJson(ueOptions) {
     fs.writeFileSync(helMetaJsonFile, JSON.stringify(helMeta, null, 2));
   }
 
+  verbose(`extractHelMetaJson done, hel-meta.json:`, JSON.stringify(helMeta, null, 2));
   return helMeta;
 }

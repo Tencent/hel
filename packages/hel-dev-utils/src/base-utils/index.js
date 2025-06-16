@@ -86,7 +86,7 @@ export function getHelEnvParams(pkg, options = {}) {
 
   // 来自 process.env 的值优先级最高
   const p0EnvParams = getHelProcessEnvParams();
-  const appName = p0EnvParams.appName || pkg.appGroupName || '';
+  const appName = p0EnvParams.appName || pkg.appGroupName || pkg.name || '';
   return {
     appHomePage: p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '/',
     appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || appName,

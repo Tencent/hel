@@ -9,6 +9,7 @@ import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull } from '../inner-utils/obj';
 import { pfstr } from '../inner-utils/str';
+import { makeFileDescList } from '../inner-utils';
 import { getAllFilePath } from './utils';
 
 const writeFile = util.promisify(fs.writeFile);
@@ -373,10 +374,11 @@ export async function fillAssetListByDist(options) {
   const matchSrvModFileIndex = options.matchSrvModFileIndex || (() => false);
   const matchIncludedFile = options.matchIncludedFile || (() => true);
   const matchExcludedFile = options.matchExcludedFile || (() => false);
-
+  const fileDescList = makeFileDescList(fileFullPathList, homePage, buildDirFullPath);
   verbose('filePathList', fileFullPathList);
 
-  fileFullPathList.forEach((fileAbsolutePath) => {
+  fileDescList.forEach((item) => {
+    const { fileAbsolutePath } = item;
     //  获取文件处于build目录下的相对路径，形如：
     //  /static/js/runtime-main.66c45929.js
     //  /asset-manifest.json

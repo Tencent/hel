@@ -28,7 +28,6 @@
     "build:es": "rollup -c --environment BUILD_ENV:es",
     "build:umd": "rollup -c --environment BUILD_ENV:development",
     "build:umd:min": "rollup -c --environment BUILD_ENV:production",
-    "build:hel": "node ./scripts/buildHel.js",
     "lint": "eslint ./src --ext ts,tsx",
     "lint_fix": "eslint ./src --ext ts,tsx --fix",
     "lint_test": "eslint ./test --ext ts,tsx",
