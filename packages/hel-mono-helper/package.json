@@ -1,0 +1,34 @@
+{
+  "name": "hel-mono-helper",
+  "version": "0.0.5",
+  "description": "hel-mono micro architecture helper",
+  "keywords": [
+    "hel",
+    "hel-micro",
+    "hel-mono-helper",
+    "hel-mono helper"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tencent/hel.git",
+    "directory": "packages/hel-mono-helper"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "README.md",
+    "index.d.ts"
+  ],
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {
+    "hel-dev-utils": "^5.2.2",
+    "hel-mono-types": "^1.1.0"
+  },
+  "bundleDependencies": [],
+  "deprecated": false
+}

@@ -1,0 +1,34 @@
+{
+  "name": "proxy-app-name",
+  "version": "0.0.1",
+  "main": "./src/entrance/libTypes.ts",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "start": "node ../../../dev/scripts/hel/start.js",
+    "build": "node ../../../dev/scripts/hel/build.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  }
+}
