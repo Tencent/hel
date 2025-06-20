@@ -35,6 +35,16 @@ export type TagStyle = 'style';
 export type TagName = TagLink | TagScript | TagStaticLink | TagStaticScript | TagRelativeLink | TagRelativeScript | TagStyle;
 
 /**
+ * ```
+ * all：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，同时也会记录 html_content
+ * build：只提取并记录构建时生成的产物，同时也会记录 html_content
+ * all_no_html：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，不记录 html_content
+ * build_no_html：只提取并记录构建时生成的产物，不记录 html_content
+ * ```
+ */
+export type ExtractMode = 'all' | 'build' | 'all_no_html' | 'build_no_html';
+
+/**
  * 这些标签类型默认不会被 sdk 加载，仅表示处于 html 代码里的位置
  * 除非显示标记 data-helappend="1" 会被加载，通常用于紧随主站点加载的私有化部署模式
  * 或显示标记 data-helex="xxx-link"，用于控制需要延迟加载的且只加载一次的 external 资源
@@ -118,15 +128,9 @@ export interface ISrcMap {
    */
   webDirPath: string;
   /**
-   * default: 'all'，生成资源清单时的元数据提取方式，会影响元数据的记录结果
-   * ```
-   * all：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，同时也会记录 html_content
-   * build：只提取并记录构建时生成的产物，同时也会记录 html_content
-   * all_no_html：提取并记录构建时生成的产物、静态路径导入的产物、homePage之外相对路径导入的产物，不记录 html_content
-   * build_no_html：只提取并记录构建时生成的产物，不记录 html_content
-   * ```
+   * default: 'build'，hel-dev-utils 生成此元数据时使用的提取资源模式
    */
-  extractMode?: 'all' | 'build' | 'all_no_html' | 'build_no_html';
+  extractMode?: ExtractMode;
   /**
    * 应用首屏加载时需要插入到 document.head 里的资源列表
    */
@@ -204,26 +208,75 @@ export interface IAppRenderInfo {
   srcMap: ISrcMap;
 }
 
-export interface ISubApp {
-  id: number;
+/**
+ * unpkg 平台应用数据
+ */
+export interface ISimpleApp {
   /** app 名称，同时也是浏览器的访问入口凭证 */
   name: string;
+  app_group_name: string;
+  /** 应用的仓库地址 */
+  git_repo_url: string;
+  /** 当前线上正使用的版本 */
+  online_version: string;
+  /** 构建产生的最新版本 */
+  build_version: string;
+  /** 创建时间 "2019-11-05T08:37:17.000Z" */
+  create_at: string;
+}
+
+/**
+ * unpkg 平台版本数据
+ */
+export interface ISimpleVersion {
+  /** hel-dev-utils 版本号，记录当前应用是基于哪一版插件构建的 */
+  plugin_ver: string;
+  /**
+   * default: 'build'，hel-dev-utils 生成此元数据时使用的提取资源模式
+  */
+  extract_mode: ExtractMode;
+  /** 冗余存储的子应用名称，对应app_info表的name字段 */
+  sub_app_name: string;
+  /** 当前元数据对应版本号 */
+  sub_app_version: string;
+  /**
+   * 资源描述表map
+  */
+  src_map: ISrcMap;
+  /** html entry 字符串，在 extractMode 为 all 或 build 时都会记录 */
+  html_content: string;
+  /** 带时区的时间戳字符串，形如；2022-03-01T06:39:46.000Z */
+  create_at: string;
+}
+
+export interface IMeta {
+  app: ISimpleApp;
+  version: ISimpleVersion;
+}
+
+/**
+ * helpack 平台应用数据，此对象目前针对 helpack 有效，或基于ISimpleApp 扩展自己需要的属性服务于自己搭建的模块管控台
+ * 等 helpack 开源后外部用户才需要关注此对象
+ */
+export interface ISubApp extends ISimpleApp {
+  id: number;
   /**
    * 辅助 hel-micro sdk 发起请求时将获取的元数据写入到对应 platform 目录下
    * 辅助 hel-micro-node sdk 将网络文件列表写入到本地时，创建带有对应 platform 前缀的模块根目录
    */
   platform: string;
-  app_group_name: string;
   /** 当前线上正使用的版本 */
   online_version: string;
   /** 构建产生的最新版本 */
   build_version: string;
   /** 应用中文名 */
   cnname: string;
-  /** 应用的仓库地址 */
-  git_repo_url: string;
-  create_at: string; // "2019-11-05T08:37:17.000Z"
-  update_at: string; // "2019-11-05T08:37:17.000Z"
+  /**
+   * default: 'build'，helpack 透传给 hel-dev-utils 生成元数据需要使用的提取资源模式
+   */
+  extract_mode: ExtractMode;
+  /** 更新时间 "2019-11-05T08:37:17.000Z" */
+  update_at: string;
   create_by: string;
   desc: string;
   // ----------------- 以下属性目前针对 helpack 有效（如用户自搭后台需要也可复用），还在使用中，外部用户可不用关注 -------------
@@ -259,7 +312,6 @@ export interface ISubApp {
   gray_users: string[];
   /** 应用的分类类型 */
   class_name: string;
-
   // ----------------- 以下属性描述目前针对 helpack 有效，后续可能计划全部下架，外部用户可不用关注 --------------
   api_host: string;
   /** 是否是富媒体类型应用 */
@@ -274,24 +326,15 @@ export interface ISubApp {
   [key: string]: any;
 }
 
-export interface ISubAppVersion {
+/**
+ * helpack 平台版本数据
+ */
+export interface ISubAppVersion extends ISimpleVersion {
   sub_app_id: string;
-  /** 冗余存储的子应用名称，对应app_info表的name字段 */
-  sub_app_name: string;
-  /** 每次构建新生成的版本号 */
-  sub_app_version: string;
   /** 开发或者测试版本调用api所属域名，不填写的会去读取app.host_map.build  */
   api_host: string;
-  /**
-   * 资源描述表map
-   */
-  src_map: ISrcMap;
-  /** html entry 字符串，在 extractMode 为 all 或 build 时都会记录 */
-  html_content: string;
   /** 触发构建时的 git 提交信息 */
   desc: string;
-  /** 带时区的时间戳字符串，形如；2022-03-01T06:39:46.000Z */
-  create_at: string;
   /** 触发构建的 rtx 名称 */
   create_by: string;
   /** 蓝盾空间名 */
@@ -305,9 +348,12 @@ export interface ISubAppVersion {
   git_hashes: string;
   /** 当次构建对应的仓库地址 */
   git_repo_url: string;
-  /** 海拉插件版本号，记录当前应用是基于那一版插件构建的 */
-  plugin_ver: string;
   [key: string]: any;
+}
+
+export interface IHelpackMeta {
+  app: ISubApp;
+  version: ISubAppVersion;
 }
 
 export interface IEmitAppInfo {
