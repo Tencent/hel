@@ -2,10 +2,10 @@
  * 辅助工具函数
  */
 import isTestFn from 'is-test';
-import { APP_GROUP_NAME } from './subApp';
 import { DEV_INFO } from './devInfo';
+import { APP_GROUP_NAME } from './subApp';
 
-type HelDep = { appName: string, appGroupName: string, packName: string };
+type HelDep = { appName: string; appGroupName: string; packName: string };
 
 export function monoLog(...args: any[]) {
   console.log(`[hel-mono] `, ...args);
@@ -24,7 +24,7 @@ export function getHelDeps() {
 
     const { appNames = { test: '', prod: '' }, appGroupName = '' } = helConf;
     if (appGroupName) {
-      const helModName = isTestFn(APP_GROUP_NAME) ? appNames.test : (appNames.prod || appGroupName);
+      const helModName = isTestFn(APP_GROUP_NAME) ? appNames.test : appNames.prod || appGroupName;
       helDeps.push({ appName: helModName, appGroupName, packName });
     }
   });

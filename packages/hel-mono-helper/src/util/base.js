@@ -9,7 +9,7 @@ exports.getCWD = function () {
   return process.cwd();
 };
 
-exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {
   const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
   const belongToDirs = appsDirs.concat(subModDirs);
   return { appsDirs, subModDirs, belongToDirs };
@@ -29,7 +29,7 @@ exports.getDirName = function (appSrc) {
   return strList[strList.length - 2];
 };
 
-exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {
   const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
   const belongToDirs = appsDirs.concat(subModDirs);
   return { appsDirs, subModDirs, belongToDirs };
@@ -72,7 +72,6 @@ exports.getAppAlias = function (appSrc, devInfo, prefixedDir2Pkg) {
 
   return appAlias;
 };
-
 
 exports.ensureSlash = function (inputPath, needsSlash) {
   const hasSlash = inputPath.endsWith('/');

@@ -1,14 +1,7 @@
 // shelljs 相比 child_process.execSync 具有更好的控制台回显交互
 const shell = require('shelljs');
 const { INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
-const {
-  getCmdKeywordName,
-  setCurKeyword,
-  getCWD,
-  helMonoLog,
-  helMonoErrorLog,
-  clearMonoLog,
-} = require('../util');
+const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
 const { execStartAppAction } = require('./app');
 const { execInit, execInitProxy } = require('./init');
 const { execCreate, execCreateStart } = require('./create');
@@ -50,7 +43,7 @@ function tryExecInnerAction(actionName, devInfo) {
 /**
  * 基于 npm start xxx 来启动或构建宿主
  */
-exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */devInfo) {
+exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
   const cwd = getCWD();
   const rawKeywordName = getCmdKeywordName();
   setCurKeyword(rawKeywordName);

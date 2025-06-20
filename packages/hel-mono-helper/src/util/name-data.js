@@ -5,7 +5,7 @@ const { getMonoNameMap } = require('./mono-name');
  * keywordName 可以是带父目录名的目录名，目录名，包名，格式形如：apps/hub, hub, @xxx/hub
  * @return {import('../types').INameData}
  */
-exports.getNameData = function (/** @type string */mayPkgOrDir, /** @type {IMonoDevInfo} */devInfo) {
+exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IMonoDevInfo} */ devInfo) {
   const { monoNameMap } = getMonoNameMap(devInfo);
 
   if (!mayPkgOrDir.startsWith('@') && mayPkgOrDir.includes('/')) {

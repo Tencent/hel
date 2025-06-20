@@ -31,7 +31,7 @@ const INNER_ACTION = {
   testAll: '.test:all',
 };
 
-const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map(key => INNER_ACTION[key]);
+const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);
 
 /**
  * .create 命令能识别的短命令参数
@@ -41,17 +41,10 @@ const CREATE_SHORT_PARAM_KEY = {
   targetBelongToDir: '-d',
 };
 
-const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map(key => CREATE_SHORT_PARAM_KEY[key]);
+const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);
 
 /** 执行 xxx:cmdKey 时，cmdKey 在这些命令里则可直接命中并执行 */
-const HITABLE_SCRIPT_KEYS = [
-  'tsup',
-  'tsc',
-  'build',
-  'start',
-  'build:hel',
-  'build:helbs',
-];
+const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
 
 module.exports = {
   HITABLE_SCRIPT_KEYS,

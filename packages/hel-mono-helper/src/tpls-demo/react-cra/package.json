@@ -1,23 +1,20 @@
 {
   "name": "hub",
-  "appGroupName": "hub",
   "version": "0.1.0",
-  "main": "./src/index",
   "private": true,
-  "dependencies": {},
+  "main": "./src/index",
   "scripts": {
+    "build": "node ../../dev/scripts/build.js",
+    "build:hel": "node ../../dev/scripts/hel/build.js",
     "prestart": "echo prestart",
     "start": "node ../../dev/scripts/start.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
-    "build": "node ../../dev/scripts/build.js",
-    "build:hel": "node ../../dev/scripts/hel/build.js",
     "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
     "test:all": "cross-env ALL=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+  "babel": {
+    "presets": [
+      "react-app"
     ]
   },
   "browserslist": {
@@ -32,9 +29,12 @@
       "last 1 safari version"
     ]
   },
-  "babel": {
-    "presets": [
-      "react-app"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
     ]
-  }
+  },
+  "dependencies": {},
+  "appGroupName": "hub"
 }

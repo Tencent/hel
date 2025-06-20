@@ -1,7 +1,6 @@
-import React from 'react';
 import { callFn } from '@/utils/path/to/str';
-import logo from './logo.svg';
 import './App.css';
+import logo from './logo.svg';
 
 function App() {
   return (
@@ -12,12 +11,7 @@ function App() {
         <p>
           Edit 3<code>src/App.tsx</code> and save to reload hel-mono.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
           Learn React
         </a>
       </header>

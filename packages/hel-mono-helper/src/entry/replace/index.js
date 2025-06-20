@@ -1,4 +1,3 @@
-
 module.exports = {
   replacePkgJson: require('./replacePkgJson'),
   replaceIndexFile: require('./replaceIndexFile'),

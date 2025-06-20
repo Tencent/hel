@@ -2,7 +2,7 @@ const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog } = require('../../util');
 
-module.exports = function replaceIndexFile(/** @type {import('../../types').ICWDAppData} */appData) {
+module.exports = function replaceIndexFile(/** @type {import('../../types').ICWDAppData} */ appData) {
   const { isForRootHelDir, helDirPath, realAppPkgName } = appData;
   const indexFilePath = path.join(helDirPath, './index.ts');
 

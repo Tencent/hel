@@ -3,12 +3,10 @@ const path = require('path');
 const { helMonoLog } = require('../../util');
 
 module.exports = function replacePkgJson(
-  /** @type {import('../../types').ICWDAppData} */appData,
-  /** @type {import('../../types').IMonoAppDepData} */depData,
+  /** @type {import('../../types').ICWDAppData} */ appData,
+  /** @type {import('../../types').IMonoAppDepData} */ depData,
 ) {
-  const {
-    belongTo, appDir, appDirPath, realAppPkgName, isForRootHelDir,
-  } = appData;
+  const { belongTo, appDir, appDirPath, realAppPkgName, isForRootHelDir } = appData;
   if (!isForRootHelDir || !depData) {
     return;
   }

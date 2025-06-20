@@ -14,12 +14,14 @@ async function preFetchHelDeps() {
   if (!helDeps.length) return;
 
   const start = Date.now();
-  const depNames = helDeps.map(v => v.appName);
+  const depNames = helDeps.map((v) => v.appName);
   console.log(`start preFetchLib (${depNames}) isDev=${isDev}`);
-  await Promise.all(helDeps.map(({ appName, appGroupName, packName }) => {
-    const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
-    return preFetchLib(appName, { custom: { enable: isDev, host: `${devHostname}:${port}`, appGroupName } });
-  }));
+  await Promise.all(
+    helDeps.map(({ appName, appGroupName, packName }) => {
+      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
+      return preFetchLib(appName, { custom: { enable: isDev, host: `${devHostname}:${port}`, appGroupName } });
+    }),
+  );
   console.log(`end preFetchLib, costs ${Date.now() - start}`);
 }
 

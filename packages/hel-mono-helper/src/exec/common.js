@@ -1,14 +1,9 @@
 const path = require('path');
-const {
-  getCWDAppData,
-  getMonoRootInfo,
-  getMonoAppDepData,
-  helMonoLog,
-} = require('../util');
+const { getCWDAppData, getMonoRootInfo, getMonoAppDepData, helMonoLog } = require('../util');
 const { HITABLE_SCRIPT_KEYS } = require('../consts');
 const { prepareHelEntry } = require('../entry');
 
-function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */devInfo, mayAlias) {
+function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
   let pureKeyword = mayAlias;
   // mayAlias 可能形如: @h:start，需要去掉分号，仅取第一位
   if (mayAlias.includes(':')) {
@@ -35,7 +30,7 @@ function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */devInfo, mayAlias) {
  * 分析可能带有冒号的名字，
  * 名字包含了冒号时，是 {dirName}:{mode} 格式
  */
-function analyzeColonKeywordName(/** @type {IMonoDevInfo} */devInfo, rawKeywordName, rawScriptCmdKey) {
+function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, rawScriptCmdKey) {
   let keywordName = rawKeywordName;
   let scriptCmdKey = rawScriptCmdKey;
 
@@ -72,8 +67,8 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */devInfo, rawKeywordN
  */
 exports.prepareHelEntrys = function (
   isForRootHel,
-  /** @type {import('hel-mono-types').IMonoDevInfo} */devInfo,
-  /** @type {import('../types').INameData} */nameData,
+  /** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo,
+  /** @type {import('../types').INameData} */ nameData,
 ) {
   const { belongTo, dirName } = nameData;
   const { monoRootHelDir, monoRoot } = getMonoRootInfo();
@@ -99,12 +94,12 @@ exports.prepareHelEntrys = function (
   });
 };
 
-exports.extractStartCmdData = function (/** @type {IMonoDevInfo} */devInfo, mayActionName) {
+exports.extractStartCmdData = function (/** @type {IMonoDevInfo} */ devInfo, mayActionName) {
   const data = analyzeColonKeywordName(devInfo, mayActionName, 'start');
   return data;
 };
 
-exports.extractBuildCmdData = function (/** @type {IMonoDevInfo} */devInfo, mayActionName) {
+exports.extractBuildCmdData = function (/** @type {IMonoDevInfo} */ devInfo, mayActionName) {
   const data = analyzeColonKeywordName(devInfo, mayActionName, 'build');
   return data;
 };

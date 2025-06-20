@@ -11,7 +11,7 @@ let curAppData = null;
 const cachedPaths = {};
 
 /**
- * 
+ *
  * @returns 获取已缓存的运行中的应用目录数据
  */
 exports.getCurAppData = function () {
@@ -62,7 +62,7 @@ function logRuningDetails(options, ...args) {
   console.log(prefix, ...args);
   const logFilePath = getLogFilePath(isTmp);
 
-  if (args.some(v => typeof v === 'object')) {
+  if (args.some((v) => typeof v === 'object')) {
     args.forEach((v) => {
       let line;
       if (typeof v === 'object') {

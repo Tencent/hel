@@ -2,11 +2,9 @@ const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog } = require('../../util');
 
-module.exports = function replaceSubApp(/** @type {import('../../types').ICWDAppData} */appData) {
+module.exports = function replaceSubApp(/** @type {import('../../types').ICWDAppData} */ appData) {
   const { isSubMod, realAppPkgName, helDirPath } = appData;
-  const subAppFilePath = isSubMod
-    ? path.join(helDirPath, './configs/subApp.ts')
-    : path.join(helDirPath, './subApp.ts');
+  const subAppFilePath = isSubMod ? path.join(helDirPath, './configs/subApp.ts') : path.join(helDirPath, './subApp.ts');
   helMonoLog(`replace content of subApp file(${subAppFilePath})`);
 
   rewriteFileLine(subAppFilePath, (line) => {

@@ -5,7 +5,9 @@ const os = require('os');
  * 去多余的空格：'a   b c d' --> 'a b c d'
  */
 function formatBlank(str) {
-  const formated = str.split(' ').filter(v => v !== '')
+  const formated = str
+    .split(' ')
+    .filter((v) => v !== '')
     .join(' ');
   return formated;
 }
@@ -26,9 +28,8 @@ function getModuleNames(oneLineExport) {
       modNames.push(formated.split(' as ')[1]);
     }
   });
-  return modNames.filter(v => !!v);
+  return modNames.filter((v) => !!v);
 }
-
 
 /** 获取格式为一行导出所有模块的语句 */
 function getOneLineExportStatement(strList, options) {
@@ -70,11 +71,7 @@ function genExportModuleNames(filePath) {
       return;
     }
     const trimed = statement.trim();
-    if (trimed.startsWith('//')
-      || trimed.startsWith('/**')
-      || trimed.startsWith('*')
-      || trimed.startsWith('*/')
-    ) {
+    if (trimed.startsWith('//') || trimed.startsWith('/**') || trimed.startsWith('*') || trimed.startsWith('*/')) {
       return;
     }
     const pured = formatBlank(trimed);
@@ -89,17 +86,14 @@ function genExportModuleNames(filePath) {
     }
 
     if (pured.startsWith('export {')) {
-      const oneLineExportStatement = getOneLineExportStatement(
-        strList,
-        { ingreIdx, statmentStart: pured, idx, lastIdx },
-      );
+      const oneLineExportStatement = getOneLineExportStatement(strList, { ingreIdx, statmentStart: pured, idx, lastIdx });
       const oneLineModNames = getModuleNames(oneLineExportStatement);
       modNames = modNames.concat(oneLineModNames);
     }
   });
 
   return modNames;
-};
+}
 
 /**
  * json 对象转为行数据
@@ -133,12 +127,12 @@ function jsonObj2Lines(jsonObj, includeFL) {
       }
 
       const leftChars = left.split('');
-      if (leftChars.some(v => ['/', '@', '-', '_'].includes(v))) {
-        left = left.replaceAll('"', '\'');
+      if (leftChars.some((v) => ['/', '@', '-', '_'].includes(v))) {
+        left = left.replaceAll('"', "'");
       } else {
         left = left.replaceAll('"', '');
       }
-      right = right.replaceAll('"', '\'');
+      right = right.replaceAll('"', "'");
       line = `${left}:${right}`;
 
       // 确保键值对都有尾逗号

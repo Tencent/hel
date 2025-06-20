@@ -9,7 +9,7 @@ const { helMonoLog, getCmdKeywords, getMonoRootInfo } = require('../util');
 const { rewriteByLines } = require('../util/rewrite');
 const { jsonObj2Lines } = require('../entry/replace/util');
 
-function getCreateOptions(/** @type {string[]} */keywords) {
+function getCreateOptions(/** @type {string[]} */ keywords) {
   const createOptions = {
     targetDirName: '',
     demoDirName: 'react-cra',
@@ -41,9 +41,9 @@ function getCreateOptions(/** @type {string[]} */keywords) {
       ignoredIdx[idx + 1] = true;
 
       const list = getDirInfoList();
-      const info = list.find(v => v.name === templateValue);
+      const info = list.find((v) => v.name === templateValue);
       if (!info) {
-        const these = list.map(v => v.name).join(' ');
+        const these = list.map((v) => v.name).join(' ');
         throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${these})`);
       }
       createOptions.demoDirName = templateValue;
@@ -59,7 +59,7 @@ function getCreateOptions(/** @type {string[]} */keywords) {
   return createOptions;
 }
 
-function getNewPort(/** @type {IMonoDevInfo} */devInfo) {
+function getNewPort(/** @type {IMonoDevInfo} */ devInfo) {
   const { appConfs } = devInfo;
   let maxPort = 0;
   Object.keys(appConfs).forEach((key) => {
@@ -71,7 +71,7 @@ function getNewPort(/** @type {IMonoDevInfo} */devInfo) {
   return maxPort + 1;
 }
 
-function rewriteRootDevInfo(/** @type {IMonoDevInfo} */devInfo, createOptions) {
+function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, createOptions) {
   const { monoRoot } = getMonoRootInfo();
   const devInfoPath = path.join(monoRoot, './base/dev-info/src/index.js');
   const content = fs.readFileSync(devInfoPath, { encoding: 'utf8' });
@@ -112,7 +112,7 @@ function rewriteRootDevInfo(/** @type {IMonoDevInfo} */devInfo, createOptions) {
   const jsonLines = jsonObj2Lines(mod);
   const allLines = [...headLines, ...jsonLines, ...tailLines];
   rewriteByLines(devInfoPath, allLines);
-};
+}
 
 function rewritePkgJson(pkgJsonFile, appName) {
   const content = fs.readFileSync(pkgJsonFile, { encoding: 'utf8' });
@@ -127,15 +127,15 @@ function rewritePkgJson(pkgJsonFile, appName) {
  * ```
  * # 创建 react-cra 到 hub 目录到 apps
  * npm start .create hub
- * 
+ *
  * # 创建 other-demo 到 hub 目录到 apps
  * npm start .create hub -t other-demo
- * 
+ *
  * # 创建 other-demo 到 hub 目录到 my-apps 目录
  * npm start .create hub -t other-demo -d my-apps
  * ```
  */
-exports.execCreate = function (/** @type {IMonoDevInfo} */devInfo, autoStart = false) {
+exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, autoStart = false) {
   const keywords = getCmdKeywords(3);
   helMonoLog(`.create keywords (${keywords.join(' ')})`);
   const createOptions = getCreateOptions(keywords);
@@ -172,14 +172,14 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */devInfo, autoStart = f
   }
 };
 
-exports.execCreateStart = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.execCreateStart = function (/** @type {IMonoDevInfo} */ devInfo) {
   exports.execCreate(devInfo, true);
 };
 
 /**
  * 执行 npm start .create-mod hub 命令
  */
-exports.execCreateMod = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.execCreateMod = function (/** @type {IMonoDevInfo} */ devInfo) {
   // TODO  将来支持
   helMonoLog('TODO, create mod');
 };

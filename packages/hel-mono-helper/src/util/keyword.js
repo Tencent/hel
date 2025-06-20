@@ -21,7 +21,6 @@ exports.getCmdKeywordName = function (namIndex = 2) {
   return keywordName;
 };
 
-
 /**
  * 获取有效的关键字数组
  */

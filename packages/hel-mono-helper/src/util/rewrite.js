@@ -12,7 +12,7 @@ function rewriteFileLine(filepath, replaceLineCb) {
   const content = fs.readFileSync(filepath, { encoding: 'utf-8' });
   const rawLines = content.split(os.EOL);
   const targetLines = [];
-  const defaultCb = line => ({ line });
+  const defaultCb = (line) => ({ line });
   const lineCb = replaceLineCb || defaultCb;
 
   rawLines.forEach((rawLine) => {
@@ -27,7 +27,7 @@ function rewriteFileLine(filepath, replaceLineCb) {
     }
 
     if (Array.isArray(line)) {
-      line.forEach(v => targetLines.push(v));
+      line.forEach((v) => targetLines.push(v));
     } else {
       targetLines.push(line);
     }

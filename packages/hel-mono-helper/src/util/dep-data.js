@@ -55,7 +55,7 @@ exports.getMonoAppDepData = function (appSrc, devInfo, isAllDep = false) {
     while (loopDeps.length) {
       const tmpDeps = loopDeps.slice();
       loopDeps.length = 0; // 清空间接依赖
-      tmpDeps.forEach(name => pushToDeps(pkg2Deps[name] || {})); // 添加新的间接依赖
+      tmpDeps.forEach((name) => pushToDeps(pkg2Deps[name] || {})); // 添加新的间接依赖
     }
   }
 

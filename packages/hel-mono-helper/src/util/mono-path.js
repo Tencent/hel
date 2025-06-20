@@ -18,7 +18,7 @@ exports.getMonoSubModSrc = function (belongTo, dirName) {
   return exports.getMonoDirOrFilePath(`./${belongTo}/${dirName}/src`);
 };
 
-exports.getDevInfoDirs = function getDevInfoDirs(/** @type {IMonoDevInfo}} */devInfo) {
+exports.getDevInfoDirs = function getDevInfoDirs(/** @type {IMonoDevInfo}} */ devInfo) {
   const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
   const belongToDirs = appsDirs.concat(subModDirs);
   return { appsDirs, subModDirs, belongToDirs };

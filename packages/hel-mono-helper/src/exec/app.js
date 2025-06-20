@@ -1,11 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const shell = require('shelljs');
-const {
-  getCmdKeywordName,
-  getCWD,
-  helMonoLog,
-  getNameData,
-} = require('../util');
+const { getCmdKeywordName, getCWD, helMonoLog, getNameData } = require('../util');
 const { extractStartCmdData } = require('./common');
 const { getPnpmRunCmd } = require('./cmd');
 
@@ -22,7 +17,7 @@ function getIsForRootHelDir() {
 /**
  * 执行应用启动的动作函数
  */
-exports.execStartAppAction = function (/** @type {IMonoDevInfo} */devInfo, rawKeywordName) {
+exports.execStartAppAction = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName) {
   const { keywordName, scriptCmdKey } = extractStartCmdData(devInfo, rawKeywordName);
   const { pkgName, dirName, isSubMod } = getNameData(keywordName, devInfo);
   const isForRootHelDir = getIsForRootHelDir();

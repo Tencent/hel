@@ -48,7 +48,7 @@ function getMonoLevel1NameMap(level1DirName) {
  * 获取整个大仓的目录与应用、应用与目录映射关系
  * @returns {import('../types').IMonoNameMap}
  */
-exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   const { appsDirs, subModDirs } = getDevInfoDirs(devInfo);
   const dupDirs = intersection(appsDirs, subModDirs);
   if (dupDirs.length > 0) {
@@ -87,8 +87,8 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */devInfo) {
     });
   };
 
-  appsDirs.forEach(dir => mapData(dir));
-  subModDirs.forEach(dir => mapData(dir, true));
+  appsDirs.forEach((dir) => mapData(dir));
+  subModDirs.forEach((dir) => mapData(dir, true));
 
   if (dupPackNames.length > 0) {
     throw new Error(`these package names (${dupPackNames.join(',')}) duplicated`);

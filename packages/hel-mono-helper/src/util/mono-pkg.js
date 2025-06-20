@@ -1,4 +1,3 @@
-
 const { getPkgjson } = require('./base');
 const { getMonoDirOrFilePath } = require('./mono-path');
 

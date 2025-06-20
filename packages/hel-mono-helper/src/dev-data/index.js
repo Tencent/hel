@@ -1,18 +1,11 @@
 const path = require('path');
 const { createLibSubApp } = require('hel-dev-utils');
-const {
-  getAppAlias,
-  getCWDAppData,
-  getMonoAppDepData,
-  getMonoSubModSrc,
-  helMonoLog,
-  getCWD,
-} = require('../util');
+const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { isHelMode, isHelStart } = require('../util/is');
 
 let cachedResult = null;
 
-function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */appData) {
+function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   let srcAppIndex = '';
   if (appData.isForRootHelDir) {
     srcAppIndex = 'index.ts';
@@ -26,7 +19,7 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */appData) {
 /**
  * @returns {import('../types').IMonoDevData}
  */
-exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */devInfo, inputAppSrc) {
+exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputAppSrc) {
   let rawAppSrc = inputAppSrc;
   if (!rawAppSrc) {
     rawAppSrc = path.join(getCWD(), './src');
@@ -142,7 +135,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     appPublicUrl,
     appPkgJson,
     appSrcIndex,
-    resolveMonoRoot: relativePath => path.resolve(appData.monoRoot, relativePath),
+    resolveMonoRoot: (relativePath) => path.resolve(appData.monoRoot, relativePath),
   };
   return cachedResult;
 };

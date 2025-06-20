@@ -8,7 +8,7 @@ const { getMonoRootInfo } = require('./root-info');
  * 通过分析 cwd 获取应用目录
  * @return {import('../types').ICWDAppData}
  */
-exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */devInfo, inputCwd) {
+exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputCwd) {
   const curAppData = getCurAppData();
   if (!inputCwd && curAppData) {
     return curAppData;

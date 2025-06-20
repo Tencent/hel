@@ -6,11 +6,7 @@ const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
 
-module.exports = function prepareHelAppEntry(
-  /** @type {import('../../types').ICWDAppData} */appData,
-  devInfo,
-  depData,
-) {
+module.exports = function prepareHelAppEntry(/** @type {import('../../types').ICWDAppData} */ appData, devInfo, depData) {
   const { isForRootHelDir, helDirPath } = appData;
 
   if (isForRootHelDir) {

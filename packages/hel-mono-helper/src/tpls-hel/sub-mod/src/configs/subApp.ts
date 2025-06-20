@@ -12,4 +12,4 @@ const { appGroupName, appNames } = helConf;
 
 export const APP_GROUP_NAME = appGroupName;
 
-export const APP_NAME = isTestFn(APP_GROUP_NAME) ? appNames.test : (appNames.prod || appGroupName);
+export const APP_NAME = isTestFn(APP_GROUP_NAME) ? appNames.test : appNames.prod || appGroupName;

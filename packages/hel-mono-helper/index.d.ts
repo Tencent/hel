@@ -8,11 +8,11 @@ import type { ICWDAppData, IMonoAppDepData, IMonoDevData, INameData } from './sr
  * ```bash
  * npm start hub
  * # 转为 pnpm --filter hub run start 来启动 hub
- * 
- * npm start hub:hel 
- * # 转为 pnpm --filter hub run start:hel 来启动 hel 模式的 hub 
+ *
+ * npm start hub:hel
+ * # 转为 pnpm --filter hub run start:hel 来启动 hel 模式的 hub
  * ```
- * 
+ *
  * @example
  * 构建，xxx 为 .build 会命中构建流程
  * ```bash

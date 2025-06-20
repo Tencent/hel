@@ -1,4 +1,3 @@
-
 function isHelMode() {
   return process.env.HEL === '1';
 }

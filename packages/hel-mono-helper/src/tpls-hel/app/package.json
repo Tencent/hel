@@ -1,17 +1,15 @@
 {
   "name": "proxy-app-name",
   "version": "0.0.1",
-  "main": "./src/index",
   "private": true,
-  "dependencies": {},
+  "main": "./src/index",
   "scripts": {
-    "start": "node ../../../dev/scripts/hel/start.js",
-    "build": "node ../../../dev/scripts/hel/build.js"
+    "build": "node ../../../dev/scripts/hel/build.js",
+    "start": "node ../../../dev/scripts/hel/start.js"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+  "babel": {
+    "presets": [
+      "react-app"
     ]
   },
   "browserslist": {
@@ -26,9 +24,11 @@
       "last 1 safari version"
     ]
   },
-  "babel": {
-    "presets": [
-      "react-app"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
     ]
-  }
+  },
+  "dependencies": {}
 }

@@ -5,7 +5,7 @@ const { prepareHelEntrys } = require('./common');
 /**
  * 执行 npm start .init xx-hub 命令
  */
-exports.execInit = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.execInit = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog('isForRootHelDir false');
   const mayPkgOrDir = getCmdKeywordName(3);
   const nameData = getNameData(mayPkgOrDir, devInfo);
@@ -15,7 +15,7 @@ exports.execInit = function (/** @type {IMonoDevInfo} */devInfo) {
 /**
  * 执行 npm start .init-proxy xx-hub 命令
  */
-exports.execInitProxy = function (/** @type {IMonoDevInfo} */devInfo) {
+exports.execInitProxy = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog('isForRootHelDir true');
   const mayPkgOrDir = getCmdKeywordName(3);
   const nameData = getNameData(mayPkgOrDir, devInfo);

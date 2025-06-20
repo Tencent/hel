@@ -1,5 +1,4 @@
 // @ts-nocheck
-import React from 'react';
 import ReactDOM from 'react-dom';
 import * as modules from './modules';
 

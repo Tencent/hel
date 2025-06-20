@@ -1,8 +1,8 @@
 import { isMasterApp } from 'hel-iso';
-import { preFetchLib } from 'hel-micro';
 import { libReady } from 'hel-lib-proxy';
+import { preFetchLib } from 'hel-micro';
 import { DEV_INFO } from './configs/devInfo';
-import { APP_NAME, APP_GROUP_NAME } from './configs/subApp';
+import { APP_GROUP_NAME, APP_NAME } from './configs/subApp';
 import { getHelDeps } from './configs/util';
 
 async function preFetchOtherDeps() {
@@ -11,12 +11,14 @@ async function preFetchOtherDeps() {
   if (!helDeps.length) return;
 
   const start = Date.now();
-  const depNames = helDeps.map(v => v.appName);
+  const depNames = helDeps.map((v) => v.appName);
   console.log(`start preFetchLib (${depNames}) isDev=${isDev}`);
-  await Promise.all(helDeps.map(({ appName, appGroupName, packName }) => {
-    const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
-    return preFetchLib(appName, { custom: { enable: isDev, host: `${devHostname}:${port}`, appGroupName } });
-  }));
+  await Promise.all(
+    helDeps.map(({ appName, appGroupName, packName }) => {
+      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
+      return preFetchLib(appName, { custom: { enable: isDev, host: `${devHostname}:${port}`, appGroupName } });
+    }),
+  );
   console.log(`end preFetchLib, costs ${Date.now() - start}`);
 }
 

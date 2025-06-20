@@ -22,4 +22,4 @@ exports.buildSrvModToHelDist = function () {
   fs.cpSync(srvModCopyFrom, srvModCopyTo, { recursive: true });
   // 复制完毕，删除 tsc 中间产物
   fs.rmSync(srvModCopyFrom, { recursive: true, force: true });
-}
+};
