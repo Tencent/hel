@@ -12,6 +12,22 @@ function getPath(list, lastIdx) {
   return tmpList.join(path.sep);
 }
 
+function getHelAssociatePath(monoRoot) {
+  const monoRootHelDir = path.join(monoRoot, './.hel');
+  const monoRootHelLog = path.join(monoRoot, './.hel/hel-all.log');
+  return { monoRootHelDir, monoRootHelLog };
+}
+
+exports.setMonoRoot = function (rootPath) {
+  const { monoRootHelDir, monoRootHelLog } = getHelAssociatePath(monoRoot);
+  curMonoRootInfo = {
+    monoRoot: rootPath,
+    monoRootHelDir,
+    monoRootHelLog,
+  };
+  return curMonoRootInfo;
+};
+
 /**
  * 获取大仓根目录信息
  */
@@ -45,9 +61,7 @@ exports.getMonoRootInfo = function () {
     throw new Error(`can not decide mono root path for cwd(${cwd})`);
   }
 
-  const monoRootHelDir = path.join(monoRoot, './.hel');
-  const monoRootHelLog = path.join(monoRoot, './.hel/hel-all.log');
-
+  const { monoRootHelDir, monoRootHelLog } = getHelAssociatePath(monoRoot);
   // 确定完毕 root 路径信息，确保一下 .hel 目录存在
   if (!fs.existsSync(monoRootHelDir)) {
     fs.mkdirSync(monoRootHelDir);

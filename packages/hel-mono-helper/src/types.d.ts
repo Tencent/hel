@@ -10,6 +10,12 @@ type BelongToDir = string;
 
 type DepsObj = Record<PkgName, PkgVer>;
 
+export interface IMonoRootInfo {
+  monoRoot: string;
+  monoRootHelDir: string;
+  monoRootHelLog: string;
+}
+
 export interface IPkgInfo {
   /** 包名 */
   pkgName: string;

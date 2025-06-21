@@ -1,5 +1,5 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
-import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, INameData } from './src/types';
+import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRootInfo, INameData } from './src/types';
 
 export declare const HEL_DIST: 'hel_dist';
 
@@ -80,8 +80,12 @@ export declare const monoUtil: {
   getCmdKeywords: (sliceStart: number) => string[];
   setCurKeyword: (keyword: string) => void;
   getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[]; subModDirs: string[]; belongToDirs: string[] };
-  getMonoRootInfo: () => { monoRoot: string; monoRootHelDir: string; monoRootHelLog: string };
+  getMonoRootInfo: () => IMonoRootInfo;
   getPkgjson: (pkgFilePath: string) => Record<string, any>;
   getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;
   getMonoAppDepData: (appSrc: string, devInfo: IMonoDevInfo, isAllDep?: boolean) => IMonoAppDepData;
+  /**
+   * 某些流水线环境可能无法推导出大仓根目录位置，但流水线上可以读到此位置对应的全局变量，可以调用此接口透传给 hel-mono-helper
+   */
+  setMonoRoot: (monoRoot: string) => IMonoRootInfo;
 };

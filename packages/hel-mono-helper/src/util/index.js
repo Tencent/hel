@@ -8,7 +8,7 @@ const { getNameData } = require('./name-data');
 const { isHelStart, isHelMode } = require('./is');
 const { clearMonoLog, helMonoLog, helMonoErrorLog, helMonoLogTmp } = require('./log');
 const { getCWDAppData } = require('./op-cwd');
-const { getMonoRootInfo } = require('./root-info');
+const { getMonoRootInfo, setMonoRoot } = require('./root-info');
 
 module.exports = {
   helMonoLog,
@@ -35,4 +35,5 @@ module.exports = {
   getMonoAppDepData,
   isHelStart,
   isHelMode,
+  setMonoRoot,
 };
