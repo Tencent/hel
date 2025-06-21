@@ -71,6 +71,17 @@ export interface IMonoDevInfo {
    * 所有hel模块本地联调时的域名
    */
   devHostname?: string;
+  /**
+   * default: hel-micro
+   * 模板文件里使用的 hel-micro sdk，如用户基于hel-micro向上封装了自己的sdk，这里可配置封装sdk的名称，
+   * 让生成的模板文件里 sdk 路径指向用户 sdk
+   */
+  helMicroName?: string;
+  /**
+   * default: hel-lib-proxy
+   * 模板文件里使用的 hel-lib-proxy sdk 名称，如有自定义包可定义此值，让生成的模板文件里 sdk 路径指向用户 sdk
+   */
+  helLibProxyName?: string;
 }
 
 /**
