@@ -132,6 +132,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     jestAlias,
     appExternals,
     appInfo,
+    appData,
     appPublicUrl,
     appPkgJson,
     appSrcIndex,

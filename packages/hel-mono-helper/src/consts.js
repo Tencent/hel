@@ -52,6 +52,8 @@ module.exports = {
   INNER_ACTION_NAMES,
   CREATE_SHORT_PARAM_KEY,
   CREATE_SHORT_PARAM_KEY_NAMES,
+  HEL_MICRO_NAME: 'hel-micro',
+  HEL_LIB_PROXY_NAME: 'hel-lib-proxy',
   DEFAULT_HUB: 'hub',
   /**
    * 默认放置 apps 项目（作为web项目构建）的目录名

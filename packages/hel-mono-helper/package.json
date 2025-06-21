@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-helper",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "hel-mono micro architecture helper",
   "keywords": [
     "hel",
@@ -26,8 +26,8 @@
   "scripts": {},
   "dependencies": {},
   "devDependencies": {
-    "hel-dev-utils": "^5.2.2",
-    "hel-mono-types": "^1.1.0"
+    "hel-dev-utils": "^5.2.6",
+    "hel-mono-types": "^1.1.1"
   },
   "bundleDependencies": [],
   "deprecated": false

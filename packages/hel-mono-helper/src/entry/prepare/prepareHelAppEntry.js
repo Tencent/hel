@@ -16,7 +16,7 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
 
     prepareTplFiles(appData, true);
     r.replacePkgJson(appData, depData);
-    r.replaceIndexFile(appData);
+    r.replaceIndexFile(appData, devInfo);
     r.replaceDevInfo(appData, devInfo);
     r.replaceSubApp(appData);
     prepareNodeModules(appData);
@@ -33,7 +33,7 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
   const fromPath = path.join(HEL_TPL_INNER_APP_PATH, './src');
   fs.cpSync(fromPath, helDirPath, { recursive: true });
 
-  r.replaceIndexFile(appData);
+  r.replaceIndexFile(appData, devInfo);
   r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
 };

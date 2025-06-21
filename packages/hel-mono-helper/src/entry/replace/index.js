@@ -5,4 +5,5 @@ module.exports = {
   replaceSubApp: require('./replaceSubApp'),
   replaceSubModModulesIndex: require('./replaceSubModModulesIndex'),
   replaceSubModLibTypes: require('./replaceSubModLibTypes'),
+  replaceSubModIndex: require('./replaceSubModIndex'),
 };

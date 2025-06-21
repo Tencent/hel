@@ -1,10 +1,12 @@
+/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
+/** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog, getPkgjson } = require('../../util');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 
-function getInjectedDevInfo(deps, /** @type {import('../../types').ICWDAppData} */ appData, devInfo) {
+function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { realAppPkgName } = appData;
   const { appConfs, devHostname } = devInfo;
   const injectedDevInfo = {
@@ -26,7 +28,7 @@ function getInjectedDevInfo(deps, /** @type {import('../../types').ICWDAppData} 
   return injectedDevInfo;
 }
 
-module.exports = function replaceDevInfo(/** @type {import('../../types').ICWDAppData} */ appData, devInfo) {
+module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { helDirPath, isSubMod, realAppPkgJsonPath } = appData;
   const devInfoFile = isSubMod ? path.join(helDirPath, './configs/devInfo.ts') : path.join(helDirPath, './devInfo.ts');
   helMonoLog(`replace content of file(${devInfoFile})`);

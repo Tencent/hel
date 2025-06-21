@@ -509,11 +509,11 @@ importers:
   packages/hel-mono-helper:
     devDependencies:
       hel-dev-utils:
-        specifier: ^5.2.2
-        version: 5.2.2(jsdom@20.0.3)
+        specifier: ^5.2.6
+        version: 5.2.6(hel-types@4.3.9)(jsdom@20.0.3)
       hel-mono-types:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
 
   packages/hel-mono-types: {}
 
@@ -6451,9 +6451,10 @@ packages:
     peerDependencies:
       jsdom: '>=19.0.0'
 
-  hel-dev-utils@5.2.2:
-    resolution: {integrity: sha512-TpDNUGlWCv3G3jx2Vjiik12KDN5wGsaA5hAzDgInF3nRvApiUIyIrh0HB/9zFganhIwI1G/LmFYNqhd0SJ5JeQ==}
+  hel-dev-utils@5.2.6:
+    resolution: {integrity: sha512-VFV/CuWzOmW9rO8lfJdvJc9FiT83LvSEOAvg7DAgCNbQT9nTnh4PE5i5+ue5Q6eWWLuInFXIqXqYsEtf+e1vnQ==}
     peerDependencies:
+      hel-types: ^4.3.9
       jsdom: '>=19.0.0'
 
   hel-html-parser@1.1.2:
@@ -6481,8 +6482,8 @@ packages:
       hel-types: ^4.3.3
     bundledDependencies: []
 
-  hel-mono-types@1.1.0:
-    resolution: {integrity: sha512-tbBE8DVjQJ4Ts87o5LbEfR2E1RLZ7GpnrfQrp+ERkfdOkw2FKWO9wTfvHZF+Zedj8dIDuiNB+hmw2CA3oisPFA==}
+  hel-mono-types@1.1.1:
+    resolution: {integrity: sha512-WPB+iFZHlCuVrIJ9UZZ3wXgvZQdv3MpERlgqxvA0EVfXU9T4GIqj9MlUIa7wAEBIlwfpAUBhavAKJSdb3utLSA==}
 
   hel-types@4.3.3:
     resolution: {integrity: sha512-Oluh82FIi0XvM1kfXYpYqZ9j70hHVrLEDEeWc3Hf9yl1eYDKBlomTXppXN7cQN9yn82+3Mk7BYrJx8D/Y63CjA==}
@@ -20264,8 +20265,9 @@ snapshots:
     dependencies:
       jsdom: 20.0.3
 
-  hel-dev-utils@5.2.2(jsdom@20.0.3):
+  hel-dev-utils@5.2.6(hel-types@4.3.9)(jsdom@20.0.3):
     dependencies:
+      hel-types: 4.3.9
       jsdom: 20.0.3
 
   hel-html-parser@1.1.2:
@@ -20299,7 +20301,7 @@ snapshots:
       hel-micro-core: 4.11.0(hel-types@4.3.9)
       hel-types: 4.3.9
 
-  hel-mono-types@1.1.0: {}
+  hel-mono-types@1.1.1: {}
 
   hel-types@4.3.3: {}
 

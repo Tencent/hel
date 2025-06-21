@@ -5,8 +5,9 @@ const prepareNodeModules = require('./prepareNodeModules');
 module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   prepareTplFiles(appData);
   r.replacePkgJson(appData, depData);
+  r.replaceSubModIndex(appData, devInfo);
   r.replaceSubModModulesIndex(appData);
-  r.replaceSubModLibTypes(appData);
+  r.replaceSubModLibTypes(appData, devInfo);
   r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
   prepareNodeModules(appData);

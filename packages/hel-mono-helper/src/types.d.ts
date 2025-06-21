@@ -1,3 +1,5 @@
+import type { ISubAppBuildDesc } from 'hel-dev-utils';
+
 type Dict<T = any> = Record<string, T>;
 
 type PkgName = string;
@@ -115,6 +117,8 @@ export interface ICWDAppData {
   appDir: string;
   /**
    * app所属项目的目录完整路径
+   * @example
+   * /path/to/hel-mono/apps/hub
    */
   appDirPath: string;
   /**
@@ -159,6 +163,9 @@ export interface ICWDAppData {
   monoRoot: string;
 }
 
+/**
+ * 应用在大仓里的相关开发数据
+ */
 export interface IMonoDevData {
   babelLoaderInclude: string[];
   appAlias: Record<string, string>;
@@ -167,7 +174,11 @@ export interface IMonoDevData {
   /**
    * 基于 hel-dev-utils 生成的应用信息
    */
-  appInfo: any;
+  appInfo: ISubAppBuildDesc;
+  /**
+   * 应用自身相关开发数据
+   */
+  appData: ICWDAppData;
   appPublicUrl: string;
   /**
    * 应用index入口文件完整路径
