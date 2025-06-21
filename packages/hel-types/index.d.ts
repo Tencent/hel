@@ -225,6 +225,7 @@ export interface ISimpleApp {
   create_at: string;
   /** 构建元数据时透传的平台值 */
   platform: string;
+  [key: string]: any;
 }
 
 /**
@@ -249,6 +250,9 @@ export interface ISimpleVersion {
   html_content: string;
   /** 带时区的时间戳字符串，创建时间 date ISO date string，形如；2022-03-01T06:39:46.000Z */
   create_at: string;
+  /** 一些描述信息：如触发构建时的 git 提交信息，可按需记录 */
+  desc: string;
+  [key: string]: any;
 }
 
 export interface IMeta {
@@ -325,7 +329,6 @@ export interface ISubApp extends ISimpleApp {
   render_mode: string;
   host_map: Record<string, string>;
   ui_framework: string;
-  [key: string]: any;
 }
 
 /**
@@ -335,8 +338,6 @@ export interface ISubAppVersion extends ISimpleVersion {
   sub_app_id: string;
   /** 开发或者测试版本调用api所属域名，不填写的会去读取app.host_map.build  */
   api_host: string;
-  /** 触发构建时的 git 提交信息 */
-  desc: string;
   /** 触发构建的 rtx 名称 */
   create_by: string;
   /** 蓝盾空间名 */

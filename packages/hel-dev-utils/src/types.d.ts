@@ -134,6 +134,12 @@ export interface IUserExtractOptions {
   enablePrefixHomePage?: boolean;
   /** default: undefined, 如无特殊情况，不需要指定，内部会自动去构建目录下查询 .html 结尾的文件 */
   indexHtmlName?: string;
+  /** 记录到 version 里的描述信息 */
+  /**
+   * default: 'this version meta is created by hel-dev-utils@xxxx'
+   * 记录到 version 里的描述信息
+   */
+  desc?: string;
 }
 
 export interface IInnerSubAppOptions {

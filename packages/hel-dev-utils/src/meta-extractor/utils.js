@@ -78,7 +78,8 @@ export function makeAppVersionSrcMap(extractOptions) {
  * @param {import('../types').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
+  const defaultDesc = `this version meta is created by hel-dev-utils@${cst.PLUGIN_VER}`;
+  const { packageJson, extractMode = 'build', subApp, desc = defaultDesc } = userExtractOptions;
   const { homePage, groupName, name: appName, semverApi, platform } = subApp;
 
   /**
@@ -100,8 +101,10 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
         if (versionMakeOnPipeline) {
           const arr = versionMakeOnPipeline.split('_');
           const lastItem = arr[arr.length - 1];
-          // 特征符合 helpack 的版本号
-          if (lastItem && lastItem.length === 14 && new RegExp('^[1-9]+[0-9]*$').test(lastItem)) {
+          const len = lastItem.length;
+          // 特征符合 helpack 的版本号，14位时间年月日字符串：20250620173919，13位时间戳字符串：1750468673912
+          const isHelpackTimeSeg = len === 14 || len === 13;
+          if (lastItem && isHelpackTimeSeg && new RegExp('^[1-9]+[0-9]*$').test(lastItem)) {
             version = versionMakeOnPipeline;
           }
         }
@@ -135,6 +138,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       src_map: parsedRet.srcMap,
       html_content: parsedRet.htmlContent,
       create_at: currentISOUTCString,
+      desc,
     },
   };
 }

@@ -20,5 +20,5 @@ export default {
   DEFAULT_NPM_CDN_TYPE: 'unpkg',
   DEFAULT_HTML_INDEX_NAME: 'index.html',
   DEFAULT_SEMVER_API: true,
-  PLUGIN_VER: '5.2.3',
+  PLUGIN_VER: '5.2.4',
 };
