@@ -221,8 +221,10 @@ export interface ISimpleApp {
   online_version: string;
   /** 构建产生的最新版本 */
   build_version: string;
-  /** 创建时间 "2019-11-05T08:37:17.000Z" */
+  /** 创建时间 date ISO date string "2019-11-05T08:37:17.000Z" */
   create_at: string;
+  /** 构建元数据时透传的平台值 */
+  platform: string;
 }
 
 /**
@@ -233,7 +235,7 @@ export interface ISimpleVersion {
   plugin_ver: string;
   /**
    * default: 'build'，hel-dev-utils 生成此元数据时使用的提取资源模式
-  */
+   */
   extract_mode: ExtractMode;
   /** 冗余存储的子应用名称，对应app_info表的name字段 */
   sub_app_name: string;
@@ -241,11 +243,11 @@ export interface ISimpleVersion {
   sub_app_version: string;
   /**
    * 资源描述表map
-  */
+   */
   src_map: ISrcMap;
   /** html entry 字符串，在 extractMode 为 all 或 build 时都会记录 */
   html_content: string;
-  /** 带时区的时间戳字符串，形如；2022-03-01T06:39:46.000Z */
+  /** 带时区的时间戳字符串，创建时间 date ISO date string，形如；2022-03-01T06:39:46.000Z */
   create_at: string;
 }
 

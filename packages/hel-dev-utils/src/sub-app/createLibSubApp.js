@@ -1,4 +1,4 @@
-/** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
+/** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
 import createSubApp from '../share/createSubApp';
 
 /**

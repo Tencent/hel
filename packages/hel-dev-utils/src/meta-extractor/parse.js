@@ -1,6 +1,6 @@
-/** @typedef {import('../../typings').SrcMap} SrcMap */
-/** @typedef {import('../../typings').IUserExtractOptions} IUserExtractOptions */
-/** @typedef {import('../../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
+/** @typedef {import('../types').SrcMap} SrcMap */
+/** @typedef {import('../types').IUserExtractOptions} IUserExtractOptions */
+/** @typedef {import('../types').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import * as fs from 'fs';
 import jsdom from 'jsdom';
 import * as util from 'util';

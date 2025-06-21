@@ -1,5 +1,5 @@
-/** @typedef {import('../../typings').IInnerSubAppOptions} IInnerSubAppOptions */
-/** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
+/** @typedef {import('../types').IInnerSubAppOptions} IInnerSubAppOptions */
+/** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
 import * as base from '../base-utils/index';
 import cst from '../configs/consts';
 import presetExternals from '../configs/presetExternals';

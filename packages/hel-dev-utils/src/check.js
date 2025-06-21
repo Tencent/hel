@@ -5,7 +5,7 @@
 |
 |--------------------------------------------------------------------------
 */
-/** @typedef {import('../typings').ICheckOptions} ICheckOptions */
+/** @typedef {import('./types').ICheckOptions} ICheckOptions */
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';

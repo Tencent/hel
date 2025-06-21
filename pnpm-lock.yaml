@@ -193,6 +193,9 @@ importers:
 
   packages/hel-dev-utils:
     dependencies:
+      hel-types:
+        specifier: ^4.3.8
+        version: 4.3.8
       jsdom:
         specifier: '>=19.0.0'
         version: 20.0.3
@@ -505,8 +508,11 @@ importers:
 
   packages/hel-mono-helper:
     devDependencies:
+      hel-dev-utils:
+        specifier: ^5.2.2
+        version: 5.2.2(jsdom@20.0.3)
       hel-mono-types:
-        specifier: '*'
+        specifier: ^1.1.0
         version: 1.1.0
 
   packages/hel-mono-types: {}
@@ -888,10 +894,10 @@ importers:
         version: 4.4.0
       hel-lib-proxy:
         specifier: ^4.7.2
-        version: 4.10.0(hel-micro-core@4.11.0(hel-types@4.3.6))(hel-types@4.3.6)
+        version: 4.10.0(hel-micro-core@4.11.0(hel-types@4.3.8))(hel-types@4.3.8)
       hel-micro:
         specifier: ^4.7.9
-        version: 4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.6))(hel-types@4.3.6)
+        version: 4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.8))(hel-types@4.3.8)
       react:
         specifier: '>=16.8.0'
         version: 18.3.1
@@ -6445,6 +6451,11 @@ packages:
     peerDependencies:
       jsdom: '>=19.0.0'
 
+  hel-dev-utils@5.2.2:
+    resolution: {integrity: sha512-TpDNUGlWCv3G3jx2Vjiik12KDN5wGsaA5hAzDgInF3nRvApiUIyIrh0HB/9zFganhIwI1G/LmFYNqhd0SJ5JeQ==}
+    peerDependencies:
+      jsdom: '>=19.0.0'
+
   hel-html-parser@1.1.2:
     resolution: {integrity: sha512-fbkzG7LkkDB/GHozwom+8h8EqMs3m4xDgAxvf7KV9JvweoaVOST0asrqClDNqym/VpewivJ2EruBs6iO3zxskg==}
 
@@ -6476,8 +6487,8 @@ packages:
   hel-types@4.3.3:
     resolution: {integrity: sha512-Oluh82FIi0XvM1kfXYpYqZ9j70hHVrLEDEeWc3Hf9yl1eYDKBlomTXppXN7cQN9yn82+3Mk7BYrJx8D/Y63CjA==}
 
-  hel-types@4.3.6:
-    resolution: {integrity: sha512-/8/WNre/vcVp3API1G0hEmNGr+hk552cAznnAkYmsduVle3TKbOd1InT/kVgFZTPpPpeeurKDS5nOLrJDkXn3A==}
+  hel-types@4.3.8:
+    resolution: {integrity: sha512-7Ls09I3PURl1/Acrwxswb7SPEzaVj5kxA5+3CuPTbzhjUDh2O6iVNPR/P7W8oxX1W0x5FceTlW+XKTcfy+Hazw==}
 
   history@4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
@@ -20253,24 +20264,28 @@ snapshots:
     dependencies:
       jsdom: 20.0.3
 
+  hel-dev-utils@5.2.2(jsdom@20.0.3):
+    dependencies:
+      jsdom: 20.0.3
+
   hel-html-parser@1.1.2:
     dependencies:
-      hel-types: 4.3.3
+      hel-types: 4.3.8
 
   hel-iso@4.4.0: {}
 
-  hel-lib-proxy@4.10.0(hel-micro-core@4.11.0(hel-types@4.3.6))(hel-types@4.3.6):
+  hel-lib-proxy@4.10.0(hel-micro-core@4.11.0(hel-types@4.3.8))(hel-types@4.3.8):
     dependencies:
-      hel-micro-core: 4.11.0(hel-types@4.3.6)
-      hel-types: 4.3.6
+      hel-micro-core: 4.11.0(hel-types@4.3.8)
+      hel-types: 4.3.8
 
   hel-micro-core@4.11.0(hel-types@4.3.3):
     dependencies:
       hel-types: 4.3.3
 
-  hel-micro-core@4.11.0(hel-types@4.3.6):
+  hel-micro-core@4.11.0(hel-types@4.3.8):
     dependencies:
-      hel-types: 4.3.6
+      hel-types: 4.3.8
 
   hel-micro@4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.3))(hel-types@4.3.3):
     dependencies:
@@ -20278,17 +20293,17 @@ snapshots:
       hel-micro-core: 4.11.0(hel-types@4.3.3)
       hel-types: 4.3.3
 
-  hel-micro@4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.6))(hel-types@4.3.6):
+  hel-micro@4.12.0(hel-html-parser@1.1.2)(hel-micro-core@4.11.0(hel-types@4.3.8))(hel-types@4.3.8):
     dependencies:
       hel-html-parser: 1.1.2
-      hel-micro-core: 4.11.0(hel-types@4.3.6)
-      hel-types: 4.3.6
+      hel-micro-core: 4.11.0(hel-types@4.3.8)
+      hel-types: 4.3.8
 
   hel-mono-types@1.1.0: {}
 
   hel-types@4.3.3: {}
 
-  hel-types@4.3.6: {}
+  hel-types@4.3.8: {}
 
   history@4.10.1:
     dependencies:

@@ -1,7 +1,7 @@
-/** @typedef {import('../../typings').SrcMap} SrcMap*/
-/** @typedef {import('../../typings').IAssetOptions} IAssetOptions*/
-/** @typedef {import('../../typings').IAssetInfo} IAssetInfo */
-/** @typedef {import('../../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
+/** @typedef {import('../types').SrcMap} SrcMap*/
+/** @typedef {import('../types').IAssetOptions} IAssetOptions*/
+/** @typedef {import('../types').IAssetInfo} IAssetInfo */
+/** @typedef {import('../types').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import fs from 'fs';
 import util from 'util';
 import { slash } from '../base-utils/index';

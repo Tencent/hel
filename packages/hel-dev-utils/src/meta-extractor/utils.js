@@ -1,4 +1,4 @@
-/** @typedef {import('../../typings').SrcMap} SrcMap*/
+/** @typedef {import('../types').SrcMap} SrcMap*/
 import * as fs from 'fs';
 import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
@@ -47,7 +47,7 @@ export function getAllFilePath(dirPath) {
 }
 
 /**
- * @param {import('../../typings').IUserExtractOptions} extractOptions
+ * @param {import('../types').IUserExtractOptions} extractOptions
  */
 export function makeAppVersionSrcMap(extractOptions) {
   const { appInfo, indexHtmlName = cst.DEFAULT_HTML_INDEX_NAME, extractMode = 'all' } = extractOptions;
@@ -75,11 +75,11 @@ export function makeAppVersionSrcMap(extractOptions) {
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap
- * @param {import('../../typings').IUserExtractOptions} userExtractOptions
+ * @param {import('../types').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
   const { packageJson, extractMode = 'build', subApp } = userExtractOptions;
-  const { homePage, groupName, name: appName, semverApi } = subApp;
+  const { homePage, groupName, name: appName, semverApi, platform } = subApp;
 
   /**
    *  构建版本号，当指定了 homePage 且不想采用默认的版本号生成规则时，才需要透传 buildVer 值
@@ -114,6 +114,8 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
     }
   }
   const repo = packageJson.repository || {};
+  const currentDate = new Date();
+  const currentISOUTCString = currentDate.toISOString();
 
   return {
     app: {
@@ -122,6 +124,8 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       git_repo_url: repo.url || packageJson.homepage || '',
       online_version: version,
       build_version: version,
+      platform: platform || cst.DEFAULT_PLAT,
+      create_at: currentISOUTCString,
     },
     version: {
       plugin_ver: cst.PLUGIN_VER,
@@ -130,6 +134,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       sub_app_version: version,
       src_map: parsedRet.srcMap,
       html_content: parsedRet.htmlContent,
+      create_at: currentISOUTCString,
     },
   };
 }

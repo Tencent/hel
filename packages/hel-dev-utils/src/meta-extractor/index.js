@@ -6,7 +6,7 @@ import { getIndexHtmlFileName, makeHelMetaJson } from './utils';
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap
- * @param {import('../../typings').IUserExtractOptions} ueOptions
+ * @param {import('../types').IUserExtractOptions} ueOptions
  */
 export default async function extractHelMetaJson(ueOptions) {
   const { buildDirFullPath, writeMetaJsonToDist = true } = ueOptions;

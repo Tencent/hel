@@ -1,4 +1,4 @@
-/** @typedef {import('../../typings').FileDesc} FileDesc*/
+/** @typedef {import('../types').FileDesc} FileDesc*/
 import * as fs from 'fs';
 import cst from '../configs/consts';
 

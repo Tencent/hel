@@ -1,4 +1,5 @@
-/** @typedef {import('../../typings').ICreateSubAppOptions} ICreateSubAppOptions */
+/** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
+import cst from '../configs/consts';
 import { getNpmCdnHomePage } from '../inner-utils/index';
 
 /**
@@ -80,7 +81,7 @@ export function getHelEnvParams(pkg, options = {}) {
   const { platform, distDir, homePage: userCustomHomePage, handleHomePage = true, npmCdnType } = options;
   let cdnHomePage = '';
   // 计算 unpkg 平台 的 homePage 值，此时如果透传了 homePage，表示 unpkg 为私服
-  if (platform === 'unpkg' && handleHomePage) {
+  if (platform === cst.DEFAULT_PLAT && handleHomePage) {
     cdnHomePage = getNpmCdnHomePage(pkg, { distDir, npmCdnType, homePage: userCustomHomePage });
   }
 
