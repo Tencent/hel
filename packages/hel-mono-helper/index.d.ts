@@ -1,5 +1,5 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
-import type { ICWDAppData, IMonoAppDepData, IMonoDevData, INameData, IMonoNameMap } from './src/types';
+import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, INameData } from './src/types';
 
 /**
  * 基于 npm start xxx 来启动或构建宿主
@@ -71,8 +71,8 @@ export declare const monoUtil: {
   getCmdKeywordName: (namIndex: number) => string;
   getCmdKeywords: (sliceStart: number) => string[];
   setCurKeyword: (keyword: string) => void;
-  getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[], subModDirs: string[], belongToDirs: string[] };
-  getMonoRootInfo: () => { monoRoot: string, monoRootHelDir: string, monoRootHelLog: string };
+  getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[]; subModDirs: string[]; belongToDirs: string[] };
+  getMonoRootInfo: () => { monoRoot: string; monoRootHelDir: string; monoRootHelLog: string };
   getPkgjson: (pkgFilePath: string) => Record<string, any>;
   getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;
   getMonoAppDepData: (appSrc: string, devInfo: IMonoDevInfo, isAllDep?: boolean) => IMonoAppDepData;
