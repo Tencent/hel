@@ -1,6 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
 const path = require('path');
+const { cst } = require('hel-dev-utils');
 const { getDevInfoDirs, intersection, getPkgjson } = require('./base');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 const { getMonoRootInfo } = require('./root-info');
@@ -97,4 +98,13 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   }
 
   return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info };
+};
+
+exports.getBuildDirPath = function (devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {
+  const { pkg2AppDirPath } = exports.getMonoNameMap(devInfo);
+  const appDirPath = pkg2AppDirPath[pkgName];
+  if (!appDirPath) {
+    throw new Error(`no app dir found for ${pkgName}!`);
+  }
+  return path.join(appDirPath, `./${buildDir}`);
 };

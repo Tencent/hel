@@ -68,6 +68,12 @@ export declare const monoUtil: {
    * true: 是 hel模式，此时 start 和 build 启动脚本都会标识 process.env.HEL=1
    */
   isHelMode: () => boolean;
+  /**
+   * 获取应用构建hel产物所在的目录路径
+   * @param buildDirName ['hel_dist']
+   * @returns 
+   */
+  getBuildDirPath: (devInfo: IMonoDevInfo, pkgName: string, buildDirName?: string) => string;
   getCWD: () => string;
   getCWDAppData: (devInfo: IMonoDevInfo, cwd?: string) => ICWDAppData;
   getCmdKeywordName: (namIndex: number) => string;

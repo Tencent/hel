@@ -55,7 +55,7 @@ export interface INameMap {
 }
 
 export interface IMonoNameMap {
-  monoNameMap: Record<BelongToDir, { isSubMod: boolean, nameMap: INameMap }>;
+  monoNameMap: Record<BelongToDir, { isSubMod: boolean; nameMap: INameMap }>;
   /**
    * 包名与应用的目录路径映射
    */

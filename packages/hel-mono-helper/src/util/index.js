@@ -1,7 +1,7 @@
 const { getCWD, getPkgjson, getAppAlias, ensureSlash } = require('./base');
 const { getMonoAppDepData } = require('./dep-data');
 const { getCmdKeywordName, getCmdKeywords, setCurKeyword } = require('./keyword');
-const { getMonoNameMap } = require('./mono-name');
+const { getMonoNameMap, getBuildDirPath } = require('./mono-name');
 const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath, getDevInfoDirs } = require('./mono-path');
 const { getMonoAppPkgJson } = require('./mono-pkg');
 const { getNameData } = require('./name-data');
@@ -17,6 +17,7 @@ module.exports = {
   clearMonoLog,
   ensureSlash,
   getAppAlias,
+  getBuildDirPath,
   getCmdKeywordName,
   getCmdKeywords,
   setCurKeyword,
