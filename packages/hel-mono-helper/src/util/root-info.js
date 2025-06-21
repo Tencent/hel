@@ -19,7 +19,7 @@ function getHelAssociatePath(monoRoot) {
 }
 
 exports.setMonoRoot = function (rootPath) {
-  const { monoRootHelDir, monoRootHelLog } = getHelAssociatePath(monoRoot);
+  const { monoRootHelDir, monoRootHelLog } = getHelAssociatePath(rootPath);
   curMonoRootInfo = {
     monoRoot: rootPath,
     monoRootHelDir,
