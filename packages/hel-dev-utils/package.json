@@ -1,6 +1,6 @@
 {
   "name": "hel-dev-utils",
-  "version": "5.2.5",
+  "version": "5.2.6",
   "description": "hel dev utils",
   "repository": {
     "type": "git",
@@ -16,9 +16,7 @@
     "dist",
     "lib",
     "src",
-    "typings.d.ts",
-    "jsconfig.json",
-    ".babelrc.js",
+    "index.d.ts",
     "README.md"
   ],
   "scripts": {
