@@ -35,7 +35,7 @@ export declare function prepareHelEntry(devInfo: IMonoDevInfo, depData: IMonoApp
 /**
  * 获取 hel-mono 大仓架构里的开发数据
  */
-export declare function getMonoDevData(devInfo: IMonoDevInfo, depData: IMonoAppDepData, appData?: ICWDAppData): IMonoDevData;
+export declare function getMonoDevData(devInfo: IMonoDevInfo, appSrc?: string): IMonoDevData;
 
 /**
  * 使用 tsc 构建后台产物，并复制到 hel_dist/srv 目录下
