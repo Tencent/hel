@@ -1,5 +1,5 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
-import type { ICWDAppData, IMonoAppDepData, IMonoDevData, INameData } from './src/types';
+import type { ICWDAppData, IMonoAppDepData, IMonoDevData, INameData, IMonoNameMap } from './src/types';
 
 /**
  * 基于 npm start xxx 来启动或构建宿主
@@ -58,4 +58,22 @@ export declare const monoUtil: {
   clearMonoLog: (markStartTime?: boolean, isTmp?: boolean) => void;
   ensureSlash: (inputPath: string, needsSlash?: boolean) => string;
   getNameData: (mayPkgOrDir: string, devInfo: IMonoDevInfo) => INameData;
+  /**
+   * true: 是 hel启动应用，此时 start 启动脚本会标识 process.env.HEL_START=1
+   */
+  isHelStart: () => boolean;
+  /**
+   * true: 是 hel模式，此时 start 和 build 启动脚本都会标识 process.env.HEL=1
+   */
+  isHelMode: () => boolean;
+  getCWD: () => string;
+  getCWDAppData: (devInfo: IMonoDevInfo, cwd?: string) => ICWDAppData;
+  getCmdKeywordName: (namIndex: number) => string;
+  getCmdKeywords: (sliceStart: number) => string[];
+  setCurKeyword: (keyword: string) => void;
+  getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[], subModDirs: string[], belongToDirs: string[] };
+  getMonoRootInfo: () => { monoRoot: string, monoRootHelDir: string, monoRootHelLog: string };
+  getPkgjson: (pkgFilePath: string) => Record<string, any>;
+  getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;
+  getMonoAppDepData: (appSrc: string, devInfo: IMonoDevInfo, isAllDep?: boolean) => IMonoAppDepData;
 };
