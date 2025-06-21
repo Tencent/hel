@@ -75,11 +75,17 @@ export declare const monoUtil: {
    */
   getBuildDirPath: (devInfo: IMonoDevInfo, pkgName: string, buildDirName?: string) => string;
   getCWD: () => string;
+  /**
+   * 获取根据 cwd 值推导出的运行中的应用的相关数据
+   */
   getCWDAppData: (devInfo: IMonoDevInfo, cwd?: string) => ICWDAppData;
   getCmdKeywordName: (namIndex: number) => string;
   getCmdKeywords: (sliceStart: number) => string[];
   setCurKeyword: (keyword: string) => void;
   getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[]; subModDirs: string[]; belongToDirs: string[] };
+  /**
+   * 获取 hel-mono-helper 自动推导出的大仓根目录信息
+   */
   getMonoRootInfo: () => IMonoRootInfo;
   getPkgjson: (pkgFilePath: string) => Record<string, any>;
   getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;

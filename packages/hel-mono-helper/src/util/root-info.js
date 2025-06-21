@@ -33,7 +33,7 @@ exports.setMonoRoot = function (rootPath) {
  */
 exports.getMonoRootInfo = function () {
   if (curMonoRootInfo) {
-    curMonoRootInfo;
+    return curMonoRootInfo;
   }
 
   const cwd = getCWD();

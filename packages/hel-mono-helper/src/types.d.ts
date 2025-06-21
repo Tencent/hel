@@ -82,6 +82,9 @@ export interface IMonoNameMap {
    * 包名与带belongTo前缀的目录名映射
    */
   prefixedDir2Pkg: Dict<string>;
+  /**
+   * 包名与包名信息对象映射
+   */
   pkg2Info: Dict<IPkgInfo>;
 }
 
@@ -98,6 +101,9 @@ export interface IMonoAppDepData extends IMonoNameMap {
   depInfos: IDepInfo[];
 }
 
+/**
+ * 根据 cwd 值推导出的运行中的应用的相关数据
+ */
 export interface ICWDAppData {
   /**
    * app是否属于大仓根hel目录
