@@ -1,6 +1,8 @@
 import { IMeta } from 'hel-types';
 import { ICheckOptions, ICreateSubAppOptions, ISubAppBuildDesc, IUserExtractOptions, PkgJson } from './src/types';
 
+export type { ICheckOptions, ICreateSubAppOptions, ISubAppBuildDesc, IUserExtractOptions };
+
 export declare const cst: {
   HEL_DIST_DIR: 'hel_dist';
   HEL_PROXY_DIR: 'hel_proxy';
