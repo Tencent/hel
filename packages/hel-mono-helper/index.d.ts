@@ -1,6 +1,8 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
 import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, INameData } from './src/types';
 
+export declare const HEL_DIST: 'hel_dist';
+
 /**
  * 基于 npm start xxx 来启动或构建宿主
  * @example

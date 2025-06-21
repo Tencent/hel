@@ -55,7 +55,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     throw new Error(`found duplicated dir names between (${appsDirs.join(',')}) and (${subModDirs.join(',')})`);
   }
 
-  const { monoRootHelDir } = getMonoRootInfo();
+  const { monoRootHelDir, monoRoot } = getMonoRootInfo();
   const monoNameMap = {};
   const packNames = [];
   const dupPackNames = [];
@@ -63,6 +63,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   const pkg2BelongTo = {}; // 包名与 belongTo 目录映射
   const pkg2Dir = {}; // 包名与项目目录映射
   const pkg2Info = {}; // 包名与info映射
+  const pkg2AppDirPath = {}; // 包名与应用的目录路径映射
   const prefixedDir2Pkg = {}; // 带belongTo前缀的目录名与包名映射
 
   const mapData = (belongTo, isSubMod = false) => {
@@ -80,6 +81,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
       pkg2BelongTo[pkgName] = belongTo;
       const dirName = nameMap.pkgName2DirName[pkgName];
       pkg2Dir[pkgName] = dirName;
+      pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${belongTo}/${dirName}`);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;
       const proxyPkgName = isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`;
       const proxySrcPath = path.join(monoRootHelDir, `./${belongTo}/${dirName}/src`);
@@ -94,5 +96,5 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     throw new Error(`these package names (${dupPackNames.join(',')}) duplicated`);
   }
 
-  return { monoNameMap, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info };
+  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info };
 };
