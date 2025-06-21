@@ -71,7 +71,7 @@ export declare const monoUtil: {
   /**
    * 获取应用构建hel产物所在的目录路径
    * @param buildDirName ['hel_dist']
-   * @returns 
+   * @returns
    */
   getBuildDirPath: (devInfo: IMonoDevInfo, pkgName: string, buildDirName?: string) => string;
   getCWD: () => string;
