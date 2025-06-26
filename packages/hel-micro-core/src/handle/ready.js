@@ -14,6 +14,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
   const platform = options.platform || getAppPlatform(appGroupName);
   let versionId = options.versionId || tryGetVersion(appGroupName, platform);
   let appName = options.appName || tryGetAppName(versionId, appGroupName);
+  log(`[[ core:libReady ]] appGroupName ${appGroupName}, appName ${appName}, versionId ${versionId}`);
 
   const appMeta = getAppMeta(appName, platform);
   // @ts-ignore，来自于用户设定 cust 配置弹射的模块
@@ -21,6 +22,7 @@ export function libReady(appGroupName, appProperties, options = {}) {
     // 优先读用户透传的版本数据，再读实际对应的在线版本
     versionId = options.versionId || appMeta.online_version;
     appName = appMeta.name;
+    log(`[[ core:libReady ]] fromCust, appGroupName ${appGroupName}, appName ${appName}, versionId ${versionId}`);
   }
 
   const emitLib = {

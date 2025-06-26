@@ -3,17 +3,38 @@ import { getJsRunLocation } from '../base/util';
 import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
+// 正常情况只有一个 @ 形如： xxxx@1.1.1 ---> 1.1.1
+// 如果有多个 @ 这样写能保证准确还原，形如：xxx@1.1.1@my@s ---> 1.1.1@my@s
+function getVerFromAtInMiddle(nameAndVer, callerSpecifiedVer) {
+  const list = nameAndVer.split('@');
+  const verList = list.slice(1);
+  const ver = verList.join('@');
+  return ver || callerSpecifiedVer || nameAndVer;
+}
+
+/**
+ * 根据执行脚本链接猜测当前模块的版本号，脚本链接例如：
+ * https://cdn.jsdelivr.net/npm/hel-lodash@2.3.4/hel_dist/hel_userChunk_1.js
+ * https://unpkg.com/hel-lodash@2.3.4/hel_dist/hel_userChunk_1.js
+ * https://tnfe.gtimg.com/hel/remote-react-comps-tpl_20241228190308/xxx.js
+ * https://tnfe.gtimg.com/hel/@my/remote-react-comps-tpl@1.1.1/xxx.js
+ */
 export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
   // 如果用户调整过，可能是：at c (https://{user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/...)
   const loc = getJsRunLocation();
-  log(`[[ core:tryGetVersion ]] may include source > ${loc}`);
+  log(`[[ core:tryGetVersion ]] may include ver source > ${loc}`);
 
   const { appGroupName2firstVer } = getSharedCache(platform);
   const callerSpecifiedVer = appGroupName2firstVer[appGroupName] || '';
 
   if (loc.includes('https://') || loc.includes('http://')) {
     const [, restStr] = loc.split('//');
+    // strList 形如：
+    // ['unpkg.com', 'hel-lodash@1.1.0', ...]
+    // ['unpkg.com', '@someScope', 'xxx@1.1.0', ...]
+    // ['cdn.jsdelivr.net', 'npm', 'hel-lodash@2.3.4', 'hel_dist', ...]
+    // ['tnfe.gtimg.com', 'hel', 'remote-react-comps-tpl_20241228190308', ...]
     const strList = restStr.split('/');
 
     // 优先判断可能包含的版本特征
@@ -30,18 +51,21 @@ export function tryGetVersion(appGroupName, platform) {
       }
     }
 
-    // [ 'unpkg.com' , 'hel-lodash@1.1.0' , ... ]
-    // [ 'unpkg.com' , '@someScope', 'xxx@1.1.0' , ... ]
-    if (platform === DEFAULT_PLAT) {
-      let atStrIdx = 1;
-      if (restStr.indexOf('@') !== restStr.lastIndexOf('@')) {
-        atStrIdx = 2;
+    const atSymbolIdx = restStr.indexOf('@');
+    // 使用了符合npm cdn 方式的链接生成规范
+    if (atSymbolIdx >= 0) {
+      const atSymbolSegs = strList.filter(v => v.includes('@'));
+      const scopeSegIdx = atSymbolSegs.findIndex(v => v.startsWith('@'));
+      if (scopeSegIdx >= 0) {
+        const verSeg = atSymbolSegs[scopeSegIdx + 1] || '';
+        return getVerFromAtInMiddle(verSeg, callerSpecifiedVer);
       }
-      const tmpList = strList[atStrIdx].split('@');
-      return tmpList[1] || callerSpecifiedVer;
+      const verSeg = atSymbolSegs[0] || '';
+      return getVerFromAtInMiddle(verSeg, callerSpecifiedVer);
     }
 
-    // 走默认的规则，应对hel默认构建的链接，或用户调整过的链接2种情况
+    // 使用的是旧版本 helpack 链接规范（注：新版 helpack 链接已支持 npm cdn 规范）
+    // 旧规范格式链接形如：
     // {cdn_host_name}/{platform}/{appname_prefixed_version}
     // {user_cdn}/{user_dir1}/{user_dir2 ...}/{platform}/{appname_prefixed_version}/
     const [, verStartStr = ''] = restStr.split(`/${platform}/`);
