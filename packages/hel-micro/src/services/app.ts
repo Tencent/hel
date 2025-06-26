@@ -10,7 +10,7 @@ import type { GetCacheKey, IHelMeta, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import type { IHelGetOptions } from './api';
 import * as apiSrv from './api';
-import { innerGetAppCacheKey, innerGetDiskCachedApp } from './appCache';
+import { innerGetAppCacheKey, innerGetDiskCachedApp, innerSaveMetaToDisk } from './appCache';
 import { getCustomMeta, isCustomValid } from './custom';
 
 const { commonUtil, helConsts, log } = core;
@@ -204,7 +204,7 @@ async function getAppWithFallback(appName: string, options: IInnerPreFetchOption
     }
 
     let data: ICacheData | null = null;
-    // 未指定 fallbackHook，为了尽量让应用能够正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
+    // 未指定 fallbackHook，为了让应用能够尽量地正常加载，尝试使用硬盘缓存数据，硬盘缓存也无数据就报错
     if (enableDiskCacheForErr) {
       data = await innerGetDiskCachedApp(appName, options);
       if (!data) {
@@ -247,26 +247,7 @@ export function cacheApp(
   if (toDisk) {
     const cacheKey = innerGetAppCacheKey(appName, loadOptions.getCacheKey);
     const toSave: IHelMeta = { app: appInfo, version: appVersion };
-    const saveToLocalStorage = () => {
-      try {
-        getLocalStorage().setItem(cacheKey, JSON.stringify(toSave));
-      } catch (err: any) {
-        core.log(`save localStorage failed: ${err.message}`);
-      }
-    };
-    if (loadOptions.storageType === 'indexedDB') {
-      const indexedDBStorage = getIndexedDB();
-      if (indexedDBStorage) {
-        indexedDBStorage.setItem(cacheKey, toSave).catch((err: any) => {
-          core.log(`save indexeddb failed, use localStorage instead, err: ${err.message}`);
-          saveToLocalStorage();
-        });
-      } else {
-        saveToLocalStorage();
-      }
-    } else {
-      saveToLocalStorage();
-    }
+    innerSaveMetaToDisk(cacheKey, toSave, loadOptions.storageType);
   }
 
   // 写 mem app

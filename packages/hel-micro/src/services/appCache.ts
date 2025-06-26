@@ -1,4 +1,4 @@
-import { commonUtil } from 'hel-micro-core';
+import { commonUtil, log } from 'hel-micro-core';
 import type { ISubApp, ISubAppVersion } from 'hel-types';
 import { getIndexedDB, getLocalStorage } from '../browser/helper';
 import storageKeys from '../consts/storageKeys';
@@ -8,6 +8,14 @@ import type { GetCacheKey, IHelMeta, IInnerPreFetchOptions, StorageType } from '
 interface ICacheData {
   appInfo: ISubApp;
   appVersion: ISubAppVersion;
+}
+
+function saveToLocalStorage(cacheKey: string, toSave: IHelMeta) {
+  try {
+    getLocalStorage().setItem(cacheKey, JSON.stringify(toSave));
+  } catch (err: any) {
+    log(`save localStorage failed: ${err.message}`);
+  }
 }
 
 /**
@@ -57,4 +65,21 @@ export async function innerGetDiskCachedApp(appName: string, options: IInnerPreF
     return { appInfo: meta.app, appVersion: meta.version };
   }
   return null;
+}
+
+export function innerSaveMetaToDisk(cacheKey: string, toSave: IHelMeta, storageType?: StorageType) {
+  const isSaveToIndexedDB = storageType === 'indexedDB';
+  if (!isSaveToIndexedDB) {
+    return saveToLocalStorage(cacheKey, toSave);
+  }
+
+  const indexedDBStorage = getIndexedDB();
+  if (!indexedDBStorage) {
+    return saveToLocalStorage(cacheKey, toSave);
+  }
+
+  indexedDBStorage.setItem(cacheKey, toSave).catch((err: any) => {
+    log(`save indexeddb failed, use localStorage instead, err: ${err.message}`);
+    saveToLocalStorage(cacheKey, toSave);
+  });
 }

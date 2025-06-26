@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "4.12.0",
+  "version": "4.12.1",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "keywords": [
     "hel",
@@ -44,8 +44,8 @@
   },
   "dependencies": {
     "hel-html-parser": "^1.1.2",
-    "hel-micro-core": "^4.11.0",
-    "hel-types": "^4.3.3"
+    "hel-micro-core": "^4.12.0",
+    "hel-types": "^4.3.9"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -58,8 +58,8 @@
   },
   "peerDependencies": {
     "hel-html-parser": "^1.1.2",
-    "hel-micro-core": "^4.11.0",
-    "hel-types": "^4.3.3"
+    "hel-micro-core": "^4.12.0",
+    "hel-types": "^4.3.9"
   },
   "bundleDependencies": [],
   "deprecated": false
