@@ -54,8 +54,8 @@ export function tryGetVersion(appGroupName, platform) {
     const atSymbolIdx = restStr.indexOf('@');
     // 使用了符合npm cdn 方式的链接生成规范
     if (atSymbolIdx >= 0) {
-      const atSymbolSegs = strList.filter(v => v.includes('@'));
-      const scopeSegIdx = atSymbolSegs.findIndex(v => v.startsWith('@'));
+      const atSymbolSegs = strList.filter((v) => v.includes('@'));
+      const scopeSegIdx = atSymbolSegs.findIndex((v) => v.startsWith('@'));
       if (scopeSegIdx >= 0) {
         const verSeg = atSymbolSegs[scopeSegIdx + 1] || '';
         return getVerFromAtInMiddle(verSeg, callerSpecifiedVer);
