@@ -1,4 +1,4 @@
-import { perfPeek } from '../base/microDebug';
+import { log, perfPeek } from '../base/microDebug';
 import { helEvents, helLoadStatus } from '../consts';
 import { setEmitApp } from '../data/app';
 import { getAppPlatform } from '../data/conf';
