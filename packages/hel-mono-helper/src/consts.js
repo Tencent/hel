@@ -47,7 +47,7 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
 
 module.exports = {
-  VER: '0.2.8',
+  VER: '0.2.9',
   HITABLE_SCRIPT_KEYS,
   INNER_ACTION,
   INNER_ACTION_NAMES,
