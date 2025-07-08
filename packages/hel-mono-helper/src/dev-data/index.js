@@ -21,7 +21,7 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
     indexName = isHelMode() ? '.hel/index' : 'index';
   }
 
-  const exts = ['.js', '.jsx', 'ts', '.tsx'];
+  const exts = ['js', 'jsx', 'ts', 'tsx'];
   const indexPaths = [];
   let result = null;
   for (let i = 0; i < exts.length; i++) {
@@ -38,7 +38,7 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
     throw new Error(`Can not find index file in this paths (${indexPaths.join(',')})`);
   }
 
-  return path.join(appSrcDirPath, srcAppIndex);
+  return result.fullPath;
 }
 
 /**

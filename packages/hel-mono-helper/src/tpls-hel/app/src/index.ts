@@ -6,7 +6,7 @@ import 'hel-iso';
 import { preFetchLib } from 'hel-micro';
 import { DEV_INFO } from './devInfo';
 import { APP_GROUP_NAME, APP_NAME } from './subApp';
-import { getHelDeps } from './util';
+import { getDevKey, getHelDeps, getStorageValue, monoLog } from './util';
 
 async function preFetchHelDeps() {
   const helDeps = getHelDeps();
@@ -15,23 +15,30 @@ async function preFetchHelDeps() {
 
   const start = Date.now();
   const depNames = helDeps.map((v) => v.appName);
-  console.log(`start preFetchLib (${depNames}) isDev=${isDev}`);
+  monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);
   await Promise.all(
     helDeps.map(({ appName, appGroupName, packName }) => {
       const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
-      return preFetchLib(appName, { custom: { enable: isDev, host: `${devHostname}:${port}`, appGroupName } });
+      const devUrl = getStorageValue(getDevKey(appGroupName));
+      if (devUrl) {
+        monoLog(`found devUrl ${devUrl} for ${appName}`);
+      }
+      const host = devUrl || `${devHostname}:${port}`;
+      const enable = isDev || !!devUrl;
+
+      return preFetchLib(appName, { custom: { enable, host, appGroupName } });
     }),
   );
-  console.log(`end preFetchLib, costs ${Date.now() - start}`);
+  monoLog(`end preFetchLib, costs ${Date.now() - start}`);
 }
 
 async function main() {
-  console.log(`load hel app ${APP_GROUP_NAME}(${APP_NAME})`);
+  monoLog(`load hel app ${APP_GROUP_NAME}(${APP_NAME})`);
   await preFetchHelDeps();
   await import('{{APP_PACK_NAME}}');
 }
 
 main().catch((err) => {
-  console.log('----- run hel app error ------');
+  monoLog('----- run hel app error ------');
   console.error(err);
 });
