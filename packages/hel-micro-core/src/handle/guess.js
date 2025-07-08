@@ -4,7 +4,8 @@ import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 // 正常情况只有一个 @ 形如： xxxx@1.1.1 ---> 1.1.1
-// 如果有多个 @ 这样写能保证准确还原，形如：xxx@1.1.1@my@s ---> 1.1.1@my@s
+// 如果有多个 @ 这样写能保证准确还原，形如：xxx@1.1.1@my@s ---> 1.1.1@my@s，
+// 不过写入版本的地方已卡死格式，所以这里理论上来说不能存在两个以上的@符号
 function getVerFromAtInMiddle(nameAndVer, callerSpecifiedVer) {
   const list = nameAndVer.split('@');
   const verList = list.slice(1);
@@ -18,6 +19,7 @@ function getVerFromAtInMiddle(nameAndVer, callerSpecifiedVer) {
  * https://unpkg.com/hel-lodash@2.3.4/hel_dist/hel_userChunk_1.js
  * https://tnfe.gtimg.com/hel/remote-react-comps-tpl_20241228190308/xxx.js
  * https://tnfe.gtimg.com/hel/@my/remote-react-comps-tpl@1.1.1/xxx.js
+ * 返回的是版本号（即后台的version_tag）
  */
 export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
