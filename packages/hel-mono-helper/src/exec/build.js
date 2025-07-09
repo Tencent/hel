@@ -1,19 +1,16 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 // shelljs 相比 child_process.execSync 具有更好的控制台回显交互
 const shell = require('shelljs');
-const { getCmdKeywordName, getCWD, helMonoLog, getNameData } = require('../util');
+const { getCmdKeywordName, helMonoLog, getNameData } = require('../util');
+const { ACTION_NAMES } = require('../consts');
 const { getPnpmRunCmd } = require('./cmd');
-const { extractBuildCmdData } = require('./common');
 
 /**
  * npm start .build xxx 时触发
  */
 exports.execBuild = function (/** @type {IMonoDevInfo} */ devInfo) {
-  const cwd = getCWD();
-  const rawKeywordName = getCmdKeywordName();
-  helMonoLog(`cwd ${cwd}, keywordName ${rawKeywordName}`);
-
-  const { keywordName, scriptCmdKey } = extractBuildCmdData(devInfo, rawKeywordName);
+  const scriptCmdKey = ACTION_NAMES.build;
+  const keywordName = getCmdKeywordName(3);
   const { pkgName, dirName } = getNameData(keywordName, devInfo);
 
   const exeCmd = getPnpmRunCmd(pkgName, { scriptCmdKey });

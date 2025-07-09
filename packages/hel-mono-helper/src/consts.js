@@ -10,6 +10,11 @@ const HEL_TPL_INNER_SUB_MOD_PATH = path.join(__dirname, './tpls-hel/sub-mod');
  */
 const HEL_TPL_INNER_DEMO_DIR = path.join(__dirname, './tpls-demo');
 
+const ACTION_NAMES = {
+  build: 'build',
+  start: 'start',
+};
+
 const INNER_ACTION = {
   create: '.create',
   createStart: '.create-start',
@@ -47,10 +52,11 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
 
 module.exports = {
-  VER: '0.2.9',
+  VER: '0.3.0',
   HITABLE_SCRIPT_KEYS,
   INNER_ACTION,
   INNER_ACTION_NAMES,
+  ACTION_NAMES,
   CREATE_SHORT_PARAM_KEY,
   CREATE_SHORT_PARAM_KEY_NAMES,
   HEL_MICRO_NAME: 'hel-micro',
