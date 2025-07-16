@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-helper",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "hel-mono micro architecture helper",
   "keywords": [
     "hel",
@@ -25,11 +25,16 @@
   ],
   "scripts": {},
   "dependencies": {
-    "hel-dev-utils": "^5.2.6",
-    "hel-mono-types": "^1.1.1",
-    "shelljs": "^0.9.2"
+    "hel-iso": "^4.4.0",
+    "hel-lib-proxy": "^4.11.0",
+    "hel-micro": "^4.12.2"
   },
   "peerDependencies": {
+    "hel-iso": "^4.4.0",
+    "hel-lib-proxy": "^4.11.0",
+    "hel-micro": "^4.12.2"
+  },
+  "devDependencies": {
     "hel-dev-utils": "^5.2.6",
     "hel-mono-types": "^1.1.1",
     "shelljs": "^0.9.2"

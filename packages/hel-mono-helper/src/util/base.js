@@ -18,7 +18,7 @@ exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {
 /**
  * 通过package.json 文件路径获取其文件内容，返回 json 对象
  */
-exports.getPkgjson = function (pkgFilePath) {
+exports.getPkgJson = function (pkgFilePath) {
   const str = fs.readFileSync(pkgFilePath, { encoding: 'utf-8' });
   const json = JSON.parse(str);
   return json;

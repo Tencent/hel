@@ -87,7 +87,7 @@ export declare const monoUtil: {
    * 获取 hel-mono-helper 自动推导出的大仓根目录信息
    */
   getMonoRootInfo: () => IMonoRootInfo;
-  getPkgjson: (pkgFilePath: string) => Record<string, any>;
+  getPkgJson: (pkgFilePath: string) => Record<string, any>;
   getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;
   getMonoAppDepData: (appSrc: string, devInfo: IMonoDevInfo, isAllDep?: boolean) => IMonoAppDepData;
   /**

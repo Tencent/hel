@@ -81,5 +81,9 @@
       "@types/react": "<18.0.0",
       "@types/react-dom": "<18.0.0"
     }
+  },
+  "volta": {
+    "node": "v14.19.3",
+    "pnpm": "7.9.5"
   }
 }

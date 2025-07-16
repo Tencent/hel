@@ -2,7 +2,7 @@
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
-const { helMonoLog, getPkgjson } = require('../../util');
+const { helMonoLog, getPkgJson } = require('../../util');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 
@@ -33,7 +33,7 @@ module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /**
   const devInfoFile = isSubMod ? path.join(helDirPath, './configs/devInfo.ts') : path.join(helDirPath, './devInfo.ts');
   helMonoLog(`replace content of file(${devInfoFile})`);
 
-  const realAppPackjson = getPkgjson(realAppPkgJsonPath);
+  const realAppPackjson = getPkgJson(realAppPkgJsonPath);
   const deps = realAppPackjson.dependencies || {};
 
   rewriteFileLine(devInfoFile, (line) => {

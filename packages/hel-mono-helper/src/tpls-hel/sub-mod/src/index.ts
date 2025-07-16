@@ -7,9 +7,9 @@ import { getDevKey, getHelDeps, getStorageValue, monoLog } from './configs/util'
 
 async function preFetchOtherDeps() {
   const helDeps = getHelDeps();
-  const isDev = process.env.NODE_ENV === 'development';
   if (!helDeps.length) return;
 
+  const isDev = process.env.NODE_ENV === 'development';
   const start = Date.now();
   const depNames = helDeps.map((v) => v.appName);
   monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);

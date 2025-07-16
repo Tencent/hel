@@ -19,6 +19,7 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
     r.replaceIndexFile(appData, devInfo);
     r.replaceDevInfo(appData, devInfo);
     r.replaceSubApp(appData);
+    r.replaceUtil(appData);
     prepareNodeModules(appData);
     return;
   }

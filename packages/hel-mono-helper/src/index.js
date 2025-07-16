@@ -10,8 +10,8 @@ const util = require('./util');
  */
 global.mlog = (...args) => util.helMonoLogTmp(...args);
 /**
- * 约定内部临时打印用 mlog2(...)，提交时搜 mlog2 删除即可，
- * 此日志会和运行日志打印到一起。
+ * 约定临时调试的运行日志打印用 mlog2(...)，提交时搜 mlog2 删除即可，
+ * 注：此日志会和运行日志打印到一起。
  */
 global.mlog2 = util.helMonoLog;
 

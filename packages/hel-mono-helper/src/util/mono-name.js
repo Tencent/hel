@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
-const { getDevInfoDirs, intersection, getPkgjson } = require('./base');
+const { getDevInfoDirs, intersection, getPkgJson } = require('./base');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 const { getMonoRootInfo } = require('./root-info');
 const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./mono-path');
@@ -30,7 +30,7 @@ function getMonoLevel1NameMap(level1DirName) {
       continue;
     }
 
-    const { name, dependencies } = getPkgjson(filepath);
+    const { name, dependencies } = getPkgJson(filepath);
     if (pkgName2DirName[name]) {
       throw new Error(`package name ${name} duplicated under ${level1DirName} dir`);
     }

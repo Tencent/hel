@@ -55,7 +55,7 @@ function getLogFilePath(isTmp) {
   return monoRootHelLog;
 }
 
-function logRuningDetails(options, ...args) {
+function logRunningDetails(options, ...args) {
   const { isTmp, isRed } = options;
   const rawPrefix = isTmp ? LOG_PREFIX_TMP : LOG_PREFIX;
   const prefix = isRed ? chalk.red(rawPrefix) : chalk.cyan(rawPrefix);
@@ -91,19 +91,19 @@ exports.clearMonoLog = function (markStartTime = true, isTmp = false) {
  * 打印hel-mono运行普通日志
  */
 exports.helMonoLog = function (...args) {
-  logRuningDetails({ isTmp: false, isRed: false }, ...args);
+  logRunningDetails({ isTmp: false, isRed: false }, ...args);
 };
 
 /**
  * 打印hel-mono运行警告日志
  */
 exports.helMonoErrorLog = function (...args) {
-  logRuningDetails({ isTmp: false, isRed: true }, ...args);
+  logRunningDetails({ isTmp: false, isRed: true }, ...args);
 };
 
 /**
  * 打印临时调试日志
  */
 exports.helMonoLogTmp = function (...args) {
-  logRuningDetails({ isTmp: true, isRed: false }, ...args);
+  logRunningDetails({ isTmp: true, isRed: false }, ...args);
 };

@@ -11,12 +11,12 @@ export interface IHelModConf {
    */
   appGroupName: string;
   /**
-   * 测试、线上对应的hel应用名（模块名）
+   * 测试test、线上prod、或其他环境对应的hel应用名（模块名）
+   * prod 未配置时，appName 和 appGroupName 同名
    */
   appNames: {
     test: string;
-    /** prod 未配置时，和 appGroupName 保持一致 */
-    prod?: string;
+    [key: string]: string;
   };
   /**
    * hel应用（模块）所属平台
