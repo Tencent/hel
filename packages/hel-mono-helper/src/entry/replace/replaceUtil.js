@@ -20,10 +20,7 @@ module.exports = function replaceUtil(/** @type {import('../../types').ICWDAppDa
   rewriteFileLine(utilFilePath, (line) => {
     let targetLine = line;
     if (line.includes('const deployEnv')) {
-      targetLine = [
-        `// ${deployEnvComment}`,
-        `const deployEnv = '${deployEnv}';`,
-      ];
+      targetLine = [`// ${deployEnvComment}`, `const deployEnv = '${deployEnv}';`];
     }
     return { line: targetLine };
   });
