@@ -9,16 +9,21 @@ module.exports = function replaceUtil(/** @type {import('../../types').ICWDAppDa
 
   const inputDeployEnv = process.env.DEPLOY_ENV;
   const deployEnv = inputDeployEnv || 'prod';
+  let deployEnvComment = '';
   if (!inputDeployEnv) {
-    helMonoLog('no process.env.DEPLOY_ENV found, use prod instead');
+    deployEnvComment = 'in build process, no process.env.DEPLOY_ENV found, use prod instead';
   } else {
-    helMonoLog(`found process.env.DEPLOY_ENV is ${inputDeployEnv}`);
+    deployEnvComment = `in build process, found process.env.DEPLOY_ENV is ${inputDeployEnv}`;
   }
+  helMonoLog(deployEnvComment);
 
-  rewriteFileLine(subAppFilePath, (line) => {
+  rewriteFileLine(utilFilePath, (line) => {
     let targetLine = line;
     if (line.includes('const deployEnv')) {
-      targetLine = `const deployEnv = '${deployEnv}';`;
+      targetLine = [
+        `// ${deployEnvComment}`,
+        `const deployEnv = '${deployEnv}';`,
+      ];
     }
     return { line: targetLine };
   });
