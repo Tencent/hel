@@ -4,7 +4,7 @@ import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRoo
 export declare const HEL_DIST: 'hel_dist';
 
 /**
- * 基于 npm start xxx 来启动或构建宿主
+ * 基于 npm start xxx 来启动或构建应用（模块）
  * @example
  * 启动
  * ```bash
@@ -28,6 +28,11 @@ export declare const HEL_DIST: 'hel_dist';
  * ```
  */
 export declare function executeStart(devInfo: IMonoDevInfo): void;
+
+/**
+ * 基于 npm run build xxx 来构建应用（模块）
+ */
+export declare function executeBuild(devInfo: IMonoDevInfo): void;
 
 /**
  * 准备 hel 微模块相关的入口文件

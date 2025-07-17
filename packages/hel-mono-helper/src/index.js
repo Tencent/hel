@@ -1,7 +1,7 @@
 const { cst } = require('hel-dev-utils');
 const { prepareHelEntry } = require('./entry');
 const { getMonoDevData } = require('./dev-data');
-const { executeStart, buildSrvModToHelDist } = require('./exec');
+const { executeStart, executeBuild, buildSrvModToHelDist } = require('./exec');
 const util = require('./util');
 
 /**
@@ -17,6 +17,7 @@ global.mlog2 = util.helMonoLog;
 
 module.exports = {
   executeStart,
+  executeBuild,
   prepareHelEntry,
   getMonoDevData,
   buildSrvModToHelDist,

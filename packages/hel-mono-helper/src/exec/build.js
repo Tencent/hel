@@ -6,13 +6,21 @@ const { ACTION_NAMES } = require('../consts');
 const { getPnpmRunCmd } = require('./cmd');
 
 /**
- * npm start .build xxx 时触发
+ * 执行 pnpm start .build xxx, pnpm start .build xxx:yyy 时触发
  */
 exports.execBuild = function (/** @type {IMonoDevInfo} */ devInfo) {
-  const scriptCmdKey = ACTION_NAMES.build;
-  const keywordName = getCmdKeywordName(3);
-  const { pkgName, dirName } = getNameData(keywordName, devInfo);
+  let scriptCmdKey = ACTION_NAMES.build;
+  let keywordName = getCmdKeywordName(3);
 
+  let mayPkgOrDir = keywordName;
+  if (keywordName.includes(':')) {
+    // 执行的是 pnpm start .build xxx:hel
+    const strList = keywordName.split(':');
+    mayPkgOrDir = strList[0];
+    scriptCmdKey = `${ACTION_NAMES.build}:${strList.slice(1).join(':')}`;
+  }
+
+  const { pkgName, dirName } = getNameData(mayPkgOrDir, devInfo);
   const exeCmd = getPnpmRunCmd(pkgName, { scriptCmdKey });
   helMonoLog(exeCmd);
   const result = shell.exec(exeCmd);

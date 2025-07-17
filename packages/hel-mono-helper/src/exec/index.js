@@ -2,7 +2,7 @@
 const shell = require('shelljs');
 const { INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
-const { execStartAppAction } = require('./app');
+const { execAppAction } = require('./app');
 const { execInit, execInitProxy } = require('./init');
 const { execCreate, execCreateStart } = require('./create');
 const { execBuild } = require('./build');
@@ -40,10 +40,7 @@ function tryExecInnerAction(actionName, devInfo) {
   }
 }
 
-/**
- * 基于 npm start xxx 来启动或构建宿主
- */
-exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+function execStartOrBuildCmd(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, startOrBuild) {
   const cwd = getCWD();
   const rawKeywordName = getCmdKeywordName();
   setCurKeyword(rawKeywordName);
@@ -57,7 +54,21 @@ exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInf
     return;
   }
 
-  execStartAppAction(devInfo, rawKeywordName);
+  execAppAction(devInfo, rawKeywordName, startOrBuild);
+}
+
+/**
+ * 基于 npm start xxx 来启动或构建宿主
+ */
+exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+  execStartOrBuildCmd(devInfo, 'start');
+};
+
+/**
+ * 基于 npm build xxx 构建应用
+ */
+exports.executeBuild = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+  execStartOrBuildCmd(devInfo, 'build');
 };
 
 exports.buildSrvModToHelDist = buildSrvModToHelDist;

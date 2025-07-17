@@ -31,7 +31,7 @@ export function getStorageValue(key: string) {
   return '';
 }
 
-export function getDeployEnv() {
+export function getDeployEnv(): string {
   return deployEnv;
 }
 

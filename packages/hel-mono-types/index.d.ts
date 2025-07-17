@@ -11,13 +11,9 @@ export interface IHelModConf {
    */
   appGroupName: string;
   /**
-   * 测试test、线上prod、或其他环境对应的hel应用名（模块名）
-   * prod 未配置时，appName 和 appGroupName 同名
+   * 测试、线上、或其他环境对应的hel应用名（模块名），默认 prod 的 appName 和 appGroupName 需保持一致，无需配置
    */
-  appNames: {
-    test: string;
-    [key: string]: string;
-  };
+  appNames: Record<string, string>;
   /**
    * hel应用（模块）所属平台
    * default: 'unpkg'

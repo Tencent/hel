@@ -94,12 +94,7 @@ exports.prepareHelEntrys = function (
   });
 };
 
-exports.extractStartCmdData = function (/** @type {IMonoDevInfo} */ devInfo, mayActionName) {
-  const data = analyzeColonKeywordName(devInfo, mayActionName, 'start');
-  return data;
-};
-
-exports.extractBuildCmdData = function (/** @type {IMonoDevInfo} */ devInfo, mayActionName) {
-  const data = analyzeColonKeywordName(devInfo, mayActionName, 'build');
+exports.extractCmdData = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
+  const data = analyzeColonKeywordName(devInfo, rawKeywordName, startOrBuild);
   return data;
 };
