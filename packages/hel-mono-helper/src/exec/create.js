@@ -73,7 +73,18 @@ function getNewPort(/** @type {IMonoDevInfo} */ devInfo) {
 
 function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, createOptions) {
   const { monoRoot } = getMonoRootInfo();
-  const devInfoPath = path.join(monoRoot, './base/dev-info/src/index.js');
+  let devInfoPath = path.join(monoRoot, './packages/dev-info/src/index.js');
+  if (!fs.existsSync(devInfoPath)) {
+    devInfoPath = path.join(monoRoot, './base/dev-info/src/index.js');
+  }
+
+  if (!fs.existsSync(devInfoPath)) {
+    const path1 = path.join(monoRoot, './packages');
+    const path2 = path.join(monoRoot, './base');
+    throw new Error(`no dev-info package found at ${path1} or ${path2}`);
+  }
+
+  helMonoLog(`found dev-info file at ${devInfoPath}`);
   const content = fs.readFileSync(devInfoPath, { encoding: 'utf8' });
   const rawLines = content.split(os.EOL);
 

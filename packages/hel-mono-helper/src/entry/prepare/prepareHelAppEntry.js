@@ -6,6 +6,13 @@ const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
 
+function replaceCommon(appData, devInfo) {
+  r.replaceIndexFile(appData, devInfo);
+  r.replaceDevInfo(appData, devInfo);
+  r.replaceSubApp(appData);
+  r.replaceUtil(appData, devInfo);
+}
+
 module.exports = function prepareHelAppEntry(/** @type {import('../../types').ICWDAppData} */ appData, devInfo, depData) {
   const { isForRootHelDir, helDirPath } = appData;
 
@@ -16,10 +23,7 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
 
     prepareTplFiles(appData, true);
     r.replacePkgJson(appData, depData);
-    r.replaceIndexFile(appData, devInfo);
-    r.replaceDevInfo(appData, devInfo);
-    r.replaceSubApp(appData);
-    r.replaceUtil(appData, devInfo);
+    replaceCommon(appData, devInfo);
     prepareNodeModules(appData);
     return;
   }
@@ -34,7 +38,5 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
   const fromPath = path.join(HEL_TPL_INNER_APP_PATH, './src');
   fs.cpSync(fromPath, helDirPath, { recursive: true });
 
-  r.replaceIndexFile(appData, devInfo);
-  r.replaceDevInfo(appData, devInfo);
-  r.replaceSubApp(appData);
+  replaceCommon(appData, devInfo);
 };
