@@ -10,6 +10,6 @@ module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   r.replaceSubModLibTypes(appData, devInfo);
   r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
-  r.replaceUtil(appData);
+  r.replaceUtil(appData, devInfo);
   prepareNodeModules(appData);
 };

@@ -8,7 +8,15 @@ module.exports = function prepareHelEntry(
   /** @type {import('../../types').ICWDAppData} */ inputAppData,
 ) {
   const appData = inputAppData || getCWDAppData(devInfo);
-  helMonoLog(`prepare hel entry for ${appData.appDir}(${appData.appPkgName}):`, appData);
+  const { belongTo, appDir, appPkgName, realAppPkgName, isForRootHelDir } = appData;
+  helMonoLog(`prepare hel entry for ${belongTo}/${appDir} (${appPkgName}):`, appData);
+  if (isForRootHelDir) {
+    helMonoLog(`the entry file is under root hel dir, it will link the target package ${realAppPkgName}`);
+  }
+
+  if (!devInfo.appConfs[realAppPkgName]) {
+    throw new Error(`package ${realAppPkgName} is not declared in dev-info, please check!`);
+  }
 
   if (appData.isSubMod) {
     prepareHelSubModEntry(appData, devInfo, depData);
