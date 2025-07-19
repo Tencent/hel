@@ -1,10 +1,11 @@
 {
   "name": "hel-mono-helper",
-  "version": "0.3.8",
-  "description": "hel-mono micro architecture helper",
+  "version": "0.3.9",
+  "description": "micro module mono-repo architecture helper",
   "keywords": [
     "hel",
     "hel-micro",
+    "mono-repo",
     "hel-mono-helper",
     "hel-mono helper"
   ],
@@ -31,7 +32,7 @@
   },
   "devDependencies": {
     "hel-dev-utils": "^5.2.6",
-    "hel-mono-types": "^1.2.1",
+    "hel-mono-types": "^1.2.2",
     "shelljs": "^0.9.2"
   },
   "peerDependencies": {

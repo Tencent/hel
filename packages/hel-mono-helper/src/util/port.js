@@ -1,6 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 
-exports.getNewPort = function (/** @type {IMonoDevInfo} */ devInfo) {
+exports.getPort = function (/** @type {IMonoDevInfo} */ devInfo) {
   const { appConfs } = devInfo;
   let maxPort = 0;
   Object.keys(appConfs).forEach((key) => {

@@ -2,7 +2,7 @@
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
-const { getNewPort } = require('../../util/port');
+const { getPort } = require('../../util/port');
 const { helMonoLog, getPkgJson } = require('../../util');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
@@ -31,7 +31,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
       rest.hel.appNames = {};
     }
     if (!rest.port) {
-      rest.port = getNewPort(devInfo);
+      rest.port = getPort(devInfo);
     }
 
     injectedDevInfo.appConfs[name] = rest;

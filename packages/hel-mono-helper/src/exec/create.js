@@ -7,7 +7,7 @@ const { HEL_TPL_INNER_DEMO_DIR, CREATE_SHORT_PARAM_KEY, CREATE_SHORT_PARAM_KEY_N
 const { getDirInfoList } = require('../util/file');
 const { helMonoLog, getCmdKeywords, getMonoRootInfo } = require('../util');
 const { rewriteByLines } = require('../util/rewrite');
-const { getNewPort } = require('../util/port');
+const { getPort } = require('../util/port');
 const { jsonObj2Lines } = require('../entry/replace/util');
 
 function getCreateOptions(/** @type {string[]} */ keywords) {
@@ -106,7 +106,7 @@ function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, createOptions) 
   const mod = require(devInfoPath);
   const { targetDirName } = createOptions;
   mod.appConfs[targetDirName] = {
-    port: getNewPort(devInfo),
+    port: getPort(devInfo),
   };
 
   const jsonLines = jsonObj2Lines(mod);
@@ -124,14 +124,14 @@ function rewritePkgJson(pkgJsonFile, appName) {
 
 /**
  * 执行 npm start .create hub 命令
- * ```
- * # 创建 react-cra 到 hub 目录到 apps
+ * ```bash
+ * # 创建 react-cra 到 apps/hub 目录
  * npm start .create hub
  *
- * # 创建 other-demo 到 hub 目录到 apps
+ * # 创建 other-demo 到 apps/hub 目录
  * npm start .create hub -t other-demo
  *
- * # 创建 other-demo 到 hub 目录到 my-apps 目录
+ * # 创建 other-demo 到 hub my-apps/hub 目录
  * npm start .create hub -t other-demo -d my-apps
  * ```
  */

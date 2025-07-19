@@ -148,7 +148,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const appPkgJson = require(appData.realAppPkgJsonPath);
   const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform });
   const appSrcIndex = getAppSrcIndex(appData);
-  let appPublicUrl = '';
+  let appPublicUrl = `${appData.appPublicUrl}/`;
   const isHelModeVar = isHelMode();
   if (isHelModeVar) {
     appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);

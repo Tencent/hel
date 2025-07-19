@@ -93,6 +93,7 @@ export declare const monoUtil: {
    */
   getMonoRootInfo: () => IMonoRootInfo;
   getPkgJson: (pkgFilePath: string) => Record<string, any>;
+  getPort: (devInfo: IMonoDevInfo) => number;
   getMonoNameMap: (devInfo: IMonoDevInfo) => IMonoNameMap;
   getMonoAppDepData: (appSrc: string, devInfo: IMonoDevInfo, isAllDep?: boolean) => IMonoAppDepData;
   /**

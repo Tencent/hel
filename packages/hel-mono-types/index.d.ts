@@ -39,18 +39,18 @@ export interface IHelModConf {
 
 export interface IMonoAppBaseConf {
   /**
-   * 应用启动端口
+   * 应用启动端口，建议配置，未配置的话内部会自动推导
    */
-  port: number;
+  port?: number;
   /**
    * default: IMonoDevInfo.devHostname
    * 当前hel模块本地联调时的域名
    */
   devHostname?: string;
   /**
-   * hel应用（模块）相关配置
+   * hel应用（模块）相关配置，适用于 helpack 平台需要
    */
-  hel: IHelModConf;
+  hel?: IHelModConf;
 }
 
 export interface IMonoAppConf extends IMonoAppBaseConf {
