@@ -7,6 +7,7 @@ const { HEL_TPL_INNER_DEMO_DIR, CREATE_SHORT_PARAM_KEY, CREATE_SHORT_PARAM_KEY_N
 const { getDirInfoList } = require('../util/file');
 const { helMonoLog, getCmdKeywords, getMonoRootInfo } = require('../util');
 const { rewriteByLines } = require('../util/rewrite');
+const { getNewPort } = require('../util/port');
 const { jsonObj2Lines } = require('../entry/replace/util');
 
 function getCreateOptions(/** @type {string[]} */ keywords) {
@@ -57,18 +58,6 @@ function getCreateOptions(/** @type {string[]} */ keywords) {
   });
 
   return createOptions;
-}
-
-function getNewPort(/** @type {IMonoDevInfo} */ devInfo) {
-  const { appConfs } = devInfo;
-  let maxPort = 0;
-  Object.keys(appConfs).forEach((key) => {
-    const port = appConfs[key].port || 0;
-    if (port > maxPort) {
-      maxPort = port;
-    }
-  });
-  return maxPort + 1;
 }
 
 function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, createOptions) {

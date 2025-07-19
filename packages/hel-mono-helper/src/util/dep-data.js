@@ -16,7 +16,7 @@ function logMonoDep(options) {
   monoDep.for = appSrc;
   const depData = { [pkgName]: monoDep.depData[pkgName] };
   const monoDepForApp = { for: appSrc, createdAt: getLocaleTime(), depData };
-  depInfos.forEach(v => depData[v.pkgName] = monoDep.depData[v.pkgName]);
+  depInfos.forEach((v) => (depData[v.pkgName] = monoDep.depData[v.pkgName]));
   fs.writeFileSync(monoDepForJson, JSON.stringify(monoDepForApp, null, 2));
 }
 

@@ -84,9 +84,9 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     monoNameMap[belongTo] = { isSubMod, nameMap };
     Object.assign(pkg2Deps, nameMap.pkgName2Deps);
     nameMap.packNames.forEach((pkgName) => {
-      const prefixedDir = `${belongTo}/${dirName}`;
       pkg2BelongTo[pkgName] = belongTo;
       const dirName = nameMap.pkgName2DirName[pkgName];
+      const prefixedDir = `${belongTo}/${dirName}`;
       pkg2Dir[pkgName] = dirName;
       pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${prefixedDir}`);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;

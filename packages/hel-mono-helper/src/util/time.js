@@ -1,4 +1,3 @@
-
 exports.getLocaleTime = function () {
   return new Date().toLocaleString();
 };

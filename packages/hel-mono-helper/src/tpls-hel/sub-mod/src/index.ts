@@ -14,8 +14,8 @@ async function preFetchOtherDeps() {
   const depNames = helDeps.map((v) => v.appName);
   monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);
   await Promise.all(
-    helDeps.map(({ appName, appGroupName, packName }) => {
-      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName] || {};
+    helDeps.map(({ appName, appGroupName, packName, platform }) => {
+      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName];
       const devUrl = getStorageValue(getDevKey(appGroupName));
       if (devUrl) {
         monoLog(`found devUrl ${devUrl} for ${appName}`);
@@ -23,7 +23,7 @@ async function preFetchOtherDeps() {
       const host = devUrl || `${devHostname}:${port}`;
       const enable = isDev || !!devUrl;
 
-      return preFetchLib(appName, { custom: { enable, host, appGroupName } });
+      return preFetchLib(appName, { custom: { enable, host, appGroupName }, platform });
     }),
   );
   monoLog(`end preFetchLib, costs ${Date.now() - start} ms`);

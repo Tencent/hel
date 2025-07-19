@@ -1,19 +1,35 @@
 /**
- * @description: hel-mono 依赖的类型
+ * @description: hel-mono-helper 类型文件
  */
+
+/**
+ * 通过 entry/replace/replaceDevInfo.js 脚本注入的 hel 模块配置
+ */
+export interface IInjectedHelModConf {
+  appGroupName: string;
+  appNames: Record<string, string>;
+  platform?: string;
+}
+
+export interface IMonoInjectedAppBaseConf {
+  port: number;
+  devHostname?: string;
+  hel: IInjectedHelModConf;
+}
 
 /**
  * hel应用（模块）配置
  */
 export interface IHelModConf {
   /**
-   * hel应用（模块）对应的hel组名
+   * hel应用（模块）对应的hel组名，如果组名和包名一致可不用配置此项，
+   * 内部会从上下文拿到包名作为此值，
    */
-  appGroupName: string;
+  appGroupName?: string;
   /**
    * 测试、线上、或其他环境对应的hel应用名（模块名），默认 prod 的 appName 和 appGroupName 需保持一致，无需配置
    */
-  appNames: Record<string, string>;
+  appNames?: Record<string, string>;
   /**
    * hel应用（模块）所属平台
    * default: 'unpkg'
@@ -34,7 +50,7 @@ export interface IMonoAppBaseConf {
   /**
    * hel应用（模块）相关配置
    */
-  hel?: IHelModConf;
+  hel: IHelModConf;
 }
 
 export interface IMonoAppConf extends IMonoAppBaseConf {
@@ -80,6 +96,8 @@ export interface IMonoDevInfo {
   helLibProxyName?: string;
 }
 
+export type MonoInjectedAppConfs = Record<string, IMonoInjectedAppBaseConf>;
+
 /**
  * 通过脚本裁剪 dev-info 配置后，注入到应用代码里的开发信息
  */
@@ -87,6 +105,10 @@ export interface IMonoInjectedDevInfo {
   /**
    * 各应用（或子模块）的大仓开发配置
    */
-  appConfs: Record<string, IMonoAppBaseConf>;
+  appConfs: MonoInjectedAppConfs;
+  /**
+   * default: 'http://localhost'
+   * 所有hel模块本地联调时的域名
+   */
   devHostname: string;
 }

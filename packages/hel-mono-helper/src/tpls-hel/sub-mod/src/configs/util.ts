@@ -4,7 +4,7 @@
 import { DEV_INFO } from './devInfo';
 import { APP_GROUP_NAME } from './subApp';
 
-type HelDep = { appName: string; appGroupName: string; packName: string };
+type HelDep = { appName: string; appGroupName: string; packName: string; platform?: string };
 
 const deployEnv = 'prod'; // {{DEPLOY_ENV}}
 
@@ -44,12 +44,12 @@ export function getHelDeps() {
 
   depPackNames.forEach((packName) => {
     const helConf = DEV_INFO.appConfs[packName].hel;
-    if (!helConf || helConf.appGroupName === APP_GROUP_NAME) return;
+    if (helConf.appGroupName === APP_GROUP_NAME) return;
 
-    const { appNames = { test: '', prod: '' }, appGroupName = '' } = helConf;
+    const { appNames, appGroupName = '', platform } = helConf;
     if (appGroupName) {
       const helModName = appNames[deployEnv] || appGroupName;
-      helDeps.push({ appName: helModName, appGroupName, packName });
+      helDeps.push({ appName: helModName, appGroupName, packName, platform });
     }
   });
 
