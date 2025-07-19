@@ -4,7 +4,7 @@ const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
-const { getLogTime } = require('../util/time');
+const { getLogTimeLine } = require('../util/time');
 
 let cachedResult = null;
 
@@ -56,7 +56,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     return cachedResult;
   }
 
-  helMonoLog(getLogTime());
+  helMonoLog(getLogTimeLine());
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${rawAppSrc}`);
   let appSrc = rawAppSrc;

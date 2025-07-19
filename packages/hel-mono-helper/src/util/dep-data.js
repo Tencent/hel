@@ -3,6 +3,22 @@ const { getDirName, getDevInfoDirs } = require('./base');
 const { getMonoNameMap } = require('./mono-name');
 const { getMonoAppPkgJson } = require('./mono-pkg');
 const { getMonoRootInfo } = require('./root-info');
+const { getLocaleTime } = require('./time');
+
+function logMonoDep(options) {
+  const { isAllDep, appSrc, monoDep, depInfos, pkgName } = options;
+  const { monoDepForJson, monoDepJson } = getMonoRootInfo();
+  if (isAllDep) {
+    fs.writeFileSync(monoDepJson, JSON.stringify(monoDep, null, 2));
+    return;
+  }
+
+  monoDep.for = appSrc;
+  const depData = { [pkgName]: monoDep.depData[pkgName] };
+  const monoDepForApp = { for: appSrc, createdAt: getLocaleTime(), depData };
+  depInfos.forEach(v => depData[v.pkgName] = monoDep.depData[v.pkgName]);
+  fs.writeFileSync(monoDepForJson, JSON.stringify(monoDepForApp, null, 2));
+}
 
 /**
  * 通过src完整路径获得应用在大仓里的所属目录
@@ -29,7 +45,7 @@ exports.getMonoAppDepData = function (appSrc, devInfo, isAllDep = false) {
   const json = getMonoAppPkgJson(dirName, belongTo);
   const { belongToDirs } = getDevInfoDirs(devInfo);
   const nameMap = getMonoNameMap(devInfo);
-  const { pkg2Deps, pkg2BelongTo, pkg2Dir } = nameMap;
+  const { pkg2Deps, pkg2BelongTo, pkg2Dir, monoDep } = nameMap;
 
   const pkgNames = [];
   const depInfos = [];
@@ -61,14 +77,7 @@ exports.getMonoAppDepData = function (appSrc, devInfo, isAllDep = false) {
     }
   }
 
-  const result = { pkgNames, depInfos, ...nameMap };
-  const { monoDepForJson, monoDepJson } = getMonoRootInfo();
-  if (isAllDep) {
-    fs.writeFileSync(monoDepJson, JSON.stringify(result, null, 2));
-  } else {
-    result.for = appSrc;
-    fs.writeFileSync(monoDepForJson, JSON.stringify(result, null, 2));
-  }
+  logMonoDep({ pkgName: json.name, isAllDep, appSrc, monoDep, depInfos });
 
   return { pkgNames, depInfos, ...nameMap };
 };

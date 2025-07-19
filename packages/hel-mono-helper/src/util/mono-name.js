@@ -6,6 +6,7 @@ const { getDevInfoDirs, intersection, getPkgJson } = require('./base');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 const { getMonoRootInfo } = require('./root-info');
 const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./mono-path');
+const { getLocaleTime } = require('./time');
 
 /**
  * 获取大仓某个一级目录下的目录与应用、应用与目录映射关系
@@ -67,6 +68,10 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   const pkg2AppDirPath = {}; // 包名与应用的目录路径映射
   const prefixedDir2Pkg = {}; // 带belongTo前缀的目录名与包名映射
 
+  // mono-dep.json 需要的数据
+  const depData = {};
+  const monoDep = { createdAt: getLocaleTime(), depData };
+
   const mapData = (belongTo, isSubMod = false) => {
     const nameMap = getMonoLevel1NameMap(belongTo);
     nameMap.packNames.forEach((name) => {
@@ -79,14 +84,22 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     monoNameMap[belongTo] = { isSubMod, nameMap };
     Object.assign(pkg2Deps, nameMap.pkgName2Deps);
     nameMap.packNames.forEach((pkgName) => {
+      const prefixedDir = `${belongTo}/${dirName}`;
       pkg2BelongTo[pkgName] = belongTo;
       const dirName = nameMap.pkgName2DirName[pkgName];
       pkg2Dir[pkgName] = dirName;
-      pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${belongTo}/${dirName}`);
+      pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${prefixedDir}`);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;
       const proxyPkgName = isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`;
-      const proxySrcPath = path.join(monoRootHelDir, `./${belongTo}/${dirName}/src`);
+      const proxySrcPath = path.join(monoRootHelDir, `./${prefixedDir}/src`);
       pkg2Info[pkgName] = { pkgName, belongTo, dirName, isSubMod, proxyPkgName, proxySrcPath };
+
+      depData[pkgName] = {
+        ...pkg2Info[pkgName],
+        appDirPath: pkg2AppDirPath[pkgName],
+        prefixedDir,
+        deps: pkg2Deps[pkgName],
+      };
     });
   };
 
@@ -97,7 +110,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     throw new Error(`these package names (${dupPackNames.join(',')}) duplicated`);
   }
 
-  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info };
+  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info, monoDep };
 };
 
 exports.getBuildDirPath = function (devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {

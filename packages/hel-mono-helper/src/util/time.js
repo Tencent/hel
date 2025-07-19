@@ -1,5 +1,8 @@
 
+exports.getLocaleTime = function () {
+  return new Date().toLocaleString();
+};
 
-exports.getLogTime = function () {
-  return `Log time: ${new Date().toLocaleString()}\n`
+exports.getLogTimeLine = function () {
+  return `Log time: ${exports.getLocaleTime()}\n`;
 };

@@ -29,7 +29,7 @@ async function preFetchHelDeps() {
       return preFetchLib(appName, { custom: { enable, host, appGroupName } });
     }),
   );
-  monoLog(`end preFetchLib, costs ${Date.now() - start}`);
+  monoLog(`end preFetchLib, costs ${Date.now() - start} ms`);
 }
 
 async function main() {
