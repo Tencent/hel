@@ -14,6 +14,8 @@ export interface IMonoRootInfo {
   monoRoot: string;
   monoRootHelDir: string;
   monoRootHelLog: string;
+  monoDepJson: string;
+  monoDepForJson;
 }
 
 export interface IPkgInfo {

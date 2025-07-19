@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
 const { getCurKeyword } = require('./keyword');
 const { getMonoRootInfo } = require('./root-info');
+const { getLogTime } = require('./time');
 
 /** @type {import('../types').ICWDAppData} 正在运行中应用数据 */
 let curAppData = null;
@@ -80,7 +81,7 @@ function logRunningDetails(options, ...args) {
 
 exports.clearMonoLog = function (markStartTime = true, isTmp = false) {
   const logFilePath = getLogFilePath(isTmp);
-  const line = markStartTime ? `Log time: ${new Date().toLocaleString()}\n` : '';
+  const line = markStartTime ? getLogTime() : '';
   // 存在才清，避免产生很多空的 .tmp.log
   if (fs.existsSync(logFilePath)) {
     fs.writeFileSync(logFilePath, line);

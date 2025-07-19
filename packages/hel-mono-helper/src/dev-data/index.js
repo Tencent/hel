@@ -4,6 +4,7 @@ const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
+const { getLogTime } = require('../util/time');
 
 let cachedResult = null;
 
@@ -55,6 +56,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     return cachedResult;
   }
 
+  helMonoLog(getLogTime());
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${rawAppSrc}`);
   let appSrc = rawAppSrc;
@@ -152,7 +154,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);
   }
 
-  helMonoLog('isHelMode', isHelModeVar);
+  helMonoLog('isHelMode=', isHelModeVar);
   helMonoLog('appSrcIndex ', appSrcIndex);
   helMonoLog('appPublicUrl ', appPublicUrl);
   helMonoLog('babel loader include', babelLoaderInclude);

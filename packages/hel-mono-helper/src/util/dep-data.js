@@ -1,6 +1,8 @@
+const fs = require('fs');
 const { getDirName, getDevInfoDirs } = require('./base');
 const { getMonoNameMap } = require('./mono-name');
 const { getMonoAppPkgJson } = require('./mono-pkg');
+const { getMonoRootInfo } = require('./root-info');
 
 /**
  * 通过src完整路径获得应用在大仓里的所属目录
@@ -57,6 +59,15 @@ exports.getMonoAppDepData = function (appSrc, devInfo, isAllDep = false) {
       loopDeps.length = 0; // 清空间接依赖
       tmpDeps.forEach((name) => pushToDeps(pkg2Deps[name] || {})); // 添加新的间接依赖
     }
+  }
+
+  const result = { pkgNames, depInfos, ...nameMap };
+  const { monoDepForJson, monoDepJson } = getMonoRootInfo();
+  if (isAllDep) {
+    fs.writeFileSync(monoDepJson, JSON.stringify(result, null, 2));
+  } else {
+    result.for = appSrc;
+    fs.writeFileSync(monoDepForJson, JSON.stringify(result, null, 2));
   }
 
   return { pkgNames, depInfos, ...nameMap };

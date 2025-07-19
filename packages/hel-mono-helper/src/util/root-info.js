@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { getCWD } = require('./base');
 
+/** @type {import('../types').IMonoRootInfo} */
 let curMonoRootInfo = null;
 
 function getPath(list, lastIdx) {
@@ -15,7 +16,9 @@ function getPath(list, lastIdx) {
 function getHelAssociatePath(monoRoot) {
   const monoRootHelDir = path.join(monoRoot, './.hel');
   const monoRootHelLog = path.join(monoRoot, './.hel/hel-all.log');
-  return { monoRootHelDir, monoRootHelLog };
+  const monoDepJson = path.join(monoRoot, './.hel/mono-dep.json');
+  const monoDepForJson = path.join(monoRoot, './.hel/mono-dep-for.json');
+  return { monoRootHelDir, monoRootHelLog, monoDepJson, monoDepForJson };
 }
 
 exports.setMonoRoot = function (rootPath) {
@@ -61,12 +64,12 @@ exports.getMonoRootInfo = function () {
     throw new Error(`can not decide mono root path for cwd(${cwd})`);
   }
 
-  const { monoRootHelDir, monoRootHelLog } = getHelAssociatePath(monoRoot);
+  const { monoRootHelDir, monoRootHelLog, monoDepJson, monoDepForJson } = getHelAssociatePath(monoRoot);
   // 确定完毕 root 路径信息，确保一下 .hel 目录存在
   if (!fs.existsSync(monoRootHelDir)) {
     fs.mkdirSync(monoRootHelDir);
   }
 
-  curMonoRootInfo = { monoRoot, monoRootHelDir, monoRootHelLog };
+  curMonoRootInfo = { monoRoot, monoRootHelDir, monoRootHelLog, monoDepJson, monoDepForJson };
   return curMonoRootInfo;
 };
