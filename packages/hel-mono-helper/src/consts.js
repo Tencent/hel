@@ -1,5 +1,7 @@
 const path = require('path');
 
+const VER = '0.4.0';
+
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
 const HEL_TPL_INNER_SUB_MOD_PATH = path.join(__dirname, './tpls-hel/sub-mod');
@@ -52,7 +54,7 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
 
 module.exports = {
-  VER: '0.3.9',
+  VER,
   HITABLE_SCRIPT_KEYS,
   INNER_ACTION,
   INNER_ACTION_NAMES,
