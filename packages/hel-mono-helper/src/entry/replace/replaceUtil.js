@@ -8,7 +8,7 @@ module.exports = function replaceUtil(
 ) {
   const { isSubMod, helDirPath, realAppPkgName } = appData;
   const utilFilePath = isSubMod ? path.join(helDirPath, './configs/util.ts') : path.join(helDirPath, './util.ts');
-  helMonoLog(`replace content of util file(${utilFilePath})`);
+  helMonoLog(`replace content of ${utilFilePath}`);
 
   const inputDeployEnv = process.env.DEPLOY_ENV;
   const deployEnv = inputDeployEnv || 'prod';
