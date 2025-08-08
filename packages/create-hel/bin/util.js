@@ -9,7 +9,7 @@ const { getConfig } = require('./config');
 let isDebug = false;
 
 const seLine = '+---------------------------------------------------------------------------+';
-const emptyLine = '|                                                                           |'
+const emptyLine = '|                                                                           |';
 
 function getIsDebug() {
   return isDebug;
@@ -266,7 +266,7 @@ function logCliInfo() {
     const prefixedStr = `|   ${mayColoredStr}`;
     let strLen = inputStrLen;
     if (!strLen) {
-      strLen = Math.ceil(color ? (prefixedStr.length / 2) + 2 : prefixedStr.length);
+      strLen = Math.ceil(color ? prefixedStr.length / 2 + 2 : prefixedStr.length);
     }
     logTipLine(prefixedStr, fixedLen, { strLen, lastChar: '|' });
   };

@@ -2,13 +2,12 @@
 
 ## 项目简介
 
-create-hel 是一个基于快速创建hel项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，
-以及其他 hel 独立的示例项目
+create-hel 是一个基于快速创建 hel 项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，以及其他 hel 独立的示例项目
 
 ## 主要功能
 
 - 支持快速创建微模块大仓架构项目（来自模板`hel-mono-react`）
-- 支持创建独立的react、vue、js库等传统微模块项目
+- 支持创建独立的 react、vue、js 库等传统微模块项目
 
 ## 目录结构
 
