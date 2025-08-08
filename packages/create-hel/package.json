@@ -1,13 +1,13 @@
 {
-  "name": "create-hel-mono",
-  "version": "1.1.2",
-  "description": "A hel-mono template CLI for quickly scaffolding your hel project",
+  "name": "create-hel",
+  "version": "0.0.2",
+  "description": "A hel template CLI for quickly scaffolding your hel project, such as hel micro monorepo project and etc.",
   "license": "MIT",
   "author": "fantasticsoul",
   "main": "index.js",
   "bin": {
-    "create-hel-mono": "./bin/index.js",
-    "hel-mono": "./bin/index.js"
+    "create-hel": "./bin/index.js",
+    "hel": "./bin/index.js"
   },
   "files": [
     "bin",
@@ -16,8 +16,8 @@
     "README.md"
   ],
   "scripts": {
-    "create-hel-mono": "node bin/index.js",
-    "hel-mono": "node bin/index.js"
+    "create-hel": "node bin/index.js",
+    "hel": "node bin/index.js"
   },
   "dependencies": {
     "chalk": "^4.1.2",

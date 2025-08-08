@@ -1,18 +1,19 @@
-# create-hel-mono 项目说明
+# create-hel 项目说明
 
 ## 项目简介
 
-create-hel-mono 是一个基于 hel monorepo 架构的前端项目模板，适用于快速创建多包（多模块）项目的场景。项目采用 pnpm 作为包管理工具。
+create-hel 是一个基于快速创建hel项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，
+以及其他 hel 独立的示例项目
 
 ## 主要功能
 
-- 支持快速创建多包（如 apps、packages）项目
-- 内置 React 应用模板，开箱即用
+- 支持快速创建微模块大仓架构项目（来自模板`hel-mono-react`）
+- 支持创建独立的react、vue、js库等传统微模块项目
 
 ## 目录结构
 
 ```
-create-hel-mono/
+create-hel/
   ├── bin/                  # 项目脚本
   │   ├── analyze-args      # 分析命令行参数
   │   ├── config            # 项目脚本配置
@@ -36,17 +37,17 @@ create-hel-mono/
 使用 npx 创建项目到`my-mono`目录下
 
 ```bash
-npx create-hel-mono my-mono
+npx create-hel my-mono
 ```
 
 - create-hel-mono
 
-使用 npm 全局安装 `create-hel-mono` 后，再基于`hel-mono`命令行或`create-hel-mono`命令行创建项目到`my-mono`目录下
+使用 npm 全局安装 `create-hel` 后，再基于`hel`命令行或`create-hel`命令行创建项目到`my-mono`目录下
 
 ```bash
-npm install create-hel-mono -g
-# or type as: create-hel-mono my-mono
-hel-mono my-mono
+npm install create-hel -g
+# or type as: create-hel my-mono
+hel my-mono
 ```
 
 - npm create
@@ -54,7 +55,7 @@ hel-mono my-mono
 使用 npm 创建项目到`my-mono`目录下
 
 ```bash
-npm create hel-mono@latest my-mono
+npm create hel@latest my-mono
 ```
 
 - pnpm create
@@ -62,7 +63,7 @@ npm create hel-mono@latest my-mono
 使用 pnpm 创建项目到`my-mono`目录下
 
 ```bash
-pnpm create hel-mono my-mono
+pnpm create hel my-mono
 ```
 
 ### 安装依赖并启动
@@ -101,29 +102,29 @@ pnpm start
 - -t 可选参数 `-t`（或 `--template`） 默认值`react`，表示模板类型，目前暂只支持设定为(`react`)。
 
 ```bash
-npm create hel-mono my-mono -t react
+npm create hel my-mono -t react
 ```
 
 - -r 可选参数 `-r`（或 `--remote`）默认值 false，表示是否优先从远端拉取 t 参数对应的模板
 
 ```bash
-npm create hel-mono my-mono -t react -r
+npm create hel my-mono -t react -r
 ```
 
 - -u 可选参数 `-u`（或 `--url`）默认值 undefined，表示从指定 url 的拉取远端模板（设置了 u，则 t r 无效）
 
 ```bash
-npm create hel-mono my-mono -u https://github.com/hel-eco/hel-mono
+npm create hel my-mono -u https://github.com/hel-eco/hel-mono
 ```
 
 ## 其他
 
 ### 携带参数写法
 
-npm create 带参写法如下，需要加 `--`，在其后面的参数会被 `create-hel-mono` cli 工具接收到
+npm create 带参写法如下，需要加 `--`，在其后面的参数会被 `create-hel` cli 工具接收到
 
 ```bash
-npm create hel-mono -- -t xx-template
+npm create hel -- -t xx-template
 ```
 
 ### 贡献模板
@@ -132,17 +133,17 @@ npm create hel-mono -- -t xx-template
 
 ```bash
 # 安装 https://github.com/hel-eco/hel-mono-my-type 项目
-create-hel-mono -t my-type
+create-hel -t my-type
 ```
 
 ### 定制 cli
 
-透传`config`参数，基于 `create-hel-mono` 构建自己的专属 hel-mono cli
+透传`config`参数，基于 `create-hel` 构建自己的专属 hel-mono cli
 
 ```js
 #!/usr/bin/env node
 const config = require('./config');
-const { analyzeArgs, setConfig } = require('create-hel-mono');
+const { analyzeArgs, setConfig } = require('create-hel');
 
 // config 参数见 setConfig 里的类型说明
 setConfig(config);

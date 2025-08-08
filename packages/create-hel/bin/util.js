@@ -8,12 +8,28 @@ const { getConfig } = require('./config');
 
 let isDebug = false;
 
+const seLine = '+---------------------------------------------------------------------------+';
+const emptyLine = '|                                                                           |'
+
 function getIsDebug() {
   return isDebug;
 }
 
 function setIsDebug(isDebugVar) {
   isDebug = isDebugVar;
+}
+
+function charByte(mayChar, idx = 0) {
+  return mayChar.charCodeAt(idx) < 128 ? 1 : 2;
+}
+
+/** 获取字符串的字节长度，注：此方法仅适用于普通字符，不适用于表情符号（例如：👯‍♂️） */
+function getByteLength(str) {
+  let count = 0;
+  for (let i = 0, l = str.length; i < l; i++) {
+    count += charByte(str, i);
+  }
+  return count;
 }
 
 function getUsageInfo() {
@@ -223,18 +239,48 @@ function logDebug(str, strOrObj) {
   logPurple(str, strOrObj);
 }
 
+function getInfoLine(str, fixedLen, options) {
+  const optVar = options || {};
+  const strLen = optVar.strLen || str.length;
+  const lastChar = optVar.lastChar || '';
+
+  let toFillStr = '';
+  if (strLen < fixedLen) {
+    const charArr = new Array(fixedLen - strLen).fill(' ');
+    toFillStr = charArr.join('');
+  }
+
+  return `${str}${toFillStr}${lastChar}`;
+}
+
+/** log tip line */
+function logTipLine(str, fixedLen, options) {
+  logTip(getInfoLine(str, fixedLen, options));
+}
+
 function logCliInfo() {
   const { cliPkgName, cliPkgVersion, cliKeyword, basedOn } = getConfig();
-  logTip('-----------------------------------------------------------------');
-  logTip('|                                                               ');
-  logTip(`|   Cli info: ${cliPkgName}@${cliPkgVersion}                    `);
-  logTip('|   Star hel https://github.com/Tencent/hel if you like it ^_^  ');
-  logTip(`|   Quick start: ${cliKeyword} <your-project-name>              `);
+  const fixedLen = seLine.length - 1;
+  const lgLine = (str, color, inputStrLen) => {
+    const mayColoredStr = color ? chalk.hex(color)(str) : str;
+    const prefixedStr = `|   ${mayColoredStr}`;
+    let strLen = inputStrLen;
+    if (!strLen) {
+      strLen = Math.ceil(color ? (prefixedStr.length / 2) + 2 : prefixedStr.length);
+    }
+    logTipLine(prefixedStr, fixedLen, { strLen, lastChar: '|' });
+  };
+
+  logTip(seLine);
+  logTip(emptyLine);
+  lgLine(`Cli info: ${cliPkgName}@${cliPkgVersion}`);
+  lgLine('Star hel https://github.com/Tencent/hel if you like it ^_^');
+  lgLine(`Quick start: ${cliKeyword} <your-project-name>`);
   if (basedOn) {
-    logTip(`|   Based on: ${basedOn}                                      `);
+    lgLine(`Based on: ${basedOn}`);
   }
-  logTip('|                                                               ');
-  logTip('-----------------------------------------------------------------');
+  logTip(emptyLine);
+  logTip(seLine);
 }
 
 function logHelpInfo() {

@@ -13,8 +13,8 @@ const defaultConfig = {
   helMonoTemplates: 'hel-mono-templates',
   repoUrlDict,
   repoUrlPrefix: 'https://github.com/hel-eco/hel-mono',
-  cliKeyword: 'hel-mono',
-  cliFullKeyword: 'create-hel-mono',
+  cliKeyword: 'hel',
+  cliFullKeyword: 'create-hel',
   basedOn: '',
 };
 
