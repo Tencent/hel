@@ -50,7 +50,7 @@ exports.getPkgMonoDepData = function (/** @type {import('hel-mono-types').IMonoD
   const nameMap = getMonoNameMap(devInfo);
   const { monoDep } = nameMap;
   return monoDep.depData[pkgName] || null;
-}
+};
 
 /**
  * @returns {import('../types').IMonoDevData}

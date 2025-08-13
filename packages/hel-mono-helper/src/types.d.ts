@@ -70,7 +70,7 @@ export interface IPkgMonoDepData extends IPkgInfo {
 
 export interface IMonoNameMap {
   monoNameMap: Record<BelongToDir, { isSubMod: boolean; nameMap: INameMap }>;
-  monoDep: { createdAt: string, depData: Record<string, IPkgMonoDepData> };
+  monoDep: { createdAt: string; depData: Record<string, IPkgMonoDepData> };
   /**
    * 包名与应用的目录路径映射
    */
