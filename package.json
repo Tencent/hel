@@ -13,7 +13,7 @@
     "commitlint": "commitlint -e $HUSKY_GIT_PARAMS",
     "cpdoc": "rm -rf ../my-opensource/hel-gh-pages/* && cp -r ./doc/build/* ../my-opensource/hel-gh-pages",
     "doc": "pnpm --filter=hel-doc run build && npm run cpdoc",
-    "format": "prettier --cache --write . '!./pnpm-lock.yaml' --ignore-path .gitignore .prettierignore --ignore-unknown",
+    "format": "prettier --cache --write . '!./pnpm-lock.yaml' '!./packages/hel-mono-helper/src/tpls-hel' --ignore-path .gitignore .prettierignore --ignore-unknown",
     "prepare": "husky install"
   },
   "lint-staged": {
