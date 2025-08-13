@@ -8,5 +8,5 @@ fixtures
 *.yaml
 *.less
 .turbo
-doc/src/components
-packages/hel-mono-helper/src/tpls-hel
+./doc/src/components
+./packages/hel-mono-helper/src/tpls-hel
