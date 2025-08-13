@@ -98,7 +98,7 @@ interface ITryOptions {
   isCore?: boolean;
 }
 
-function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions) {
+function tryInjectPlatForMethods(platform: string, obj: any, options: ITryOptions) {
   const { preFetchOptions, isCore } = options;
   const newObj: any = {};
   Object.keys(obj).forEach((mayFnName) => {
@@ -116,7 +116,7 @@ function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions
     }
     if (mayFn && valueType === 'object') {
       const tryOptions = { ...options, isCore: mayFnName === 'core' };
-      newObj[mayFnName] = tryInectPlatForMethods(platform, mayFn, tryOptions);
+      newObj[mayFnName] = tryInjectPlatForMethods(platform, mayFn, tryOptions);
       return;
     }
     newObj[mayFnName] = mayFn;
@@ -126,9 +126,9 @@ function tryInectPlatForMethods(platform: string, obj: any, options: ITryOptions
 }
 
 type Apis = typeof apis;
-type CreateInstance = (platform: string, options?: Partial<IControlPreFetchOptions>) => InsApis;
-type CreateOriginInstance = (platform: string, options?: Partial<IPlatformConfigInitFull>) => InsApis;
-type InsApis = Apis & {
+export type CreateInstance = (platform: string, options?: Partial<IControlPreFetchOptions>) => InsApis;
+export type CreateOriginInstance = (platform: string, options?: Partial<IPlatformConfigInitFull>) => InsApis;
+export type InsApis = Apis & {
   createInstance: CreateInstance;
   createOriginInstance: CreateOriginInstance;
   resetGlobalThis: typeof apis.core.resetGlobalThis;
@@ -143,7 +143,7 @@ type InsApis = Apis & {
  * @returns
  */
 export function createInstance(platform: string, preFetchOptions?: Partial<IControlPreFetchOptions>): InsApis {
-  const insApis = tryInectPlatForMethods(platform, apis, { preFetchOptions });
+  const insApis = tryInjectPlatForMethods(platform, apis, { preFetchOptions });
   insApis.createInstance = createInstance;
   insApis.createOriginInstance = createOriginInstance;
   insApis.resetGlobalThis = apis.core.resetGlobalThis;

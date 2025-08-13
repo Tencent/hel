@@ -1,5 +1,5 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
-import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRootInfo, INameData } from './src/types';
+import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRootInfo, INameData, IPkgMonoDepData } from './src/types';
 
 export declare const HEL_DIST: 'hel_dist';
 
@@ -45,9 +45,16 @@ export declare function prepareHelEntry(devInfo: IMonoDevInfo, depData: IMonoApp
 export declare function getMonoDevData(devInfo: IMonoDevInfo, appSrc?: string): IMonoDevData;
 
 /**
- * 使用 tsc 构建后台产物，并复制到 hel_dist/srv 目录下
+ * 根据包名获取对应 hel-mono 大仓里的依赖数据
  */
-export declare function buildSrvModToHelDist(): IMonoDevData;
+export declare function getPkgMonoDepData(devInfo: IMonoDevInfo, pkgName: string): IPkgMonoDepData | null;
+
+/**
+ * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下，
+ * tsc 产物保留了原始的目录层级结构，产物可能为多个文件，
+ * tsup 产物将所有代码合并为一个js文件，
+ */
+export declare function buildSrvModToHelDist(isUseTsup?: boolean): IMonoDevData;
 
 export declare const monoUtil: {
   /** 打印hel-mono运行普通日志 */

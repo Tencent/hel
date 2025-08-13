@@ -1,6 +1,6 @@
 const { cst } = require('hel-dev-utils');
 const { prepareHelEntry } = require('./entry');
-const { getMonoDevData } = require('./dev-data');
+const { getMonoDevData, getPkgMonoDepData } = require('./dev-data');
 const { executeStart, executeBuild, buildSrvModToHelDist } = require('./exec');
 const util = require('./util');
 
@@ -20,6 +20,7 @@ module.exports = {
   executeBuild,
   prepareHelEntry,
   getMonoDevData,
+  getPkgMonoDepData,
   buildSrvModToHelDist,
   monoUtil: util,
   HEL_DIST: cst.HEL_DIST_DIR,

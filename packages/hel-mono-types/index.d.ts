@@ -1,5 +1,5 @@
 /**
- * @description: hel-mono-helper 类型文件
+ * @description: hel-mono-helper 对应的 dev-info 类型文件
  */
 
 /**

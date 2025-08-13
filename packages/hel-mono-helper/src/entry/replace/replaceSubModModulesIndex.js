@@ -1,13 +1,13 @@
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog } = require('../../util');
-const { genExportModuleNames } = require('./util');
+const { genExportModuleNames, getModEntryFilePath } = require('./util');
 
 module.exports = function replaceSubModModulesIndex(/** @type {import('../../types').ICWDAppData} */ appData) {
   const { helDirPath, realAppPkgName, realAppSrcDirPath, isForRootHelDir } = appData;
   const filePath = path.join(helDirPath, './modules/index.ts');
   const oriModImportName = isForRootHelDir ? realAppPkgName : '../../index';
-  const oriModFilePath = path.join(realAppSrcDirPath, './index.ts');
+  const oriModFilePath = getModEntryFilePath(realAppSrcDirPath);
 
   helMonoLog(`replace content of ${filePath}`);
   rewriteFileLine(filePath, (line) => {

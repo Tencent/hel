@@ -17,6 +17,7 @@ import * as apis from './apis';
 import * as ins from './ins';
 export type { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase, IStyleDataResult } from './types';
+export type { CreateInstance, CreateOriginInstance, InsApis } from './ins';
 
 /** 暂时解决部分 v3 版本用户升级到 v4 后，原来使用 helMicro.core.IAppAndVer 标准类型出错的问题 */
 export declare namespace core {

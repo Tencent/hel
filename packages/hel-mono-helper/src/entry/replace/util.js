@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const os = require('os');
 
 /**
@@ -152,7 +153,23 @@ function jsonObj2Lines(jsonObj, includeFL) {
   return targetLines;
 }
 
+function getModEntryFilePath(appSrcDirPath) {
+  let filePath = path.join(appSrcDirPath, './index.ts');
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(appSrcDirPath, './index.js');
+  }
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(appSrcDirPath, './index.tsx');
+  }
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(appSrcDirPath, './index.jsx');
+  }
+
+  return filePath;
+}
+
 module.exports = {
   genExportModuleNames,
+  getModEntryFilePath,
   jsonObj2Lines,
 };

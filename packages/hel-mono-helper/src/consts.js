@@ -1,6 +1,6 @@
 const path = require('path');
 
-const VER = '0.4.0';
+const VER = '0.4.2';
 
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 

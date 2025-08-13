@@ -62,8 +62,15 @@ export interface INameMap {
   dirNames: string[];
 }
 
+export interface IPkgMonoDepData extends IPkgInfo {
+  appDirPath: string;
+  prefixedDir: string;
+  deps: Record<string, string>;
+}
+
 export interface IMonoNameMap {
   monoNameMap: Record<BelongToDir, { isSubMod: boolean; nameMap: INameMap }>;
+  monoDep: { createdAt: string, depData: Record<string, IPkgMonoDepData> };
   /**
    * 包名与应用的目录路径映射
    */

@@ -4,12 +4,12 @@ const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog } = require('../../util');
 const { HEL_LIB_PROXY_NAME } = require('../../consts');
-const { genExportModuleNames } = require('./util');
+const { genExportModuleNames, getModEntryFilePath } = require('./util');
 
 module.exports = function replaceSubModLibTypes(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { helDirPath, realAppSrcDirPath } = appData;
   const filePath = path.join(helDirPath, './entrance/libTypes.ts');
-  const oriModFilePath = path.join(realAppSrcDirPath, './index.ts');
+  const oriModFilePath = getModEntryFilePath(realAppSrcDirPath);
   const { helLibProxyName = HEL_LIB_PROXY_NAME } = devInfo;
 
   helMonoLog(`replace content of ${filePath}`);

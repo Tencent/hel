@@ -46,7 +46,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
 module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { helDirPath, isSubMod, realAppPkgJsonPath } = appData;
   const devInfoFile = isSubMod ? path.join(helDirPath, './configs/devInfo.ts') : path.join(helDirPath, './devInfo.ts');
-  helMonoLog(`replace content of file(${devInfoFile})`);
+  helMonoLog(`replace content of ${devInfoFile}`);
 
   const realAppPackjson = getPkgJson(realAppPkgJsonPath);
   const deps = realAppPackjson.dependencies || {};
