@@ -1,4 +1,3 @@
-import React from 'react';
 import * as helMicro from 'hel-micro';
 
 export default function RemoteCallBtn() {
