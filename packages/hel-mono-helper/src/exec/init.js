@@ -1,6 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const { getCmdKeywordName, getNameData, helMonoLog } = require('../util');
-const { prepareHelEntrys } = require('./common');
+const { prepareHelEntryForMainAndDeps } = require('../entry');
 
 /**
  * 执行 npm start .init xx-hub 命令
@@ -9,7 +9,7 @@ exports.execInit = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog('isForRootHelDir false');
   const mayPkgOrDir = getCmdKeywordName(3);
   const nameData = getNameData(mayPkgOrDir, devInfo);
-  prepareHelEntrys(false, devInfo, nameData);
+  prepareHelEntryForMainAndDeps({ isForRootHelDir: false, devInfo, nameData });
 };
 
 /**
@@ -19,5 +19,5 @@ exports.execInitProxy = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog('isForRootHelDir true');
   const mayPkgOrDir = getCmdKeywordName(3);
   const nameData = getNameData(mayPkgOrDir, devInfo);
-  prepareHelEntrys(true, devInfo, nameData);
+  prepareHelEntryForMainAndDeps({ isForRootHelDir: true, devInfo, nameData });
 };

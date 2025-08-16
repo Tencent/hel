@@ -6,26 +6,18 @@ import 'hel-iso';
 import { preFetchLib } from 'hel-micro';
 import { DEV_INFO } from './devInfo';
 import { APP_GROUP_NAME, APP_NAME } from './subApp';
-import { getDevKey, getHelDeps, getStorageValue, monoLog } from './util';
+import { getHelDeps, getIsDev, getEnableAndHost, monoLog } from './util';
 
 async function preFetchHelDeps() {
   const helDeps = getHelDeps();
   if (!helDeps.length) return;
 
-  const isDev = process.env.NODE_ENV === 'development';
   const start = Date.now();
   const depNames = helDeps.map((v) => v.appName);
-  monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);
+  monoLog(`start preFetchLib (${depNames}) isDev=${getIsDev()}`);
   await Promise.all(
     helDeps.map(({ appName, appGroupName, packName, platform }) => {
-      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName];
-      const devUrl = getStorageValue(getDevKey(appGroupName));
-      if (devUrl) {
-        monoLog(`found devUrl ${devUrl} for ${appName}`);
-      }
-      const host = devUrl || `${devHostname}:${port}`;
-      const enable = isDev || !!devUrl;
-
+      const { enable, host } = getEnableAndHost(appName, DEV_INFO.appConfs[packName]);
       return preFetchLib(appName, { custom: { enable, host, appGroupName }, platform });
     }),
   );
@@ -33,7 +25,8 @@ async function preFetchHelDeps() {
 }
 
 async function main() {
-  monoLog(`load hel app ${APP_GROUP_NAME}(${APP_NAME})`);
+  const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;
+  monoLog(`load hel app ${label}`);
   await preFetchHelDeps();
   await import('{{APP_PACK_NAME}}');
 }

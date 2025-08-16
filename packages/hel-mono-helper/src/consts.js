@@ -1,6 +1,7 @@
 const path = require('path');
+const devUtils = require('hel-dev-utils');
 
-const VER = '0.4.2';
+const VER = '0.4.3';
 
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
@@ -18,7 +19,13 @@ const ACTION_NAMES = {
 };
 
 const INNER_ACTION = {
+  /**
+   * 创建 hub 项目
+   */
   create: '.create',
+  /**
+   * 创建 hub 项目并启动
+   */
   createStart: '.create-start',
   createStartShort: '.cs',
   build: '.build',
@@ -27,6 +34,10 @@ const INNER_ACTION = {
    * 首次执行 npm start xx-hub:hel 时需要先执行此命令
    */
   init: '.init',
+  /**
+   * 启动数组对应的所以子依赖
+   */
+  startHelDeps: '.deps',
   /**
    * 为代理宿主初始化微模块相关文件，
    * 首次执行 npm start xx-hub:proxy 时需要先执行此命令
@@ -54,6 +65,7 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
 
 module.exports = {
+  HEL_DIST: devUtils.cst.HEL_DIST_DIR,
   VER,
   HITABLE_SCRIPT_KEYS,
   INNER_ACTION,
@@ -95,4 +107,28 @@ module.exports = {
   INNER_APP_ORG: '@hel-apps',
   /** 默认调试域名 */
   HOST_NAME: 'http://localhost',
+  /**
+   * 本地启动 hel 应用时，仅启动宿主，子模块需要用户主动调用 npm start .deps xx-hub 启动
+   */
+  HEL_START_WITH_LOCAL_DEPS: '1',
+  /**
+   * 本地启动 hel 应用时，自动启动对应的依赖 hel子模块
+   */
+  HEL_START_WITH_LOCAL_RUNNING_DEPS: '2',
+  /**
+   * 本地启动 hel 应用时，拉取对应的依赖hel子模块的远程已构建版本
+   */
+  HEL_START_WITH_REMOTE_DEPS: '3',
+  /**
+   * 赋值给 process.env.HEL_BUILD ，表示使用微模块模式构建
+   */
+  HEL_MICRO_BUILD: '1',
+  /**
+   * 赋值给 process.env.HEL_BUILD ，表示使用微模块模式构建，同时构建 hel 前后端（浏览器端、node端）模块
+   */
+  HEL_MICRO_BUILD_BS: '2',
+  /**
+   * 赋值给 process.env.HEL_BUILD ，表示使用传统的整体模式构建
+   */
+  HEL_ALL_BUILD: '3',
 };

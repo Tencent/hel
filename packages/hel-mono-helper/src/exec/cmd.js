@@ -10,10 +10,6 @@ exports.getPnpmRunCmd = function (packName, options) {
   if (isForRootHelDir) {
     targetPackName = `${isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`}`;
   }
-  // // 非内部代理启动子模块时，添加前缀 HEL=1，表示入口走 .hel/index
-  // if (isSubMod && !isForRootHelDir) {
-  //   prefix = 'HEL=1 ';
-  // }
 
   return `pnpm --filter ${targetPackName} run ${scriptCmdKey}`;
 };

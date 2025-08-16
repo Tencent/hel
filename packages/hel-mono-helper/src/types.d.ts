@@ -1,3 +1,4 @@
+import type { IMonoDevInfo } from 'hel-mono-types';
 import type { ISubAppBuildDesc } from 'hel-dev-utils';
 
 type Dict<T = any> = Record<string, T>;
@@ -222,4 +223,11 @@ export interface IMonoDevData {
    */
   appSrcIndex: string;
   resolveMonoRoot: (relativePath: string) => string;
+}
+
+export interface IPrepareHelEntrysOptions {
+  isForRootHelDir: boolean;
+  devInfo: IMonoDevInfo;
+  nameData: INameData;
+  startDeps?: boolean;
 }

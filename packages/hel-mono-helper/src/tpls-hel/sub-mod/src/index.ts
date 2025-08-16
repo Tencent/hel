@@ -3,26 +3,19 @@ import { libReady } from 'hel-lib-proxy';
 import { preFetchLib } from 'hel-micro';
 import { DEV_INFO } from './configs/devInfo';
 import { APP_GROUP_NAME, APP_NAME } from './configs/subApp';
-import { getDevKey, getHelDeps, getStorageValue, monoLog } from './configs/util';
+import { getHelDeps, getIsDev, getEnableAndHost, monoLog } from './configs/util';
 
 async function preFetchOtherDeps() {
   const helDeps = getHelDeps();
   if (!helDeps.length) return;
 
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = getIsDev();
   const start = Date.now();
   const depNames = helDeps.map((v) => v.appName);
   monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);
   await Promise.all(
     helDeps.map(({ appName, appGroupName, packName, platform }) => {
-      const { port = 3000, devHostname = DEV_INFO.devHostname } = DEV_INFO.appConfs[packName];
-      const devUrl = getStorageValue(getDevKey(appGroupName));
-      if (devUrl) {
-        monoLog(`found devUrl ${devUrl} for ${appName}`);
-      }
-      const host = devUrl || `${devHostname}:${port}`;
-      const enable = isDev || !!devUrl;
-
+      const { enable, host } = getEnableAndHost(appName, DEV_INFO.appConfs[packName]);
       return preFetchLib(appName, { custom: { enable, host, appGroupName }, platform });
     }),
   );
@@ -30,7 +23,8 @@ async function preFetchOtherDeps() {
 }
 
 async function main() {
-  monoLog(`load hel mod ${APP_GROUP_NAME}(${APP_NAME})`);
+  const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;
+  monoLog(`load hel mod ${label}`);
   // 预拉取其他依赖
   await preFetchOtherDeps();
   const libProperties = await import('./entrance/libProperties.ts');

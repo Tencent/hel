@@ -1,12 +1,28 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
-const { APPS, PACKAGES } = require('../consts');
+const path = require('path');
+const { APPS, PACKAGES, HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 
 /**
- * 获取 node 命令执行时所处目录
+ * 获取 node 命令执行时所处目录，
+ * 形如：/your/path/hel-mono/apps/hub
  */
 exports.getCWD = function () {
   return process.cwd();
+};
+
+exports.getCWDPkgDir = function () {
+  const cwd = exports.getCWD();
+  const strList = cwd.split(path.sep);
+  return strList[strList.length - 1];
+};
+
+exports.getCWDIsForRootHelDir = function () {
+  const cwd = exports.getCWD();
+  const strList = cwd.split(path.sep);
+  const rootHelAppSeg = `${path.sep}${HEL_DIR_NAME}${path.sep}${INNER_APP_ORG}`;
+  const rootHelSubModSeg = `${path.sep}${HEL_DIR_NAME}${path.sep}${INNER_SUB_MOD_ORG}`;
+  return strList.includes(rootHelAppSeg) || strList.includes(rootHelSubModSeg);
 };
 
 exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {

@@ -1,12 +1,16 @@
 /**
  * 辅助工具函数
  */
+import type { IMonoInjectedAppBaseConf } from 'hel-mono-types';
 import { DEV_INFO } from './devInfo';
 import { APP_GROUP_NAME } from './subApp';
 
 type HelDep = { appName: string; appGroupName: string; packName: string; platform?: string };
+const START_WITH_REMOTE = '3';
 
-const deployEnv = 'prod'; // {{DEPLOY_ENV}}
+// deployEnv may replaced by build script
+// replace result: in build process, no process.env.DEPLOY_ENV found, use prod instead
+const deployEnv = 'prod';
 
 function getWindow() {
   if (typeof window !== 'undefined') {
@@ -15,15 +19,11 @@ function getWindow() {
   return null;
 }
 
-export function monoLog(...args: any[]) {
-  console.log(`[hel-mono] `, ...args);
-}
-
-export function getDevKey(modName: string) {
+function getDevKey(modName: string) {
   return `dev:${modName}`;
 }
 
-export function getStorageValue(key: string) {
+function getStorageValue(key: string) {
   const windowVar = getWindow();
   if (windowVar) {
     return windowVar.localStorage.getItem(key) || '';
@@ -31,8 +31,17 @@ export function getStorageValue(key: string) {
   return '';
 }
 
-export function getDeployEnv(): string {
+export function monoLog(...args: any[]) {
+  console.log(`[hel-mono] `, ...args);
+}
+
+export function getDeployEnv() {
   return deployEnv;
+}
+
+export function getIsDev() {
+  const isDev = process.env.NODE_ENV === 'development';
+  return isDev;
 }
 
 /**
@@ -46,12 +55,35 @@ export function getHelDeps() {
     const helConf = DEV_INFO.appConfs[packName].hel;
     if (helConf.appGroupName === APP_GROUP_NAME) return;
 
-    const { appNames, appGroupName = '', platform } = helConf;
+    const { appNames, appGroupName = '' } = helConf;
     if (appGroupName) {
       const helModName = appNames[deployEnv] || appGroupName;
-      helDeps.push({ appName: helModName, appGroupName, packName, platform });
+      helDeps.push({ appName: helModName, appGroupName, packName });
     }
   });
 
   return helDeps;
+}
+
+export function getEnableAndHost(appName: string, conf: IMonoInjectedAppBaseConf) {
+  const { port = 3000, devHostname = DEV_INFO.devHostname } = conf;
+  const { appGroupName } = conf.hel;
+  const devUrl = getStorageValue(getDevKey(appGroupName));
+  if (devUrl) {
+    monoLog(`found devUrl ${devUrl} for ${appName}`);
+    return { enable: true, host: devUrl };
+  }
+
+  const isDev = getIsDev();
+  if (!isDev) {
+    return { enable: false, host: '' };
+  }
+
+  const startMode = process.env.REACT_APP_HEL_START;
+  const isStartWithRemoteDeps = startMode === START_WITH_REMOTE;
+  if (isStartWithRemoteDeps) {
+    return { enable: false, host: '' };
+  }
+
+  return { enable: true, host: `${devHostname}:${port}` };
 }

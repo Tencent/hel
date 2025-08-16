@@ -1,11 +1,11 @@
-const { getCWD, getPkgJson, getAppAlias, ensureSlash } = require('./base');
+const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getPkgJson, getAppAlias, ensureSlash } = require('./base');
 const { getMonoAppDepData } = require('./dep-data');
 const { getCmdKeywordName, getCmdKeywords, setCurKeyword } = require('./keyword');
 const { getMonoNameMap, getBuildDirPath } = require('./mono-name');
 const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath, getDevInfoDirs } = require('./mono-path');
 const { getMonoAppPkgJson } = require('./mono-pkg');
 const { getNameData } = require('./name-data');
-const { isHelStart, isHelMode } = require('./is');
+const { isHelStart, isHelMicroMode, isHelMode, isHelAllBuild } = require('./is');
 const { clearMonoLog, helMonoLog, helMonoErrorLog, helMonoLogTmp } = require('./log');
 const { getCWDAppData } = require('./op-cwd');
 const { getMonoRootInfo, setMonoRoot } = require('./root-info');
@@ -24,6 +24,8 @@ module.exports = {
   setCurKeyword,
   getCWD,
   getCWDAppData,
+  getCWDPkgDir,
+  getCWDIsForRootHelDir,
   getDevInfoDirs,
   getMonoRootInfo,
   getNameData,
@@ -37,5 +39,7 @@ module.exports = {
   getMonoAppDepData,
   isHelStart,
   isHelMode,
+  isHelMicroMode,
+  isHelAllBuild,
   setMonoRoot,
 };

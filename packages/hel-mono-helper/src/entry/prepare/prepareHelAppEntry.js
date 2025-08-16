@@ -1,3 +1,4 @@
+/** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const fs = require('fs');
 const path = require('path');
 const { HEL_TPL_INNER_APP_PATH } = require('../../consts');
@@ -6,26 +7,28 @@ const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
 
-function replaceCommon(appData, devInfo) {
+function replaceRelevantFiles(appData, devInfo) {
   r.replaceIndexFile(appData, devInfo);
-  r.replaceDevInfo(appData, devInfo);
+  const injectedDevInfo = r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
   r.replaceUtil(appData, devInfo);
+
+  return injectedDevInfo;
 }
 
-module.exports = function prepareHelAppEntry(/** @type {import('../../types').ICWDAppData} */ appData, devInfo, depData) {
+module.exports = function prepareHelAppEntry(/** @type ICWDAppData } */ appData, devInfo, depData) {
   const { isForRootHelDir, helDirPath } = appData;
 
   if (isForRootHelDir) {
     if (!depData) {
-      return;
+      throw new Error('forget pass depData while isForRootHelDir=true');
     }
 
     prepareTplFiles(appData, true);
     r.replacePkgJson(appData, depData);
-    replaceCommon(appData, devInfo);
+    const injectedDevInfo = replaceRelevantFiles(appData, devInfo);
     prepareNodeModules(appData);
-    return;
+    return injectedDevInfo;
   }
 
   if (!fs.existsSync(helDirPath)) {
@@ -38,5 +41,6 @@ module.exports = function prepareHelAppEntry(/** @type {import('../../types').IC
   const fromPath = path.join(HEL_TPL_INNER_APP_PATH, './src');
   fs.cpSync(fromPath, helDirPath, { recursive: true });
 
-  replaceCommon(appData, devInfo);
+  const injectedDevInfo = replaceRelevantFiles(appData, devInfo);
+  return injectedDevInfo;
 };

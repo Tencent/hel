@@ -1,9 +1,10 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
+/** @typedef {import('hel-mono-types').IMonoInjectedDevInfo} IMonoInjectedDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
-const { getPort } = require('../../util/port');
 const { helMonoLog, getPkgJson } = require('../../util');
+const { ensureAppConf } = require('../../util/dev-info');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 
@@ -15,26 +16,14 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
     devHostname: devHostname || HOST_NAME,
   };
   const assignConf = (name) => {
+    if (injectedDevInfo.appConfs[name]) {
+      return;
+    }
     const conf = appConfs[name];
     if (!conf) {
       return;
     }
-    const { alias, ...rest } = conf;
-
-    if (!rest.hel) {
-      rest.hel = {};
-    }
-    if (!rest.hel.appGroupName) {
-      rest.hel.appGroupName = name;
-    }
-    if (!rest.hel.appNames) {
-      rest.hel.appNames = {};
-    }
-    if (!rest.port) {
-      rest.port = getPort(devInfo);
-    }
-
-    injectedDevInfo.appConfs[name] = rest;
+    injectedDevInfo.appConfs[name] = ensureAppConf(devInfo, conf);
   };
 
   assignConf(realAppPkgName);
@@ -43,6 +32,9 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   return injectedDevInfo;
 }
 
+/**
+ * @returns {IMonoInjectedDevInfo}
+ */
 module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { helDirPath, isSubMod, realAppPkgJsonPath } = appData;
   const devInfoFile = isSubMod ? path.join(helDirPath, './configs/devInfo.ts') : path.join(helDirPath, './devInfo.ts');
@@ -50,13 +42,15 @@ module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /**
 
   const realAppPackjson = getPkgJson(realAppPkgJsonPath);
   const deps = realAppPackjson.dependencies || {};
+  const injectedDevInfo = getInjectedDevInfo(deps, appData, devInfo);
 
   rewriteFileLine(devInfoFile, (line) => {
     let targetLine = line;
     if (line.includes('{{TO_BE_REPLACED}}')) {
-      const injectedDevInfo = getInjectedDevInfo(deps, appData, devInfo);
       targetLine = jsonObj2Lines(injectedDevInfo);
     }
     return { line: targetLine };
   });
+
+  return injectedDevInfo;
 };

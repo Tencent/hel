@@ -8,8 +8,10 @@ module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   r.replaceSubModIndex(appData, devInfo);
   r.replaceSubModModulesIndex(appData);
   r.replaceSubModLibTypes(appData, devInfo);
-  r.replaceDevInfo(appData, devInfo);
+  const injectedDevInfo = r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
   r.replaceUtil(appData, devInfo);
   prepareNodeModules(appData);
+
+  return injectedDevInfo;
 };

@@ -1,30 +1,38 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
 import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRootInfo, INameData, IPkgMonoDepData } from './src/types';
+import * as monoCst from './src/consts';
 
-export declare const HEL_DIST: 'hel_dist';
+export declare const cst: typeof monoCst;
 
 /**
  * 基于 npm start xxx 来启动或构建应用（模块）
  * @example
  * 启动
  * ```bash
+ * # 以传统模式启动 hub
  * npm start hub
- * # 转为 pnpm --filter hub run start 来启动 hub
  *
+ * # 以 hel 模式启动 hub，启动宿主和对应的所有子依赖
  * npm start hub:hel
- * # 转为 pnpm --filter hub run start:hel 来启动 hel 模式的 hub
+ *
+ * # 以 hel 模式启动 hub，仅启动宿主
+ * npm start hub:hwl
+ *
+ * # 以 hel 模式启动 hub，同时把对应的子模块依赖全部启动
+ * npm start .deps hub
+ *
+ * # 以 hel 模式启动 hub，宿主拉取远程的已构建子模块
+ * npm start hub:hwr
  * ```
  *
  * @example
  * 构建，xxx 为 .build 会命中构建流程
  * ```bash
+ * # 以传统模式启动 hub
  * npm start .build hub
- * # 转为 pnpm --filter hub run build 来构建 hub
- * # 等效于根目录执行 npm run build hub
  *
+ * # 以 hel 模式构建 hub
  * npm start .build hub:hel
- * # 转为 pnpm --filter hub run build:hel 来构建 hub
- * # 等效于根目录执行 npm run build:hel hub
  * ```
  */
 export declare function executeStart(devInfo: IMonoDevInfo): void;
@@ -35,9 +43,9 @@ export declare function executeStart(devInfo: IMonoDevInfo): void;
 export declare function executeBuild(devInfo: IMonoDevInfo): void;
 
 /**
- * 准备 hel 微模块相关的入口文件
+ * 准备 hel 微模块相关的入口文件，不透传 pkgOrDir 时会根据 cwd 自动推导
  */
-export declare function prepareHelEntry(devInfo: IMonoDevInfo, depData: IMonoAppDepData, appData?: ICWDAppData): void;
+export declare function prepareHelEntry(devInfo: IMonoDevInfo, pkgOrDir?: string): void;
 
 /**
  * 获取 hel-mono 大仓架构里的开发数据
@@ -72,14 +80,24 @@ export declare const monoUtil: {
   clearMonoLog: (markStartTime?: boolean, isTmp?: boolean) => void;
   ensureSlash: (inputPath: string, needsSlash?: boolean) => string;
   getNameData: (mayPkgOrDir: string, devInfo: IMonoDevInfo) => INameData;
+
   /**
    * true: 是 hel启动应用，此时 start 启动脚本会标识 process.env.HEL_START=1
    */
   isHelStart: () => boolean;
   /**
-   * true: 是 hel模式，此时 start 和 build 启动脚本都会标识 process.env.HEL=1
+   * true: 走了 scripts/hel 相关脚本执行运行或构建
+   * @returns
    */
   isHelMode: () => boolean;
+  /**
+   * hel应用（模块）处于 微模块 start 或 微模块 build 模式
+   */
+  isHelMicroMode: () => boolean;
+  /**
+   * hel应用（模块）处于整体构建模式（即传统的单一应用构建模式）
+   */
+  isHelAllBuild: () => boolean;
   /**
    * 获取应用构建hel产物所在的目录路径
    * @param buildDirName ['hel_dist']

@@ -1,7 +1,6 @@
-const path = require('path');
-const { getCWDAppData, getMonoRootInfo, getMonoAppDepData, helMonoLog } = require('../util');
+/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo */
+const { helMonoLog } = require('../util');
 const { HITABLE_SCRIPT_KEYS } = require('../consts');
-const { prepareHelEntry } = require('../entry');
 
 function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
   let pureKeyword = mayAlias;
@@ -61,38 +60,6 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
 
   return { keywordName, scriptCmdKey };
 }
-
-/**
- * 为宿主和其子模块准备hel相关入口文件
- */
-exports.prepareHelEntrys = function (
-  isForRootHel,
-  /** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo,
-  /** @type {import('../types').INameData} */ nameData,
-) {
-  const { belongTo, dirName } = nameData;
-  const { monoRootHelDir, monoRoot } = getMonoRootInfo();
-  const rootDir = isForRootHel ? monoRootHelDir : monoRoot;
-  const targetCWD = path.join(rootDir, `./${belongTo}/${dirName}`);
-
-  const appData = getCWDAppData(devInfo, targetCWD);
-  const depData = getMonoAppDepData(appData.realAppSrcDirPath, devInfo, true);
-  const { depInfos } = depData;
-  prepareHelEntry(devInfo, depData, appData);
-
-  helMonoLog('depInfos', depInfos);
-  depInfos.forEach((info) => {
-    const { belongTo, dirName } = info;
-    const targetCWD = path.join(rootDir, `./${belongTo}/${dirName}`);
-    const appData = getCWDAppData(devInfo, targetCWD);
-    prepareHelEntry(devInfo, depData, appData);
-    // 生成类似命令： pnpm --filter @hel-packages/some-sub run start
-    // const exeCmd = getPnpmRunCmd(pkgName, { isForRootHelDir, dirName, scriptCmdKey: 'start', isSubMod: true });
-    // helMonoLog(`start dep ${pkgName} proxy by (${exeCmd})`);
-    // helMonoLog(exeCmd);
-    // shell.exec(exeCmd);
-  });
-};
 
 exports.extractCmdData = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
   const data = analyzeColonKeywordName(devInfo, rawKeywordName, startOrBuild);

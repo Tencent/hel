@@ -1,8 +1,7 @@
-// shelljs 相比 child_process.execSync 具有更好的控制台回显交互
-const shell = require('shelljs');
 const { INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
 const { execAppAction } = require('./app');
+const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');
 const { execCreate, execCreateStart } = require('./create');
 const { execBuild } = require('./build');
@@ -18,6 +17,7 @@ const innerActionFns = {
   [INNER_ACTION.lint]: execLint,
   [INNER_ACTION.createStart]: execCreateStart,
   [INNER_ACTION.createStartShort]: execCreateStart,
+  [INNER_ACTION.startHelDeps]: startHelDeps,
   [INNER_ACTION.tsup]: execTsup,
 };
 
@@ -33,11 +33,12 @@ function tryExecInnerAction(actionName, devInfo) {
       helMonoLog(`hit inner action ${actionName}, start to exec preset logic`);
       actionFn(devInfo);
     }
-  } else {
-    const these = INNER_ACTION_NAMES.join(' ');
-    helMonoErrorLog(`unknown inner action ${actionName}, it must be one of (${these})`);
-    process.exit(1);
+    return;
   }
+
+  const these = INNER_ACTION_NAMES.join(' ');
+  helMonoErrorLog(`unknown inner action ${actionName}, it must be one of (${these})`);
+  process.exit(1);
 }
 
 function execStartOrBuildCmd(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, startOrBuild) {

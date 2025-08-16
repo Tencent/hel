@@ -3,7 +3,7 @@ const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
-const { isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
+const { isHelMicroMode, isHelStart, isHelAllBuild } = require('../util/is');
 const { getMonoNameMap } = require('../util/mono-name');
 const { getLogTimeLine } = require('../util/time');
 
@@ -20,7 +20,7 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   if (isForRootHelDir || isHelAllBuild()) {
     indexName = 'index';
   } else {
-    indexName = isHelMode() ? '.hel/index' : 'index';
+    indexName = isHelMicroMode() ? '.hel/index' : 'index';
   }
 
   const exts = ['js', 'jsx', 'ts', 'tsx'];
@@ -84,13 +84,13 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
 
   let isMicroBuild;
   let shouldGetAllDep;
-  // 设定了 HEL_ALL_BUILD=1，表示走整体构建模式
+  // 设定了 process.env.HEL_BUILD = cst.HEL_ALL_BUILD ，表示走整体构建模式
   if (isHelAllBuild()) {
     isMicroBuild = false;
     shouldGetAllDep = true;
   } else {
     // start xx:proxy 或 start xx:hel 模式启动
-    isMicroBuild = appData.isForRootHelDir || isHelMode();
+    isMicroBuild = appData.isForRootHelDir || isHelMicroMode();
     // hel 模式启动或构建，只需要获取直接依赖即可，反之则需要获取所有依赖
     shouldGetAllDep = !isMicroBuild;
   }
@@ -137,7 +137,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       }
 
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
-      if (isHelMode()) {
+      if (isHelMicroMode()) {
         appAlias[pkgName] = `${pkgName}/hel`;
       }
 
@@ -159,7 +159,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform });
   const appSrcIndex = getAppSrcIndex(appData);
   let appPublicUrl = `${appData.appPublicUrl}/`;
-  const isHelModeVar = isHelMode();
+  const isHelModeVar = isHelMicroMode();
   if (isHelModeVar) {
     appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);
   }
