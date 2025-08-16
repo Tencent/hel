@@ -18,7 +18,7 @@ export function mockEmitModule(options?: { app?: Partial<ISubApp>; platform?: st
       platform,
       appName: app.name,
       appGroupName: app.app_group_name,
-      versionId: version.sub_app_version,
+      versionId: version.version_tag || version.sub_app_version,
       appProperties: { getNum: () => 1 },
       isLib: true,
       Comp: null,

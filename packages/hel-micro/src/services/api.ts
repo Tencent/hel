@@ -26,6 +26,8 @@ export interface IHelGetOptionsBase {
 }
 
 export interface IHelGetOptions extends IHelGetOptionsBase {
+  /** default: true, 是否尝试复用已缓存数据，此参数为true时也只在 versionId projectId branchId 都未传递时才有效 */
+  reuseCache?: boolean;
   versionId?: string;
   /** 仅服务于平台自定义请求 */
   projectId?: string;
@@ -300,24 +302,33 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
  */
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, apiMode, loadOptions = {} } = getOptions;
-  const getFn = alt.getFn(platform, 'getSubAppAndItsVersionFn', loadOptions.getSubAppAndItsVersionFn);
+  const fnName = 'getSubAppAndItsVersionFn';
+  const getFn = alt.getFn(platform, fnName, loadOptions.getSubAppAndItsVersionFn);
   const { url, userName } = await prepareRequestInfo(appName, getOptions);
 
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const metaUrl = custUrl || url;
     const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions.semverApi });
-    if (0 !== parseInt(reply.code, 10) || !reply) {
-      throw new Error(reply?.msg || 'getSubAppAndItsVersion err');
+    if (0 !== Number(reply.code) || !reply) {
+      throw new Error(reply?.msg || `${fnName} err`);
     }
-    return { app: ensureApp(reply.data.app), version: ensureVersion(reply.data.version), metaUrl };
+    const { app, version } = reply.data || {};
+    if (!app) {
+      throw new Error(`no app for ${appName}`);
+    }
+    if (!version) {
+      // 可能存在有应用但无版本的情况
+      throw new Error(`no version for ${appName}`);
+    }
+    return { app: ensureApp(app), version: ensureVersion(version), metaUrl };
   };
 
   // 走用户定义的 getSubAppAndItsVersionFn 函数获取数据，用户可在函数里自己预埋的元数据
   if (getFn) {
     const needGrayVer = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions.shouldUseGray);
     const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
-    log('[[ getSubAppAndItsVersion ]] fnParams:', fnParams);
+    log(`[[ ${fnName} ]] fnParams:`, fnParams);
     const data = (await Promise.resolve(getFn(fnParams))) as IHelMeta;
     return { app: ensureApp(data.app), version: ensureVersion(data.version) };
   }

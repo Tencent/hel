@@ -18,7 +18,7 @@ export function getPlatAndVer(appName: string, options?: IGetOptionsLoose): IPla
     const versionData = core.getVersion(appName, { platform });
     if (versionData) {
       // 已存在了正在运行的版本数据
-      versionId = versionData.sub_app_version;
+      versionId = versionData.version_tag || versionData.sub_app_version;
     } else {
       const appMeta = core.getAppMeta(appName, platform);
       versionId = appMeta?.online_version || appMeta?.build_version || '';

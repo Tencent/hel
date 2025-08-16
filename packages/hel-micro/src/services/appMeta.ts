@@ -1,3 +1,4 @@
+import { getAppMeta } from 'hel-micro-core';
 import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 import { API_NORMAL_GET } from '../consts/logic';
 import type { GetCacheKey, IHelMeta } from '../types';
@@ -29,8 +30,17 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
  * 获取应用自身描述和构建版本数据
  */
 export async function getSubAppMeta(appName: string, options?: IHelGetOptions): Promise<IHelMeta> {
-  const meta = await innerApiSrv.getSubAppAndItsVersion(appName, options || {});
-  return meta;
+  const { versionId, projectId, branchId, platform, reuseCache = true } = options || {};
+  let targetMeta;
+  // 尝试复用已缓存的版本
+  if (reuseCache && !versionId && !projectId && !branchId) {
+    targetMeta = getAppMeta(appName, platform);
+  }
+  if (!targetMeta) {
+    targetMeta = await innerApiSrv.getSubAppAndItsVersion(appName, options || {});
+  }
+
+  return targetMeta;
 }
 
 /**

@@ -55,5 +55,5 @@ export default function makeApp(options?: { app?: Partial<ISubApp>; platform?: s
     create_at: '2022-05-31T17:34:13.000Z',
     update_at: '2022-06-01T18:29:18.000Z',
   };
-  return { ...appDemo, ...(options || {}) };
+  return { ...appDemo, ...(options || {}) } as unknown as ISubApp;
 }

@@ -19,7 +19,7 @@ export function getVersion(appName, options) {
 export function setVersion(appName, /** @type {import('hel-types').ISubAppVersion}*/ versionData, options) {
   const { platform } = options || {};
   const { appName2verAppVersion, appGroupName2firstVer, appName2appVersion } = getSharedCache(platform);
-  const versionId = versionData.sub_app_version;
+  const versionId = versionData.version_tag || versionData.sub_app_version;
   if (!versionId) {
     return;
   }
@@ -33,5 +33,6 @@ export function setVersion(appName, /** @type {import('hel-types').ISubAppVersio
   }
   setSubMapValue(appName2verAppVersion, appName, versionId, versionData);
 
-  appGroupName2firstVer[appMeta.app_group_name] = versionId;
+  // 注意，此处记录的是 versionIndex 值，用于辅助 tryGetVersion 逻辑匹配 url 逻辑
+  appGroupName2firstVer[appMeta.app_group_name] = versionData.sub_app_version;
 }

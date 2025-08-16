@@ -88,45 +88,55 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
    *  内网包：裁出 homePage ${cdnHost}/${appZone}/${appName}_${dateStr} 里的 ${appName}_${dateStr} 作为版本号
    *  外网包：pkg.version
    */
-  let version = userExtractOptions.buildVer;
+  let versionTag = userExtractOptions.buildVer;
+  let versionIndex = '';
+
   const packVer = packageJson.version;
-  if (!version) {
+  if (!versionTag) {
     if (semverApi) {
-      version = packVer;
+      versionTag = packVer;
+      versionIndex = `${packageJson.name}@${packVer}`;
     } else {
       try {
         // ${cdnHost}/${appZone}/${appName}_${dateStr}
         const [, restStr] = homePage.split('//');
-        const [, , versionMakeOnPipeline] = restStr.split('/');
-        if (versionMakeOnPipeline) {
-          const arr = versionMakeOnPipeline.split('_');
-          const lastItem = arr[arr.length - 1];
-          const len = lastItem.length;
+
+        const strList = restStr.split('/');
+        const lastStr = strList[strList.length - 1];
+        // restStr 是新格式，形如：tnfe.gtimg.com/hel/hel-hello-helpack@20250814103253
+        if (lastStr.includes('@')) {
+          versionTag = lastStr.split('@')[1];
+          const prevStr = strList[strList.length - 2] || '';
+          versionIndex = prevStr.startsWith('@') ? `${prevStr}/${lastStr}` : lastStr;
+        } else {
+          const arr = lastStr.split('_');
+          const mayVersionTag = arr[arr.length - 1] || '';
+          const len = mayVersionTag.length;
           // 特征符合 helpack 的版本号，14位时间年月日字符串：20250620173919，13位时间戳字符串：1750468673912
           const isHelpackTimeSeg = len === 14 || len === 13;
-          if (lastItem && isHelpackTimeSeg && new RegExp('^[1-9]+[0-9]*$').test(lastItem)) {
-            version = versionMakeOnPipeline;
+          if (isHelpackTimeSeg && new RegExp('^[1-9]+[0-9]*$').test(mayVersionTag)) {
+            versionTag = mayVersionTag;
+            versionIndex = lastStr;
           }
         }
-      } catch (err) {}
-
-      if (!version) {
-        // 自定义 homePage 后，版本未必能推导出来，降级为使用 package.json 版本号
-        version = packVer;
-      }
+      } catch (err) { }
     }
   }
   const repo = packageJson.repository || {};
   const currentDate = new Date();
   const currentISOUTCString = currentDate.toISOString();
 
+  // 自定义 homePage 后，版本未必能推导出来，降级为使用 package.json 版本号
+  versionTag = versionTag || packVer;
+  versionIndex = versionIndex || `${appName}@${versionTag}`;
+
   return {
     app: {
       name: appName,
       app_group_name: groupName,
       git_repo_url: repo.url || packageJson.homepage || '',
-      online_version: version,
-      build_version: version,
+      online_version: versionTag,
+      build_version: versionTag,
       platform: platform || cst.DEFAULT_PLAT,
       create_at: currentISOUTCString,
     },
@@ -134,7 +144,8 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       plugin_ver: cst.PLUGIN_VER,
       extract_mode: extractMode,
       sub_app_name: appName,
-      sub_app_version: version,
+      sub_app_version: versionIndex,
+      version_tag: versionTag,
       src_map: parsedRet.srcMap,
       html_content: parsedRet.htmlContent,
       create_at: currentISOUTCString,

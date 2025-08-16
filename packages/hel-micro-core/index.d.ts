@@ -1,3 +1,6 @@
+/**
+ * hel-micro-core@4.12.3
+ */
 import { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 
 type AppNameKey = string;
@@ -368,7 +371,8 @@ export interface SharedCache extends IPlatformConfigFull {
    */
   appName2styleStr: Record<string, string>;
   /**
-   * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入
+   * 组名对应的第一个加载的模块版本号，用于辅助 tryGetVersion 推导版本号用，在 setVersion 时会写入，
+   * key: appGroupName, value: versionIndex
    */
   appGroupName2firstVer: Record<string, string>;
 }

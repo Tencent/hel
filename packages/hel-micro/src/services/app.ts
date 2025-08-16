@@ -31,7 +31,8 @@ interface ICacheData {
 const inner = {
   recordAssetCtx(appInfo: ISubApp, appVersion: ISubAppVersion, options: IInnerPreFetchOptions) {
     const { name, app_group_name } = appInfo;
-    const { src_map: srcMap, sub_app_version: ver } = appVersion;
+    const { src_map: srcMap } = appVersion;
+    const ver = appVersion.version_tag || appVersion.sub_app_version;
     const { chunkCssSrcList = [], chunkJsSrcList = [] } = srcMap;
     const fn = alt.getHookFn(options, 'beforeAppendAssetNode');
     const assetList = chunkCssSrcList.concat(chunkJsSrcList);
@@ -129,13 +130,11 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
   // 优先从内存获取（非语义化api、未传递分支时获取的 memAppVersion 才是有意义的，可进入此逻辑做判断）
   // TODO : semverApi 下沉到 isEmitVerMatchInputVer 里面
   const compareMem = !semverApi && !branchId;
-  if (
-    compareMem
-    && memApp
-    && memAppVersion
-    && isEmitVerMatchInputVer(appName, { platform, projectId, emitVer: memAppVersion.sub_app_version, inputVer: versionId, strictMatchVer })
-  ) {
-    return { appInfo: memApp, appVersion: memAppVersion };
+  if (compareMem && memApp && memAppVersion) {
+    const emitVer = memAppVersion.version_tag || memAppVersion.sub_app_version;
+    if (isEmitVerMatchInputVer(appName, { platform, projectId, emitVer, inputVer: versionId, strictMatchVer })) {
+      return { appInfo: memApp, appVersion: memAppVersion };
+    }
   }
 
   const srvInnerOptions = { platform, apiMode, versionId, projectId, branchId, isFullVersion, loadOptions: options };
@@ -159,7 +158,8 @@ export async function getAppFromRemoteOrLocal(appName: string, options: IInnerPr
       log('[[ getAppFromRemoteOrLocal ]] disk meta:', mayCachedApp);
 
       // 缓存无效，从远端获取，（注：enableDiskCache = true 情况下，未指定 versionId 时，总是相信本地缓存是最新的）
-      if (versionId && appVersion.sub_app_version !== versionId) {
+      const versionTag = appVersion.version_tag || appVersion.sub_app_version;
+      if (versionId && versionTag !== versionId) {
         mayCachedApp = await tryGetFromRemote(callRemote);
         log('[[ getAppFromRemoteOrLocal ]] remote meta:', mayCachedApp);
       } else {
@@ -268,7 +268,8 @@ export function cacheApp(
 
   // 记录sdk注入的额外样式
   const cssList = getAllExtraCssList(loadOptions);
-  core.setVerExtraCssList(appName, cssList, { platform, versionId: appVersion.sub_app_version });
+  const versionTag = appVersion.version_tag || appVersion.sub_app_version;
+  core.setVerExtraCssList(appName, cssList, { platform, versionId: versionTag });
 }
 
 export async function getAndCacheApp(appName: string, options: ISrvInnerOptions) {

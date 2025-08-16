@@ -240,8 +240,10 @@ export interface ISimpleVersion {
   extract_mode: ExtractMode;
   /** 冗余存储的子应用名称，对应app_info表的name字段 */
   sub_app_name: string;
-  /** 当前元数据对应版本号 */
+  /** 每次构建新生成的版本号，可用于数据库创建索引，由 <app_name>@<version_tag> 构成（部分老数据为<app_name>_<version_tag>）*/
   sub_app_version: string;
+  /** 构建生成的版本号，可以是时间戳、npm包版本号等，具体生成规则由开发者写入时控制 */
+  version_tag: string;
   /**
    * 资源描述表map
    */

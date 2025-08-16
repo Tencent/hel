@@ -88,8 +88,10 @@ export interface ISubAppVersion {
   sub_app_id: string;
   /** 冗余存储的子应用名称，对应app_info表的name字段 */
   sub_app_name: string;
-  /** 每次构建新生成的版本号 */
+  /** 每次构建新生成的版本号，可用于数据库创建索引，由 <app_name>@<version_tag> 构成（部分老数据为<app_name>_<version_tag>）*/
   sub_app_version: string;
+  /** 构建生成的版本号，可以是时间戳、npm包版本号等，具体生成规则由开发者写入时控制 */
+  version_tag: string;
   /** 开发或者测试版本调用api所属域名，不填写的会去读取app.host_map.build  */
   api_host: string;
   /**

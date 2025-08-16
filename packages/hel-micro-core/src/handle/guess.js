@@ -1,6 +1,6 @@
 import { log } from '../base/microDebug';
 import { getJsRunLocation } from '../base/util';
-import { DEFAULT_ONLINE_VER, DEFAULT_PLAT } from '../consts';
+import { DEFAULT_ONLINE_VER } from '../consts';
 import { getSharedCache } from '../wrap/cache';
 
 // 正常情况只有一个 @ 形如： xxxx@1.1.1 ---> 1.1.1
@@ -13,13 +13,18 @@ function getVerFromAtInMiddle(nameAndVer, callerSpecifiedVer) {
   return ver || callerSpecifiedVer || nameAndVer;
 }
 
+function isJs(str) {
+  return str === 'js' || str === 'mjs';
+}
+
 /**
  * 根据执行脚本链接猜测当前模块的版本号，脚本链接例如：
  * https://cdn.jsdelivr.net/npm/hel-lodash@2.3.4/hel_dist/hel_userChunk_1.js
  * https://unpkg.com/hel-lodash@2.3.4/hel_dist/hel_userChunk_1.js
  * https://tnfe.gtimg.com/hel/remote-react-comps-tpl_20241228190308/xxx.js
  * https://tnfe.gtimg.com/hel/@my/remote-react-comps-tpl@1.1.1/xxx.js
- * 返回的是版本号（即后台的version_tag）
+ * 对于新版协议meta返回的是版本号标签（即后台的version_tag）
+ * 对于旧版协议meta返回的是版本号索引（即后台的sub_app_version）
  */
 export function tryGetVersion(appGroupName, platform) {
   // 形如: at c (https://{cdn_host_name}/{platform}/{appname_prefixed_version}/static/js/4.b60c0895.chunk.js:2:44037
@@ -41,20 +46,39 @@ export function tryGetVersion(appGroupName, platform) {
 
     // 优先判断可能包含的版本特征
     if (callerSpecifiedVer) {
-      if (platform === DEFAULT_PLAT && strList.some((item) => item.includes(callerSpecifiedVer))) {
-        return callerSpecifiedVer;
+      // tnfe.gtimg.com/hel/@tencent/mono-comps@20250816051000/static/xxx 匹配 /@tencent/mono-comps@20250816051000/
+      // tnfe.gtimg.com/hel/mono-comps@20250816051000/static/xxx 匹配 /mono-comps@20250816051000/
+      const hasSpecifiedVer = restStr.includes(`/${callerSpecifiedVer}/`);
+      if (hasSpecifiedVer) {
+        // 避免 tnfe.gtimg.com/hel/@tencent/mono-comps@20250816051000/static/xxx 匹配 /mono-comps@20250816051000/ 成功
+        // 需排除错误场景
+        const isSpecifiedVerHasScope = callerSpecifiedVer.startsWith('@');
+        if (!isSpecifiedVerHasScope) {
+          // 此时 callerSpecifiedVer 为不带 scope 前缀的 versionIndex 值
+          const idx = strList.indexOf(callerSpecifiedVer);
+          const prevSeg = strList[idx - 1];
+          const isPrevSegScope = prevSeg.startsWith('@');
+          if (!isPrevSegScope) {
+            return getVerFromAtInMiddle(callerSpecifiedVer);
+          }
+
+          // 运行到这里，prevSeg 表示 scope，但 callerSpecifiedVer 是无 scope 前缀的，此时不执行任何逻辑则成功排除了上述错误场景
+        } else {
+          const verSeg = callerSpecifiedVer.split('/')[1] || '';
+          return getVerFromAtInMiddle(verSeg);
+        }
       }
-      if (strList.includes(callerSpecifiedVer)) {
-        return callerSpecifiedVer;
-      }
+
       // strList: ['xxxx.com:8888', 'static', 'js']，本地联调时的特征
-      if ((strList['1'] === 'static' && strList['2'] === 'js') || strList['1'] === 'js') {
-        return callerSpecifiedVer;
+      const str1 = strList[1];
+      const str2 = strList[2];
+      if ((str1 === 'static' && isJs(str2)) || isJs(str1)) {
+        return getVerFromAtInMiddle(callerSpecifiedVer);
       }
     }
 
     const atSymbolIdx = restStr.indexOf('@');
-    // 使用了符合npm cdn 方式的链接生成规范
+    // 使用了符合 npm cdn 方式的链接生成规范
     if (atSymbolIdx >= 0) {
       const atSymbolSegs = strList.filter((v) => v.includes('@'));
       const scopeSegIdx = atSymbolSegs.findIndex((v) => v.startsWith('@'));

@@ -1,6 +1,6 @@
 {
   "name": "hel-dev-utils",
-  "version": "5.2.6",
+  "version": "5.2.7",
   "description": "hel dev utils",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
   },
   "dependencies": {
-    "hel-types": "^4.3.9",
+    "hel-types": "^4.3.10",
     "jsdom": ">=19.0.0"
   },
   "devDependencies": {
@@ -38,7 +38,7 @@
     "rollup": "^2.23.0"
   },
   "peerDependencies": {
-    "hel-types": "^4.3.9",
+    "hel-types": "^4.3.10",
     "jsdom": ">=19.0.0"
   },
   "bundleDependencies": false,

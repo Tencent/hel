@@ -1,5 +1,5 @@
-import type { IMonoDevInfo } from 'hel-mono-types';
 import type { ISubAppBuildDesc } from 'hel-dev-utils';
+import type { IMonoDevInfo } from 'hel-mono-types';
 
 type Dict<T = any> = Record<string, T>;
 

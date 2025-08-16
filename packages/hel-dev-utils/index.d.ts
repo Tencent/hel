@@ -1,3 +1,6 @@
+/**
+ * hel-dev-utils@5.2.7
+ */
 import { IMeta } from 'hel-types';
 import { ICheckOptions, ICreateSubAppOptions, ISubAppBuildDesc, IUserExtractOptions, PkgJson } from './src/types';
 
