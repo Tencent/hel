@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
 const { getConfig } = require('./config');
+const { TEMPLATE } = require('./consts');
 
 let isDebug = false;
 
@@ -83,7 +84,7 @@ function getTemplateRepoUrl(templateType) {
 function getArgObject(args) {
   const argObj = {
     projectName: '',
-    template: 'react',
+    template: TEMPLATE,
     isTplRemote: false,
     isSeeHelp: false,
     isDebug: false,
@@ -274,8 +275,9 @@ function logCliInfo() {
   logTip(seLine);
   logTip(emptyLine);
   lgLine(`Cli info: ${cliPkgName}@${cliPkgVersion}`);
-  lgLine('Star hel https://github.com/Tencent/hel if you like it ^_^');
+  lgLine('Star hel-micro https://github.com/Tencent/hel if you like it ^_^');
   lgLine(`Quick start: ${cliKeyword} <your-project-name>`);
+  lgLine(`Help: ${cliKeyword} -h`);
   if (basedOn) {
     lgLine(`Based on: ${basedOn}`);
   }

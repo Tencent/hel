@@ -80,6 +80,7 @@ pnpm start
 - 普通模式启动
 
 宿主和所有子模块依赖在一个服务里启动
+
 ```bash
 pnpm start hub
 ```
@@ -87,6 +88,7 @@ pnpm start hub
 - 微模块启动
 
 除了启动宿主，还会启动所有的子模块依赖
+
 ```bash
 pnpm start hub:hel
 ```
@@ -95,8 +97,7 @@ pnpm start hub:hel
 
 ### 参数说明
 
-- -t 可选参数 `-t`（或 `--template`） 默认值`react-mono`，表示模板类型，目前暂提供这一种内置模板，其他<xxx>名称会自动尝试拉取
-`https://github.com/hel-eco/<xxx>.git`的代码做初始化
+- -t 可选参数 `-t`（或 `--template`） 默认值`react-mono`，表示模板类型，目前暂提供这一种内置模板，其他<xxx>名称会自动尝试拉取 `https://github.com/hel-eco/<xxx>.git`的代码做初始化
 
 ```bash
 npm create hel my-mono -t react-mono

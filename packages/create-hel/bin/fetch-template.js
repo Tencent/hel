@@ -3,12 +3,13 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 const util = require('./util');
+const { getConfig } = require('./config');
 
 /**
  * 通过url拉取远端模板代码
  */
 exports.fetchTemplateByUrl = async function (/** @type IArgObj */ argObj, dirPath, repoUrl) {
-  const { projectName, template, customTplUrl } = argObj;
+  const { projectName, customTplUrl } = argObj;
   const url = repoUrl || customTplUrl;
 
   try {
@@ -48,7 +49,9 @@ exports.fetchLocalTemplate = async function (/** @type IArgObj */ argObj, dirPat
   util.logTip(`Pulling template [${template}] from local...`);
   try {
     const helMonoTemplatesPkgPath = util.ensureHelMonoTemplates();
-    const templateDir = path.join(helMonoTemplatesPkgPath, `hel-mono-${template}`);
+    const { templateLocalDirDict } = getConfig();
+    const localDir = templateLocalDirDict[template] || template;
+    const templateDir = path.join(helMonoTemplatesPkgPath, localDir);
     util.logDebug(`See var: templateDir ${templateDir}`);
 
     if (!fs.existsSync(templateDir)) {
