@@ -1,4 +1,4 @@
-import { IMonoInjectedDevInfo, IMonoInjectedAppBaseConf } from 'hel-mono-types';
+import { IMonoInjectedAppBaseConf, IMonoInjectedDevInfo } from 'hel-mono-types';
 
 export type HelDep = { appName: string; appGroupName: string; packName: string; platform?: string };
 
@@ -20,6 +20,6 @@ export type GetHelDeps = () => HelDep[];
 export type GetEnableAndHost = (appName: string, conf: IMonoInjectedAppBaseConf) => IEnableAndHost;
 
 export type RuntimeUtil = {
-  getHelDeps: GetHelDeps,
-  getEnableAndHost: GetEnableAndHost,
+  getHelDeps: GetHelDeps;
+  getEnableAndHost: GetEnableAndHost;
 };

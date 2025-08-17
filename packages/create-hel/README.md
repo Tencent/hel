@@ -2,11 +2,11 @@
 
 ## 项目简介
 
-create-hel 是一个基于快速创建 hel 项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，以及其他 hel 独立的示例项目
+create-hel 是一个可快速创建 hel 项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，通过可自动扩展type的架构，后续可以支持其它 hel 类型的示例项目
 
 ## 主要功能
 
-- 支持快速创建微模块大仓架构项目（来自模板`hel-mono-react`）
+- 支持快速创建微模块大仓架构项目（来自模板[hel-mono](https://github.com/hel-eco/hel-mono)）
 - 支持创建独立的 react、vue、js 库等传统微模块项目
 
 ## 目录结构
@@ -31,15 +31,7 @@ create-hel/
 
 > 注：如不提供项目目录名称，则会提供交互询问方式要求用户输入
 
-- npx
-
-使用 npx 创建项目到`my-mono`目录下
-
-```bash
-npx create-hel my-mono
-```
-
-- create-hel-mono
+- create-hel（推荐）
 
 使用 npm 全局安装 `create-hel` 后，再基于`hel`命令行或`create-hel`命令行创建项目到`my-mono`目录下
 
@@ -47,6 +39,14 @@ npx create-hel my-mono
 npm install create-hel -g
 # or type as: create-hel my-mono
 hel my-mono
+```
+
+- npx
+
+使用 npx 创建项目到`my-mono`目录下
+
+```bash
+npx create-hel my-mono
 ```
 
 - npm create
@@ -93,26 +93,26 @@ pnpm start hub
 pnpm start hub:hel
 ```
 
-更多说明详见 `react` 模板 `README.md` 文件。
+更多说明详见[react-mono](https://github.com/hel-eco/hel-mono)项目
 
 ### 参数说明
 
 - -t 可选参数 `-t`（或 `--template`） 默认值`react-mono`，表示模板类型，目前暂提供这一种内置模板，其他<xxx>名称会自动尝试拉取 `https://github.com/hel-eco/<xxx>.git`的代码做初始化
 
 ```bash
-npm create hel my-mono -t react-mono
+hel my-mono -t react-mono
 ```
 
 - -r 可选参数 `-r`（或 `--remote`）默认值 false，表示是否优先从远端拉取 t 参数对应的模板
 
 ```bash
-npm create hel my-mono -t react-mono -r
+hel my-mono -t react-mono -r
 ```
 
 - -u 可选参数 `-u`（或 `--url`）默认值 undefined，表示从指定 url 的拉取远端模板（设置了 u，则 t r 无效）
 
 ```bash
-npm create hel my-mono -u https://github.com/hel-eco/hel-mono.git
+hel my-mono -u https://github.com/hel-eco/hel-mono.git
 ```
 
 ## 其他
@@ -127,16 +127,16 @@ npm create hel -- -t xx-template
 
 ### 贡献模板
 
-在 https://github.com/hel-eco 组下创建 `hel-mono-` 前缀的项目，均能被 cli 识别到，例如创一个 `hel-mono-my-type`，则可以使用以下命令行安装
+在 https://github.com/hel-eco 组下创建项目，均能被 cli 识别到，例如创一个 `my-type`，则可以使用以下命令行安装
 
 ```bash
-# 安装 https://github.com/hel-eco/hel-mono-my-type 项目
-create-hel -t my-type
+# 安装 https://github.com/hel-eco/my-type 项目
+hel -t my-type
 ```
 
 ### 定制 cli
 
-透传`config`参数，基于 `create-hel` 构建自己的专属 hel-mono cli
+透传`config`参数，基于 `create-hel` 包构建自己的专属 hel cli
 
 ```js
 #!/usr/bin/env node

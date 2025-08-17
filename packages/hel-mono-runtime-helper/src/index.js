@@ -29,7 +29,7 @@ export function monoLog(...args) {
   console.log(`[hel-mono] `, ...args);
 }
 
-export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */options) {
+export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
   const { DEV_INFO, APP_GROUP_NAME, isDev, startMode } = options;
 
   return {
@@ -54,7 +54,7 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */options) {
 
       return helDeps;
     },
-    getEnableAndHost(appName, /** @type {IMonoInjectedAppBaseConf} */conf) {
+    getEnableAndHost(appName, /** @type {IMonoInjectedAppBaseConf} */ conf) {
       const { port = 3000, devHostname = DEV_INFO.devHostname } = conf;
       const { appGroupName } = conf.hel;
       const devUrl = getStorageValue(getDevKey(appGroupName));
