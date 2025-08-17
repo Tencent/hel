@@ -260,9 +260,13 @@ function logTipLine(str, fixedLen, options) {
 }
 
 function logCliInfo() {
-  const { cliPkgName, cliPkgVersion, cliKeyword, basedOn } = getConfig();
+  const { cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen } = getConfig();
   const fixedLen = seLine.length - 1;
   const lgLine = (str, color, inputStrLen) => {
+    if (!str) {
+      return;
+    }
+
     const mayColoredStr = color ? chalk.hex(color)(str) : str;
     const prefixedStr = `|   ${mayColoredStr}`;
     let strLen = inputStrLen;
@@ -278,9 +282,8 @@ function logCliInfo() {
   lgLine('Star hel-micro https://github.com/Tencent/hel if you like it ^_^');
   lgLine(`Quick start: ${cliKeyword} <your-project-name>`);
   lgLine(`Help: ${cliKeyword} -h`);
-  if (basedOn) {
-    lgLine(`Based on: ${basedOn}`);
-  }
+  lgLine(basedOn);
+  lgLine(contactAuthor, '#ad4e00', contactAuthorReferLen);
   logTip(emptyLine);
   logTip(seLine);
 }

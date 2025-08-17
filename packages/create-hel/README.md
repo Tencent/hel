@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-create-hel 是一个可快速创建 hel 项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，通过可自动扩展type的架构，后续可以支持其它 hel 类型的示例项目
+create-hel 是一个可快速创建 hel 项目的命令行工具，自带多种模板，目前支持创建 hel + react + pnpm workspace 的`hel-mono`大仓架构项目，通过可自动扩展 type 的架构，后续可以支持其它 hel 类型的示例项目
 
 ## 主要功能
 

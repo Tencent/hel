@@ -22,6 +22,8 @@ const defaultConfig = {
   repoUrlPrefix: REPO_URL_PREFIX,
   cliKeyword: CLI_KEYWORD,
   cliFullKeyword: CLI_FULL_KEYWORD,
+  contactAuthor: 'Contact author: gmail(zhongzhengkai@gmail.com), QQ(624313307)',
+  contactAuthorReferLen: 65,
   basedOn: '',
 };
 
