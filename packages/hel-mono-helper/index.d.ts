@@ -38,6 +38,16 @@ export declare const cst: typeof monoCst;
 export declare function executeStart(devInfo: IMonoDevInfo): void;
 
 /**
+ * 执行启动hel子依赖服务的命令，以下3种场景均能触发
+ * ```txt
+ * 1 在根目录执行 npm start .deps hub 触发
+ * 2 在根目录执行 npm start hub:deps 触发
+ * 3 在子目录执行 npm run start:deps 触发
+ * ```
+ */
+export declare function executeStartDeps(devInfo: IMonoDevInfo): void;
+
+/**
  * 基于 npm run build xxx 来构建应用（模块）
  */
 export declare function executeBuild(devInfo: IMonoDevInfo): void;
@@ -109,6 +119,14 @@ export declare const monoUtil: {
    * 获取根据 cwd 值推导出的运行中的应用的相关数据
    */
   getCWDAppData: (devInfo: IMonoDevInfo, cwd?: string) => ICWDAppData;
+  /**
+   * 从 cwd 推导当前命令执行位置所属的包目录名
+   */
+  getCWDPkgDir: () => string;
+  /**
+   * 从 cwd 推导当前命令是否在根目录 .hel 下执行
+   */
+  getCWDIsForRootHelDir: () => boolean;
   getCmdKeywordName: (namIndex: number) => string;
   getCmdKeywords: (sliceStart: number) => string[];
   setCurKeyword: (keyword: string) => void;

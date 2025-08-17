@@ -75,45 +75,43 @@ pnpm install
 pnpm start
 ```
 
-针对内置模板`react`, 有 2 种启动方式
+针对内置模板`react-mono`, 有 2 种启动方式
 
 - 普通模式启动
 
+宿主和所有子模块依赖在一个服务里启动
 ```bash
-pnpm start
+pnpm start hub
 ```
 
 - 微模块启动
 
+除了启动宿主，还会启动所有的子模块依赖
 ```bash
-# 初始化微模块相关代码
-pnpm start .init
-# 启动子模块
-pnpm start mono-comps
-# 启动宿主
-pnpm start
+pnpm start hub:hel
 ```
 
 更多说明详见 `react` 模板 `README.md` 文件。
 
 ### 参数说明
 
-- -t 可选参数 `-t`（或 `--template`） 默认值`react`，表示模板类型，目前暂只支持设定为(`react`)。
+- -t 可选参数 `-t`（或 `--template`） 默认值`react-mono`，表示模板类型，目前暂提供这一种内置模板，其他<xxx>名称会自动尝试拉取
+`https://github.com/hel-eco/<xxx>.git`的代码做初始化
 
 ```bash
-npm create hel my-mono -t react
+npm create hel my-mono -t react-mono
 ```
 
 - -r 可选参数 `-r`（或 `--remote`）默认值 false，表示是否优先从远端拉取 t 参数对应的模板
 
 ```bash
-npm create hel my-mono -t react -r
+npm create hel my-mono -t react-mono -r
 ```
 
 - -u 可选参数 `-u`（或 `--url`）默认值 undefined，表示从指定 url 的拉取远端模板（设置了 u，则 t r 无效）
 
 ```bash
-npm create hel my-mono -u https://github.com/hel-eco/hel-mono
+npm create hel my-mono -u https://github.com/hel-eco/hel-mono.git
 ```
 
 ## 其他

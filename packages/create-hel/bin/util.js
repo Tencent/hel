@@ -74,7 +74,7 @@ function getTemplateRepoUrl(templateType) {
   const { repoUrlDict, repoUrlPrefix } = getConfig();
   let repoUrl = repoUrlDict[templateType];
   if (!repoUrl) {
-    repoUrl = `${repoUrlPrefix}-${templateType}.git`;
+    repoUrl = `${repoUrlPrefix}${templateType}.git`;
   }
   return repoUrl;
 }

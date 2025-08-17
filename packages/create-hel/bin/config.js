@@ -4,7 +4,7 @@ const { name: cliPkgName, version: cliPkgVersion } = packageJsonInfo || {};
 
 // 远程模板仓库地址
 const repoUrlDict = {
-  react: 'https://github.com/hel-eco/hel-mono.git',
+  'react-mono': 'https://github.com/hel-eco/hel-mono.git',
 };
 
 const defaultConfig = {
@@ -12,7 +12,7 @@ const defaultConfig = {
   cliPkgVersion,
   helMonoTemplates: 'hel-mono-templates',
   repoUrlDict,
-  repoUrlPrefix: 'https://github.com/hel-eco/hel-mono',
+  repoUrlPrefix: 'https://github.com/hel-eco/',
   cliKeyword: 'hel',
   cliFullKeyword: 'create-hel',
   basedOn: '',
