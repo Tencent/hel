@@ -1,0 +1,38 @@
+{
+  "name": "esbuild-plugin-module-css",
+  "version": "0.1.1",
+  "description": "ESBuild plugin to handle module css",
+  "keywords": [
+    "esbuild-plugin-module-css",
+    "module css",
+    "esbuild plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tencent/hel.git",
+    "directory": "packages/esbuild-plugin-module-css"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "src/index.js",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md",
+    "index.d.ts"
+  ],
+  "dependencies": {
+    "hash-css-selector": "^1.1.0",
+    "postcss": ">=8.0.0",
+    "postcss-modules": "^6.0.1"
+  },
+  "peerDependencies": {
+    "hash-css-selector": "^1.1.0",
+    "postcss": ">=8.0.0",
+    "postcss-modules": "^6.0.1"
+  },
+  "bundleDependencies": [],
+  "deprecated": false
+}

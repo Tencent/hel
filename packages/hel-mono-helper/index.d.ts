@@ -1,6 +1,15 @@
 import type { IMonoDevInfo } from 'hel-mono-types';
 import * as monoCst from './src/consts';
-import type { ICWDAppData, IMonoAppDepData, IMonoDevData, IMonoNameMap, IMonoRootInfo, INameData, IPkgMonoDepData } from './src/types';
+import type {
+  ICWDAppData,
+  IMonoAppDepData,
+  IMonoDevData,
+  IMonoNameMap,
+  IMonoRootInfo,
+  INameData,
+  IPkgMonoDepData,
+  IExecuteStartOptions,
+} from './src/types';
 
 export declare const cst: typeof monoCst;
 
@@ -45,7 +54,7 @@ export declare function executeStart(devInfo: IMonoDevInfo): void;
  * 3 在子目录执行 npm run start:deps 触发
  * ```
  */
-export declare function executeStartDeps(devInfo: IMonoDevInfo): void;
+export declare function executeStartDeps(devInfo: IMonoDevInfo, options?: IExecuteStartOptions): void;
 
 /**
  * 基于 npm run build xxx 来构建应用（模块）
