@@ -231,8 +231,3 @@ export interface IPrepareHelEntrysOptions {
   nameData: INameData;
   startDeps?: boolean;
 }
-
-export interface IExecuteStartOptions {
-  /** tpl-demos 目录，用于替代内置的目录 */
-  tplDemosDirParentPath?: string;
-}

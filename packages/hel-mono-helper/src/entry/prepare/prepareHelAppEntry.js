@@ -11,6 +11,7 @@ function replaceRelevantFiles(appData, devInfo) {
   r.replaceIndexFile(appData, devInfo);
   const injectedDevInfo = r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
+  r.replaceDeployEnv(appData, devInfo);
   r.replaceUtil(appData, devInfo);
 
   return injectedDevInfo;

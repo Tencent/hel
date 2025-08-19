@@ -101,6 +101,7 @@ function genExportModuleNames(filePath) {
  */
 function jsonObj2Lines(jsonObj, includeFL) {
   const targetLines = [];
+  // 这一步 stringify 会导致 jsonObj 函数属性丢失，下面有逻辑还原第一层属性对应函数
   const str = JSON.stringify(jsonObj, null, 2);
   const lines = str.split('\n');
   const firstLineIdx = 0;
@@ -148,6 +149,37 @@ function jsonObj2Lines(jsonObj, includeFL) {
     }
 
     targetLines.push(line);
+  });
+
+  // 还原 jsonObj 里第一层存在的函数定义属性
+  // TODO 接入 acorn 走 ast 分析，目前此方法会将外包的方法实现 { test: sommeTest } 转移到内部
+  const fnKeys = Object.keys(jsonObj).filter((key) => typeof jsonObj[key] === 'function');
+  fnKeys.forEach((key) => {
+    const fnStr = jsonObj[key].toString();
+    const fnStrList = fnStr.split('\n');
+    fnStrList.forEach((line, idx) => {
+      if (idx === 0) {
+        const compactLine = line.replaceAll(' ', '');
+        console.log('compactLine', compactLine);
+        if (compactLine.startsWith('()=>')) {
+          // 形如 b: ()=>{...} 的箭头函数
+          console.log('push', `  ${key}: ${line}`);
+          targetLines.push(`  ${key}: ${line}`);
+          return;
+        }
+        if (compactLine.startsWith('function(')) {
+          // 形如 b: function(){...} 的函数
+          targetLines.push(`  ${key}: ${line}`);
+          return;
+        }
+        if (compactLine.startsWith(`${key}(`)) {
+          // 形如 b(){...} 的函数
+          targetLines.push(`  ${line}`);
+          return;
+        }
+      }
+      targetLines.push(line);
+    });
   });
 
   return targetLines;

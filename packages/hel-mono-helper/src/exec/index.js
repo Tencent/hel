@@ -3,7 +3,7 @@ const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, c
 const { execAppAction } = require('./app');
 const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');
-const { execCreate, execCreateStart } = require('./create');
+const { execCreate, execCreateMod, execCreateStart } = require('./create');
 const { execBuild } = require('./build');
 const { execLint } = require('./lint');
 const { execTsup } = require('./tsup');
@@ -13,6 +13,7 @@ const innerActionFns = {
   [INNER_ACTION.init]: execInit,
   [INNER_ACTION.initProxy]: execInitProxy,
   [INNER_ACTION.create]: execCreate,
+  [INNER_ACTION.createMod]: execCreateMod,
   [INNER_ACTION.build]: execBuild,
   [INNER_ACTION.lint]: execLint,
   [INNER_ACTION.createStart]: execCreateStart,
@@ -24,14 +25,14 @@ const innerActionFns = {
 /**
  * 尝试执行内部预设的动作函数
  */
-function tryExecInnerAction(actionName, devInfo) {
+function tryExecInnerAction(actionName, devInfo, options) {
   if (INNER_ACTION_NAMES.includes(actionName)) {
     const actionFn = innerActionFns[actionName];
     if (!actionFn) {
       helMonoLog(`currently unsupported inner action ${actionName}`);
     } else {
       helMonoLog(`hit inner action ${actionName}, start to exec preset logic`);
-      actionFn(devInfo);
+      actionFn(devInfo, options);
     }
     return;
   }
@@ -41,7 +42,8 @@ function tryExecInnerAction(actionName, devInfo) {
   process.exit(1);
 }
 
-function execStartOrBuildCmd(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, startOrBuild) {
+function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
+  const { appAction, innerAction } = options;
   const cwd = getCWD();
   const rawKeywordName = getCmdKeywordName();
   setCurKeyword(rawKeywordName);
@@ -49,27 +51,35 @@ function execStartOrBuildCmd(/** @type {import('hel-mono-types').IMonoDevInfo} *
   clearMonoLog(true, true);
   helMonoLog(`cwd ${cwd}, rawKeywordName ${rawKeywordName}`);
 
+  const innerActionVar = innerAction || rawKeywordName || '';
   // 尝试执行内部预设的动作函数
-  if (rawKeywordName.startsWith('.')) {
-    tryExecInnerAction(rawKeywordName, devInfo);
+  if (innerActionVar.startsWith('.')) {
+    tryExecInnerAction(innerActionVar, devInfo, options);
     return;
   }
 
-  execAppAction(devInfo, rawKeywordName, startOrBuild);
+  execAppAction(devInfo, rawKeywordName, appAction);
 }
 
 /**
  * 基于 npm start xxx 来启动或构建宿主
  */
-exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
-  execStartOrBuildCmd(devInfo, 'start');
+exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
+  execCmdByActionName(devInfo, { appAction: 'start', ...(options || {}) });
 };
 
 /**
  * 基于 npm build xxx 构建应用
  */
 exports.executeBuild = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
-  execStartOrBuildCmd(devInfo, 'build');
+  execCmdByActionName(devInfo, { appAction: 'build' });
+};
+
+/**
+ * 基于 npm start xxx:deps 启动hel子模块依赖
+ */
+exports.executeStartDeps = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+  execCmdByActionName(devInfo, { innerAction: INNER_ACTION.startHelDeps });
 };
 
 exports.buildSrvModToHelDist = buildSrvModToHelDist;

@@ -3,14 +3,14 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const shell = require('shelljs');
-const { HEL_TPL_INNER_DEMO_DIR, CREATE_SHORT_PARAM_KEY, CREATE_SHORT_PARAM_KEY_NAMES } = require('../consts');
+const { HEL_TPL_INNER_DEMO_DIR, HEL_TPL_INNER_DEMO_MOD_DIR, CREATE_SHORT_PARAM_KEY, CREATE_SHORT_PARAM_KEY_NAMES } = require('../consts');
 const { getDirInfoList } = require('../util/file');
-const { helMonoLog, getCmdKeywords, getMonoRootInfo } = require('../util');
+const { helMonoLog, getCmdKeywords, getMonoRootInfo, getCmdKeywordName } = require('../util');
 const { rewriteByLines } = require('../util/rewrite');
 const { getPort } = require('../util/port');
 const { jsonObj2Lines } = require('../entry/replace/util');
 
-function getCreateOptions(/** @type {string[]} */ keywords) {
+function getCreateOptions(/** @type {string[]} */ keywords, tplDirParentPath) {
   const createOptions = {
     targetDirName: '',
     demoDirName: 'react-cra',
@@ -39,9 +39,10 @@ function getCreateOptions(/** @type {string[]} */ keywords) {
 
     if (CREATE_SHORT_PARAM_KEY.template === word) {
       const templateValue = keywords[idx + 1];
+      helMonoLog(`trigger .create with template ${templateValue}`);
       ignoredIdx[idx + 1] = true;
 
-      const list = getDirInfoList();
+      const list = getDirInfoList(tplDirParentPath);
       const info = list.find((v) => v.name === templateValue);
       if (!info) {
         const these = list.map((v) => v.name).join(' ');
@@ -135,10 +136,17 @@ function rewritePkgJson(pkgJsonFile, appName) {
  * npm start .create hub -t other-demo -d my-apps
  * ```
  */
-exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, autoStart = false) {
+exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options) {
+  const optionsVar = options || {};
+  const { autoStart = false, isSubMod = false } = optionsVar;
+
+  const tplsDemoDirPath = optionsVar.tplsDemoDirPath || HEL_TPL_INNER_DEMO_DIR;
+  const tplsDemoModDirPath = optionsVar.tplsDemoModDirPath || HEL_TPL_INNER_DEMO_MOD_DIR;
+  const tplsDirPath = isSubMod ? tplsDemoModDirPath : tplsDemoDirPath;
+
   const keywords = getCmdKeywords(3);
   helMonoLog(`.create keywords (${keywords.join(' ')})`);
-  const createOptions = getCreateOptions(keywords);
+  const createOptions = getCreateOptions(keywords, tplsDirPath);
   const { monoRoot } = getMonoRootInfo();
   const { targetBelongToDirName, targetDirName, demoDirName } = createOptions;
   const belongToDir = path.join(monoRoot, targetBelongToDirName);
@@ -152,7 +160,7 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, autoStart = 
     throw new Error(`you can not create app to an existed dir ${appDir}`);
   }
   // 复制模板项目文件
-  const demoAppDir = path.join(HEL_TPL_INNER_DEMO_DIR, demoDirName);
+  const demoAppDir = path.join(tplsDirPath, demoDirName);
   helMonoLog(`start create app to ${appDir}`);
   fs.cpSync(demoAppDir, appDir, { recursive: true });
   helMonoLog(`create app ${demoDirName} done`);
@@ -172,14 +180,13 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, autoStart = 
   }
 };
 
-exports.execCreateStart = function (/** @type {IMonoDevInfo} */ devInfo) {
-  exports.execCreate(devInfo, true);
+exports.execCreateStart = function (/** @type {IMonoDevInfo} */ devInfo, options) {
+  exports.execCreate(devInfo, { autoStart: true, ...(options || {}) });
 };
 
 /**
- * 执行 npm start .create-mod hub 命令
+ * 执行 npm start .create-mod xxx 命令
  */
-exports.execCreateMod = function (/** @type {IMonoDevInfo} */ devInfo) {
-  // TODO  将来支持
-  helMonoLog('TODO, create mod');
+exports.execCreateMod = function (/** @type {IMonoDevInfo} */ devInfo, options) {
+  exports.execCreate(devInfo, { autoStart: true, isSubMod: true, ...(options || {}) });
 };

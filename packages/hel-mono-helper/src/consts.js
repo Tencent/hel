@@ -1,7 +1,7 @@
 const path = require('path');
 const devUtils = require('hel-dev-utils');
 
-const VER = '0.4.3';
+const VER = '0.5.0';
 
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
@@ -13,6 +13,8 @@ const HEL_TPL_INNER_SUB_MOD_PATH = path.join(__dirname, './tpls-hel/sub-mod');
  */
 const HEL_TPL_INNER_DEMO_DIR = path.join(__dirname, './tpls-demo');
 
+const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(__dirname, './tpls-demo-mod');
+
 const ACTION_NAMES = {
   build: 'build',
   start: 'start',
@@ -20,11 +22,15 @@ const ACTION_NAMES = {
 
 const INNER_ACTION = {
   /**
-   * 创建 hub 项目
+   * 创建宿主项目
    */
   create: '.create',
   /**
-   * 创建 hub 项目并启动
+   * 创建子模块项目
+   */
+  createMod: '.create-mod',
+  /**
+   * 创建宿主项目并启动
    */
   createStart: '.create-start',
   createStartShort: '.cs',
@@ -61,13 +67,9 @@ const CREATE_SHORT_PARAM_KEY = {
 
 const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);
 
-/** 执行 xxx:cmdKey 时，cmdKey 在这些命令里则可直接命中并执行 */
-const HITABLE_SCRIPT_KEYS = ['tsup', 'tsc', 'build', 'start', 'build:hel', 'build:helbs'];
-
 module.exports = {
   HEL_DIST: devUtils.cst.HEL_DIST_DIR,
   VER,
-  HITABLE_SCRIPT_KEYS,
   INNER_ACTION,
   INNER_ACTION_NAMES,
   ACTION_NAMES,
@@ -93,6 +95,7 @@ module.exports = {
   HEL_TPL_INNER_APP_PATH,
   HEL_TPL_INNER_SUB_MOD_PATH,
   HEL_TPL_INNER_DEMO_DIR,
+  HEL_TPL_INNER_DEMO_MOD_DIR,
   /**
    * 模板文件复制到项目里后，某一行将被删除的标记
    */

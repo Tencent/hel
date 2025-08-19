@@ -96,7 +96,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   }
 
   const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info } = getMonoAppDepData(appSrc, devInfo, shouldGetAllDep);
-  helMonoLog('isMicroBuild', isMicroBuild);
+  helMonoLog('isMicroBuild ', isMicroBuild);
   helMonoLog('dep pack names', pkgNames);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
@@ -167,9 +167,9 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     appInfo.homePage = appPublicUrl;
   }
 
-  helMonoLog('isHelMode', isHelModeVar);
-  helMonoLog('appSrcIndex', appSrcIndex);
-  helMonoLog('appPublicUrl', appPublicUrl);
+  helMonoLog('isHelMode ', isHelModeVar);
+  helMonoLog('appSrcIndex ', appSrcIndex);
+  helMonoLog('appPublicUrl ', appPublicUrl);
   helMonoLog('babel loader include', babelLoaderInclude);
   helMonoLog('app alias', appAlias);
   helMonoLog('jest alias', jestAlias);

@@ -3,7 +3,7 @@
 const cst = require('./consts');
 const { prepareHelEntry } = require('./entry');
 const { getMonoDevData, getPkgMonoDepData } = require('./dev-data');
-const { executeStart, executeBuild, buildSrvModToHelDist } = require('./exec');
+const { executeStart, executeBuild, executeStartDeps, buildSrvModToHelDist } = require('./exec');
 const monoUtil = require('./util');
 
 /**
@@ -20,6 +20,7 @@ global.mlog2 = monoUtil.helMonoLog;
 module.exports = {
   executeStart,
   executeBuild,
+  executeStartDeps,
   prepareHelEntry,
   getMonoDevData,
   getPkgMonoDepData,

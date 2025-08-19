@@ -13,15 +13,22 @@ function getWindow() {
   return null;
 }
 
+export const HEL_DEV_KEY_PREFIX = {
+  devUrl: 'hel.dev',
+  branchId: 'hel.branch',
+  versionId: 'hel.ver',
+  projectId: 'hel.proj',
+};
+
 export function getDevUrlKey(modName) {
-  return `dev:${modName}`;
+  return `${HEL_DEV_KEY_PREFIX.devUrl}:${modName}`;
 }
 
 export function getHelConfKeys(modName) {
   return {
-    branchId: `hel/branch:${modName}`,
-    versionId: `hel/ver:${modName}`,
-    projectId: `hel/proj:${modName}`,
+    branchId: `${HEL_DEV_KEY_PREFIX.branchId}:${modName}`,
+    versionId: `${HEL_DEV_KEY_PREFIX.versionId}:${modName}`,
+    projectId: `${HEL_DEV_KEY_PREFIX.projectId}:${modName}`,
   };
 }
 

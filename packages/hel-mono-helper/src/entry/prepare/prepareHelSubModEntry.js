@@ -10,6 +10,7 @@ module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   r.replaceSubModLibTypes(appData, devInfo);
   const injectedDevInfo = r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);
+  r.replaceDeployEnv(appData, devInfo);
   r.replaceUtil(appData, devInfo);
   prepareNodeModules(appData);
 

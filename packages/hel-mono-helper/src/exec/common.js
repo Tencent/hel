@@ -1,6 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo */
 const { helMonoLog } = require('../util');
-const { HITABLE_SCRIPT_KEYS } = require('../consts');
 
 function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
   let pureKeyword = mayAlias;
@@ -40,12 +39,13 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
     const mode = rest.join(':');
     keywordName = str1;
 
+    helMonoLog(`keywordName ${keywordName}, rawScriptCmdKey ${rawScriptCmdKey}, mode ${mode}`);
+
     // 是 xxx:proxy 时，启动的是 .hel/apps或.hel/packages 下的应用，cmdKey 无需再保留后缀
     if (mode === 'proxy') {
       scriptCmdKey = rawScriptCmdKey;
-    } else if (HITABLE_SCRIPT_KEYS.includes(mode)) {
-      // 这些命令式可直接命中的，可直接把 scriptCmdKey 重写为 mode 值
-      // 例如是 xxx:tsup 时，执行 pnpm --filter xxx run tsup
+    } else if (rawScriptCmdKey === 'start') {
+      // 根目录执行 npm start xx:yy:zz 均表示尝试执行 子项目的 yy:zz 命令
       scriptCmdKey = mode;
     } else {
       scriptCmdKey = `${rawScriptCmdKey}:${mode}`;
@@ -54,7 +54,7 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
 
   const pkgName = getPkgNameFromMayAlias(devInfo, rawKeywordName);
   if (pkgName) {
-    helMonoLog(`found alias from ${rawKeywordName}, we will use its pkgname ${pkgName}`);
+    helMonoLog(`found alias from ${rawKeywordName}, we will use its package name ${pkgName}`);
     keywordName = pkgName;
   }
 

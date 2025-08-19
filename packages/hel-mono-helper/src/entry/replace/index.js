@@ -6,5 +6,6 @@ module.exports = {
   replaceSubModModulesIndex: require('./replaceSubModModulesIndex'),
   replaceSubModLibTypes: require('./replaceSubModLibTypes'),
   replaceSubModIndex: require('./replaceSubModIndex'),
+  replaceDeployEnv: require('./replaceDeployEnv'),
   replaceUtil: require('./replaceUtil'),
 };

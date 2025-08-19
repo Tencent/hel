@@ -5,7 +5,7 @@ const shell = require('shelljs');
 const util = require('../util');
 const { getPnpmRunCmd } = require('../exec/cmd');
 const { prepareHelEntryFiles } = require('./prepare');
-const { HEL_START_WITH_LOCAL_RUNNING_DEPS, HEL_START_WITH_REMOTE_DEPS } = require('../consts');
+const { HEL_START_WITH_LOCAL_RUNNING_DEPS } = require('../consts');
 
 const { helMonoLog } = util;
 
@@ -46,7 +46,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
     const appData = util.getCWDAppData(devInfo, targetCWD);
     const startHelDep = () => {
       // 生成类似命令： pnpm --filter @hel-packages/some-sub run start
-      const exeCmd = getPnpmRunCmd(pkgName, { isForRootHelDir, dirName, scriptCmdKey: 'start', isSubMod: true });
+      const exeCmd = getPnpmRunCmd(pkgName, { isForRootHelDir, dirName, scriptCmdKey: 'start:hel', isSubMod: true });
       helMonoLog(`starting hel dep ${pkgName}...`);
       helMonoLog(exeCmd);
       // 提供 callback，exec 变为异步模式
@@ -66,8 +66,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
           helMonoLog(`${pkgName} dev-server is already running, hel-mono-helper will reuse it!`);
         },
         (e) => {
-          helMonoLog('--------------------------');
-          helMonoLog(e);
+          helMonoLog(e.message);
           helMonoLog(`${pkgName} dev-server is not started! hel-mono-helper will start it...`);
           startHelDep();
         },

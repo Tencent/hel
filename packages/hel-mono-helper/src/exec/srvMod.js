@@ -6,11 +6,11 @@ const { getCWD, helMonoLog } = require('../util');
 /**
  * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下
  */
-exports.buildSrvModToHelDist = function (isUseTsup) {
+exports.buildSrvModToHelDist = function (isUseTsup = false) {
   const projectDir = getCWD();
   const projectJson = require(path.join(projectDir, './package.json'));
   const projectName = projectJson.name;
-  helMonoLog(`build hel srv mod of ${projectName} start`);
+  helMonoLog(`start build hel srv mod of ${projectName}(with arg isUseTsup=${isUseTsup})...`);
 
   if (isUseTsup) {
     shell.exec(`pnpm --filter ${projectName} run build:npm`);
@@ -21,7 +21,7 @@ exports.buildSrvModToHelDist = function (isUseTsup) {
 
   const srvModCopyTo = path.join(projectDir, './hel_dist/srv');
   fs.mkdirSync(srvModCopyTo);
-  shell.exec('start to copy hel srv mode build assets');
+  shell.exec('start to copy hel srv mode build assets...');
 
   if (isUseTsup) {
     const srvModFileCopyFrom = path.join(projectDir, './dist/index.js');
