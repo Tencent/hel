@@ -2,13 +2,13 @@ import type { IMonoDevInfo } from 'hel-mono-types';
 import * as monoCst from './src/consts';
 import type {
   ICWDAppData,
+  IExecuteStartOptions,
   IMonoAppDepData,
   IMonoDevData,
   IMonoNameMap,
   IMonoRootInfo,
   INameData,
   IPkgMonoDepData,
-  IExecuteStartOptions,
 } from './src/types';
 
 export declare const cst: typeof monoCst;

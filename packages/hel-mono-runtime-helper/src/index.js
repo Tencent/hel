@@ -13,8 +13,16 @@ function getWindow() {
   return null;
 }
 
-export function getDevKey(modName) {
+export function getDevUrlKey(modName) {
   return `dev:${modName}`;
+}
+
+export function getHelConfKeys(modName) {
+  return {
+    branchId: `hel/branch:${modName}`,
+    versionId: `hel/ver:${modName}`,
+    projectId: `hel/proj:${modName}`,
+  };
 }
 
 export function getStorageValue(key) {
@@ -30,7 +38,7 @@ export function monoLog(...args) {
 }
 
 export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
-  const { DEV_INFO, APP_GROUP_NAME, isDev, startMode } = options;
+  const { DEV_INFO, APP_GROUP_NAME, DEPLOY_ENV, isDev, startMode } = options;
 
   return {
     /**
@@ -47,32 +55,39 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
 
         const { appNames, appGroupName = '' } = helConf;
         if (appGroupName) {
-          const helModName = appNames[deployEnv] || appGroupName;
+          const helModName = appNames[DEPLOY_ENV] || appGroupName;
           helDeps.push({ appName: helModName, appGroupName, packName });
         }
       });
 
       return helDeps;
     },
-    getEnableAndHost(appName, /** @type {IMonoInjectedAppBaseConf} */ conf) {
+    getPrefetchParams(appName, /** @type {IMonoInjectedAppBaseConf} */ conf) {
       const { port = 3000, devHostname = DEV_INFO.devHostname } = conf;
       const { appGroupName } = conf.hel;
-      const devUrl = getStorageValue(getDevKey(appGroupName));
+      const devUrl = getStorageValue(getDevUrlKey(appGroupName));
+      const confKeys = getHelConfKeys(appGroupName);
+      const params = {
+        branchId: getStorageValue(confKeys.branchId),
+        versionId: getStorageValue(confKeys.versionId),
+        projectId: getStorageValue(confKeys.projectId),
+      };
+
       if (devUrl) {
         monoLog(`found devUrl ${devUrl} for ${appName}`);
-        return { enable: true, host: devUrl };
+        return { enable: true, host: devUrl, ...params };
       }
 
       if (!isDev) {
-        return { enable: false, host: '' };
+        return { enable: false, host: '', ...params };
       }
 
       const isStartWithRemoteDeps = startMode === START_WITH_REMOTE;
       if (isStartWithRemoteDeps) {
-        return { enable: false, host: '' };
+        return { enable: false, host: '', ...params };
       }
 
-      return { enable: true, host: `${devHostname}:${port}` };
+      return { enable: true, host: `${devHostname}:${port}`, ...params };
     },
   };
 }

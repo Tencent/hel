@@ -1,8 +1,8 @@
-import * as path from 'path';
 import * as fs from 'fs';
-import * as util from 'util';
+import * as path from 'path';
 import postcss from 'postcss';
 import postcssModules from 'postcss-modules';
+import * as util from 'util';
 // 因 hash-css-selector 是以 module 形式暴露的，这里不能使用 require，故改为 import 写法
 import { generateScopedName } from 'hash-css-selector';
 
@@ -47,64 +47,48 @@ export function moduleCss(options) {
   scopePrefix = pureScopePrefix(scopePrefix);
 
   return {
-    name: "module-css",
+    name: 'module-css',
     setup(build) {
-      build.onResolve(
-        { filter: /\.module\.css$/, namespace: "file" },
-        (args) => {
-          // args: { path, importer, namespace, resolveDir, kind, pluginData, with }
-          const pathDir = path.join(args.resolveDir, args.path);
-          const pathPrefix = getPathPrefix(baseSrc, args.resolveDir);
-          return {
-            // path: `${args.path}#css-module`,
-            // 让不同目录的react组件使用了相同的 module.css 文件名时，也能够编译出正确的 css 名称
-            path: path.join(pathPrefix, `${args.path}#css-module`),
-            namespace: "css-module",
-            pluginData: { pathDir },
-          };
-        },
-      );
-      build.onLoad(
-        { filter: /#css-module$/, namespace: "css-module" },
-        async (args) => {
-          const { pluginData } = args;
-          const source = await readFile(
-            pluginData.pathDir,
-            "utf8"
-          );
+      build.onResolve({ filter: /\.module\.css$/, namespace: 'file' }, (args) => {
+        // args: { path, importer, namespace, resolveDir, kind, pluginData, with }
+        const pathDir = path.join(args.resolveDir, args.path);
+        const pathPrefix = getPathPrefix(baseSrc, args.resolveDir);
+        return {
+          // path: `${args.path}#css-module`,
+          // 让不同目录的react组件使用了相同的 module.css 文件名时，也能够编译出正确的 css 名称
+          path: path.join(pathPrefix, `${args.path}#css-module`),
+          namespace: 'css-module',
+          pluginData: { pathDir },
+        };
+      });
+      build.onLoad({ filter: /#css-module$/, namespace: 'css-module' }, async (args) => {
+        const { pluginData } = args;
+        const source = await readFile(pluginData.pathDir, 'utf8');
 
-          let cssModule = {};
-          const result = await postcss([
-            postcssModules({
-              generateScopedName: (className, filename, css) => getCssClassName({ scopePrefix, className, filename, css }),
-              getJSON(_, json) {
-                cssModule = json;
-              },
-            }),
-          ]).process(source, { from: pluginData.pathDir });
+        let cssModule = {};
+        const result = await postcss([
+          postcssModules({
+            generateScopedName: (className, filename, css) => getCssClassName({ scopePrefix, className, filename, css }),
+            getJSON(_, json) {
+              cssModule = json;
+            },
+          }),
+        ]).process(source, { from: pluginData.pathDir });
 
-          return {
-            pluginData: { css: result.css },
-            contents: `import "${pluginData.pathDir
-              }"; export default ${JSON.stringify(cssModule)}`,
-          };
-        }
-      );
-      build.onResolve(
-        { filter: /\.module\.css$/, namespace: "css-module" },
-        (args) => ({
-          path: path.join(args.resolveDir, args.path, "#css-module-data"),
-          namespace: "css-module",
-          pluginData: args.pluginData,
-        })
-      );
-      build.onLoad(
-        { filter: /#css-module-data$/, namespace: "css-module" },
-        (args) => ({
-          contents: args.pluginData.css,
-          loader: "css",
-        })
-      );
+        return {
+          pluginData: { css: result.css },
+          contents: `import "${pluginData.pathDir}"; export default ${JSON.stringify(cssModule)}`,
+        };
+      });
+      build.onResolve({ filter: /\.module\.css$/, namespace: 'css-module' }, (args) => ({
+        path: path.join(args.resolveDir, args.path, '#css-module-data'),
+        namespace: 'css-module',
+        pluginData: args.pluginData,
+      }));
+      build.onLoad({ filter: /#css-module-data$/, namespace: 'css-module' }, (args) => ({
+        contents: args.pluginData.css,
+        loader: 'css',
+      }));
     },
   };
 }

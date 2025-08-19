@@ -12,6 +12,6 @@ export interface IModuleCssOptions {
 /**
  * moduleCss factory
  */
-export declare function moduleCss(options?: IModuleCssOptions): { name: string, setup: (...args: any[]) => any };
+export declare function moduleCss(options?: IModuleCssOptions): { name: string; setup: (...args: any[]) => any };
 
 export default moduleCss;
