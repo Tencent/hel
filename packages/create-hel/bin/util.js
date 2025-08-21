@@ -410,6 +410,11 @@ function logDepPath() {
   }
 }
 
+function logCliVersion() {
+  console.log(getConfig().cliPkgVersion);
+  logKeyParams();
+}
+
 function bumpTplStore() {
   const { pkgManager, helMonoTemplates } = getConfig();
   const { isSuccess, modPath, err } = getDepPathStat(helMonoTemplates);
@@ -456,6 +461,7 @@ module.exports = {
   logTip,
   logDepPath,
   logKeyParams,
+  logCliVersion,
   bumpTplStore,
   viewTplStoreVerByPkgManager,
 };

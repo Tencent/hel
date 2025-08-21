@@ -1,5 +1,4 @@
 const shell = require('shelljs');
-const { getConfig } = require('./config');
 const { CMD_TYPE_LIST, CMD_TYPE } = require('./consts');
 const { createTemplate } = require('./create-template');
 const util = require('./util');
@@ -49,8 +48,7 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
 
   if (isSeeVersion) {
-    util.logKeyParams();
-    return console.log(getConfig().cliPkgVersion);
+    return util.logCliVersion();
   }
 
   if (isSeeHelp) {
