@@ -1,7 +1,7 @@
 {
   "name": "create-hel",
-  "version": "0.3.5",
-  "description": "A Hel template CLI for quickly scaffolding Hel normal project or micro-monorepo architecture project.",
+  "version": "1.0.4",
+  "description": "A Hel template CLI for quickly scaffolding Hel normal project or micro-module monorepo architecture project.",
   "license": "MIT",
   "author": "fantasticsoul",
   "main": "index.js",

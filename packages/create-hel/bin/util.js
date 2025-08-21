@@ -6,7 +6,7 @@ const path = require('path');
 const readline = require('readline');
 const shell = require('shelljs');
 const { getConfig } = require('./config');
-const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST } = require('./consts');
+const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST, ALL_CMD_TYPE_LIST, CMD_SHORT_TYPE } = require('./consts');
 
 let isDebug = false;
 
@@ -21,27 +21,32 @@ function setIsDebug(isDebugVar) {
   isDebug = isDebugVar;
 }
 
-function charByte(mayChar, idx = 0) {
-  return mayChar.charCodeAt(idx) < 128 ? 1 : 2;
-}
-
-/** 获取字符串的字节长度，注：此方法仅适用于普通字符，不适用于表情符号（例如：👯‍♂️） */
-function getByteLength(str) {
-  let count = 0;
-  for (let i = 0, l = str.length; i < l; i++) {
-    count += charByte(str, i);
-  }
-  return count;
-}
-
-function getUsageInfo() {
-  const { cliPkgName } = getConfig();
-  return (
-    'usage with command keyword [hel]:\n'
-    + '  1: hel <project-name>\n'
-    + '  2: hel <project-name> -c <template-repo-url>\n'
-    + `By the way, you can replace 'hel' with 'npx ${cliPkgName}'`
-  );
+function logUsage() {
+  const usageStr = '\nHel <command> usage:\n\n'
+    + 'hel init <project-name>              create hel project\n'
+    + 'hel init <project-name> -t <type>    create hel project by type (Default:react-mono)\n'
+    + 'hel init <project-name> -u <url>     create hel project by url\n'
+    + 'hel -v,--version                     see cli version\n'
+    + 'hel -d,--debug                       execute hel cli command (init, help etc) with debug log\n'
+    + 'hel help                             see help info\n\n'
+    + '# The following usage is only available under the hel-mono type project\n'
+    + 'hel start <mod-name-or-dir>          start hel mod with legacy mode\n'
+    + 'hel start <mod-name-or-dir>:hel      start hel mod with micro-module mode\n'
+    + 'hel build <mod-name-or-dir>          build hel mod with legacy mode\n'
+    + 'hel build <mod-name-or-dir>:hel      build hel mod with micro-module mode\n'
+    + 'hel create <dir-name>                create a hel app\n'
+    + 'hel create <dir-name> -t             create a hel app with type (Default:react-app)\n'
+    + 'hel create <dir-name> -n             create a hel app with package name\n'
+    + 'hel create <dir-name> -a             create a hel app with alias\n'
+    + 'hel create-mod <dir-name>            create a hel mod\n'
+    + 'hel create-mod <dir-name> -t         create a hel mod with type (Default:ts-lib)\n'
+    + 'hel create-mod <dir-name> -n         create a hel mod with package name\n'
+    + 'hel create-mod <dir-name> -a         create a hel mod with package alias\n'
+    + 'hel test <mod-name-or-dir>           test hel mod\n'
+    + 'hel test-watch <mod-name-or-dir>     test hel mod witch watch mode\n'
+    + 'hel deps <mod-name-or-dir>           start micro-module dev servers of hel mod deps\n'
+    + '';
+  console.log(usageStr);
 }
 
 async function askQuestion(question) {
@@ -125,21 +130,29 @@ function getArgObject(args) {
       return false;
     }
 
-    // 未命中内置命令时，第二位参数都当做创建目录名处理
-    if (!CMD_TYPE_LIST.includes(cmdType)) {
-      skipIdx[0] = true;
-      argObj.projectName = cmdType;
-      return true;
+    // 未命中内置命令时则报错
+    if (!ALL_CMD_TYPE_LIST.includes(cmdType)) {
+      logPurple("You can just type 'hel',"
+        + "then cli will trigger interactive commands to ask you input project name "
+        + "if you forget the command."
+      )
+      throw new Error(`Unknown command: "${cmdType}", it must be one of (${CMD_TYPE_LIST.join(', ')})`);
     }
 
     // 命中了内置命令
-    argObj.cmdType = cmdType;
-    if (CMD_TYPE.init === cmdType) {
-      argObj.projectName = cmdValue;
-    }
-    argObj.cmdValue = cmdValue;
+    const targetCmdType = CMD_SHORT_TYPE[cmdType] || cmdType;
+    argObj.cmdType = targetCmdType;
     skipIdx[0] = true;
-    skipIdx[1] = true;
+    if (CMD_TYPE.init === targetCmdType) {
+      argObj.projectName = cmdValue;
+      skipIdx[1] = true;
+    }
+    if (CMD_TYPE.help === targetCmdType) {
+      argObj.isSeeHelp = true;
+    }
+
+    argObj.cmdValue = cmdValue;
+
     return true;
   };
 
@@ -365,7 +378,7 @@ function logCliInfo() {
   logTip(emptyLine);
   lgLine(`Cli info: ${cliPkgName}@${cliPkgVersion}`);
   lgLine('Star hel-micro https://github.com/Tencent/hel if you like it ^_^');
-  lgLine(`Quick start: ${cliKeyword} <project-name>`);
+  lgLine(`Quick start: ${cliKeyword} init <project-name>`);
   lgLine(`Help: ${cliKeyword} -h`);
   lgLine(`Local templates store: ${helMonoTemplates}@${tplStoreVer}`);
   lgLine(`Remote templates store prefix: ${repoUrlPrefix}`);
@@ -377,15 +390,7 @@ function logCliInfo() {
 
 function logHelpInfo() {
   logCliInfo();
-  const { cliFullKeyword, cliKeyword } = getConfig();
-  logTip(`Attention: cli cmd ${cliFullKeyword} and ${cliKeyword} is both available, choose any one you like.\n`);
-  logTip('--------------- cli cmd use case ------------------');
-  logTip('create hel-mono project by specified <project-name>:');
-  logTip(`${cliKeyword} <project-name>\n`);
-  logTip('use -t or --template arg to create hel-mono project by specified template type:');
-  logTip(`${cliKeyword} <project-name> -t <template-type>\n`);
-  logTip('use -u or --url arg to create hel-mono project by specified template repo url(-t -r arg will be ignored):');
-  logTip(`${cliKeyword} <project-name> -u <template-repo-url>\n`);
+  logUsage();
 }
 
 function getDepPathStat(name) {
@@ -441,8 +446,20 @@ function viewTplStoreVerByPkgManager() {
   shell.exec(`${pkgManager} view ${helMonoTemplates}`);
 }
 
+function logFinalError(e) {
+  const errMsg = e.message;
+  if (errMsg.includes('Unknown command')) {
+    logError(errMsg);
+    logUsage();
+    return;
+  }
+
+  logError(e.message);
+  logError(e, true);
+  process.exit(1);
+}
+
 module.exports = {
-  getUsageInfo,
   getIsDebug,
   setIsDebug,
   askQuestion,
@@ -462,6 +479,7 @@ module.exports = {
   logDepPath,
   logKeyParams,
   logCliVersion,
+  logFinalError,
   bumpTplStore,
   viewTplStoreVerByPkgManager,
 };

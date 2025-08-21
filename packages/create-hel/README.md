@@ -16,6 +16,7 @@ create-hel/
   ├── bin/                  # 项目脚本
   │   ├── analyze-args      # 分析命令行参数
   │   ├── config            # 项目脚本配置
+  │   ├── consts            # 常量
   │   ├── fetch-template    # 拉取模板
   │   ├── create-template   # 创建模板
   │   ├── util              # 工具函数
@@ -37,8 +38,8 @@ create-hel/
 
 ```bash
 npm install create-hel -g
-# or type as: create-hel my-mono
-hel my-mono
+# or type as: create-hel init my-mono
+hel init my-mono
 ```
 
 - npx
@@ -46,7 +47,7 @@ hel my-mono
 使用 npx 创建项目到`my-mono`目录下
 
 ```bash
-npx create-hel my-mono
+npx create-hel init my-mono
 ```
 
 - npm create
@@ -54,7 +55,7 @@ npx create-hel my-mono
 使用 npm 创建项目到`my-mono`目录下
 
 ```bash
-npm create hel@latest my-mono
+npm create hel@latest init my-mono
 ```
 
 - pnpm create
@@ -62,7 +63,7 @@ npm create hel@latest my-mono
 使用 pnpm 创建项目到`my-mono`目录下
 
 ```bash
-pnpm create hel my-mono
+pnpm create hel init my-mono
 ```
 
 ### 安装依赖并启动
@@ -122,7 +123,7 @@ hel my-mono -u https://github.com/hel-eco/hel-mono.git
 npm create 带参写法如下，需要加 `--`，在其后面的参数会被 `create-hel` cli 工具接收到
 
 ```bash
-npm create hel -- -t xx-template
+npm create init hel -- -t xx-template
 ```
 
 ### 贡献模板
@@ -130,8 +131,8 @@ npm create hel -- -t xx-template
 在 https://github.com/hel-eco 组下创建项目，均能被 cli 识别到，例如创一个 `my-type`，则可以使用以下命令行安装
 
 ```bash
-# 安装 https://github.com/hel-eco/my-type 项目
-hel -t my-type
+# 安装 https://github.com/hel-eco/my-type 对应的模板项目
+hel init my-mono -t my-type
 ```
 
 ### 定制 cli

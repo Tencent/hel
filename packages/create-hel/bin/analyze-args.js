@@ -1,7 +1,8 @@
 const shell = require('shelljs');
-const { CMD_TYPE_LIST, CMD_TYPE } = require('./consts');
+const { HEL_MONO_CMD_TYPE_LIST, CMD_TYPE } = require('./consts');
 const { createTemplate } = require('./create-template');
 const util = require('./util');
+
 
 /**
  * 触发 hel-moon 大仓里的命令
@@ -25,15 +26,21 @@ function execHelMonoCmd(helMonoStartCmd) {
 }
 
 async function tryExecCmd(argObj) {
-  const { cmdType } = argObj;
-
-  if (!CMD_TYPE_LIST.includes(cmdType)) {
-    throw new Error(`Unknown command: "${cmdType}", it must be one of (${Object.keys(CMD_TYPE)})`);
-  }
+  const { cmdType, cmdValue } = argObj;
 
   if (CMD_TYPE.init === cmdType) {
     await createTemplate(argObj);
     return;
+  }
+
+  if (CMD_TYPE.start === cmdType) {
+    const helMonoStartCmd = cmdValue ? `start ${cmdValue}` : 'start';
+    return shell.exec(`pnpm run ${helMonoStartCmd}`);
+  }
+
+  if (HEL_MONO_CMD_TYPE_LIST.includes(cmdType)) {
+    const helMonoStartCmd = cmdValue ? `start .${cmdType} ${cmdValue}` : 'build';
+    return shell.exec(`pnpm run ${helMonoStartCmd}`);
   }
 
   console.log(`Unhandled command: "${cmdType}"`);
@@ -44,43 +51,42 @@ async function tryExecCmd(argObj) {
  */
 exports.analyzeArgs = async function analyzeArgs(forHels) {
   const args = process.argv.slice(2);
-  const argObj = util.getArgObject(args);
-  const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
-
-  if (isSeeVersion) {
-    return util.logCliVersion();
-  }
-
-  if (isSeeHelp) {
-    return util.logHelpInfo();
-  }
-
-  util.logCliInfo();
-
-  if (isViewTplStoreVerByPkgManager) {
-    return util.viewTplStoreVerByPkgManager();
-  }
-
-  if (isBumpTplStore) {
-    return util.bumpTplStore();
-  }
-
-  // for hels bin
-  if (forHels) {
-    // 触发 hels bin 命令，表示全部走 hel-mono 大仓命令
-    const pureArgs = args.filter((v) => v !== '-d' && v !== '--debug');
-    return execHelMonoCmd(pureArgs.join(' ') || 'start');
-  }
-
-  if (helMonoStartCmd) {
-    return execHelMonoCmd(helMonoStartCmd);
-  }
-
   try {
+    const argObj = util.getArgObject(args);
+    const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
+
+    if (isSeeVersion) {
+      return util.logCliVersion();
+    }
+
+    if (isSeeHelp) {
+      return util.logHelpInfo();
+    }
+
+    util.logCliInfo();
+
+    if (isViewTplStoreVerByPkgManager) {
+      return util.viewTplStoreVerByPkgManager();
+    }
+
+    if (isBumpTplStore) {
+      return util.bumpTplStore();
+    }
+
+    // for hels bin
+    if (forHels) {
+      // 触发 hels bin 命令，表示全部走 hel-mono 大仓命令
+      const pureArgs = args.filter((v) => v !== '-d' && v !== '--debug');
+      return execHelMonoCmd(pureArgs.join(' ') || 'start');
+    }
+
+    if (helMonoStartCmd) {
+      return execHelMonoCmd(helMonoStartCmd);
+    }
+
+
     await tryExecCmd(argObj);
   } catch (e) {
-    util.logError(e.message);
-    util.logError(e, true);
-    process.exit(1);
+    util.logFinalError(e);
   }
 };
