@@ -49,6 +49,7 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
 
   if (isSeeVersion) {
+    util.logKeyParams();
     return console.log(getConfig().cliPkgVersion);
   }
 

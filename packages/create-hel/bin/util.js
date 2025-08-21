@@ -455,6 +455,7 @@ module.exports = {
   logHelpInfo,
   logTip,
   logDepPath,
+  logKeyParams,
   bumpTplStore,
   viewTplStoreVerByPkgManager,
 };
