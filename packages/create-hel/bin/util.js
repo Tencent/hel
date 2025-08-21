@@ -22,7 +22,8 @@ function setIsDebug(isDebugVar) {
 }
 
 function logUsage() {
-  const usageStr = '\nHel <command> usage:\n\n'
+  const usageStr =
+    '\nHel <command> usage:\n\n'
     + 'hel init <project-name>              create hel project\n'
     + 'hel init <project-name> -t <type>    create hel project by type (Default:react-mono)\n'
     + 'hel init <project-name> -u <url>     create hel project by url\n'
@@ -132,10 +133,11 @@ function getArgObject(args) {
 
     // 未命中内置命令时则报错
     if (!ALL_CMD_TYPE_LIST.includes(cmdType)) {
-      logPurple("You can just type 'hel',"
-        + "then cli will trigger interactive commands to ask you input project name "
-        + "if you forget the command."
-      )
+      logPurple(
+        "You can just type 'hel',"
+          + 'then cli will trigger interactive commands to ask you input project name '
+          + 'if you forget the command.',
+      );
       throw new Error(`Unknown command: "${cmdType}", it must be one of (${CMD_TYPE_LIST.join(', ')})`);
     }
 

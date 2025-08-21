@@ -47,7 +47,11 @@ hel init my-mono
 使用 npx 创建项目到`my-mono`目录下
 
 ```bash
-npx create-hel init my-mono
+# 回车后在交互式命令行界面输入 my-mono
+npx create-hel@latest
+
+# or
+npx create-hel@latest init my-mono
 ```
 
 - npm create
@@ -55,7 +59,11 @@ npx create-hel init my-mono
 使用 npm 创建项目到`my-mono`目录下
 
 ```bash
-npm create hel@latest init my-mono
+# 回车后在交互式命令行界面输入 my-mono
+npm create hel@latest
+
+# or
+npx create-hel@latest init my-mono
 ```
 
 - pnpm create
@@ -63,7 +71,11 @@ npm create hel@latest init my-mono
 使用 pnpm 创建项目到`my-mono`目录下
 
 ```bash
-pnpm create hel init my-mono
+# 回车后在交互式命令行界面输入 my-mono
+pnpm create hel
+
+# or
+pnpm create-hel@latest init my-mono
 ```
 
 ### 安装依赖并启动
@@ -101,29 +113,37 @@ pnpm start hub:hel
 - -t 可选参数 `-t`（或 `--template`） 默认值`react-mono`，表示模板类型，目前暂提供这一种内置模板，其他<xxx>名称会自动尝试拉取 `https://github.com/hel-eco/<xxx>.git`的代码做初始化
 
 ```bash
-hel my-mono -t react-mono
+hel init my-mono -t react-mono
 ```
 
 - -r 可选参数 `-r`（或 `--remote`）默认值 false，表示是否优先从远端拉取 t 参数对应的模板
 
 ```bash
-hel my-mono -t react-mono -r
+hel init my-mono -t react-mono -r
 ```
 
 - -u 可选参数 `-u`（或 `--url`）默认值 undefined，表示从指定 url 的拉取远端模板（设置了 u，则 t r 无效）
 
 ```bash
-hel my-mono -u https://github.com/hel-eco/hel-mono.git
+hel init my-mono -u https://github.com/hel-eco/hel-mono.git
 ```
 
 ## 其他
+
+### 升级本地模板
+
+```bash
+hel -b
+# or
+hel --bump
+```
 
 ### 携带参数写法
 
 npm create 带参写法如下，需要加 `--`，在其后面的参数会被 `create-hel` cli 工具接收到
 
 ```bash
-npm create init hel -- -t xx-template
+npm create@latest init hel -- -t xx-template
 ```
 
 ### 贡献模板

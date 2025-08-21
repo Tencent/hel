@@ -3,7 +3,6 @@ const { HEL_MONO_CMD_TYPE_LIST, CMD_TYPE } = require('./consts');
 const { createTemplate } = require('./create-template');
 const util = require('./util');
 
-
 /**
  * 触发 hel-moon 大仓里的命令
  */
@@ -83,7 +82,6 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
     if (helMonoStartCmd) {
       return execHelMonoCmd(helMonoStartCmd);
     }
-
 
     await tryExecCmd(argObj);
   } catch (e) {

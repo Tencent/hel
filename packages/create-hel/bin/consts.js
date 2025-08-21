@@ -32,11 +32,11 @@ const HEL_MONO_CMD_TYPE_LIST = [
   CMD_TYPE.testWatch,
   CMD_TYPE.test,
   CMD_TYPE.deps,
-]
+];
 
 const CMD_TYPE_LIST = Object.keys(CMD_TYPE);
 
-const ALL_CMD_TYPE_LIST = Object.keys(CMD_TYPE).concat(Object.keys(CMD_SHORT_TYPE))
+const ALL_CMD_TYPE_LIST = Object.keys(CMD_TYPE).concat(Object.keys(CMD_SHORT_TYPE));
 
 module.exports = {
   TEMPLATE_REACT_MONO: 'react-mono',
