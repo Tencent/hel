@@ -342,10 +342,8 @@ function logKeyParams(args, argObj) {
 
 function logCliInfo() {
   logKeyParams();
-  const {
-    cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen,
-    helMonoTemplates, repoUrlPrefix,
-  } = getConfig();
+  const { cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen, helMonoTemplates, repoUrlPrefix } =
+    getConfig();
   const fixedLen = seLine.length - 1;
   const lgLine = (str, color, inputStrLen) => {
     if (!str) {
