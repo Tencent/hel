@@ -59,7 +59,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
 
     const injectedDevInfo = prepareHelEntryFiles(devInfo, depData, appData);
     if (startDeps) {
-      const { devHostname, port } = injectedDevInfo.appConfs[pkgName];
+      const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.appConfs[pkgName];
       visitDevServer(
         `${devHostname}:${port}`,
         () => {
@@ -76,7 +76,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
 
   // 为宿主准备 hel 入口文件
   prepareHelEntryFiles(devInfo, depData, appData);
-}
+};
 
 function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir) {
   const pkgOrDirVar = pkgOrDir || util.getCWDPkgDir();
@@ -86,7 +86,7 @@ function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ de
   const startDeps = process.env.HEL_START === HEL_START_WITH_LOCAL_RUNNING_DEPS;
   process.env.REACT_APP_HEL_START = process.env.HEL_START || '';
   prepareHelEntryForMainAndDeps({ isForRootHelDir, devInfo, nameData, startDeps });
-}
+};
 
 module.exports = {
   prepareHelEntryForMainAndDeps,

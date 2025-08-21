@@ -1,9 +1,8 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
-const { HOST_NAME } = require('../consts');
 const { getPort } = require('./port');
 
-exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IMonoAppConf} */ conf) {
+exports.ensureAppConf = function (/** @type {IDevInfo} */devInfo, /** @type {IMonoAppConf} */conf) {
   const { alias, ...rest } = conf;
 
   if (!rest.hel) {
@@ -18,9 +17,6 @@ exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IM
   if (!rest.port) {
     rest.port = getPort(devInfo);
   }
-  if (!rest.devHostname) {
-    rest.devHostname = conf.devHostname || devInfo.devHostname || HOST_NAME;
-  }
 
   return rest;
-};
+}

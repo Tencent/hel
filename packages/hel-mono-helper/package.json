@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-helper",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "micro module mono-repo architecture helper",
   "keywords": [
     "hel",
@@ -19,8 +19,12 @@
     "name": "fantasticsoul"
   },
   "main": "src/index.js",
+  "bin": {
+    "mono": "./bin/index.js"
+  },
   "files": [
     "src",
+    "bin",
     "README.md",
     "index.d.ts"
   ],

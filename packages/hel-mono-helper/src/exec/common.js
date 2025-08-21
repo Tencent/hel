@@ -1,4 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo */
+const { START_CMD_MODES } = require('../consts');
 const { helMonoLog } = require('../util');
 
 function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
@@ -45,8 +46,8 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
     if (mode === 'proxy') {
       scriptCmdKey = rawScriptCmdKey;
     } else if (rawScriptCmdKey === 'start') {
-      // 根目录执行 npm start xx:yy:zz 均表示尝试执行 子项目的 yy:zz 命令
-      scriptCmdKey = mode;
+      // 除去 START_CMD_MODES 之外的，根目录执行 npm start xx:yy:zz 均表示尝试执行子项目的 yy:zz 命令
+      scriptCmdKey = START_CMD_MODES.includes(mode) ? `${rawScriptCmdKey}:${mode}` : mode;
     } else {
       scriptCmdKey = `${rawScriptCmdKey}:${mode}`;
     }

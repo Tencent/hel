@@ -23,4 +23,4 @@ exports.prepareHelEntryFiles = function (
   }
 
   return prepareHelAppEntry(appData, devInfo, depData);
-};
+}

@@ -1,7 +1,7 @@
 const path = require('path');
 const devUtils = require('hel-dev-utils');
 
-const VER = '0.5.0';
+const VER = '0.4.2';
 
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
@@ -15,6 +15,11 @@ const HEL_TPL_INNER_DEMO_DIR = path.join(__dirname, './tpls-demo');
 
 const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(__dirname, './tpls-demo-mod');
 
+/**
+ * 这些目录不用用来命名为项目目录
+ */
+const FORBIDDEN_DIR_NAMES = ['test'];
+
 const ACTION_NAMES = {
   build: 'build',
   start: 'start',
@@ -26,9 +31,17 @@ const INNER_ACTION = {
    */
   create: '.create',
   /**
+   * 创建宿主项目
+   */
+  createShort: '.c',
+  /**
    * 创建子模块项目
    */
   createMod: '.create-mod',
+  /**
+   * 创建子模块项目
+   */
+  createModShort: '.cm',
   /**
    * 创建宿主项目并启动
    */
@@ -57,22 +70,35 @@ const INNER_ACTION = {
 
 const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);
 
+// 这些模式被 start xx:mode 直接命中时，需要转为 start:mode 去运行
+const START_CMD_MODES = ['hel', 'hwl', 'hwr'];
+
 /**
  * .create 命令能识别的短命令参数
  */
 const CREATE_SHORT_PARAM_KEY = {
   template: '-t',
+  alias: '-a',
   targetBelongToDir: '-d',
+  modName: '-n',
 };
 
 const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);
 
+const MOD_TEMPLATE = {
+  reactApp: 'react-app',
+  lib: 'lib',
+};
+
 module.exports = {
   HEL_DIST: devUtils.cst.HEL_DIST_DIR,
   VER,
+  MOD_TEMPLATE,
   INNER_ACTION,
   INNER_ACTION_NAMES,
   ACTION_NAMES,
+  START_CMD_MODES,
+  FORBIDDEN_DIR_NAMES,
   CREATE_SHORT_PARAM_KEY,
   CREATE_SHORT_PARAM_KEY_NAMES,
   HEL_MICRO_NAME: 'hel-micro',

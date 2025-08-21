@@ -9,7 +9,7 @@ const { getConfig } = require('./config');
  * 通过url拉取远端模板代码
  */
 exports.fetchTemplateByUrl = async function (/** @type IArgObj */ argObj, dirPath, repoUrl) {
-  const { projectName, customTplUrl } = argObj;
+  const { projectName, customTplUrl, template } = argObj;
   const url = repoUrl || customTplUrl;
 
   try {
@@ -19,7 +19,7 @@ exports.fetchTemplateByUrl = async function (/** @type IArgObj */ argObj, dirPat
     // 修改根 package.json
     await util.modifyPkgInfo({ projectName, dirPath });
     // logs
-    util.logCreateSuccess({ projectName, dirPath });
+    util.logCreateSuccess({ projectName, dirPath, template });
   } catch (e) {
     util.logError(`Pulling template by url error: ${e.message}`);
     throw e;
@@ -74,7 +74,7 @@ exports.fetchLocalTemplate = async function (/** @type IArgObj */ argObj, dirPat
         }
       }
     }
-    util.logCreateSuccess({ projectName, dirPath });
+    util.logCreateSuccess({ projectName, dirPath, template });
   } catch (e) {
     util.logError(`Pulling local template error: ${e.message}`);
     throw e;

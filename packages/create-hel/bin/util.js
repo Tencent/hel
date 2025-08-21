@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
 const { getConfig } = require('./config');
-const { TEMPLATE } = require('./consts');
+const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST } = require('./consts');
 
 let isDebug = false;
 
@@ -36,10 +36,10 @@ function getByteLength(str) {
 function getUsageInfo() {
   const { cliPkgName } = getConfig();
   return (
-    'usage with command keyword [create-hel-mono]:\n'
-    + '  1: create-hel-mono <your-project-name>\n'
-    + '  2: create-hel-mono <your-project-name> -c <template-repo-url>\n'
-    + `By the way, you can replace 'create-hel-mono' with 'npx ${cliPkgName}'`
+    'usage with command keyword [hel]:\n'
+    + '  1: hel <project-name>\n'
+    + '  2: hel <project-name> -c <template-repo-url>\n'
+    + `By the way, you can replace 'hel' with 'npx ${cliPkgName}'`
   );
 }
 
@@ -83,8 +83,11 @@ function getTemplateRepoUrl(templateType) {
 /** 获取描述 args 的对象 */
 function getArgObject(args) {
   const argObj = {
+    cmdType: CMD_TYPE.init,
+    cmdValue: '',
     projectName: '',
-    template: TEMPLATE,
+    template: TEMPLATE_REACT_MONO,
+    helMonoStartCmd: '',
     isTplRemote: false,
     isSeeHelp: false,
     isDebug: false,
@@ -112,22 +115,43 @@ function getArgObject(args) {
     argObj[objKey] = args[i + 1];
   };
 
-  const maySetProjectName = (i) => {
-    const name = args[i];
-    if (name.startsWith('-') || skipIdx[i]) {
-      return;
+  const maySetCmdTypeAndValue = () => {
+    const [cmdType = '', cmdValue] = args;
+
+    if (cmdType.startsWith('-') || cmdType.startsWith('--')) {
+      return false;
     }
-    argObj.projectName = name;
+
+    // 未命中内置命令时，第二位参数都当做创建目录名处理
+    if (!CMD_TYPE_LIST.includes(cmdType)) {
+      skipIdx[0] = true;
+      argObj.projectName = cmdType;
+      return true;
+    }
+
+    // 命中了内置命令
+    argObj.cmdType = cmdType;
+    if (CMD_TYPE.init === cmdType) {
+      argObj.projectName = cmdValue;
+    }
+    argObj.cmdValue = cmdValue;
+    skipIdx[0] = true;
+    skipIdx[1] = true;
+    return true;
   };
 
   for (let i = 0; i < args.length; i++) {
+    if (i === 0 && maySetCmdTypeAndValue()) {
+      continue;
+    }
+
     mayAssignObj(['-h', '--help'], 'isSeeHelp', i, true);
     mayAssignObj(['-d', '--debug'], 'isDebug', i, true);
     mayAssignObj(['-v', '--version'], 'isSeeVersion', i, true);
     mayAssignObj(['-r', '--remote'], 'isTplRemote', i, true);
     mayAssignObj(['-t', '--template'], 'template', i);
     mayAssignObj(['-u', '--url'], 'customTplUrl', i);
-    maySetProjectName(i);
+    mayAssignObj(['-s', '--start'], 'helMonoStartCmd', i);
   }
 
   if (argObj.isDebug) {
@@ -196,9 +220,21 @@ function ensureHelMonoTemplates() {
   return helMonoTemplatesPkgPath;
 }
 
-function logCreateSuccess({ projectName, dirPath }) {
+function logCreateSuccess({ projectName, dirPath, template }) {
   console.log(chalk.green(`\n✅ Project of hel-mono [${projectName}] created on ${chalk.bold(dirPath)}`));
-  console.log(chalk.cyan(`\nnext:\n  cd ${projectName}\n  pnpm install\n  pnpm start`));
+  let devTip = `\nnext:\n  cd ${projectName}\n  pnpm install\n  pnpm start`;
+
+  if (TEMPLATE_REACT_MONO === template) {
+    devTip += `\n\ndev hint:\n  pnpm start hub (start apps/hub with legacy mode)`;
+    devTip += `\n  pnpm start hub:hel (start apps/hub with micro-module mode)`;
+    devTip += `\n  pnpm start .test hub (create react lib to packages dir)`;
+    devTip += `\n  pnpm start .build hub (build apps/hub with legacy mode)`;
+    devTip += `\n  pnpm start .build hub:hel (build apps/hub with micro-module mode)`;
+    devTip += `\n  pnpm start .create <some-app> (create an app to apps dir)`;
+    devTip += `\n  pnpm start .create-mod <some-lib> (create lib to packages dir)`;
+    devTip += `\n  pnpm start .create-mod <some-lib> -t react-lib (create react lib to packages dir)`;
+    console.log(chalk.cyan(devTip));
+  }
 }
 
 function getProjectDirPath(/** @type IArgObj */ argObj) {
@@ -280,7 +316,7 @@ function logCliInfo() {
   logTip(emptyLine);
   lgLine(`Cli info: ${cliPkgName}@${cliPkgVersion}`);
   lgLine('Star hel-micro https://github.com/Tencent/hel if you like it ^_^');
-  lgLine(`Quick start: ${cliKeyword} <your-project-name>`);
+  lgLine(`Quick start: ${cliKeyword} <project-name>`);
   lgLine(`Help: ${cliKeyword} -h`);
   lgLine(basedOn);
   lgLine(contactAuthor, '#ad4e00', contactAuthorReferLen);
@@ -293,11 +329,11 @@ function logHelpInfo() {
   const { cliFullKeyword, cliKeyword } = getConfig();
   logTip(`Attention: cli cmd ${cliFullKeyword} and ${cliKeyword} is both available, choose any one you like.\n`);
   logTip('--------------- cli cmd use case ------------------');
-  logTip('create hel-mono by specified project name:');
+  logTip('create hel-mono project by specified <project-name>:');
   logTip(`${cliKeyword} <project-name>\n`);
-  logTip('use -t or --template arg to create hel-mono by specified template type:');
+  logTip('use -t or --template arg to create hel-mono project by specified template type:');
   logTip(`${cliKeyword} <project-name> -t <template-type>\n`);
-  logTip('use -u or --url arg to create hel-mono by specified template repo url(-t -r arg will be ignored):');
+  logTip('use -u or --url arg to create hel-mono project by specified template repo url(-t -r arg will be ignored):');
   logTip(`${cliKeyword} <project-name> -u <template-repo-url>\n`);
 }
 
@@ -321,6 +357,7 @@ function logDepPath() {
 module.exports = {
   getUsageInfo,
   getIsDebug,
+  setIsDebug,
   askQuestion,
   ensureHelMonoTemplates,
   getProjectNameByAsk,
