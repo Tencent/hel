@@ -19,3 +19,7 @@ exports.getLintCmd = function (appDirName) {
   const cmd = `${monoRoot}/node_modules/.bin/eslint --fix ${monoRoot}/apps/${appDirName}/src`;
   return cmd;
 };
+
+exports.getTestCmd = function (packName, testWord = 'test') {
+  return `pnpm --filter ${packName} run ${testWord}`;
+};

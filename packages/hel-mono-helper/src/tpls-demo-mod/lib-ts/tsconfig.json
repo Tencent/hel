@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "composite": false,
+    "target": "es2017",
+    "outDir": "hel_srv",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "files": ["src/index.ts"]
+}

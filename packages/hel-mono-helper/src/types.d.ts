@@ -231,3 +231,10 @@ export interface IPrepareHelEntrysOptions {
   nameData: INameData;
   startDeps?: boolean;
 }
+
+export interface IExecuteStartOptions {
+  /** 读取应用模板的目录路径 */
+  tplsDemoDirPath: string;
+  /** 读取模块模板的目录路径 */
+  tplsDemoModDirPath: string;
+}

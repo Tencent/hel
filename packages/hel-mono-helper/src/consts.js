@@ -1,15 +1,17 @@
 const path = require('path');
 const devUtils = require('hel-dev-utils');
 
-const VER = '0.4.2';
+const VER = '0.6.0';
 
+/** react 应用 hel 胶水代码模板 */
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
+/** 子模块 hel 胶水代码模板 */
 const HEL_TPL_INNER_SUB_MOD_PATH = path.join(__dirname, './tpls-hel/sub-mod');
 
 /**
  * 模板项目所在目录
- * TODO 将来支持网络下载
+ * TODO 将来支持网络下载其他模板
  */
 const HEL_TPL_INNER_DEMO_DIR = path.join(__dirname, './tpls-demo');
 
@@ -65,7 +67,8 @@ const INNER_ACTION = {
   lint: '.lint',
   tsup: '.tsup',
   test: '.test',
-  testAll: '.test:all',
+  testOnce: '.test-once',
+  testWatch: '.test-watch',
 };
 
 const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);
@@ -87,7 +90,9 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 
 const MOD_TEMPLATE = {
   reactApp: 'react-app',
-  lib: 'lib',
+  reactLib: 'react-lib',
+  lib: 'lib-ts',
+  libTs: 'lib-ts',
 };
 
 module.exports = {

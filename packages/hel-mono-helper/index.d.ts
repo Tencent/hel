@@ -44,7 +44,7 @@ export declare const cst: typeof monoCst;
  * npm start .build hub:hel
  * ```
  */
-export declare function executeStart(devInfo: IMonoDevInfo): void;
+export declare function executeStart(devInfo: IMonoDevInfo, options?: IExecuteStartOptions): void;
 
 /**
  * 执行启动hel子依赖服务的命令，以下3种场景均能触发
@@ -54,7 +54,7 @@ export declare function executeStart(devInfo: IMonoDevInfo): void;
  * 3 在子目录执行 npm run start:deps 触发
  * ```
  */
-export declare function executeStartDeps(devInfo: IMonoDevInfo, options?: IExecuteStartOptions): void;
+export declare function executeStartDeps(devInfo: IMonoDevInfo): void;
 
 /**
  * 基于 npm run build xxx 来构建应用（模块）

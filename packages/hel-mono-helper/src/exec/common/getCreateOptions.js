@@ -12,6 +12,10 @@ const {
 const { getDirInfoList } = require('../../util/file');
 const { helMonoLog, getMonoRootInfo } = require('../../util');
 
+const modTplAlas = {
+  [MOD_TEMPLATE.lib]: MOD_TEMPLATE.libTs,
+};
+
 function getNameReg(max = 32) {
   return new RegExp(`^[A-Za-z0-9|_|-]{1,${max}}$`);
 }
@@ -24,7 +28,6 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
   const tplsDemoModDirPath = options.tplsDemoModDirPath || HEL_TPL_INNER_DEMO_MOD_DIR;
   const tplsDirPath = isSubMod ? tplsDemoModDirPath : tplsDemoDirPath;
   const copyToBelongTo = isSubMod ? PACKAGES : APPS;
-
   const createKey = isSubMod ? '.create-mod' : '.create';
   const demoModTemplate = isSubMod ? MOD_TEMPLATE.lib : MOD_TEMPLATE.reactApp;
 
@@ -72,7 +75,7 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
         const these = list.map((v) => v.name).join(' ');
         throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${these})`);
       }
-      createOptions.modTemplate = templateValue;
+      createOptions.modTemplate = modTplAlas[templateValue] || templateValue;
     }
 
     // 创建到某个 belongTo 目录
