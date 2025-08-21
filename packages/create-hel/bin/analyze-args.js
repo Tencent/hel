@@ -19,7 +19,8 @@ function logKeyParams(args, argObj) {
  */
 function execHelMonoCmd(helMonoStartCmd) {
   util.logDebug(`See var: helMonoStartCmd ${helMonoStartCmd}`);
-  if (helMonoStartCmd === 'start'
+  if (
+    helMonoStartCmd === 'start'
     || helMonoStartCmd.startsWith('start:')
     || helMonoStartCmd === 'build'
     || helMonoStartCmd.startsWith('build:')
@@ -71,7 +72,7 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   // for hels bin
   if (forHels) {
     // 触发 hels bin 命令，表示全部走 hel-mono 大仓命令
-    const pureArgs = args.filter(v => v !== '-d' && v !== '--debug');
+    const pureArgs = args.filter((v) => v !== '-d' && v !== '--debug');
     return execHelMonoCmd(pureArgs.join(' ') || 'start');
   }
 

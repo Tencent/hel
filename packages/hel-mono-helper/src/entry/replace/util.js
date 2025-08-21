@@ -153,7 +153,7 @@ function jsonObj2Lines(jsonObj, includeFL) {
 
   // 还原 jsonObj 里第一层存在的函数定义属性
   // TODO 接入 acorn 走 ast 分析，目前此方法会将外包的方法实现 { test: sommeTest } 转移到内部
-  const fnKeys = Object.keys(jsonObj).filter(key => typeof jsonObj[key] === 'function');
+  const fnKeys = Object.keys(jsonObj).filter((key) => typeof jsonObj[key] === 'function');
   fnKeys.forEach((key) => {
     const fnStr = jsonObj[key].toString();
     const fnStrList = fnStr.split('\n');

@@ -86,7 +86,7 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
     if (CREATE_SHORT_PARAM_KEY.alias === word) {
       const value = keywords[idx + 1];
       ignoredIdx[idx + 1] = true;
-      const tip = 'Alias must start with @, and only accept 64 length str between 1~9,a~z,A~Z chars for rest part, for example: @mx.'
+      const tip = 'Alias must start with @, and only accept 64 length str between 1~9,a~z,A~Z chars for rest part, for example: @mx.';
       if (!value.startsWith('@')) {
         throw new Error(tip);
       }
@@ -103,7 +103,7 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
     if (CREATE_SHORT_PARAM_KEY.modName === word) {
       const value = keywords[idx + 1];
       const modName = keywords[idx + 1] || '';
-      const tip = '-n value (modName) invalid, valid modName example: @xx-scope/yy or yy'
+      const tip = '-n value (modName) invalid, valid modName example: @xx-scope/yy or yy';
       if (modName) {
         if (modName.includes('/')) {
           const strList = modName.split('/');

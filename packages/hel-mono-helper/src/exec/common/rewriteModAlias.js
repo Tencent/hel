@@ -35,7 +35,6 @@ function rewriteModAliasForLib(createOptions) {
   });
   ret2.write();
 
-
   const ret3 = getFileContentLines(copyToPath, './src/utils/__tests__/index.ts');
   ret3.lines.forEach((line, idx) => {
     if (line.includes('../index')) {
@@ -66,8 +65,8 @@ exports.rewriteModAlias = function rewriteModAlias(createOptions) {
   }
 
   const ret = getFileJson(copyToPath, './tsconfig.json');
-  ret.json.paths = { [`${alias}/*`]: ["./*"] };
-  ret.json.compilerOptions.paths = { [`${alias}/*`]: ["./*"] };
+  ret.json.paths = { [`${alias}/*`]: ['./*'] };
+  ret.json.compilerOptions.paths = { [`${alias}/*`]: ['./*'] };
   ret.write();
 
   if (MOD_TEMPLATE.lib === modTemplate) {

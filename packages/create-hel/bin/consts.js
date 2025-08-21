@@ -1,9 +1,8 @@
-
 const CMD_TYPE = {
-  'init': '.init',
+  init: '.init',
 };
 
-const CMD_TYPE_LIST = Object.keys(CMD_TYPE).map(key => CMD_TYPE[key]);
+const CMD_TYPE_LIST = Object.keys(CMD_TYPE).map((key) => CMD_TYPE[key]);
 
 module.exports = {
   TEMPLATE_REACT_MONO: 'react-mono',

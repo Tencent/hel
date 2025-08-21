@@ -2,7 +2,7 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
 const { getPort } = require('./port');
 
-exports.ensureAppConf = function (/** @type {IDevInfo} */devInfo, /** @type {IMonoAppConf} */conf) {
+exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IMonoAppConf} */ conf) {
   const { alias, ...rest } = conf;
 
   if (!rest.hel) {
@@ -19,4 +19,4 @@ exports.ensureAppConf = function (/** @type {IDevInfo} */devInfo, /** @type {IMo
   }
 
   return rest;
-}
+};

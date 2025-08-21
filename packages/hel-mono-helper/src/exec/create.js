@@ -54,7 +54,7 @@ exports.execCreateStart = function (/** @type {IMonoDevInfo} */ devInfo, options
 };
 
 /**
- * 执行 npm start .create-mod xxx 命令 
+ * 执行 npm start .create-mod xxx 命令
  */
 exports.execCreateMod = function (/** @type {IMonoDevInfo} */ devInfo, options) {
   exports.execCreate(devInfo, { autoStart: false, isSubMod: true, ...(options || {}) });
