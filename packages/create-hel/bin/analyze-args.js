@@ -5,16 +5,6 @@ const { createTemplate } = require('./create-template');
 const util = require('./util');
 
 /**
- * debug 模式才打印关键信息
- */
-function logKeyParams(args, argObj) {
-  util.logDepPath();
-  util.logDebug(`See var: args ${args}`);
-  util.logDebug('See var: argObj', argObj);
-  util.logDebug(`See var: cwd ${process.cwd()}`);
-}
-
-/**
  * 触发 hel-moon 大仓里的命令
  */
 function execHelMonoCmd(helMonoStartCmd) {
@@ -56,7 +46,7 @@ async function tryExecCmd(argObj) {
 exports.analyzeArgs = async function analyzeArgs(forHels) {
   const args = process.argv.slice(2);
   const argObj = util.getArgObject(args);
-  const { isSeeVersion, isSeeHelp, helMonoStartCmd } = argObj;
+  const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
 
   if (isSeeVersion) {
     return console.log(getConfig().cliPkgVersion);
@@ -67,7 +57,14 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   }
 
   util.logCliInfo();
-  logKeyParams(args, argObj);
+
+  if (isViewTplStoreVerByPkgManager) {
+    return util.viewTplStoreVerByPkgManager();
+  }
+
+  if (isBumpTplStore) {
+    return util.bumpTplStore();
+  }
 
   // for hels bin
   if (forHels) {

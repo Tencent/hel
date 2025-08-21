@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
+const shell = require('shelljs');
 const { getConfig } = require('./config');
 const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST } = require('./consts');
 
@@ -88,6 +89,8 @@ function getArgObject(args) {
     projectName: '',
     template: TEMPLATE_REACT_MONO,
     helMonoStartCmd: '',
+    isBumpTplStore: false,
+    isViewTplStoreVerByPkgManager: false,
     isTplRemote: false,
     isSeeHelp: false,
     isDebug: false,
@@ -149,6 +152,8 @@ function getArgObject(args) {
     mayAssignObj(['-d', '--debug'], 'isDebug', i, true);
     mayAssignObj(['-v', '--version'], 'isSeeVersion', i, true);
     mayAssignObj(['-r', '--remote'], 'isTplRemote', i, true);
+    mayAssignObj(['-b', '--bump'], 'isBumpTplStore', i, true);
+    mayAssignObj(['-vs', '--view-store-ver'], 'isViewTplStoreVerByPkgManager', i, true);
     mayAssignObj(['-t', '--template'], 'template', i);
     mayAssignObj(['-u', '--url'], 'customTplUrl', i);
     mayAssignObj(['-s', '--start'], 'helMonoStartCmd', i);
@@ -295,8 +300,52 @@ function logTipLine(str, fixedLen, options) {
   logTip(getInfoLine(str, fixedLen, options));
 }
 
+function getHelMonoTemplatesVerByPath(mayModIndexPath, clearCache) {
+  let modPath = mayModIndexPath;
+  if (modPath.endsWith('/index.js')) {
+    // 去掉末尾的 /index.js
+    modPath = modPath.substring(0, modPath.length - 9);
+  }
+
+  const pkgJsonPath = path.join(modPath, './package.json');
+  if (clearCache) {
+    delete require.cache[mayModIndexPath];
+    delete require.cache[pkgJsonPath];
+  }
+
+  const ver = require(pkgJsonPath).version;
+  return ver;
+}
+
+function getHelMonoTemplatesVer() {
+  const { helMonoTemplates } = getConfig();
+  const { modPath, isSuccess, err } = getDepPathStat(helMonoTemplates);
+  let ver = '';
+  if (isSuccess) {
+    ver = getHelMonoTemplatesVerByPath(modPath);
+  } else {
+    console.error(err);
+  }
+
+  return ver;
+}
+
+/**
+ * debug 模式才打印部分关键信息
+ */
+function logKeyParams(args, argObj) {
+  logDepPath();
+  logDebug(`See var: args ${args}`);
+  logDebug('See var: argObj', argObj);
+  logDebug(`See var: cwd ${process.cwd()}`);
+}
+
 function logCliInfo() {
-  const { cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen } = getConfig();
+  logKeyParams();
+  const {
+    cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen,
+    helMonoTemplates, repoUrlPrefix,
+  } = getConfig();
   const fixedLen = seLine.length - 1;
   const lgLine = (str, color, inputStrLen) => {
     if (!str) {
@@ -312,12 +361,16 @@ function logCliInfo() {
     logTipLine(prefixedStr, fixedLen, { strLen, lastChar: '|' });
   };
 
+  const tplStoreVer = getHelMonoTemplatesVer();
+
   logTip(seLine);
   logTip(emptyLine);
   lgLine(`Cli info: ${cliPkgName}@${cliPkgVersion}`);
   lgLine('Star hel-micro https://github.com/Tencent/hel if you like it ^_^');
   lgLine(`Quick start: ${cliKeyword} <project-name>`);
   lgLine(`Help: ${cliKeyword} -h`);
+  lgLine(`Local templates store: ${helMonoTemplates}@${tplStoreVer}`);
+  lgLine(`Remote templates store prefix: ${repoUrlPrefix}`);
   lgLine(basedOn);
   lgLine(contactAuthor, '#ad4e00', contactAuthorReferLen);
   logTip(emptyLine);
@@ -337,12 +390,17 @@ function logHelpInfo() {
   logTip(`${cliKeyword} <project-name> -u <template-repo-url>\n`);
 }
 
-function getDepPath(name) {
+function getDepPathStat(name) {
   try {
-    return require.resolve(name);
+    return { modPath: require.resolve(name), isSuccess: true, err: '' };
   } catch (err) {
-    return err.message;
+    return { modPath: '', isSuccess: false, err: err.message };
   }
+}
+
+function getDepPath(name) {
+  const { modPath } = getDepPathStat(name);
+  return modPath;
 }
 
 function logDepPath() {
@@ -352,6 +410,32 @@ function logDepPath() {
     logPurple(`See dep path: fs-extra ${getDepPath('fs-extra')}`);
     logPurple(`See dep path: hel-mono-templates ${getDepPath(helMonoTemplates)}`);
   }
+}
+
+function bumpTplStore() {
+  const { pkgManager, helMonoTemplates } = getConfig();
+  const { isSuccess, modPath, err } = getDepPathStat(helMonoTemplates);
+  if (!isSuccess) {
+    return console.error(err);
+  }
+
+  const oldVer = getHelMonoTemplatesVerByPath(modPath);
+  const parentDir = modPath.split(`/${helMonoTemplates}`)[0];
+  logPurple(`Hel cli will bump ${helMonoTemplates} at ${parentDir}`);
+  shell.cd(parentDir);
+
+  const npmCmd = `${pkgManager} install ${helMonoTemplates}@latest`;
+  logPurple(`Bump ${helMonoTemplates} by '${npmCmd}'...`);
+
+  shell.exec(npmCmd);
+  const newVer = getHelMonoTemplatesVerByPath(modPath, true);
+
+  logPurple(`Bump ${helMonoTemplates} from ${oldVer} to ${newVer}`);
+}
+
+function viewTplStoreVerByPkgManager() {
+  const { pkgManager, helMonoTemplates } = getConfig();
+  shell.exec(`${pkgManager} view ${helMonoTemplates}`);
 }
 
 module.exports = {
@@ -373,4 +457,6 @@ module.exports = {
   logHelpInfo,
   logTip,
   logDepPath,
+  bumpTplStore,
+  viewTplStoreVerByPkgManager,
 };

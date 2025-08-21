@@ -1,7 +1,7 @@
 const path = require('path');
 const devUtils = require('hel-dev-utils');
 
-const VER = '0.6.0';
+const VER = '0.6.1';
 
 /** react 应用 hel 胶水代码模板 */
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');

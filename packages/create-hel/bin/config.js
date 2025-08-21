@@ -16,6 +16,7 @@ const templateLocalDirDict = {
 const defaultConfig = {
   cliPkgName,
   cliPkgVersion,
+  pkgManager: 'npm',
   helMonoTemplates: HEL_MONO_TEMPLATES,
   repoUrlDict,
   templateLocalDirDict,
