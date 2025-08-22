@@ -23,7 +23,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
     if (!conf) {
       return;
     }
-    injectedDevInfo.appConfs[name] = ensureAppConf(devInfo, conf);
+    injectedDevInfo.appConfs[name] = ensureAppConf(devInfo, conf, name);
   };
 
   assignConf(realAppPkgName);
