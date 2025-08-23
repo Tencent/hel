@@ -4,8 +4,8 @@
  * hel模块名称配置
  */
 import { monoLog } from 'hel-mono-runtime-helper';
-import { DEV_INFO } from './devInfo';
 import { DEPLOY_ENV } from './deployEnv';
+import { DEV_INFO } from './devInfo';
 
 const { appGroupName, appNames } = DEV_INFO.appConfs['{{APP_PACK_NAME}}'].hel;
 

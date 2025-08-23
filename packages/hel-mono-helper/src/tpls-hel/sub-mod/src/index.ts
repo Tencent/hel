@@ -1,9 +1,8 @@
 import { isMasterApp } from 'hel-iso';
-import { monoLog } from 'hel-mono-runtime-helper';
 import { libReady } from 'hel-lib-proxy';
+import { monoLog } from 'hel-mono-runtime-helper';
 import { APP_GROUP_NAME, APP_NAME } from './configs/subApp';
 import { preFetchHelDeps } from './configs/util';
-
 
 async function main() {
   const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;

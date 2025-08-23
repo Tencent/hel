@@ -1,3 +1,14 @@
+build
+es
+lib
+tmp
+TIMME.md
+package-lock.json
+coverage
+npm-debug.log*
+yarn-debug.log*
+turbo-build.log*
+package.json
 node_modules
 dist
 pnpm-lock.yaml
@@ -8,5 +19,7 @@ fixtures
 *.yaml
 *.less
 .turbo
-./doc/src/components
-./packages/hel-mono-helper/src/tpls-hel
+
+doc/.docusaurus
+doc/src/components
+packages/hel-mono-helper/src/tpls-hel
