@@ -35,7 +35,7 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
 
   // 重写根目录的dev-info
   rewriteRootDevInfo(devInfo, createOptions);
-  // 重新模块别名
+  // 重写模块别名
   rewriteModAlias(createOptions);
   // 重写应用的 package.json
   rewritePkgJson(createOptions, options);
