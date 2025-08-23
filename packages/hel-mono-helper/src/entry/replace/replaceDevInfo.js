@@ -40,8 +40,8 @@ module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /**
   const devInfoFile = isSubMod ? path.join(helDirPath, './configs/devInfo.ts') : path.join(helDirPath, './devInfo.ts');
   helMonoLog(`replace content of ${devInfoFile}`);
 
-  const realAppPackjson = getPkgJson(realAppPkgJsonPath);
-  const deps = realAppPackjson.dependencies || {};
+  const realAppPkgJson = getPkgJson(realAppPkgJsonPath);
+  const deps = realAppPkgJson.dependencies || {};
   const injectedDevInfo = getInjectedDevInfo(deps, appData, devInfo);
 
   rewriteFileLine(devInfoFile, (line) => {

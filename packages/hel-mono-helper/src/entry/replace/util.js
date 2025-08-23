@@ -2,15 +2,32 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+function noop() { }
+
 /**
  * 去多余的空格：'a   b c d' --> 'a b c d'
  */
-function formatBlank(str) {
+function compactBlank(str) {
   const formatted = str
     .split(' ')
     .filter((v) => v !== '')
     .join(' ');
   return formatted;
+}
+
+function delBlank(str) {
+  const formatted = str
+    .split(' ')
+    .filter((v) => v !== '')
+    .join('');
+  return formatted;
+}
+
+function ensureTailComma(str) {
+  if (!str.endsWith(',')) {
+    return `${str},`;
+  }
+  return str;
 }
 
 /** 处理单行的导出语句，得到模块名称数组 */
@@ -25,7 +42,7 @@ function getModuleNames(oneLineExport) {
     if (!trimedV.includes(' as ')) {
       modNames.push(trimedV);
     } else {
-      const formated = formatBlank(trimedV);
+      const formated = compactBlank(trimedV);
       modNames.push(formated.split(' as ')[1]);
     }
   });
@@ -75,7 +92,7 @@ function genExportModuleNames(filePath) {
     if (trimed.startsWith('//') || trimed.startsWith('/**') || trimed.startsWith('*') || trimed.startsWith('*/')) {
       return;
     }
-    const pured = formatBlank(trimed);
+    const pured = compactBlank(trimed);
     if (!pured.startsWith('export ') || pured.startsWith('export type')) {
       return;
     }
@@ -119,13 +136,29 @@ function genExportModuleNames(filePath) {
 /**
  * json 对象转为行数据
  */
-function jsonObj2Lines(jsonObj, includeFL) {
+function jsonObj2Lines(jsonObj, options) {
+  const { includeFL, handleLine = noop } = options;
   const targetLines = [];
   // 这一步 stringify 会导致 jsonObj 函数属性丢失，下面有逻辑还原第一层属性对应函数
   const str = JSON.stringify(jsonObj, null, 2);
   const lines = str.split('\n');
   const firstLineIdx = 0;
   const lastLineIdx = lines.length - 1;
+
+  let isArrLineHandling = false;
+  let isArrPartial = false;
+  let arrStartLine = '';
+  let arrStartLineIdx = 0;
+  let arrEndLineIdx = 0;
+
+  const pushToLines = (line, idx) => {
+    const isArrStartLine = arrStartLineIdx === idx;
+    const isArrEndLine = arrEndLineIdx === idx;
+    const params = { line, isArrPartial, arrStartLine, isArrStartLine, isArrEndLine };
+    const handledLine = handleLine(params) || line;
+    targetLines.push(handledLine);
+  };
+
   lines.forEach((str, idx) => {
     // includeFL=true，表示包含首行、尾行
     if (!includeFL && [firstLineIdx, lastLineIdx].includes(idx)) {
@@ -136,39 +169,65 @@ function jsonObj2Lines(jsonObj, includeFL) {
     const trimed = line.trim();
     // 处理注释
     if (trimed.startsWith('//') || trimed.startsWith('/*')) {
-      targetLines.push(line);
+      pushToLines(line, idx);
       return;
     }
 
-    if (line.includes(':')) {
-      const segs = line.split(':');
-      let [left, right] = segs;
-      // 谨防右侧值里本身就含有冒号，例如："devHostname": "http://localhost"
-      if (segs.length > 2) {
-        right = segs.slice(1).join(':');
+    // 是数组键值对
+    const noBlankLine = delBlank(line);
+    if (noBlankLine.includes(':[')) {
+      isArrLineHandling = true;
+      isArrPartial = true;
+      arrStartLine = line;
+      arrStartLineIdx = idx;
+      if (noBlankLine.includes(']')) {
+        arrEndLineIdx = idx;
+        isArrLineHandling = false;
+      }
+      pushToLines(line, idx);
+      return;
+    }
+
+    // 是数组键值对的独立结束行
+    if (noBlankLine.includes(']') && isArrLineHandling) {
+      arrEndLineIdx = idx;
+      isArrLineHandling = false;
+      pushToLines(line, idx);
+      return;
+    }
+
+    if (!isArrLineHandling) {
+      isArrPartial = false;
+      if (line.includes(':')) {
+        const segs = line.split(':');
+        let [left, right] = segs;
+        // 谨防右侧值里本身就含有冒号，例如："devHostname": "http://localhost"
+        if (segs.length > 2) {
+          right = segs.slice(1).join(':');
+        }
+
+        const leftChars = left.split('');
+        if (leftChars.some((v) => ['/', '@', '-', '_'].includes(v))) {
+          left = left.replaceAll('"', "'");
+        } else {
+          left = left.replaceAll('"', '');
+        }
+        right = right.replaceAll('"', "'");
+        line = `${left}:${right}`;
+
+        // 确保键值对都有尾逗号
+        if (!line.endsWith(',') && !line.endsWith('{')) {
+          line = `${line},`;
+        }
       }
 
-      const leftChars = left.split('');
-      if (leftChars.some((v) => ['/', '@', '-', '_'].includes(v))) {
-        left = left.replaceAll('"', "'");
-      } else {
-        left = left.replaceAll('"', '');
-      }
-      right = right.replaceAll('"', "'");
-      line = `${left}:${right}`;
-
-      // 确保键值对都有尾逗号
-      if (!line.endsWith(',') && !line.endsWith('{')) {
+      // 确保 } 右侧有尾逗号
+      if (line.endsWith('}')) {
         line = `${line},`;
       }
     }
 
-    // 确保 } 右侧有尾逗号
-    if (line.endsWith('}')) {
-      line = `${line},`;
-    }
-
-    targetLines.push(line);
+    pushToLines(line, idx);
   });
 
   // 还原 jsonObj 里第一层存在的函数定义属性
@@ -180,10 +239,8 @@ function jsonObj2Lines(jsonObj, includeFL) {
     fnStrList.forEach((line, idx) => {
       if (idx === 0) {
         const compactLine = line.replaceAll(' ', '');
-        console.log('compactLine', compactLine);
         if (compactLine.startsWith('()=>')) {
           // 形如 b: ()=>{...} 的箭头函数
-          console.log('push', `  ${key}: ${line}`);
           targetLines.push(`  ${key}: ${line}`);
           return;
         }
@@ -224,4 +281,5 @@ module.exports = {
   genExportModuleNames,
   getModEntryFilePath,
   jsonObj2Lines,
+  ensureTailComma,
 };

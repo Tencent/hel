@@ -2,7 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
-const { getDevInfoDirs, intersection, getPkgJson } = require('./base');
+const { intersection, getPkgJson } = require('./base');
+const { getDevInfoDirs } = require('./dev-info');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 const { getMonoRootInfo } = require('./root-info');
 const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./mono-path');

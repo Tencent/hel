@@ -42,12 +42,10 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
   };
 
   const ignoredIdx = {};
-  console.log(keywords);
   keywords.forEach((word, idx) => {
     if (ignoredIdx[idx]) {
       return;
     }
-    console.log(idx, ignoredIdx);
 
     if (idx === 0) {
       // TODO 优化为正则，只允许字母 a~z 开头的目录名
@@ -94,8 +92,6 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
         throw new Error(tip);
       }
       const restValue = value.substring(1);
-      console.log('value', value);
-      console.log('restValue', restValue);
       if (!getNameReg(64).test(restValue)) {
         throw new Error(tip);
       }

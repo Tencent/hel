@@ -1,5 +1,6 @@
 const fs = require('fs');
-const { getDirName, getDevInfoDirs } = require('./base');
+const { getDirName } = require('./base');
+const { getDevInfoDirs } = require('./dev-info');
 const { getMonoNameMap } = require('./mono-name');
 const { getMonoAppPkgJson } = require('./mono-pkg');
 const { getMonoRootInfo } = require('./root-info');

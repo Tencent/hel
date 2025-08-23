@@ -1,6 +1,7 @@
 const path = require('path');
-const { getCWD, getDevInfoDirs, getPkgJson } = require('./base');
+const { getCWD, getPkgJson } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
+const { getDevInfoDirs } = require('./dev-info');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./root-info');
 const { getPort } = require('./port');
@@ -32,12 +33,12 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   const root = isForRootHelDir ? monoRootHelDir : monoRoot;
   const belongToDirPath = path.join(root, `./${belongTo}`);
   const appDirPath = path.join(belongToDirPath, `./${appDir}`);
-  const appPackjsonPath = path.join(appDirPath, './package.json');
+  const appPkgJsonPath = path.join(appDirPath, './package.json');
   const appSrcDirPath = path.join(appDirPath, './src');
   const helDirPath = isForRootHelDir ? appSrcDirPath : path.join(appSrcDirPath, `./${HEL_DIR_NAME}`);
   let appPkgName = '';
   try {
-    const appPkgJson = getPkgJson(appPackjsonPath);
+    const appPkgJson = getPkgJson(appPkgJsonPath);
     appPkgName = appPkgJson.name;
   } catch (err) {
     // assign appPkgName later

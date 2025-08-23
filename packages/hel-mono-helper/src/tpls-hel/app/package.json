@@ -2,7 +2,7 @@
   "name": "proxy-app-name",
   "version": "0.0.1",
   "private": true,
-  "main": "./src/index.ts",
+  "main": "./src/index",
   "scripts": {
     "build": "node ../../../dev/scripts/hel/build.js",
     "start": "node ../../../dev/scripts/hel/start.js"

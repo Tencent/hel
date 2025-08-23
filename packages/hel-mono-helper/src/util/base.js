@@ -25,12 +25,6 @@ exports.getCWDIsForRootHelDir = function () {
   return strList.includes(rootHelAppSeg) || strList.includes(rootHelSubModSeg);
 };
 
-exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {
-  const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
-  const belongToDirs = appsDirs.concat(subModDirs);
-  return { appsDirs, subModDirs, belongToDirs };
-};
-
 /**
  * 通过package.json 文件路径获取其文件内容，返回 json 对象
  */
@@ -43,12 +37,6 @@ exports.getPkgJson = function (pkgFilePath) {
 exports.getDirName = function (appSrc) {
   const strList = appSrc.split('/');
   return strList[strList.length - 2];
-};
-
-exports.getDevInfoDirs = function (/** @type {IMonoDevInfo} */ devInfo) {
-  const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
-  const belongToDirs = appsDirs.concat(subModDirs);
-  return { appsDirs, subModDirs, belongToDirs };
 };
 
 /** 求两个数组的交集 */

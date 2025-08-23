@@ -11,6 +11,16 @@ type BelongToDir = string;
 
 type DepsObj = Record<PkgName, PkgVer>;
 
+export interface ICreateModOptions {
+  modTemplate: string;
+  modName: string;
+  copyToBelongTo: string;
+  copyToDir: string;
+  alias: string;
+  copyFromPath: string;
+  copyToPath: string;
+}
+
 export interface IMonoRootInfo {
   monoRoot: string;
   monoRootHelDir: string;

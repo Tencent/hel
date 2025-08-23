@@ -22,7 +22,7 @@ const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(__dirname, './tpls-demo-mod');
  */
 const FORBIDDEN_DIR_NAMES = ['test'];
 
-const ACTION_NAMES = {
+const ACTION_NAME = {
   build: 'build',
   start: 'start',
 };
@@ -101,7 +101,7 @@ module.exports = {
   MOD_TEMPLATE,
   INNER_ACTION,
   INNER_ACTION_NAMES,
-  ACTION_NAMES,
+  ACTION_NAME,
   START_CMD_MODES,
   FORBIDDEN_DIR_NAMES,
   CREATE_SHORT_PARAM_KEY,

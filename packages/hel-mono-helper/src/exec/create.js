@@ -38,7 +38,7 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
   // 重新模块别名
   rewriteModAlias(createOptions);
   // 重写应用的 package.json
-  rewritePkgJson(createOptions);
+  rewritePkgJson(createOptions, options);
   // 安装依赖
   helMonoLog('pnpm install start...');
   shell.exec('pnpm install');

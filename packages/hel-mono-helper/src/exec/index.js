@@ -1,4 +1,4 @@
-const { INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
+const { ACTION_NAME, INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
 const { execAppAction } = require('./app');
 const { startHelDeps } = require('./helDeps');
@@ -71,14 +71,14 @@ function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} *
  * 基于 npm start xxx 来启动或构建宿主
  */
 exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
-  execCmdByActionName(devInfo, { appAction: 'start', ...(options || {}) });
+  execCmdByActionName(devInfo, { appAction: ACTION_NAME.start, ...(options || {}) });
 };
 
 /**
  * 基于 npm build xxx 构建应用
  */
 exports.executeBuild = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
-  execCmdByActionName(devInfo, { appAction: 'build' });
+  execCmdByActionName(devInfo, { appAction: ACTION_NAME.build });
 };
 
 /**
