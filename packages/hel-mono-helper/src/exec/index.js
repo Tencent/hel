@@ -56,7 +56,7 @@ function tryRecordKeywordForLog() {
     return;
   }
   const last2Str = lastNItem(argv, 2);
-  setCurKeyword(last2Str)
+  setCurKeyword(last2Str);
 }
 
 function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {

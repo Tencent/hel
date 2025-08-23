@@ -1,4 +1,3 @@
-
 function lastItem(list) {
   return list[list.length - 1];
 }
