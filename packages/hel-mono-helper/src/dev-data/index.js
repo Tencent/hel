@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
-const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
+const { getAppAlias, inferConfAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
 const { getMonoNameMap } = require('../util/mono-name');
 const { getLogTimeLine } = require('../util/time');
@@ -113,7 +113,8 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       if (!appConf) {
         return;
       }
-      const { alias } = appConf;
+
+      const alias = inferConfAlias(subModSrcPath, appConf, pkgName);
       if (alias) {
         appAlias[alias] = subModSrcPath;
         pureAlias[alias] = subModSrcPath;

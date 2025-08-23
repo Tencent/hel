@@ -1,5 +1,5 @@
 const path = require('path');
-const { getCWD, getPkgJson } = require('./base');
+const { getCWD, getFileJson } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
 const { getDevInfoDirs } = require('./dev-info');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
@@ -38,7 +38,7 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   const helDirPath = isForRootHelDir ? appSrcDirPath : path.join(appSrcDirPath, `./${HEL_DIR_NAME}`);
   let appPkgName = '';
   try {
-    const appPkgJson = getPkgJson(appPkgJsonPath);
+    const appPkgJson = getFileJson(appPkgJsonPath);
     appPkgName = appPkgJson.name;
   } catch (err) {
     // assign appPkgName later
@@ -47,7 +47,7 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   const realAppDirPath = path.join(monoRoot, `./${belongTo}/${appDir}`);
   const realAppSrcDirPath = path.join(realAppDirPath, './src');
   const realAppPkgJsonPath = path.join(realAppDirPath, './package.json');
-  const realAppPkgJson = getPkgJson(realAppPkgJsonPath);
+  const realAppPkgJson = getFileJson(realAppPkgJsonPath);
   const realAppPkgName = realAppPkgJson.name;
 
   const defaultDevHostName = devInfo.devHostname || HOST_NAME;

@@ -1,4 +1,4 @@
-const { getPkgJson } = require('./base');
+const { getFileJson } = require('./base');
 const { getMonoDirOrFilePath } = require('./mono-path');
 
 /**
@@ -6,6 +6,6 @@ const { getMonoDirOrFilePath } = require('./mono-path');
  */
 exports.getMonoAppPkgJson = function (dirName, belongTo) {
   const filepath = getMonoDirOrFilePath(`./${belongTo}/${dirName}/package.json`);
-  const json = getPkgJson(filepath);
+  const json = getFileJson(filepath);
   return json;
 };

@@ -1,4 +1,4 @@
-const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getPkgJson, getAppAlias, ensureSlash } = require('./base');
+const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, getAppAlias, ensureSlash, inferConfAlias } = require('./base');
 const { getMonoAppDepData } = require('./dep-data');
 const { getCmdKeywordName, getCmdKeywords, setCurKeyword } = require('./keyword');
 const { getMonoNameMap, getBuildDirPath } = require('./mono-name');
@@ -18,6 +18,7 @@ module.exports = {
   clearMonoLog,
   ensureSlash,
   getAppAlias,
+  inferConfAlias,
   getBuildDirPath,
   getCmdKeywordName,
   getCmdKeywords,
@@ -33,7 +34,7 @@ module.exports = {
   getMonoSubModSrc,
   getMonoAppPkgJson,
   getUnderDirSubPath,
-  getPkgJson,
+  getFileJson,
   getPort,
   getMonoNameMap,
   getMonoAppDepData,

@@ -136,7 +136,7 @@ function genExportModuleNames(filePath) {
 /**
  * json 对象转为行数据
  */
-function jsonObj2Lines(jsonObj, options) {
+function jsonObj2Lines(jsonObj, options = {}) {
   const { includeFL, handleLine = noop } = options;
   const targetLines = [];
   // 这一步 stringify 会导致 jsonObj 函数属性丢失，下面有逻辑还原第一层属性对应函数
