@@ -3,9 +3,10 @@ const os = require('os');
 const fs = require('fs');
 const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
+const { lastItem, lastNItem } = require('./arr');
 const { getCurKeyword } = require('./keyword');
 const { getMonoRootInfo } = require('./root-info');
-const { getLogTimeLine } = require('./time');
+const { getLogTimeLine, getLocaleTime } = require('./time');
 
 /** @type {import('../types').ICWDAppData} 正在运行中应用数据 */
 let curAppData = null;
@@ -26,6 +27,7 @@ exports.setCurAppData = function (data) {
 function getLogFilePath(isTmp) {
   const { monoRootHelLog, monoRootHelDir } = getMonoRootInfo();
   const curKeyword = getCurKeyword();
+
   const getLogPath = (logName) => {
     const cachedPath = cachedPaths[logName];
     if (cachedPath) {
@@ -51,6 +53,20 @@ function getLogFilePath(isTmp) {
   }
   if (curAppData) {
     return getLogPath(curAppData.appDir);
+  }
+
+  // 触发 [.../bin/node, .../root-scripts/executeStart, xx:hel]
+  const argv = process.argv;
+  const last1Str = lastNItem(argv);
+  const last2Str = lastNItem(argv, 2);
+  if (last2Str.includes('/executeStart')) {
+    const [dirOrPkgName] = last1Str.split(':');
+    return getLogPath(dirOrPkgName);
+  }
+
+  const dirName = lastItem(process.cwd().split(path.sep));
+  if (dirName) {
+    return getLogPath(dirName);
   }
 
   return monoRootHelLog;

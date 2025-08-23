@@ -2,8 +2,22 @@ const { DEFAULT_HUB } = require('../consts');
 
 let curKeyword = '';
 
-exports.setCurKeyword = function (keyword) {
+/**
+ * 记录 keyword，辅助日志路径定位
+ */
+exports.setCurKeyword = function (keyword, shouldPure = true) {
+  if (keyword.startsWith('.')) {
+    return false;
+  }
+
+  if (shouldPure) {
+    const [dirOrPkgName] = keyword.split(':');
+    curKeyword = dirOrPkgName;
+    return true;
+  }
+
   curKeyword = keyword;
+  return true;
 };
 
 exports.getCurKeyword = function () {

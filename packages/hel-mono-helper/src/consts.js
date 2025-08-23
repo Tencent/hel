@@ -118,6 +118,10 @@ module.exports = {
    */
   PACKAGES: 'packages',
   /**
+   * 默认放置 apps 公共依赖的第二个目录名
+   */
+  PKGS: 'pkgs',
+  /**
    * 当应用以 hel 模式启动时，app/src 下 hel 的目录名称
    */
   HEL_DIR_NAME: '.hel',

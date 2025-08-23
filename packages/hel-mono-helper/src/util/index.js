@@ -1,8 +1,9 @@
 const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, getAppAlias, ensureSlash, inferConfAlias } = require('./base');
 const { getMonoAppDepData } = require('./dep-data');
+const { getDevInfoDirs } = require('./dev-info');
 const { getCmdKeywordName, getCmdKeywords, setCurKeyword } = require('./keyword');
 const { getMonoNameMap, getBuildDirPath } = require('./mono-name');
-const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath, getDevInfoDirs } = require('./mono-path');
+const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath } = require('./mono-path');
 const { getMonoAppPkgJson } = require('./mono-pkg');
 const { getNameData } = require('./name-data');
 const { isHelStart, isHelMicroMode, isHelMode, isHelAllBuild } = require('./is');

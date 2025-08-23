@@ -79,6 +79,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
 }
 
 function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir) {
+  util.clearMonoLog();
   const pkgOrDirVar = pkgOrDir || util.getCWDPkgDir();
   const isForRootHelDir = util.getCWDIsForRootHelDir();
   const nameData = util.getNameData(pkgOrDirVar, devInfo);

@@ -1,6 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
-const { APPS, PACKAGES } = require('../consts');
+const { APPS, PACKAGES, PKGS } = require('../consts');
 const { getPort } = require('./port');
 
 exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IMonoAppConf} */ conf, name) {
@@ -23,7 +23,7 @@ exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IM
 };
 
 exports.getDevInfoDirs = function (/** @type {IDevInfo} */ devInfo) {
-  const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
+  const { appsDirs = [APPS], subModDirs = [PACKAGES, PKGS] } = devInfo;
   const belongToDirs = appsDirs.concat(subModDirs);
   return { appsDirs, subModDirs, belongToDirs };
 };

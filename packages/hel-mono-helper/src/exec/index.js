@@ -1,5 +1,6 @@
 const { ACTION_NAME, INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, setCurKeyword, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
+const { lastNItem } = require('../util/arr');
 const { execAppAction } = require('./app');
 const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');
@@ -48,14 +49,24 @@ function tryExecInnerAction(actionName, devInfo, options) {
   process.exit(1);
 }
 
+function tryRecordKeywordForLog() {
+  const argv = process.argv;
+  const last1Str = lastNItem(argv);
+  if (setCurKeyword(last1Str)) {
+    return;
+  }
+  const last2Str = lastNItem(argv, 2);
+  setCurKeyword(last2Str)
+}
+
 function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
+  tryRecordKeywordForLog();
   const { appAction, innerAction } = options;
   const cwd = getCWD();
   const rawKeywordName = getCmdKeywordName();
-  setCurKeyword(rawKeywordName);
   clearMonoLog();
   clearMonoLog(true, true);
-  helMonoLog(`cwd ${cwd}, rawKeywordName ${rawKeywordName}`);
+  helMonoLog(`execCmdByActionName ${appAction}: cwd ${cwd}, rawKeywordName ${rawKeywordName}`);
 
   const innerActionVar = innerAction || rawKeywordName || '';
   // 尝试执行内部预设的动作函数
