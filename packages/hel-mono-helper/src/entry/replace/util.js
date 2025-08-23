@@ -6,11 +6,11 @@ const os = require('os');
  * 去多余的空格：'a   b c d' --> 'a b c d'
  */
 function formatBlank(str) {
-  const formated = str
+  const formatted = str
     .split(' ')
     .filter((v) => v !== '')
     .join(' ');
-  return formated;
+  return formatted;
 }
 
 /** 处理单行的导出语句，得到模块名称数组 */
@@ -34,12 +34,12 @@ function getModuleNames(oneLineExport) {
 
 /** 获取格式为一行导出所有模块的语句 */
 function getOneLineExportStatement(strList, options) {
-  const { ingreIdx, statmentStart, idx, lastIdx } = options;
+  const { ignoreIdx, statementStart, idx, lastIdx } = options;
   let endIdx = idx;
-  if (!statmentStart.includes('}')) {
+  if (!statementStart.includes('}')) {
     let cursorIdx = idx + 1;
     while (cursorIdx <= lastIdx) {
-      ingreIdx[cursorIdx] = true;
+      ignoreIdx[cursorIdx] = true;
       if ((strList[cursorIdx] || '').includes('}')) {
         endIdx = cursorIdx;
         break;
@@ -48,7 +48,7 @@ function getOneLineExportStatement(strList, options) {
     }
   }
 
-  let oneLineExport = statmentStart;
+  let oneLineExport = statementStart;
   if (endIdx > idx) {
     // 导出语句不在一行内结束时，凑为一行
     for (let i = idx + 1; i <= endIdx; i++) {
@@ -64,11 +64,11 @@ function genExportModuleNames(filePath) {
   const content = res.toString();
   const strList = content.split(os.EOL);
   const lastIdx = strList.length - 1;
-  const ingreIdx = {};
+  const ignoreIdx = {};
   let modNames = [];
 
   strList.forEach((statement, idx) => {
-    if (ingreIdx[idx]) {
+    if (ignoreIdx[idx]) {
       return;
     }
     const trimed = statement.trim();
@@ -86,8 +86,28 @@ function genExportModuleNames(filePath) {
       return;
     }
 
+    if (pured.startsWith('export const')) {
+      const restStr = pured.split('export const')[1];
+      const [left] = restStr.split('=');
+      modNames.push(left.trim());
+    }
+
+    if (pured.startsWith('export function')) {
+      const restStr = pured.split('export function')[1];
+      // 可能带泛型符号，这里判断一下
+      const seg = restStr.includes('<') ? '<' : '(';
+      const [left] = restStr.split(seg);
+      modNames.push(left.trim());
+    }
+
+    if (pured.startsWith('export enum')) {
+      const restStr = pured.split('export enum')[1];
+      const [left] = restStr.split('{');
+      modNames.push(left.trim());
+    }
+
     if (pured.startsWith('export {')) {
-      const oneLineExportStatement = getOneLineExportStatement(strList, { ingreIdx, statmentStart: pured, idx, lastIdx });
+      const oneLineExportStatement = getOneLineExportStatement(strList, { ignoreIdx, statementStart: pured, idx, lastIdx });
       const oneLineModNames = getModuleNames(oneLineExportStatement);
       modNames = modNames.concat(oneLineModNames);
     }
