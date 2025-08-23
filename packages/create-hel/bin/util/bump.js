@@ -1,4 +1,8 @@
+const shell = require('shelljs');
 const { getConfig } = require('../config');
+const { getDepPathStat } = require('./dep');
+const { logPurple } = require('./log');
+const { getHelMonoTemplatesVerByPath } = require('./tpl');
 
 function bumpTplStore() {
   const { pkgManager, helMonoTemplates } = getConfig();

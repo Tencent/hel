@@ -4,7 +4,7 @@ const path = require('path');
 const shell = require('shelljs');
 const { getConfig } = require('../config');
 const { getDepPathStat } = require('./dep');
-const { logDebug } = require('./log');
+const { logDebug, logTip } = require('./log');
 
 /**
  * 推导 hel-mono-templates 包位置，如不存在则尝试安装
@@ -16,7 +16,7 @@ function ensureHelMonoTemplates() {
    * 1 /Users/soul/.npm/_npx/ace083ee75254b22/node_modules/chalk/source/index.js
    * 2 /Users/soul/.npm/_npx/32399/lib/node_modules/create-hel-mono/node_modules/chalk/source/index.js
    */
-  const createHelMonoPkgPath = path.join(__dirname, '../');
+  const createHelMonoPkgPath = path.join(__dirname, '../../');
 
   let nodeModulesPath = path.join(createHelMonoPkgPath, './node_modules');
   if (!fs.existsSync(nodeModulesPath)) {
@@ -29,7 +29,7 @@ function ensureHelMonoTemplates() {
   }
 
   if (!fs.existsSync(helMonoTemplatesPkgPath)) {
-    logTip(`First time to use create-hel-mono, try install inner templates to local`);
+    logTip(`First time to use create-hel, try install preset templates to local disk`);
     logDebug(`Execute cmd: cd ${createHelMonoPkgPath}`);
     execSync(`cd ${createHelMonoPkgPath}`);
 
@@ -49,7 +49,6 @@ function ensureHelMonoTemplates() {
     logDebug(`Execute cmd: ${npmKey} install`);
     execSync(`${npmKey} install ${helMonoTemplates}`);
   } else {
-    // TODO 支持 hel-mono --update 来更新模板
     logDebug(`Reuse template store ${helMonoTemplatesPkgPath}`);
   }
 
@@ -95,4 +94,5 @@ module.exports = {
   ensureHelMonoTemplates,
   getHelMonoTemplatesVer,
   viewTplStoreVerByPkgManager,
+  getHelMonoTemplatesVerByPath,
 };

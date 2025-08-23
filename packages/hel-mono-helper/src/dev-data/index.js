@@ -3,7 +3,7 @@ const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const { getAppAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
-const { isHelMicroMode, isHelStart, isHelAllBuild } = require('../util/is');
+const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
 const { getMonoNameMap } = require('../util/mono-name');
 const { getLogTimeLine } = require('../util/time');
 
@@ -159,12 +159,15 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform });
   const appSrcIndex = getAppSrcIndex(appData);
   let appPublicUrl = `${appData.appPublicUrl}/`;
-  const isHelModeVar = isHelMicroMode();
+  const isHelModeVar = isHelMode();
   if (isHelModeVar) {
     appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);
-  }
-  if (appInfo.homePage !== appPublicUrl) {
-    appInfo.homePage = appPublicUrl;
+    if (appInfo.homePage !== appPublicUrl) {
+      appInfo.homePage = appPublicUrl;
+    }
+  } else {
+    // 非 hel 脚本触发，以 appInfo.homePage 为准
+    appPublicUrl = appInfo.homePage;
   }
 
   helMonoLog('isHelMode ', isHelModeVar);

@@ -3,7 +3,34 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 const util = require('./util');
+const { TEMPLATE_REACT_MONO } = require('./consts');
 const { getConfig } = require('./config');
+
+const fixFilesDirPath = path.join(__dirname, './fix-files');
+const gitIgnoreFileTpl = path.join(fixFilesDirPath, './gitignore.txt');
+const npmIgnoreFileTpl = path.join(fixFilesDirPath, './npmignore.txt');
+const npmRCFileTpl = path.join(fixFilesDirPath, './npmrc.txt');
+const npmRCTnpmFileTpl = path.join(fixFilesDirPath, './npmrc-tnpm.txt');
+
+function ensureFiles(dirPath, template) {
+  const { pkgManager } = getConfig();
+  if (template === TEMPLATE_REACT_MONO) {
+    const gitIgnoreFile = path.join(dirPath, './.gitignore');
+    const npmIgnoreFile = path.join(dirPath, './.npmignore');
+    const npmRcFile = path.join(dirPath, './.npmrc');
+    const npmRcFileTplVar = pkgManager === 'tnpm' ? npmRCTnpmFileTpl : npmRCFileTpl;
+
+    if (!fs.existsSync(gitIgnoreFile)) {
+      fs.writeFileSync(gitIgnoreFile, fs.readFileSync(gitIgnoreFileTpl));
+    }
+    if (!fs.existsSync(npmIgnoreFile)) {
+      fs.writeFileSync(npmIgnoreFile, fs.readFileSync(npmIgnoreFileTpl));
+    }
+    if (!fs.existsSync(npmRcFile)) {
+      fs.writeFileSync(npmRcFile, fs.readFileSync(npmRcFileTplVar));
+    }
+  }
+}
 
 /**
  * 通过url拉取远端模板代码
@@ -61,19 +88,9 @@ exports.fetchLocalTemplate = async function (/** @type IArgObj */ argObj, dirPat
     await fs.copy(templateDir, dirPath);
     // 修改根 package.json
     await util.modifyPkgInfo({ projectName, dirPath });
-    // 递归处理 packages 下所有 package.json
-    const packagesDir = path.join(dirPath, 'packages');
-    if (fs.existsSync(packagesDir)) {
-      const subDirs = await fs.readdir(packagesDir);
-      for (const sub of subDirs) {
-        const subPkgPath = path.join(packagesDir, sub, 'package.json');
-        if (fs.existsSync(subPkgPath)) {
-          const subPkg = await fs.readJson(subPkgPath);
-          // 只保留原有 name 字段或可加前缀
-          await fs.writeJson(subPkgPath, subPkg, { spaces: 2 });
-        }
-      }
-    }
+    // 补齐一些缺失的文件
+    ensureFiles(dirPath, template);
+
     util.logCreateSuccess({ projectName, dirPath, template });
   } catch (e) {
     util.logError(`Pulling local template error: ${e.message}`);

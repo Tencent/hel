@@ -51,8 +51,8 @@ exports.rewriteRootDevInfo = function rewriteRootDevInfo(/** @type {IMonoDevInfo
   });
 
   const mod = require(devInfoPath);
-  const { targetDirName } = createOptions;
-  mod.appConfs[targetDirName] = {
+  const { modName } = createOptions;
+  mod.appConfs[modName] = {
     port: getPort(devInfo),
   };
 

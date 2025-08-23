@@ -60,6 +60,9 @@ export interface IMonoAppConf extends IMonoAppBaseConf {
   alias?: string;
 }
 
+/**
+ * 大仓应用（模块）的配置，key：应用（模块）在大仓里的包名，value：对应的配置对象
+ */
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
 /**

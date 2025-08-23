@@ -1,0 +1,5 @@
+# 阿里npm镜像
+# registry=https://registry.npmmirror.com
+
+# 官方npm库
+registry=https://registry.npmjs.org
