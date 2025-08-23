@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-function noop() { }
+function noop() {}
 
 /**
  * 去多余的空格：'a   b c d' --> 'a b c d'

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.rewritePkgJson = function rewritePkgJson(/** @type {ICreateModOptions} */createOptions, userOptions) {
+exports.rewritePkgJson = function rewritePkgJson(/** @type {ICreateModOptions} */ createOptions, userOptions) {
   const { copyToPath, modName } = createOptions;
   // 重写应用的 package.json
   const pkgJsonFile = path.join(copyToPath, './package.json');

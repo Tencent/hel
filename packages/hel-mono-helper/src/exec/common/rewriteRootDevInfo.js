@@ -72,12 +72,12 @@ exports.rewriteRootDevInfo = function rewriteRootDevInfo(/** @type {IMonoDevInfo
         return line.replaceAll('"', '');
       }
       if (!isArrStartLine && !isArrEndLine) {
-        return ensureTailComma(line.replaceAll('"', '\''));
+        return ensureTailComma(line.replaceAll('"', "'"));
       }
 
       if (isArrStartLine && isArrEndLine) {
         let [left, right] = line.split(':');
-        return `${left.replaceAll('"', '')}:${right.replaceAll('"', '\'')}`;
+        return `${left.replaceAll('"', '')}:${right.replaceAll('"', "'")}`;
       }
     },
   });
