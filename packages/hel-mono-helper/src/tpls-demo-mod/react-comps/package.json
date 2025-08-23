@@ -1,36 +1,55 @@
 {
   "name": "mono-comps",
   "version": "0.1.0",
+  "description": "hel-mono demo react lib",
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
     "./index.css": "./dist/index.css",
     "./hel": {
-      "types": "./src/.hel/entrance/libTypes.ts",
-      "import": "./src/.hel/entrance/libTypes.ts"
+      "types": "./src/.hel/entrance/libTypes.ts"
     }
   },
-  "main": "./src/index",
-  "files": [
-    "dist",
-    "hel_dist",
-    "src",
-    "README.md",
-    "tsconfig.json"
-  ],
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js"
+      },
+      "./index.css": "./dist/index.css",
+      "./hel": {
+        "types": "./src/.hel/entrance/libTypes.ts"
+      }
+    }
+  },
+  "hel": {},
+  "dependencies": {},
+  "devDependencies": {
+    "esbuild-plugin-module-css": "^0.1.1",
+    "hash-css-selector": "^1.1.0",
+    "postcss": "^8.4.4",
+    "postcss-modules": "^6.0.1"
+  },
   "scripts": {
-    "build": "pnpm run build:npm",
-    "build:hel": "node ../../dev/scripts/hel/build.js",
-    "build:npm": "tsup",
     "start": "node ../../dev/scripts/start.js",
     "start:deps": "node ../../dev/scripts/hel/startDeps.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "start:hwl": "node ../../dev/scripts/hel/startWL.js",
     "start:hwr": "node ../../dev/scripts/hel/startWR.js",
-    "start:test": "pnpm run test",
-    "start:test:once": "pnpm run test:once",
+    "build": "pnpm run build:npm",
+    "build:hel": "node ../../dev/scripts/hel/build.js",
+    "build:npm": "tsup",
+    "build:nb": "pnpm run build:npm && pnpm run build:hel",
+    "build:meta": "node ../../dev/scripts/hel/meta",
+    "build:nbm": "cross-env-shell \"pnpm run build:nb && pnpm run build:meta\"",
     "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
     "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
@@ -57,28 +76,15 @@
       "react-app/jest"
     ]
   },
-  "devDependencies": {
-    "esbuild-plugin-module-css": "^0.1.1",
-    "hash-css-selector": "^1.1.0",
-    "postcss": "^8.4.4",
-    "postcss-modules": "^6.0.1"
-  },
   "volta": {
     "node": "18.12.1",
     "pnpm": "8.6.8"
   },
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js"
-      },
-      "./index.css": "./dist/index.css",
-      "./hel": {
-        "types": "./src/.hel/entrance/libTypes.ts",
-        "import": "./src/.hel/entrance/libTypes.ts"
-      }
-    }
-  }
+  "files": [
+    "dist",
+    "hel_dist",
+    "src",
+    "README.md",
+    "tsconfig.json"
+  ]
 }

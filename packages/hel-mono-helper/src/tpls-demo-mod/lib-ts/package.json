@@ -6,10 +6,9 @@
   "author": {
     "name": "fantasticsoul"
   },
-  "main": "./src/index",
+  "main": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
     "./hel": {
@@ -17,6 +16,7 @@
     }
   },
   "publishConfig": {
+    "main": "./dist/index.js",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -28,28 +28,30 @@
       }
     }
   },
+  "hel": {},
   "dependencies": {},
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
     "babel-cli": "^6.26.0"
   },
   "scripts": {
-    "build": "pnpm run build:npm",
-    "build:hel": "node ../../dev/scripts/hel/build.js",
-    "build:helbs": "node ../../dev/scripts/hel/buildBS",
-    "build:hels": "node ../../dev/scripts/hel/buildS",
-    "build:meta": "node ../../dev/scripts/hel/meta",
-    "build:nbs": "pnpm run build:npm && pnpm run build:helbs",
-    "build:nbsm": "cross-env-shell \"pnpm run build:helbs && pnpm run build:meta\"",
-    "build:npm": "tsup",
-    "hint": "node ../../dev/scripts/hel/hint.js",
     "start": "node ../../dev/scripts/start.js",
+    "start:deps": "node ../../dev/scripts/hel/startDeps.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "start:hwl": "node ../../dev/scripts/hel/startWL.js",
     "start:hwr": "node ../../dev/scripts/hel/startWR.js",
+    "hint": "node ../../dev/scripts/hel/hint.js",
+    "build": "pnpm run build:npm",
+    "build:nbs": "pnpm run build:npm && pnpm run build:helbs",
+    "build:nbsm": "cross-env-shell \"pnpm run build:helbs && pnpm run build:meta\"",
+    "build:hel": "node ../../dev/scripts/hel/build.js",
+    "build:hels": "node ../../dev/scripts/hel/buildS",
+    "build:helbs": "node ../../dev/scripts/hel/buildBS",
+    "build:meta": "node ../../dev/scripts/hel/meta",
+    "build:npm": "tsup",
+    "tsc": "tsc --project ./tsconfig.build.json && tsc-alias -p ./tsconfig.json ",
     "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
-    "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
-    "tsc": "tsc --project ./tsconfig.build.json && tsc-alias -p ./tsconfig.json "
+    "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
   "browserslist": {
     "production": [
