@@ -138,7 +138,6 @@ export declare const monoUtil: {
   getCWDIsForRootHelDir: () => boolean;
   getCmdKeywordName: (namIndex: number) => string;
   getCmdKeywords: (sliceStart: number) => string[];
-  setCurKeyword: (keyword: string) => void;
   getDevInfoDirs: (devInfo: IMonoDevInfo) => { appsDirs: string[]; subModDirs: string[]; belongToDirs: string[] };
   /**
    * 获取 hel-mono-helper 自动推导出的大仓根目录信息

@@ -4,55 +4,84 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
 const { lastItem, lastNItem } = require('./arr');
-const { getCurKeyword } = require('./keyword');
+const { inferDevInfo } = require('./dev-info');
+const { inferDirFromDevInfo } = require('./mono-dir');
 const { getMonoRootInfo } = require('./root-info');
-const { getLogTimeLine, getLocaleTime } = require('./time');
+const { getLogTimeLine } = require('./time');
 
 /** @type {import('../types').ICWDAppData} 正在运行中应用数据 */
 let curAppData = null;
 const cachedPaths = {};
 
+let curLogName = '';
+
+/**
+ * 记录 keyword，辅助日志路径定位
+ */
+function trySetLogName(keyword, shouldPure = true) {
+  if (keyword.startsWith('.')) {
+    return false;
+  }
+
+  // 是 /xxx/yy/.bin/node, /xx/yy/dev/execStart 等完整路径关键字
+  const strList = keyword.split(path.sep);
+  if (strList.length > 2) {
+    return false;
+  }
+
+  if (shouldPure) {
+    const [dirOrPkgName] = keyword.split(':');
+    curLogName = dirOrPkgName;
+    return true;
+  }
+
+  curLogName = keyword;
+  return true;
+}
+
 /**
  *
  * @returns 获取已缓存的运行中的应用目录数据
  */
-exports.getCurAppData = function () {
+function getCurAppData() {
   return curAppData;
-};
+}
 
-exports.setCurAppData = function (data) {
+function setCurAppData(data) {
   curAppData = data;
-};
+}
+
+function getLogPathByName(logName, isTmp) {
+  const { monoRootHelDir } = getMonoRootInfo();
+  if (!curLogName) {
+    curLogName = logName;
+  }
+  const cachedPath = cachedPaths[logName];
+  if (cachedPath) {
+    return cachedPath;
+  }
+
+  // 可能是目录或scope的关键字，例如 @tencent/xxx packages/xxx
+  if (logName.includes('/')) {
+    // 暂只考虑两层目录的关键字
+    const [logDir] = logName.split('/');
+    const logFullDir = path.join(monoRootHelDir, logDir);
+    if (!fs.existsSync(logFullDir)) {
+      fs.mkdirSync(logFullDir);
+    }
+  }
+
+  const joinSeg = isTmp ? `./${logName}.tmp.log` : `./${logName}.log`;
+  return path.join(monoRootHelDir, joinSeg);
+}
 
 function getLogFilePath(isTmp) {
-  const { monoRootHelLog, monoRootHelDir } = getMonoRootInfo();
-  const curKeyword = getCurKeyword();
-
-  const getLogPath = (logName) => {
-    const cachedPath = cachedPaths[logName];
-    if (cachedPath) {
-      return cachedPath;
-    }
-
-    // 可能是目录或scope的关键字，例如 @tencent/xxx packages/xxx
-    if (logName.includes('/')) {
-      // 暂只考虑两层目录的关键字
-      const [logDir] = logName.split('/');
-      const logFullDir = path.join(monoRootHelDir, logDir);
-      if (!fs.existsSync(logFullDir)) {
-        fs.mkdirSync(logFullDir);
-      }
-    }
-
-    const joinSeg = isTmp ? `./${logName}.tmp.log` : `./${logName}.log`;
-    return path.join(monoRootHelDir, joinSeg);
-  };
-
-  if (curKeyword) {
-    return getLogPath(curKeyword);
+  const { monoRootHelLog, monoRoot } = getMonoRootInfo();
+  if (curLogName) {
+    return getLogPathByName(curLogName, isTmp);
   }
   if (curAppData) {
-    return getLogPath(curAppData.appDir);
+    return getLogPathByName(curAppData.appDir, isTmp);
   }
 
   // 触发 [.../bin/node, .../root-scripts/executeStart, xx:hel]
@@ -61,12 +90,24 @@ function getLogFilePath(isTmp) {
   const last2Str = lastNItem(argv, 2);
   if (last2Str.includes('/executeStart')) {
     const [dirOrPkgName] = last1Str.split(':');
-    return getLogPath(dirOrPkgName);
+    return getLogPathByName(dirOrPkgName, isTmp);
   }
 
-  const dirName = lastItem(process.cwd().split(path.sep));
-  if (dirName) {
-    return getLogPath(dirName);
+  const cwd = process.cwd();
+  // 避免根目录执行 pnpm start 时创建错误的 log 文件
+  if (cwd !== monoRoot) {
+    const dirName = lastItem(cwd.split(path.sep));
+    if (dirName) {
+      return getLogPathByName(dirName, isTmp);
+    }
+  }
+
+  const devInfo = inferDevInfo(true);
+  if (devInfo) {
+    const dirName = inferDirFromDevInfo(devInfo, true);
+    if (dirName) {
+      return getLogPathByName(dirName, isTmp);
+    }
   }
 
   return monoRootHelLog;
@@ -95,32 +136,42 @@ function logRunningDetails(options, ...args) {
   }
 }
 
-exports.clearMonoLog = function (markStartTime = true, isTmp = false) {
+function clearMonoLog(markStartTime = true, isTmp = false) {
   const logFilePath = getLogFilePath(isTmp);
   const line = markStartTime ? getLogTimeLine() : '';
   // 存在才清，避免产生很多空的 .tmp.log
   if (fs.existsSync(logFilePath)) {
     fs.writeFileSync(logFilePath, line);
   }
-};
+}
 
 /**
  * 打印hel-mono运行普通日志
  */
-exports.helMonoLog = function (...args) {
+function helMonoLog(...args) {
   logRunningDetails({ isTmp: false, isRed: false }, ...args);
-};
+}
 
 /**
  * 打印hel-mono运行警告日志
  */
-exports.helMonoErrorLog = function (...args) {
+function helMonoErrorLog(...args) {
   logRunningDetails({ isTmp: false, isRed: true }, ...args);
-};
+}
 
 /**
  * 打印临时调试日志
  */
-exports.helMonoLogTmp = function (...args) {
+function helMonoLogTmp(...args) {
   logRunningDetails({ isTmp: true, isRed: false }, ...args);
+}
+
+module.exports = {
+  trySetLogName,
+  getCurAppData,
+  setCurAppData,
+  clearMonoLog,
+  helMonoLog,
+  helMonoErrorLog,
+  helMonoLogTmp,
 };

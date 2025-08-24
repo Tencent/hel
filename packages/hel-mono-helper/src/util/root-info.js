@@ -15,7 +15,7 @@ function getPath(list, lastIdx) {
 
 function getHelAssociatePath(monoRoot) {
   const monoRootHelDir = path.join(monoRoot, './.hel');
-  const monoRootHelLog = path.join(monoRoot, './.hel/hel-all.log');
+  const monoRootHelLog = path.join(monoRoot, './.hel/.hel-all.log');
   const monoDepJson = path.join(monoRoot, './.hel/mono-dep.json');
   const monoDepForJson = path.join(monoRoot, './.hel/mono-dep-for.json');
   return { monoRootHelDir, monoRootHelLog, monoDepJson, monoDepForJson };

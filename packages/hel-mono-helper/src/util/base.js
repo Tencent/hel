@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 const jsonc = require('jsonc-parser');
-const { getDevInfoDirs } = require('./dev-info');
 const { HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 
 /**
