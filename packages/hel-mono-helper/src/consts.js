@@ -95,7 +95,8 @@ const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((ke
 const MOD_TEMPLATE = {
   reactApp: 'react-app',
   reactLib: 'react-lib',
-  lib: 'lib-ts',
+  tsLib: 'ts-lib',
+  lib: 'lib',
   libTs: 'lib-ts',
 };
 

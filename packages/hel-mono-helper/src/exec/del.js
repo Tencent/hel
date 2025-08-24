@@ -2,6 +2,7 @@
 const fs = require('fs');
 const shell = require('shelljs');
 const { helMonoLog } = require('../util');
+const { checkPkgsLenNotGT1 } = require('../util/err');
 const { getCmdKeywordName } = require('../util/keyword');
 const { getMonoNameMap } = require('../util/monoName');
 const { rewriteImpl } = require('./common/rewriteRootDevInfo');
@@ -16,13 +17,7 @@ function inferPkgData(devInfo, modDirOrName) {
 
   if (!pkgName) {
     const pkgs = dir2Pkgs[modDirOrName] || [];
-    if (pkgs.length > 1) {
-      const errMsg =
-        `these packages (${pkgs.join(',')}) belong to same dir ${modDirOrName}, `
-        + `you may del mod with a parent dir name prefixed like xxx-parent-dir/${modDirOrName}`;
-      throw new Error(errMsg);
-    }
-
+    checkPkgsLenNotGT1(pkgs);
     if (pkgs.length === 1) {
       pkgName = pkgs[0];
     }

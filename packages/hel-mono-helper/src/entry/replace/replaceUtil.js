@@ -22,7 +22,6 @@ module.exports = function replaceUtil(/** @type {ICWDAppData} */ appData, /** @t
     let targetLine = line;
     if (line.includes(`from '${HEL_MICRO_NAME}'`)) {
       targetLine = line.replace(`from '${HEL_MICRO_NAME}'`, `from '${helMicroName}'`);
-      helMonoLog('targetLine', targetLine);
     }
     return { line: targetLine };
   });

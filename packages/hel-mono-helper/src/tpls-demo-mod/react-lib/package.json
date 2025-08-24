@@ -9,15 +9,18 @@
   "main": "./src/index.ts",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
     "./index.css": "./dist/index.css",
     "./hel": {
-      "types": "./src/.hel/entrance/libTypes.ts"
+      "types": "./src/.hel/entrance/libTypes.ts",
+      "import": "./src/.hel/entrance/libTypes.ts"
     }
   },
   "publishConfig": {
     "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -26,7 +29,8 @@
       },
       "./index.css": "./dist/index.css",
       "./hel": {
-        "types": "./src/.hel/entrance/libTypes.ts"
+        "types": "./src/.hel/entrance/libTypes.ts",
+        "import": "./src/.hel/entrance/libTypes.ts"
       }
     }
   },

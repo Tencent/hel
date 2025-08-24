@@ -3,6 +3,7 @@ const http = require('http');
 const path = require('path');
 const shell = require('shelljs');
 const util = require('../util');
+const { getMonoAppDepDataImpl } = require('../util/depData');
 const { getPnpmRunCmd } = require('../exec/cmd');
 const { prepareHelEntryFiles } = require('./prepare');
 const { HEL_START_WITH_LOCAL_RUNNING_DEPS } = require('../consts');
@@ -35,7 +36,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
   const targetCWD = path.join(rootDir, `./${belongTo}/${dirName}`);
 
   const appData = util.getCWDAppData(devInfo, targetCWD);
-  const depData = util.getMonoAppDepData(appData.realAppSrcDirPath, devInfo, true);
+  const depData = getMonoAppDepDataImpl({ appSrc: appData.realAppSrcDirPath, devInfo, isAllDep: true, isForRootHelDir });
   const { depInfos } = depData;
 
   util.helMonoLog('depInfos', depInfos);
@@ -80,7 +81,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
 
 function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir) {
   util.clearMonoLog();
-  const pkgOrDirVar = pkgOrDir || util.getCWDPkgDir();
+  const pkgOrDirVar = pkgOrDir || util.getCWDPkgPrefixedDir();
   const isForRootHelDir = util.getCWDIsForRootHelDir();
   const nameData = util.getNameData(pkgOrDirVar, devInfo);
 

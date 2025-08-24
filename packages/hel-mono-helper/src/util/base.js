@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
+const { lastNItem } = require('./arr');
 
 /**
  * 获取 node 命令执行时所处目录，
@@ -15,6 +16,12 @@ exports.getCWDPkgDir = function () {
   const cwd = exports.getCWD();
   const strList = cwd.split(path.sep);
   return strList[strList.length - 1];
+};
+
+exports.getCWDPkgPrefixedDir = function () {
+  const cwd = exports.getCWD();
+  const strList = cwd.split(path.sep);
+  return `${lastNItem(strList, 2)}/${lastNItem(strList, 1)}`;
 };
 
 exports.getCWDIsForRootHelDir = function () {

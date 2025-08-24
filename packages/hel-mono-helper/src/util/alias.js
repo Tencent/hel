@@ -32,6 +32,10 @@ function getAliasData(devInfo) {
 
   for (const dir of belongToDirs) {
     const dirPath = path.join(monoRoot, `./${dir}`);
+    if (!fs.existsSync(dirPath)) {
+      continue;
+    }
+
     const names = fs.readdirSync(dirPath);
     for (const name of names) {
       const modPath = path.join(dirPath, `./${name}`);

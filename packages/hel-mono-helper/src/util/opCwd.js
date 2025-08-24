@@ -1,7 +1,10 @@
 const path = require('path');
+const { lastNItem } = require('./arr');
+const { getTsConfigJson } = require('./appSrc');
 const { getCWD, getFileJson } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
 const { getDevInfoDirs } = require('./devInfo');
+const { safeOnlyGet } = require('./dict');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getPort } = require('./port');
@@ -25,9 +28,8 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
 
   const isForRootHelDir = cwd.includes(monoRootHelDir);
   const list = cwd.split(path.sep);
-  const len = list.length;
-  const belongTo = list[len - 2];
-  const appDir = list[len - 1];
+  const belongTo = lastNItem(list, 2);
+  const appDir = lastNItem(list, 1);
   const isSubMod = subModDirs.includes(belongTo);
 
   const root = isForRootHelDir ? monoRootHelDir : monoRoot;
@@ -43,6 +45,10 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   } catch (err) {
     // assign appPkgName later
   }
+
+  const tsConfigJson = getTsConfigJson(appSrcDirPath);
+  const compilerOptions = safeOnlyGet(tsConfigJson, 'compilerOptions', {});
+  const appTsConfigPaths = compilerOptions.paths || {};
 
   const realAppDirPath = path.join(monoRoot, `./${belongTo}/${appDir}`);
   const realAppSrcDirPath = path.join(realAppDirPath, './src');
@@ -63,6 +69,7 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
     appDir,
     appDirPath,
     appSrcDirPath,
+    appTsConfigPaths,
     appPkgName,
     belongToDirPath,
     realAppDirPath,

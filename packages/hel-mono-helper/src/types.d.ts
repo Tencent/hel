@@ -81,6 +81,7 @@ export interface IPkgMonoDepData extends IPkgInfo {
 
 export interface IMonoNameMap {
   monoNameMap: Record<BelongToDir, { isSubMod: boolean; nameMap: INameMap }>;
+  dir2Pkgs: Dict<string[]>;
   monoDep: { createdAt: string; depData: Record<string, IPkgMonoDepData> };
   /**
    * 包名与应用的目录路径映射
@@ -174,6 +175,10 @@ export interface ICWDAppData {
    */
   appSrcDirPath: string;
   /**
+   * 动态计算出的 tsconfig.json 的 paths 值
+   */
+  appTsConfigPaths: string;
+  /**
    * app所属项目的对应的包名
    */
   appPkgName: string;
@@ -232,6 +237,10 @@ export interface IMonoDevData {
    * 应用index入口文件完整路径
    */
   appSrcIndex: string;
+  /**
+   * 动态计算出的应用的 tsconfig.json 里的 paths 值
+   */
+  appTsConfigPaths: string;
   resolveMonoRoot: (relativePath: string) => string;
 }
 

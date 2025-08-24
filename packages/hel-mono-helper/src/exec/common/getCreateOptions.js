@@ -14,6 +14,7 @@ const { helMonoLog, getMonoRootInfo } = require('../../util');
 
 const modTplAlas = {
   [MOD_TEMPLATE.lib]: MOD_TEMPLATE.libTs,
+  [MOD_TEMPLATE.tsLib]: MOD_TEMPLATE.libTs,
 };
 
 function getNameReg(max = 32) {
@@ -68,12 +69,14 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
       ignoredIdx[idx + 1] = true;
 
       const list = getDirInfoList(tplsDirPath);
-      const info = list.find((v) => v.name === templateValue);
+      const targetTpl = modTplAlas[templateValue] || templateValue;
+
+      const info = list.find((v) => v.name === targetTpl);
       if (!info) {
         const these = list.map((v) => v.name).join(' ');
-        throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${these})`);
+        throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${these.join(',')})`);
       }
-      createOptions.modTemplate = modTplAlas[templateValue] || templateValue;
+      createOptions.modTemplate = targetTpl;
     }
 
     // 创建到某个 belongTo 目录

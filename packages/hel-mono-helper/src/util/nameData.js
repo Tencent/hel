@@ -1,12 +1,13 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const { getMonoNameMap } = require('./monoName');
+const { checkPkgsLenNotGT1 } = require('./err');
 
 /**
  * keywordName 可以是带父目录名的目录名，目录名，包名，格式形如：apps/hub, hub, @xxx/hub
  * @return {import('../types').INameData}
  */
 exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IMonoDevInfo} */ devInfo) {
-  const { monoNameMap } = getMonoNameMap(devInfo);
+  const { monoNameMap, dir2Pkgs } = getMonoNameMap(devInfo);
 
   if (!mayPkgOrDir.startsWith('@') && mayPkgOrDir.includes('/')) {
     const [belongToDir, appDir] = mayPkgOrDir.split('/');
@@ -41,6 +42,8 @@ exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IMon
 
     const pkgName = dirName2PkgName[mayPkgOrDir];
     if (pkgName) {
+      const pkgs = dir2Pkgs[mayPkgOrDir];
+      checkPkgsLenNotGT1(pkgs, mayPkgOrDir);
       result = { pkgName, dirName: mayPkgOrDir, isSubMod, belongTo: belongToDir };
       break;
     }

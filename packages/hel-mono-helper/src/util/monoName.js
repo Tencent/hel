@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
 const { safeGet } = require('./dict');
+const { getTsConfigAliasByAppSrc } = require('./appSrc');
 const { intersection, getFileJson } = require('./base');
 const { getDevInfoDirs } = require('./devInfo');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
@@ -15,7 +16,11 @@ const { getLocaleTime } = require('./time');
  */
 function getMonoLevel1NameMap(level1DirName) {
   const levelDirPath = getMonoDirOrFilePath(level1DirName);
-  const fsDirNames = fs.readdirSync(levelDirPath);
+  let fsDirNames = [];
+  if (fs.existsSync(levelDirPath)) {
+    fsDirNames = fs.readdirSync(levelDirPath);
+  }
+
   const pkgName2DirName = {};
   const pkgName2Deps = {};
   const dirName2PkgName = {};
@@ -91,7 +96,11 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
       const dirName = nameMap.pkgName2DirName[pkgName];
       const prefixedDir = `${belongTo}/${dirName}`;
       pkg2Dir[pkgName] = dirName;
-      pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${prefixedDir}`);
+
+      const appDirPath = path.join(monoRoot, `./${prefixedDir}`);
+      pkg2AppDirPath[pkgName] = appDirPath;
+      const appSrcPath = path.join(appDirPath, './src');
+      const alias = getTsConfigAliasByAppSrc(appSrcPath);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;
 
       const pkgs = safeGet(dir2Pkgs, dirName, []);
@@ -99,7 +108,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
 
       const proxyPkgName = isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`;
       const proxySrcPath = path.join(monoRootHelDir, `./${prefixedDir}/src`);
-      pkg2Info[pkgName] = { pkgName, belongTo, dirName, isSubMod, proxyPkgName, proxySrcPath };
+      pkg2Info[pkgName] = { pkgName, belongTo, dirName, isSubMod, proxyPkgName, proxySrcPath, appSrcPath, alias };
 
       depData[pkgName] = {
         ...pkg2Info[pkgName],

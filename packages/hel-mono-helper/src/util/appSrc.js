@@ -52,6 +52,19 @@ function getPrefixedDirName(appSrc) {
 }
 
 /**
+ * 通过src完整路径获得应用在大仓里的所属目录
+ * @example
+ * ```
+ * input: /user/path/to/hel-mono/packages/mono-comps-in-one-v2/src
+ * output: packages
+ * ```
+ */
+function getAppBelongTo(appSrc) {
+  const strList = appSrc.split('/');
+  return strList[strList.length - 3];
+}
+
+/**
  * 获得 alias 描述对象
  */
 function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pkg) {
@@ -70,4 +83,8 @@ function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pk
 module.exports = {
   inferConfAlias,
   buildAppAlias,
+  getAppBelongTo,
+  getTsConfigJson,
+  getTsConfigAliasByAppSrc,
+  getPrefixedDirName,
 };

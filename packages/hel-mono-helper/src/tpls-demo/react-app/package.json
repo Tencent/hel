@@ -2,20 +2,24 @@
   "name": "hub",
   "version": "0.1.0",
   "private": true,
-  "main": "./src/index",
+  "main": "./src/index.ts",
   "scripts": {
-    "build": "node ../../dev/scripts/build.js",
-    "build:all": "node ../../dev/scripts/hel/buildAll.js",
-    "build:ci": "node ../../dev/scripts/hel/buildCI.js",
-    "build:hel": "node ../../dev/scripts/hel/build.js",
     "start": "node ../../dev/scripts/start.js",
-    "start:deps": "node ../../dev/scripts/hel/startDeps.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "start:hwl": "node ../../dev/scripts/hel/startWL.js",
     "start:hwr": "node ../../dev/scripts/hel/startWR.js",
+    "start:deps": "node ../../dev/scripts/hel/startDeps.js",
+    "build": "node ../../dev/scripts/build.js",
+    "build:hel": "node ../../dev/scripts/hel/build.js",
+    "build:all": "node ../../dev/scripts/hel/buildAll.js",
+    "build:am": "cross-env-shell \"pnpm run build:all && pnpm run build:meta\"",
+    "build:bm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
+    "build:meta": "node ../../dev/scripts/hel/meta",
     "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
     "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
+  "hel": {},
+  "dependencies": {},
   "babel": {
     "presets": [
       "react-app"
@@ -39,10 +43,8 @@
       "react-app/jest"
     ]
   },
-  "dependencies": {},
   "volta": {
     "node": "18.12.1",
     "pnpm": "8.6.8"
-  },
-  "appGroupName": "hub"
+  }
 }
