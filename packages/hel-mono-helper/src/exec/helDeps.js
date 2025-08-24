@@ -2,7 +2,7 @@
 const { INNER_ACTION } = require('../consts');
 const { prepareHelEntryForMainAndDeps } = require('../entry');
 const { getCmdKeywordName, getNameData, getCWDPkgDir } = require('../util');
-const { inferDirFromArgv2ndItem } = require('../util/mono-dir');
+const { inferDirFromArgv2ndItem } = require('../util/monoDir');
 
 /**
  * 执行启动hel子依赖服务的命令

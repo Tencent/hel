@@ -1,7 +1,7 @@
 const { lastNItem } = require('./arr');
-const { getMonoRootInfo } = require('./root-info');
-const { getDevInfoDirs } = require('./dev-info');
-const { pickOneDir } = require('./mono-path');
+const { getMonoRootInfo } = require('./rootInfo');
+const { getDevInfoDirs } = require('./devInfo');
+const { pickOneDir } = require('./monoPath');
 
 function inferDirFromDevInfo(devInfo, allowEmptyDir) {
   //  执行 pnpm start 时，从目录结构里挑出一个并返回

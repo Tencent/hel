@@ -4,9 +4,9 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
 const { lastItem, lastNItem } = require('./arr');
-const { inferDevInfo } = require('./dev-info');
-const { inferDirFromDevInfo } = require('./mono-dir');
-const { getMonoRootInfo } = require('./root-info');
+const { inferDevInfo } = require('./devInfo');
+const { inferDirFromDevInfo } = require('./monoDir');
+const { getMonoRootInfo } = require('./rootInfo');
 const { getLogTimeLine } = require('./time');
 
 /** @type {import('../types').ICWDAppData} 正在运行中应用数据 */

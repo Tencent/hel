@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { APPS, PACKAGES, PKGS } = require('../consts');
 const { getPort } = require('./port');
-const { getMonoRootInfo } = require('./root-info');
+const { getMonoRootInfo } = require('./rootInfo');
 
 exports.ensureAppConf = function (/** @type {IDevInfo} */ devInfo, /** @type {IMonoAppConf} */ conf, name) {
   const { alias, ...rest } = conf;

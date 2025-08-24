@@ -1,5 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo */
 const { START_CMD_MODES } = require('../consts');
+const { getAliasData } = require('../util/alias');
 const { helMonoLog } = require('../util');
 
 function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
@@ -19,6 +20,21 @@ function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
     if (conf.alias === pureKeyword) {
       newKeyword = key;
       break;
+    }
+  }
+
+  // 在 dev-info 里未定义，从模块目录里去推导
+  if (!newKeyword) {
+    const { alias2PkgList } = getAliasData(devInfo);
+    const list = alias2PkgList[mayAlias];
+    if (list && list.length) {
+      if (list.length > 1) {
+        const errMsg =
+          `these packages(${list.join(',')}) have the same alias ${mayAlias}, you can not start mod with alias`
+          + `, or you can specify alias in dev-info config if you want to use alias-start ability!`;
+        throw new Error(errMsg);
+      }
+      newKeyword = list[0];
     }
   }
 

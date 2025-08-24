@@ -1,9 +1,9 @@
 const fs = require('fs');
 const { getDirName } = require('./base');
-const { getDevInfoDirs } = require('./dev-info');
-const { getMonoNameMap } = require('./mono-name');
-const { getMonoAppPkgJson } = require('./mono-pkg');
-const { getMonoRootInfo } = require('./root-info');
+const { getDevInfoDirs } = require('./devInfo');
+const { getMonoNameMap } = require('./monoName');
+const { getMonoAppPkgJson } = require('./monoPkg');
+const { getMonoRootInfo } = require('./rootInfo');
 const { getLocaleTime } = require('./time');
 
 function logMonoDep(options) {

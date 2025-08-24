@@ -1,7 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const shell = require('shelljs');
 const { getCmdKeywordName, helMonoLog, getNameData } = require('../util');
-const { inferDirFromArgv2ndItem } = require('../util/mono-dir');
+const { inferDirFromArgv2ndItem } = require('../util/monoDir');
 const { extractCmdData } = require('./common');
 const { getPnpmRunCmd } = require('./cmd');
 

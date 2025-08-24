@@ -1,5 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
-const { getMonoNameMap } = require('./mono-name');
+const { getMonoNameMap } = require('./monoName');
 
 /**
  * keywordName 可以是带父目录名的目录名，目录名，包名，格式形如：apps/hub, hub, @xxx/hub

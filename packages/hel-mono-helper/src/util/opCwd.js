@@ -1,9 +1,9 @@
 const path = require('path');
 const { getCWD, getFileJson } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
-const { getDevInfoDirs } = require('./dev-info');
+const { getDevInfoDirs } = require('./devInfo');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
-const { getMonoRootInfo } = require('./root-info');
+const { getMonoRootInfo } = require('./rootInfo');
 const { getPort } = require('./port');
 
 /**

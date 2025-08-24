@@ -1,7 +1,7 @@
 const { ACTION_NAME, INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, trySetLogName, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
 const { lastNItem } = require('../util/arr');
-const { inferDirFromDevInfo } = require('../util/mono-dir');
+const { inferDirFromDevInfo } = require('../util/monoDir');
 const { execAppAction } = require('./app');
 const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');

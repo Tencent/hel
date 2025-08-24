@@ -3,10 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
 const { intersection, getFileJson } = require('./base');
-const { getDevInfoDirs } = require('./dev-info');
+const { getDevInfoDirs } = require('./devInfo');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
-const { getMonoRootInfo } = require('./root-info');
-const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./mono-path');
+const { getMonoRootInfo } = require('./rootInfo');
+const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./monoPath');
 const { getLocaleTime } = require('./time');
 
 /**

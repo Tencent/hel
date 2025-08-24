@@ -1,15 +1,15 @@
-const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, getAppAlias, ensureSlash, inferConfAlias } = require('./base');
-const { getMonoAppDepData } = require('./dep-data');
-const { getDevInfoDirs } = require('./dev-info');
+const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, buildAppAlias, ensureSlash, inferConfAlias } = require('./base');
+const { getMonoAppDepData } = require('./depData');
+const { getDevInfoDirs } = require('./devInfo');
 const { getCmdKeywordName, getCmdKeywords } = require('./keyword');
-const { getMonoNameMap, getBuildDirPath } = require('./mono-name');
-const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath } = require('./mono-path');
-const { getMonoAppPkgJson } = require('./mono-pkg');
-const { getNameData } = require('./name-data');
+const { getMonoNameMap, getBuildDirPath } = require('./monoName');
+const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath } = require('./monoPath');
+const { getMonoAppPkgJson } = require('./monoPkg');
+const { getNameData } = require('./nameData');
 const { isHelStart, isHelMicroMode, isHelMode, isHelAllBuild } = require('./is');
 const { clearMonoLog, helMonoLog, helMonoErrorLog, helMonoLogTmp, trySetLogName } = require('./log');
-const { getCWDAppData } = require('./op-cwd');
-const { getMonoRootInfo, setMonoRoot } = require('./root-info');
+const { getCWDAppData } = require('./opCwd');
+const { getMonoRootInfo, setMonoRoot } = require('./rootInfo');
 const { getPort } = require('./port');
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
   helMonoLogTmp,
   clearMonoLog,
   ensureSlash,
-  getAppAlias,
+  buildAppAlias,
   inferConfAlias,
   getBuildDirPath,
   getCmdKeywordName,

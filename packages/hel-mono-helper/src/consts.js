@@ -51,6 +51,10 @@ const INNER_ACTION = {
   createStartShort: '.cs',
   build: '.build',
   /**
+   * 删除模块
+   */
+  del: '.del',
+  /**
    * 为宿主初始化微模块相关文件，
    * 首次执行 npm start xx-hub:hel 时需要先执行此命令
    */

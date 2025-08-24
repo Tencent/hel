@@ -1,5 +1,5 @@
 const { getFileJson } = require('./base');
-const { getMonoDirOrFilePath } = require('./mono-path');
+const { getMonoDirOrFilePath } = require('./monoPath');
 
 /**
  * 获取应用的 package.json 文件内容

@@ -4,7 +4,7 @@
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog, getFileJson } = require('../../util');
-const { ensureAppConf } = require('../../util/dev-info');
+const { ensureAppConf } = require('../../util/devInfo');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 

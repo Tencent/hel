@@ -2,9 +2,10 @@ const path = require('path');
 const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
-const { getAppAlias, inferConfAlias, getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
+const { getCWDAppData, getMonoAppDepData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
+const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
-const { getMonoNameMap } = require('../util/mono-name');
+const { getMonoNameMap } = require('../util/monoName');
 const { getLogTimeLine } = require('../util/time');
 
 let cachedResult = null;
@@ -100,7 +101,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   helMonoLog('dep pack names', pkgNames);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
-  const appAlias = getAppAlias(appSrc, devInfo, prefixedDir2Pkg);
+  const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
   const pureAlias = Object.assign({}, appAlias);
 
   if (!isMicroBuild) {

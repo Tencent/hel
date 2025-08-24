@@ -1,13 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const jsonc = require('jsonc-parser');
 const { rewriteByLines } = require('../../util/rewrite');
 const { MOD_TEMPLATE } = require('../../consts');
 
 function getFileJson(dirPath, relPath) {
   const filePath = path.join(dirPath, relPath);
   const content = fs.readFileSync(filePath, { encoding: 'utf8' });
-  const json = JSON.parse(content);
+  const json = jsonc.parse(content);
   return {
     json,
     write: (input) => fs.writeFileSync(filePath, JSON.stringify(input || json, null, 2)),
@@ -65,7 +66,9 @@ exports.rewriteModAlias = function rewriteModAlias(createOptions) {
   }
 
   const ret = getFileJson(copyToPath, './tsconfig.json');
-  ret.json.paths = { [`${alias}/*`]: ['./*'] };
+  if (!ret.json.compilerOptions) {
+    ret.json.compilerOptions = {};
+  }
   ret.json.compilerOptions.paths = { [`${alias}/*`]: ['./*'] };
   ret.write();
 

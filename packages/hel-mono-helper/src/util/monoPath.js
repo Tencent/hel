@@ -1,7 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
 const path = require('path');
-const { getMonoRootInfo } = require('./root-info');
+const { getMonoRootInfo } = require('./rootInfo');
 
 function pickOneDir(dirRoot, dirNames) {
   let targetDirName = '';

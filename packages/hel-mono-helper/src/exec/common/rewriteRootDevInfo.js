@@ -1,4 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../../types').ICreateModOptions} ICreateModOptions*/
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -7,7 +8,10 @@ const { rewriteByLines } = require('../../util/rewrite');
 const { getPort } = require('../../util/port');
 const { jsonObj2Lines, ensureTailComma } = require('../../entry/replace/util');
 
-exports.rewriteRootDevInfo = function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, createOptions) {
+exports.rewriteRootDevInfo = function rewriteRootDevInfo(
+  /** @type {IMonoDevInfo} */ devInfo,
+  /** @type {ICreateModOptions} */ createOptions,
+) {
   const { monoRoot } = getMonoRootInfo();
   let devInfoPath = path.join(monoRoot, './base/dev-info/src/index.js');
   if (!fs.existsSync(devInfoPath)) {
@@ -55,10 +59,13 @@ exports.rewriteRootDevInfo = function rewriteRootDevInfo(/** @type {IMonoDevInfo
   });
 
   const rawMod = require(devInfoPath);
-  const { modName } = createOptions;
+  const { modName, alias } = createOptions;
   rawMod.appConfs[modName] = {
     port: getPort(devInfo),
   };
+  if (alias) {
+    rawMod.appConfs[modName].alias = alias;
+  }
 
   const jsonLines = jsonObj2Lines(rawMod, {
     handleLine: ({ line, isArrPartial, arrStartLine, isArrStartLine, isArrEndLine }) => {
