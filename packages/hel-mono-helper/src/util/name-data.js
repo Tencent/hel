@@ -46,9 +46,12 @@ exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IMon
     }
   }
 
-  // TODO !result 尝试查找 .hel 下的项目，支持 npm start @hel-packages/mono-comps-in-one-v2 来显式启动代理项目
+  // OPTIMIZE !result 时尝试查找 .hel 下的项目，支持 npm start @hel-packages/mono-comps-in-one-v2 来显式启动代理项目
   if (!result) {
-    throw new Error(`keyword ${mayPkgOrDir} match nothing under these dirs (${dirs.join(',')})`);
+    msg =
+      `module ${mayPkgOrDir} is not under these dirs (${dirs.join(',')}),`
+      + ` you may execute "pnpm start .create ${mayPkgOrDir}" to create it`;
+    throw new Error(msg);
   }
 
   return result;
