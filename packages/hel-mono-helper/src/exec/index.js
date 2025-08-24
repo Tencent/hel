@@ -3,6 +3,7 @@ const { getCmdKeywordName, trySetLogName, getCWD, helMonoLog, helMonoErrorLog, c
 const { lastNItem } = require('../util/arr');
 const { inferDirFromDevInfo } = require('../util/monoDir');
 const { execAppAction } = require('./app');
+const { delMod } = require('./del');
 const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');
 const { execCreate, execCreateMod, execCreateStart } = require('./create');
@@ -20,6 +21,7 @@ const innerActionFns = {
   [INNER_ACTION.createMod]: execCreateMod,
   [INNER_ACTION.createModShort]: execCreateMod,
   [INNER_ACTION.build]: execBuild,
+  [INNER_ACTION.del]: delMod,
   [INNER_ACTION.lint]: execLint,
   [INNER_ACTION.createStart]: execCreateStart,
   [INNER_ACTION.createStartShort]: execCreateStart,

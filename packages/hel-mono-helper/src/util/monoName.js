@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
+const { safeGet } = require('./dict');
 const { intersection, getFileJson } = require('./base');
 const { getDevInfoDirs } = require('./devInfo');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
@@ -68,6 +69,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   const pkg2Info = {}; // 包名与info映射
   const pkg2AppDirPath = {}; // 包名与应用的目录路径映射
   const prefixedDir2Pkg = {}; // 带belongTo前缀的目录名与包名映射
+  const dir2Pkgs = {}; // 目录名与包名list映射
 
   // mono-dep.json 需要的数据
   const depData = {};
@@ -91,6 +93,10 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
       pkg2Dir[pkgName] = dirName;
       pkg2AppDirPath[pkgName] = path.join(monoRoot, `./${prefixedDir}`);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;
+
+      const pkgs = safeGet(dir2Pkgs, dirName, []);
+      pkgs.push(pkgName);
+
       const proxyPkgName = isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`;
       const proxySrcPath = path.join(monoRootHelDir, `./${prefixedDir}/src`);
       pkg2Info[pkgName] = { pkgName, belongTo, dirName, isSubMod, proxyPkgName, proxySrcPath };
@@ -111,7 +117,7 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
     throw new Error(`these package names (${dupPackNames.join(',')}) duplicated`);
   }
 
-  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info, monoDep };
+  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info, dir2Pkgs, monoDep };
 };
 
 exports.getBuildDirPath = function (devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {

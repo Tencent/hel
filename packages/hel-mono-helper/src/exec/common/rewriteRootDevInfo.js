@@ -8,11 +8,10 @@ const { rewriteByLines } = require('../../util/rewrite');
 const { getPort } = require('../../util/port');
 const { jsonObj2Lines, ensureTailComma } = require('../../entry/replace/util');
 
-exports.rewriteRootDevInfo = function rewriteRootDevInfo(
-  /** @type {IMonoDevInfo} */ devInfo,
-  /** @type {ICreateModOptions} */ createOptions,
-) {
+function rewriteImpl(/** @type {IMonoDevInfo} */ devInfo, options) {
+  const { beforeRewrite } = options;
   const { monoRoot } = getMonoRootInfo();
+
   let devInfoPath = path.join(monoRoot, './base/dev-info/src/index.js');
   if (!fs.existsSync(devInfoPath)) {
     devInfoPath = path.join(monoRoot, './packages/dev-info/src/index.js');
@@ -59,12 +58,8 @@ exports.rewriteRootDevInfo = function rewriteRootDevInfo(
   });
 
   const rawMod = require(devInfoPath);
-  const { modName, alias } = createOptions;
-  rawMod.appConfs[modName] = {
-    port: getPort(devInfo),
-  };
-  if (alias) {
-    rawMod.appConfs[modName].alias = alias;
+  if (beforeRewrite) {
+    beforeRewrite(rawMod);
   }
 
   const jsonLines = jsonObj2Lines(rawMod, {
@@ -90,4 +85,23 @@ exports.rewriteRootDevInfo = function rewriteRootDevInfo(
   });
   const allLines = [...headLines, ...jsonLines, ...tailLines];
   rewriteByLines(devInfoPath, allLines);
+}
+
+function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, /** @type {ICreateModOptions} */ createOptions) {
+  rewriteImpl(devInfo, {
+    beforeRewrite: (rawDevInfoJson) => {
+      const { modName, alias } = createOptions;
+      rawDevInfoJson.appConfs[modName] = {
+        port: getPort(devInfo),
+      };
+      if (alias) {
+        rawDevInfoJson.appConfs[modName].alias = alias;
+      }
+    },
+  });
+}
+
+module.exports = {
+  rewriteRootDevInfo,
+  rewriteImpl,
 };

@@ -30,8 +30,8 @@ function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
     if (list && list.length) {
       if (list.length > 1) {
         const errMsg =
-          `these packages(${list.join(',')}) have the same alias ${mayAlias}, you can not start mod with alias`
-          + `, or you can specify alias in dev-info config if you want to use alias-start ability!`;
+          `these packages(${list.join(',')}) have the same alias ${mayAlias}, you can not operate mod with alias`
+          + `, or you can specify alias in dev-info config if you want to use alias ability!`;
         throw new Error(errMsg);
       }
       newKeyword = list[0];

@@ -98,7 +98,7 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
       createOptions.alias = value;
     }
 
-    // 指定了模块名
+    // 指定了模块名（即包名）
     if (CREATE_SHORT_PARAM_KEY.modName === word) {
       const value = keywords[idx + 1];
       const modName = keywords[idx + 1] || '';

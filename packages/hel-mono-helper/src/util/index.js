@@ -1,4 +1,5 @@
-const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, buildAppAlias, ensureSlash, inferConfAlias } = require('./base');
+const { buildAppAlias, inferConfAlias } = require('./appSrc');
+const { getCWD, getCWDPkgDir, getCWDIsForRootHelDir, getFileJson, ensureSlash } = require('./base');
 const { getMonoAppDepData } = require('./depData');
 const { getDevInfoDirs } = require('./devInfo');
 const { getCmdKeywordName, getCmdKeywords } = require('./keyword');
