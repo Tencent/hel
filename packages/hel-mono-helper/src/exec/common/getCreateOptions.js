@@ -30,7 +30,7 @@ exports.getCreateOptions = function getCreateOptions(/** @type {string[]} */ key
   const tplsDirPath = isSubMod ? tplsDemoModDirPath : tplsDemoDirPath;
   const copyToBelongTo = isSubMod ? PACKAGES : APPS;
   const createKey = isSubMod ? '.create-mod' : '.create';
-  const demoModTemplate = isSubMod ? MOD_TEMPLATE.lib : MOD_TEMPLATE.reactApp;
+  const demoModTemplate = isSubMod ? MOD_TEMPLATE.libTs : MOD_TEMPLATE.reactApp;
 
   const createOptions = {
     modTemplate: demoModTemplate,
