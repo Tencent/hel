@@ -11,9 +11,9 @@ type BelongToDir = string;
 
 type DepsObj = Record<PkgName, PkgVer>;
 
-export interface ICreateModOptions {
+export interface IArgvOptions {
   modTemplate: string;
-  modName: string;
+  pkgName: string;
   copyToBelongTo: string;
   copyToDir: string;
   alias: string;

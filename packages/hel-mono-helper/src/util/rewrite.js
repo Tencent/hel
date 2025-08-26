@@ -1,6 +1,9 @@
 const fs = require('fs');
 const os = require('os');
+const path = require('path');
+const { lastItem } = require('./arr');
 const { HEL_DEL_MARK } = require('../consts');
+const { getFileInfoList, getFileContentLines } = require('./file');
 
 /**
  * 重新文件里的每一行数据，支持以下3种模式
@@ -40,7 +43,40 @@ function rewriteByLines(filepath, lines) {
   fs.writeFileSync(filepath, lines.join(os.EOL));
 }
 
+function rewriteByDirPath(dirPath, cb, options = {}) {
+  const { excludeNames = ['node_modules'] } = options;
+
+  const handleFile = (filePath) => {
+    const lines = getFileContentLines(filePath);
+    const name = lastItem(filePath.split(path.seq));
+    const { shouldRewrite, newLines } = cb(lines, { name, path: filePath, isDirectory: false });
+    if (shouldRewrite) {
+      rewriteByLines(filePath, newLines);
+    }
+  };
+
+  if (!fs.statSync(dirPath).isDirectory()) {
+    handleFile(dirPath);
+    return;
+  }
+
+  const list = getFileInfoList(dirPath);
+  for (const item of list) {
+    const { path, isDirectory, name } = item;
+    if (excludeNames.includes(name)) {
+      continue;
+    }
+    if (!isDirectory) {
+      handleFile(path);
+      continue;
+    }
+    rewriteByDirPath(path, cb, options);
+  }
+}
+
+
 module.exports = {
   rewriteByLines,
   rewriteFileLine,
+  rewriteByDirPath,
 };

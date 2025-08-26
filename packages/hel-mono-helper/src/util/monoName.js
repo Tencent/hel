@@ -4,6 +4,7 @@ const path = require('path');
 const { cst } = require('hel-dev-utils');
 const { safeGet } = require('./dict');
 const { getTsConfigAliasByAppSrc } = require('./appSrc');
+const { getAliasData } = require('./alias');
 const { intersection, getFileJson } = require('./base');
 const { getDevInfoDirs } = require('./devInfo');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
@@ -57,7 +58,7 @@ function getMonoLevel1NameMap(level1DirName) {
  * 获取整个大仓的目录与应用、应用与目录映射关系
  * @returns {import('../types').IMonoNameMap}
  */
-exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
+function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
   const { appsDirs, subModDirs } = getDevInfoDirs(devInfo);
   const dupDirs = intersection(appsDirs, subModDirs);
   if (dupDirs.length > 0) {
@@ -127,13 +128,55 @@ exports.getMonoNameMap = function (/** @type {IMonoDevInfo} */ devInfo) {
   }
 
   return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info, dir2Pkgs, monoDep };
-};
+}
 
-exports.getBuildDirPath = function (devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {
+function getBuildDirPath(devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {
   const { pkg2AppDirPath } = exports.getMonoNameMap(devInfo);
   const appDirPath = pkg2AppDirPath[pkgName];
   if (!appDirPath) {
     throw new Error(`no app dir found for ${pkgName}!`);
   }
   return path.join(appDirPath, `./${buildDir}`);
+}
+
+function getCmdDPNameData(/** @type {IMonoDevInfo} */ devInfo, dirOrPkgName) {
+  const { pkg2Dir, dir2Pkgs, prefixedDir2Pkg, pkg2BelongTo } = getMonoNameMap(devInfo);
+  const dirName = pkg2Dir[dirOrPkgName];
+  const pkgName = prefixedDir2Pkg[dirOrPkgName];
+  const { pkg2Alias } = getAliasData(devInfo);
+  const getAlias = (pkgName) => pkg2Alias[pkgName] || '';
+
+  if (dirName) {
+    const pkgName = dirOrPkgName;
+    const belongTo = pkg2BelongTo[pkgName];
+    return { pkgName, dirName, belongTo, prefixedDir: `${belongTo}/${dirName}`, alias: getAlias(pkgName) };
+  }
+
+  if (pkgName) {
+    const prefixedDir = dirOrPkgName;
+    const [belongTo, dirName] = prefixedDir.split('/');
+    return { pkgName, dirName, belongTo, prefixedDir, alias: getAlias(pkgName) };
+  }
+
+  const pkgs = dir2Pkgs[dirOrPkgName] || [];
+  if (pkgs.length === 1) {
+    const pkgName = pkgs[0];
+    const dirName = dirOrPkgName;
+    const belongTo = pkg2BelongTo[pkgName];
+    return { pkgName, dirName, belongTo, prefixedDir: `${belongTo}/${dirName}`, alias: getAlias(pkgName) };
+  }
+
+  if (pkgs.length > 1) {
+    const tip = `multi packages have the same dir name ${dirOrPkgName}, `
+      + `you may operate it with a prefixed dir name like xxx/${dirOrPkgName}`;
+    throw new Error(tip);
+  }
+
+  throw new Error(`${dirOrPkgName} is not a valid dir name or package name`);
+}
+
+module.exports = {
+  getMonoNameMap,
+  getBuildDirPath,
+  getCmdDPNameData,
 };

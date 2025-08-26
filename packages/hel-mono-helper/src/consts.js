@@ -29,6 +29,10 @@ const ACTION_NAME = {
 
 const INNER_ACTION = {
   /**
+   * 修改模块对应的包名
+   */
+  change: '.change',
+  /**
    * 创建宿主项目
    */
   create: '.create',
@@ -87,7 +91,7 @@ const CREATE_SHORT_PARAM_KEY = {
   template: '-t',
   alias: '-a',
   targetBelongToDir: '-d',
-  modName: '-n',
+  pkgName: '-n',
 };
 
 const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);

@@ -1,5 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
-/** @typedef {import('../../types').ICreateModOptions} ICreateModOptions*/
+/** @typedef {import('../../types').IArgvOptions} IArgvOptions*/
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -87,15 +87,32 @@ function rewriteImpl(/** @type {IMonoDevInfo} */ devInfo, options) {
   rewriteByLines(devInfoPath, allLines);
 }
 
-function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, /** @type {ICreateModOptions} */ createOptions) {
+function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, /** @type {IArgvOptions} */ argvOptions) {
   rewriteImpl(devInfo, {
     beforeRewrite: (rawDevInfoJson) => {
-      const { modName, alias } = createOptions;
-      rawDevInfoJson.appConfs[modName] = {
+      const { pkgName, alias } = argvOptions;
+      rawDevInfoJson.appConfs[pkgName] = {
         port: getPort(devInfo),
       };
       if (alias) {
-        rawDevInfoJson.appConfs[modName].alias = alias;
+        rawDevInfoJson.appConfs[pkgName].alias = alias;
+      }
+    },
+  });
+}
+
+function rewriteRootDevInfoForChange(/** @type {IMonoDevInfo} */ devInfo, changeOptions) {
+  rewriteImpl(devInfo, {
+    beforeRewrite: (rawDevInfoJson) => {
+      const { oldPkgName, newPkgName, newAlias } = changeOptions;
+      const { appConfs } = rawDevInfoJson;
+      if (appConfs[oldPkgName]) {
+        const conf = appConfs[oldPkgName];
+        delete appConfs[oldPkgName];
+        appConfs[newPkgName] = conf;
+        if (newAlias) {
+          conf.alias = newAlias;
+        }
       }
     },
   });
@@ -103,5 +120,6 @@ function rewriteRootDevInfo(/** @type {IMonoDevInfo} */ devInfo, /** @type {ICre
 
 module.exports = {
   rewriteRootDevInfo,
+  rewriteRootDevInfoForChange,
   rewriteImpl,
 };

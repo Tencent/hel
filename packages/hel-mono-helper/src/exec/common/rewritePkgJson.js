@@ -1,19 +1,18 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
-/** @typedef {import('../../types').ICreateModOptions} ICreateModOptions*/
+/** @typedef {import('../../types').IArgvOptions} IArgvOptions*/
 const fs = require('fs');
 const path = require('path');
 
-exports.rewritePkgJson = function rewritePkgJson(/** @type {ICreateModOptions} */ createOptions, userOptions) {
-  const { copyToPath, modName } = createOptions;
+exports.rewritePkgJson = function (/** @type {IArgvOptions} */ argvOptions, userOptions = {}) {
+  const { copyToPath, pkgName } = argvOptions;
   // 重写应用的 package.json
   const pkgJsonFile = path.join(copyToPath, './package.json');
   const content = fs.readFileSync(pkgJsonFile, { encoding: 'utf8' });
   const pkgJson = JSON.parse(content);
-  pkgJson.name = modName;
-  pkgJson.appGroupName = modName;
+  pkgJson.name = pkgName;
 
   if (userOptions.beforeWritePkgJson) {
-    userOptions.beforeWritePkgJson({ createOptions, pkgJson });
+    userOptions.beforeWritePkgJson({ createOptions: argvOptions, pkgJson });
   }
   fs.writeFileSync(pkgJsonFile, JSON.stringify(pkgJson, null, 2));
 };

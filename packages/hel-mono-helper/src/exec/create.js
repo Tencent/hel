@@ -1,8 +1,9 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
 const shell = require('shelljs');
-const { helMonoLog, getCmdKeywords, getCWD } = require('../util');
-const { getCreateOptions } = require('./common/getCreateOptions');
+const { INNER_ACTION } = require('../consts');
+const { helMonoLog, getCmdKeywords } = require('../util');
+const { getArgvOptions } = require('./common/getArgvOptions');
 const { rewriteModAlias } = require('./common/rewriteModAlias');
 const { rewritePkgJson } = require('./common/rewritePkgJson');
 const { rewriteRootDevInfo } = require('./common/rewriteRootDevInfo');
@@ -23,29 +24,30 @@ const { rewriteRootDevInfo } = require('./common/rewriteRootDevInfo');
 exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}) {
   const { isSubMod = false, autoStart = false } = options;
   const label = isSubMod ? 'hel-mod' : 'app';
+  const actionKey = isSubMod ? INNER_ACTION.createMod : INNER_ACTION.create;
   const keywords = getCmdKeywords(3);
-  helMonoLog(`create ${label} keywords (${keywords.join(' ')})`);
-  const createOptions = getCreateOptions(keywords, options);
-  const { copyToPath, copyFromPath, modName } = createOptions;
+  helMonoLog(`${actionKey} keywords (${keywords.join(' ')})`);
+  const argvOptions = getArgvOptions({ keywords, actionKey }, options);
+  const { copyToPath, copyFromPath, pkgName } = argvOptions;
 
   // 复制模板项目文件
   helMonoLog(`start create ${label} to ${copyToPath}...`);
   fs.cpSync(copyFromPath, copyToPath, { recursive: true });
-  helMonoLog(`create ${label} ${modName} done`);
+  helMonoLog(`create ${label} ${pkgName} done`);
 
   // 重写根目录的dev-info
-  rewriteRootDevInfo(devInfo, createOptions);
+  rewriteRootDevInfo(devInfo, argvOptions);
   // 重写模块别名
-  rewriteModAlias(createOptions);
+  rewriteModAlias(argvOptions);
   // 重写应用的 package.json
-  rewritePkgJson(createOptions, options);
+  rewritePkgJson(argvOptions, options);
   // 安装依赖
   helMonoLog('pnpm install start...');
   shell.exec('pnpm install');
   helMonoLog('pnpm install done');
 
   if (autoStart) {
-    shell.exec(`pnpm start ${modName}`);
+    shell.exec(`pnpm start ${pkgName}`);
   }
 };
 
