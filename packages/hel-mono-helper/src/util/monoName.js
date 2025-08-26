@@ -113,6 +113,7 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
       const proxySrcPath = path.join(monoRootHelDir, `./${prefixedDir}/src`);
       const infoPure = { pkgName, belongTo, dirName, isSubMod, appSrcPath, alias };
       const info = { ...infoPure, proxyPkgName, proxySrcPath };
+      const deps = pkg2Deps[pkgName];
 
       pkg2Info[pkgName] = info;
       depData[pkgName] = { ...info, appDirPath, prefixedDir, deps };
@@ -134,7 +135,8 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
     pkg2BelongTo,
     pkg2Dir,
     prefixedDir2Pkg,
-    pkg2Info, dir2Pkgs,
+    pkg2Info,
+    dir2Pkgs,
     monoDep,
     monoDepPure,
   };
