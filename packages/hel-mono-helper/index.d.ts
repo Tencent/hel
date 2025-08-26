@@ -9,6 +9,7 @@ import type {
   IMonoRootInfo,
   INameData,
   IPkgMonoDepData,
+  DepDataDict,
 } from './src/types';
 
 export declare const cst: typeof monoCst;
@@ -75,6 +76,11 @@ export declare function getMonoDevData(devInfo: IMonoDevInfo, appSrc?: string): 
  * 根据包名获取对应 hel-mono 大仓里的依赖数据
  */
 export declare function getPkgMonoDepData(devInfo: IMonoDevInfo, pkgName: string): IPkgMonoDepData | null;
+
+/**
+ * 获取 hel-mono 大仓里的依赖数据字典
+ */
+export declare function getMonoDepDict(devInfo: IMonoDevInfo): DepDataDict;
 
 /**
  * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下，

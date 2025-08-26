@@ -36,12 +36,12 @@ function rewriteImportMod(modSrcPath, oldPkgName, newPkgName) {
       });
 
       if (shouldRewrite) {
-        helMonoLog(`found ${fileItem.path} import ${oldPkgName}, rewrite as ${newPkgName}`)
+        helMonoLog(`found ${fileItem.path} import ${oldPkgName}, rewrite as ${newPkgName}`);
       }
       return { shouldRewrite, newLines };
     });
   }
-};
+}
 
 exports.rewritePkgDeps = function (/** @type {IMonoDevInfo} */ devInfo, oldPkgName, newPkgName) {
   const { monoRoot } = getMonoRootInfo();
@@ -77,10 +77,10 @@ exports.rewritePkgDeps = function (/** @type {IMonoDevInfo} */ devInfo, oldPkgNa
         }
 
         if (shouldRewrite) {
-          helMonoLog(`found ${pkgJsonPath} dep ${oldPkgName}, rewrite as ${newPkgName}`)
+          helMonoLog(`found ${pkgJsonPath} dep ${oldPkgName}, rewrite as ${newPkgName}`);
           fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
           const modSrcPath = path.join(item.path, 'src');
-          helMonoLog(`check modSrcPath ${modSrcPath}`)
+          helMonoLog(`check modSrcPath ${modSrcPath}`);
           rewriteImportMod(modSrcPath, oldPkgName, newPkgName);
         }
       }

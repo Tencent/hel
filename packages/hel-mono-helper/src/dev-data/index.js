@@ -63,6 +63,15 @@ exports.getPkgMonoDepData = function (/** @type {import('hel-mono-types').IMonoD
 };
 
 /**
+ * @returns {import('../types').DepDataDict}
+ */
+exports.getMonoDepDict = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+  const nameMap = getMonoNameMap(devInfo);
+  const { monoDepPure } = nameMap;
+  return monoDepPure.depData;
+};
+
+/**
  * @returns {import('../types').IMonoDevData}
  */
 exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputAppSrc) {

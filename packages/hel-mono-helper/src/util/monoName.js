@@ -79,7 +79,9 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
 
   // mono-dep.json 需要的数据
   const depData = {};
+  const depDataPure = {};
   const monoDep = { createdAt: getLocaleTime(), depData };
+  const monoDepPure = { createdAt: getLocaleTime(), depData: depDataPure };
 
   const mapData = (belongTo, isSubMod = false) => {
     const nameMap = getMonoLevel1NameMap(belongTo);
@@ -109,14 +111,12 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
 
       const proxyPkgName = isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`;
       const proxySrcPath = path.join(monoRootHelDir, `./${prefixedDir}/src`);
-      pkg2Info[pkgName] = { pkgName, belongTo, dirName, isSubMod, proxyPkgName, proxySrcPath, appSrcPath, alias };
+      const infoPure = { pkgName, belongTo, dirName, isSubMod, appSrcPath, alias };
+      const info = { ...infoPure, proxyPkgName, proxySrcPath };
 
-      depData[pkgName] = {
-        ...pkg2Info[pkgName],
-        appDirPath: pkg2AppDirPath[pkgName],
-        prefixedDir,
-        deps: pkg2Deps[pkgName],
-      };
+      pkg2Info[pkgName] = info;
+      depData[pkgName] = { ...info, appDirPath, prefixedDir, deps };
+      depDataPure[pkgName] = { ...infoPure, appDirPath, prefixedDir, deps };
     });
   };
 
@@ -127,11 +127,21 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
     throw new Error(`these package names (${dupPackNames.join(',')}) duplicated`);
   }
 
-  return { monoNameMap, pkg2AppDirPath, pkg2Deps, pkg2BelongTo, pkg2Dir, prefixedDir2Pkg, pkg2Info, dir2Pkgs, monoDep };
+  return {
+    monoNameMap,
+    pkg2AppDirPath,
+    pkg2Deps,
+    pkg2BelongTo,
+    pkg2Dir,
+    prefixedDir2Pkg,
+    pkg2Info, dir2Pkgs,
+    monoDep,
+    monoDepPure,
+  };
 }
 
 function getBuildDirPath(devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {
-  const { pkg2AppDirPath } = exports.getMonoNameMap(devInfo);
+  const { pkg2AppDirPath } = getMonoNameMap(devInfo);
   const appDirPath = pkg2AppDirPath[pkgName];
   if (!appDirPath) {
     throw new Error(`no app dir found for ${pkgName}!`);
@@ -167,8 +177,8 @@ function getCmdDPNameData(/** @type {IMonoDevInfo} */ devInfo, dirOrPkgName) {
   }
 
   if (pkgs.length > 1) {
-    const tip = `multi packages have the same dir name ${dirOrPkgName}, `
-      + `you may operate it with a prefixed dir name like xxx/${dirOrPkgName}`;
+    const tip =
+      `multi packages have the same dir name ${dirOrPkgName}, ` + `you may operate it with a prefixed dir name like xxx/${dirOrPkgName}`;
     throw new Error(tip);
   }
 

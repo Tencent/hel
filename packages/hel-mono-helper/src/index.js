@@ -2,7 +2,7 @@
 // 故 hel-mono-helper 内部使用 shelljs 替代 child_process.execSync
 const cst = require('./consts');
 const { prepareHelEntry } = require('./entry');
-const { getMonoDevData, getPkgMonoDepData } = require('./dev-data');
+const { getMonoDevData, getPkgMonoDepData, getMonoDepDict } = require('./dev-data');
 const { executeStart, executeBuild, executeStartDeps, buildSrvModToHelDist } = require('./exec');
 const monoUtil = require('./util');
 
@@ -24,6 +24,7 @@ module.exports = {
   prepareHelEntry,
   getMonoDevData,
   getPkgMonoDepData,
+  getMonoDepDict,
   buildSrvModToHelDist,
   monoUtil,
   cst,

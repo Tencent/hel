@@ -24,7 +24,7 @@ function getNameReg(max = 32) {
 
 exports.getArgvOptions = function (options, topOptions = {}) {
   /** @type {{keywords:string[], actionKey: string}} */
-  const { keywords, actionKey, belongTo, pkgName } = options
+  const { keywords, actionKey, belongTo, pkgName } = options;
   const { monoRoot } = getMonoRootInfo();
   const { isSubMod = false } = topOptions;
 

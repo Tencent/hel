@@ -38,11 +38,16 @@ export interface IPkgInfo {
   dirName: string;
   /** 是否子模块 */
   isSubMod: boolean;
+}
+
+
+export interface IInnerPkgInfo extends IPkgInfo {
   /** 代理包名 */
   proxyPkgName: string;
   /** 代理包项目src路径 */
   proxySrcPath: string;
 }
+
 
 export interface INameData {
   pkgName: string;
@@ -79,10 +84,21 @@ export interface IPkgMonoDepData extends IPkgInfo {
   deps: Record<string, string>;
 }
 
+export interface IInnerPkgMonoDepData extends IInnerPkgInfo {
+  appDirPath: string;
+  prefixedDir: string;
+  deps: Record<string, string>;
+}
+
+export type DepDataDict = Record<string, IPkgMonoDepData>;
+
+export type InnerDepDataDict = Record<string, IInnerPkgMonoDepData>;
+
 export interface IMonoNameMap {
   monoNameMap: Record<BelongToDir, { isSubMod: boolean; nameMap: INameMap }>;
   dir2Pkgs: Dict<string[]>;
-  monoDep: { createdAt: string; depData: Record<string, IPkgMonoDepData> };
+  monoDep: { createdAt: string; depData: InnerDepDataDict };
+  monoDepPure: { createdAt: string; depData: DepDataDict };
   /**
    * 包名与应用的目录路径映射
    */
@@ -106,7 +122,7 @@ export interface IMonoNameMap {
   /**
    * 包名与包名信息对象映射
    */
-  pkg2Info: Dict<IPkgInfo>;
+  pkg2Info: Dict<IInnerPkgInfo>;
 }
 
 /** 依赖信息 */

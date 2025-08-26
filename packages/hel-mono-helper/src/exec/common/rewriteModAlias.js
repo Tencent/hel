@@ -99,7 +99,7 @@ function rewriteModAliasForReactApp(argvOptions, oldAlias) {
   ret.write();
 }
 
-exports.rewriteModAlias = function (/** @type {IArgvOptions} */argvOptions, oldAlias) {
+exports.rewriteModAlias = function (/** @type {IArgvOptions} */ argvOptions, oldAlias) {
   const { copyToPath, alias, modTemplate } = argvOptions;
   if (!alias) {
     return;

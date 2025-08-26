@@ -74,7 +74,6 @@ function rewriteByDirPath(dirPath, cb, options = {}) {
   }
 }
 
-
 module.exports = {
   rewriteByLines,
   rewriteFileLine,
