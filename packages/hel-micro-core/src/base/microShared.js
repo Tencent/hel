@@ -28,6 +28,15 @@ function makeOriginOptions(presetOptions) {
     apiPathOfApp: DEFAULT_API_URL,
     apiPathOfAppVersion: '',
     getSubAppAndItsVersionFn: null,
+
+    // 4.13.0 新增 customMetaUrl 和 getMeta
+    // customMetaUrl 用于配合平台新增的 /openapi/meta 请求
+    // customMetaJsonpUrl 用于配合平台新增的 /openapi/metajsonp 请求
+    // getMeta 用于取代 getSubAppAndItsVersionFn 函数
+    customMetaUrl: '',
+    customMetaJsonpUrl: '',
+    getMeta: null,
+
     onFetchMetaFailed: null,
     strictMatchVer: true,
     getUserName: null,

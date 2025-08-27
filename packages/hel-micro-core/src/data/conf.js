@@ -30,6 +30,9 @@ export function getPureConfig(mayCache, needOrigin) {
     platform,
     origin,
     hook,
+    customMetaUrl,
+    customMetaJsonpUrl,
+    getMeta,
   } = mayCache;
   let toReturn = {
     apiMode,
@@ -47,6 +50,9 @@ export function getPureConfig(mayCache, needOrigin) {
     trustAppNames,
     hook,
     platform,
+    customMetaUrl,
+    customMetaJsonpUrl,
+    getMeta,
   };
   if (needOrigin) {
     toReturn.origin = origin;

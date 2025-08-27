@@ -30,12 +30,11 @@ export function callFn(platform: string | undefined, fnName: KeyName, params: an
 }
 
 export function getVal<T extends any = any>(platform: string | undefined, key: KeyName, valPair?: any[], nullDef?: NullDef): T {
-  const [userVal, defautVal] = valPair || [];
+  const [userVal, defaultVal] = valPair || [];
   if (!isNull(userVal, nullDef)) {
     return userVal;
   }
   const conf = getPlatformConfig(platform);
-  const { origin } = conf;
 
   // 优先返回 platInitOptions
   const confVal: any = conf[key];
@@ -44,13 +43,14 @@ export function getVal<T extends any = any>(platform: string | undefined, key: K
   }
 
   // 最后返回 originInitOptions
+  const { origin } = conf;
   // @ts-ignore
   const originVal: any = origin[key];
   if (!isNull(originVal, nullDef)) {
     return originVal;
   }
 
-  return defautVal;
+  return defaultVal;
 }
 
 export function getHookFn<Key extends HookKey>(loadOptions: IInnerPreFetchOptions, hookKey: Key): Hook[Key] {

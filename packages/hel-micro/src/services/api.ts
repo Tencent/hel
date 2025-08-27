@@ -206,32 +206,53 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   const userName = getFnVal('getUserName', { platform, appName, userLsKey });
   const grayResult = getFnVal('shouldUseGray', { appName });
   const apiSuffix = getVal('apiSuffix');
-  const apiPathOfApp = getVal('apiPathOfApp', helConsts.DEFAULT_API_URL);
-  const apiHost = alt.genApiPrefix(platform, loadOptions);
 
   let grayVar = '';
   if (typeof grayResult === 'boolean') {
     grayVar = grayResult ? '1' : '0';
   }
 
-  // 为自定义模块管理台拼接请求链接
-  const jsonpMark = apiMode === API_NORMAL_GET ? '' : JSONP_MARK;
+  const isJsonpGet = apiMode !== API_NORMAL_GET;
+  let url = '';
   let interfaceName = '';
+  let hasV2Get = false;
   if (!isBatch) {
-    interfaceName = !isFullVersion ? apiSrvConst.GET_APP_AND_VER : apiSrvConst.GET_APP_AND_FULL_VER;
+    const customMetaUrl = getVal('customMetaUrl', '');
+    const customMetaJsonpUrl = getVal('customMetaJsonpUrl', '');
+    if (customMetaUrl) {
+      url = `${customMetaUrl}/${appName}?`;
+    } else if (isJsonpGet && customMetaJsonpUrl) {
+      url = `${customMetaJsonpUrl}/${appName}?`;
+    }
+
+    if (!url) {
+      interfaceName = !isFullVersion ? apiSrvConst.GET_APP_AND_VER : apiSrvConst.GET_APP_AND_FULL_VER;
+    } else {
+      hasV2Get = true;
+    }
   } else {
     interfaceName = !isFullVersion ? apiSrvConst.BATCH_GET_APP_AND_VER : apiSrvConst.BATCH_GET_APP_AND_FULL_VER;
   }
-  const finalInterfaceName = `${interfaceName}${jsonpMark}`;
 
-  let url = '';
-  url = `${apiHost}${apiPathOfApp}/${finalInterfaceName}?name=${urlAppName}`;
+  if (!hasV2Get) {
+    const apiPathOfApp = getVal('apiPathOfApp', helConsts.DEFAULT_API_URL);
+    const apiHost = alt.genApiPrefix(platform, loadOptions);
+    // 为自定义模块管理台拼接请求链接
+    const jsonpMark = isJsonpGet ? JSONP_MARK : '';
+    const finalInterfaceName = `${interfaceName}${jsonpMark}`;
+    url = `${apiHost}${apiPathOfApp}/${finalInterfaceName}?name=${urlAppName}`;
+  }
+
   url = inner.appendSearchKV(url, 'userName', userName);
   url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
   url = inner.appendSearchKV(url, 'branch', urlBranchId);
   url = inner.appendSearchKV(url, 'gray', grayVar);
   url = inner.appendSuffix(url, apiSuffix);
+
+  if (url.endsWith('?')) {
+    url = url.substring(0, url.length - 1);
+  }
 
   return { url, userName };
 }
@@ -302,8 +323,16 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
  */
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
   const { versionId, platform, apiMode, loadOptions = {} } = getOptions;
-  const fnName = 'getSubAppAndItsVersionFn';
-  const getFn = alt.getFn(platform, fnName, loadOptions.getSubAppAndItsVersionFn);
+  const oldFnName = 'getSubAppAndItsVersionFn';
+  // core v4.13.0 新增的函数
+  const newFnName = 'getMeta';
+  let fnName = newFnName;
+  let getMetaFn = alt.getFn(platform, newFnName, loadOptions.getMeta);
+  if (!getMetaFn) {
+    // 兼容就配置项
+    getMetaFn = alt.getFn(platform, oldFnName, loadOptions.getSubAppAndItsVersionFn);
+    fnName = oldFnName;
+  }
   const { url, userName } = await prepareRequestInfo(appName, getOptions);
 
   // 内部的请求句柄
@@ -324,12 +353,12 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
     return { app: ensureApp(app), version: ensureVersion(version), metaUrl };
   };
 
-  // 走用户定义的 getSubAppAndItsVersionFn 函数获取数据，用户可在函数里自己预埋的元数据
-  if (getFn) {
+  // 走用户定义的 getMeta 函数获取数据，用户可在函数里自己预埋的元数据
+  if (getMetaFn) {
     const needGrayVer = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions.shouldUseGray);
     const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
     log(`[[ ${fnName} ]] fnParams:`, fnParams);
-    const data = (await Promise.resolve(getFn(fnParams))) as IHelMeta;
+    const data = (await Promise.resolve(getMetaFn(fnParams))) as IHelMeta;
     return { app: ensureApp(data.app), version: ensureVersion(data.version) };
   }
 

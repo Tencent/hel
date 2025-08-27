@@ -123,6 +123,21 @@ export interface IHelMeta {
 
 export type IAppAndVer = IHelMeta;
 
+/**
+ * 透传给 getMeta 的对象
+ */
+export interface IGetMetaPassCtx {
+  platform: string;
+  appName: string;
+  userName: string;
+  versionId: string | undefined;
+  url: string;
+  /** 可能存在的 shouldUseGray 函数的返回结果 */
+  needGrayVer: boolean | null;
+  /** 内部请求句柄，不传递 url 的话会使用内部生成的 url 去请求 */
+  innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IHelMeta>;
+}
+
 export interface IControlPreFetchOptions {
   platform: Platform;
   /**
@@ -208,6 +223,7 @@ export interface IControlPreFetchOptions {
    */
   apiPathOfAppVersion: string;
   /**
+   * @deprecated 可使用名称更简洁的 getMeta 替代
    * default: null
    * 定义获取 app 和 version 数据的函数，修改 hel-micro 的默认请求行为，可根据自己的实际需求来实现此函数逻辑
    * 如定义了 getSubAppAndItsVersionFn 函数，则 apiMode apiPrefix apiSuffix apiPathOfApp 设定均无效
@@ -220,17 +236,19 @@ export interface IControlPreFetchOptions {
    * 4 内部请求行为
    * ```
    */
-  getSubAppAndItsVersionFn: (passCtx: {
-    platform: string;
-    appName: string;
-    userName: string;
-    versionId: string | undefined;
-    url: string;
-    /** 可能存在的 shouldUseGray 函数的返回结果 */
-    needGrayVer: boolean | null;
-    /** 内部请求句柄 */
-    innerRequest: (url?: string, apiMode?: ApiMode) => Promise<IHelMeta>;
-  }) => Promise<IHelMeta> | IHelMeta;
+  getSubAppAndItsVersionFn: (passCtx: IGetMetaPassCtx) => Promise<IHelMeta> | IHelMeta;
+  /**
+   * v4.13.0新增，用于取代 getSubAppAndItsVersionFn
+   */
+  getMeta: (passCtx: IGetMetaPassCtx) => Promise<IHelMeta> | IHelMeta;
+  /**
+   * v4.13.0新增，semverApi 为 false 时，需要走平台侧自定义的语义化 url
+   */
+  customMetaUrl: string;
+  /**
+   * v4.13.0新增，semverApi 为 false 时，需要走平台侧自定义的语义化 url，配合 apiMode='jsonp' 时使用
+   */
+  customMetaJsonpUrl: string;
   /**
    * default: 'HelUserRtxName'，仅当 semverApi 为 false 时，设置此值才会有效
    * 发起自定义平台请求时，尝试从 localStorage 的 {userLsKey} 下获取用户名，
@@ -651,6 +669,7 @@ export interface IInjectPlatOptions {
 }
 
 /**
+ * typo inectPlatToMod, fix it in the future
  * 对函数注入平台值参数，辅助上层模块生成 ins 对象
  * @returns {Record<string, any>} - newMod
  */
