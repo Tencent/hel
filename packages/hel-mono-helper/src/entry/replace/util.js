@@ -103,10 +103,24 @@ function genExportModuleNames(filePath) {
       return;
     }
 
+    if (pured.startsWith('export * from')) {
+      const restStr = pured.split('export * from')[1];
+      // TODO 奖励支持分析 export * from './xxx' 语句
+      throw new Error(`'export * from' in ${filePath} is not supported currently, please use named export statement`);
+    }
+
     if (pured.startsWith('export const')) {
       const restStr = pured.split('export const')[1];
       const [left] = restStr.split('=');
       modNames.push(left.trim());
+      return;
+    }
+
+    if (pured.startsWith('export var')) {
+      const restStr = pured.split('export var')[1];
+      const [left] = restStr.split('=');
+      modNames.push(left.trim());
+      return;
     }
 
     if (pured.startsWith('export function')) {
@@ -115,12 +129,20 @@ function genExportModuleNames(filePath) {
       const seg = restStr.includes('<') ? '<' : '(';
       const [left] = restStr.split(seg);
       modNames.push(left.trim());
+      return;
     }
 
     if (pured.startsWith('export enum')) {
       const restStr = pured.split('export enum')[1];
       const [left] = restStr.split('{');
       modNames.push(left.trim());
+      return;
+    }
+
+    if (pured.startsWith('export default')) {
+      const restStr = pured.split('export enum')[1];
+      modNames.push('default as default');
+      return;
     }
 
     if (pured.startsWith('export {')) {

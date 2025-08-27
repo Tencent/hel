@@ -2,16 +2,37 @@
 /**
  * 为 hel 模式开发或打包的应用动态载入子模块
  */
-import 'hel-iso';
+import { isMasterApp } from 'hel-iso';
+import { libReady, appReady } from 'hel-lib-proxy';
 import { monoLog } from 'hel-mono-runtime-helper';
 import { APP_GROUP_NAME, APP_NAME } from './subApp';
 import { preFetchHelDeps } from './util';
+
+async function mayLoadAsSubMod() {
+  const RootComp = await import('../App');
+  if (RootComp) {
+    monoLog('found root comp to emit');
+    appReady(APP_GROUP_NAME, RootComp, { appName: APP_NAME });
+  }
+
+  const shareModules = await import('../share-modules');
+  if (shareModules) {
+    monoLog('found share modules to emit');
+    libReady(APP_GROUP_NAME, shareModules, { appName: APP_NAME });
+  }
+}
 
 async function main() {
   const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;
   monoLog(`load hel app ${label}`);
   await preFetchHelDeps();
-  await import('{{APP_PACK_NAME}}');
+
+  if (isMasterApp()) {
+    await import('{{APP_PACK_NAME}}');
+    return;
+  }
+
+  await mayLoadAsSubMod();
 }
 
 main().catch((err) => {
