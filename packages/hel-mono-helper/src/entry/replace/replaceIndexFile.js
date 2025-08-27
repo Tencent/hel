@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { HEL_MICRO_NAME, HEL_LIB_PROXY_NAME } = require('../../consts');
 const { rewriteFileLine } = require('../../util/rewrite');
-const { helMonoLog } = require('../../util');
+const { helMonoLog, isHelAllBuild } = require('../../util');
 
 function hasFile(appSrcDirPath, relPath) {
   const filePath = path.join(appSrcDirPath, relPath);
@@ -17,8 +17,7 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
   const { helMicroName = HEL_MICRO_NAME, helLibProxyName = HEL_LIB_PROXY_NAME } = devInfo;
 
   helMonoLog(`replace content of ${indexFilePath}`);
-  const hasRootComp =
-    hasFile(appSrcDirPath, 'App.tsx')
+  const hasRootComp = hasFile(appSrcDirPath, 'App.tsx')
     || hasFile(appSrcDirPath, 'App.jsx')
     || hasFile(appSrcDirPath, 'App.js')
     || hasFile(appSrcDirPath, 'App');
@@ -37,6 +36,8 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
       targetLine = !hasRootComp ? `  const RootComp: any = null; // found no root comp` : line;
     } else if (line.includes('../share-modules')) {
       targetLine = !hasShareModules ? `  const shareModules: any = null; // found no share modules` : line;
+    } else if (line.includes('const needHelDeps =')) {
+      targetLine = isHelAllBuild() ? `const needHelDeps = false; // found process.env.HEL_BUILD=3 in build process` : line;
     }
 
     return { line: targetLine };

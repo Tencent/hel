@@ -8,6 +8,7 @@
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "start:hwl": "node ../../dev/scripts/hel/startWL.js",
     "start:hwr": "node ../../dev/scripts/hel/startWR.js",
+    "start:all": "node ../../dev/scripts/hel/startAll.js",
     "start:deps": "node ../../dev/scripts/hel/startDeps.js",
     "build": "node ../../dev/scripts/build.js",
     "build:hel": "node ../../dev/scripts/hel/build.js",

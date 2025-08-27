@@ -19,8 +19,10 @@ function getExtIndexData(appSrcDirPath, indexName, ext) {
 function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   let indexName = '';
   const { isForRootHelDir, appSrcDirPath } = appData;
-  if (isForRootHelDir || isHelAllBuild()) {
+  if (isForRootHelDir) {
     indexName = 'index';
+  } else if (isHelAllBuild()) {
+    indexName = '.hel/index';
   } else {
     indexName = isHelMicroMode() ? '.hel/index' : 'index';
   }

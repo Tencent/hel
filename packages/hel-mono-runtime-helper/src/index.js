@@ -41,7 +41,16 @@ export function getStorageValue(key) {
 }
 
 export function monoLog(...args) {
-  console.log(`[hel-mono] `, ...args);
+  const argv = Array.from(args);
+  const len = args.length;
+  const prefix = '[hel-mono]';
+  if (len === 1) {
+    return console.log(`%c${prefix} ${args[0]}`, 'color:#eaa10f');
+  }
+  if (len === 2) {
+    return console.log(`%c${prefix} ${args[0]} ${args[1]}`, 'color:#eaa10f');
+  }
+  console.log(`[hel-mono]`, ...argv);
 }
 
 export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {

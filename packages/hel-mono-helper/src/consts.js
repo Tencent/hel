@@ -82,7 +82,7 @@ const INNER_ACTION = {
 const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);
 
 // 这些模式被 start xx:mode 直接命中时，需要转为 start:mode 去运行
-const START_CMD_MODES = ['hel', 'hwl', 'hwr'];
+const START_CMD_MODES = ['hel', 'hwl', 'hwr', 'all'];
 
 /**
  * .create 命令能识别的短命令参数

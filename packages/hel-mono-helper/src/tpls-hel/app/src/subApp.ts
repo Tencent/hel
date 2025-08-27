@@ -13,4 +13,4 @@ export const APP_GROUP_NAME = appGroupName;
 
 export const APP_NAME = appNames[DEPLOY_ENV] || appGroupName;
 
-monoLog(`${APP_GROUP_NAME} deployEnv is ${DEPLOY_ENV}, mapped ${APP_NAME}`);
+monoLog(`${APP_GROUP_NAME} deployEnv is ${DEPLOY_ENV}`);

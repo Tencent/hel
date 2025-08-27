@@ -8,6 +8,10 @@ import { monoLog } from 'hel-mono-runtime-helper';
 import { APP_GROUP_NAME, APP_NAME } from './subApp';
 import { preFetchHelDeps } from './util';
 
+// process.env.HEL_BUILD=3 时（HEL_ALL_BUILD），此处会编译为 false
+const needHelDeps = true;
+const loadModeLabel = needHelDeps ? 'hel micro-module mode' : 'hel legacy mode';
+
 async function mayLoadAsSubMod() {
   const RootComp = await import('../App');
   if (RootComp) {
@@ -24,8 +28,10 @@ async function mayLoadAsSubMod() {
 
 async function main() {
   const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;
-  monoLog(`load hel app ${label}`);
-  await preFetchHelDeps();
+  monoLog(`load hel app ${label} as ${loadModeLabel}`);
+  if (needHelDeps) {
+    await preFetchHelDeps();
+  }
 
   if (isMasterApp()) {
     await import('{{APP_PACK_NAME}}');

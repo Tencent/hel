@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-runtime-helper",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "micro module mono-repo architecture runtime helper",
   "keywords": [
     "hel",
