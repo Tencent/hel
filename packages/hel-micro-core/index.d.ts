@@ -112,7 +112,7 @@ export function libReady(appGroupName: string, appProperties: any, options?: ILi
 export function appReady(appGroupName: string, Comp: any, options?: IAppReadyOptions): void;
 
 /**
- * 获取内置的平台默认值，现为 'unpkg'，如是来自 createInstace 实例调用，则返回的是对应的自定义平台
+ * 获取内置的平台默认值，现为 'unpkg'，如是来自 createInstance 实例调用，则返回的是对应的自定义平台
  */
 export function getPlatform(): Platform;
 
@@ -594,6 +594,8 @@ export interface NullDef {
 }
 
 export type CommonUtil = {
+  isServer: () => boolean;
+  hasProp: (obj: any, key: string) => boolean;
   noDupPush: (list: any[], item: any) => void;
   merge2List: (list1: string[], list2: string[]) => string[];
   okeys: (map: any) => string[];

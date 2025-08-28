@@ -1,4 +1,4 @@
-import { getAppMeta, log } from 'hel-micro-core';
+import { getAppMeta, log, getGlobalThis, commonUtil } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as alt from '../alternative';
 
@@ -54,4 +54,17 @@ export function isEmitVerMatchInputVer(appName: string, options: IVerMatchOption
   }
 
   return emitVer === inputVer;
+}
+
+/**
+ * 解决非 hel 直出的首页，使用了 hel sdk 去拉取 hel 模块时，子模块允许报错 TencentHelMicro is undefined
+ * 子模块的 hel-base 链接加载始终晚于 main.js 执行逻辑（非首屏的资源加载会出现这个问题），
+ * 故这里自动绑定一下，同时也可以提高 hel-mono 架构易用性
+ */
+export function mayBindIns(ins: any) {
+  const globalThis: any = getGlobalThis();
+  if (!commonUtil.isServer() && !globalThis.HelMicro) {
+    log('auto bind hel-micro to global.HelMicro');
+    globalThis.HelMicro = ins;
+  }
 }

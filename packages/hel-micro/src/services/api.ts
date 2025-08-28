@@ -6,7 +6,7 @@ import { getJSON } from '../browser/jsonp';
 import { apiSrvConst, API_NORMAL_GET, JSONP_MARK } from '../consts/logic';
 import { getPlatform } from '../shared/platform';
 import type { IInnerPreFetchOptions } from '../types';
-import { getSemverLatestVer, perfEnd, perfStart, requestGet } from '../util';
+import { getSemverLatestVer, hasProp, perfEnd, perfStart, requestGet } from '../util';
 
 const { safeParse } = commonUtil;
 
@@ -318,6 +318,26 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
   return url;
 }
 
+function extractMetaFromReply(appName: string, inputReply: any) {
+  let reply = inputReply;
+  // 支持 getMeta 按类型说明返回的 IHelMeta 结构
+  if (hasProp(reply, 'app') && hasProp(reply, 'version')) {
+    reply = { code: 0, data: { app: reply.app, version: reply.version } };
+  }
+  if (!reply || 0 !== Number(reply.code)) {
+    throw new Error(reply?.msg || 'getSubAppAndItsVersion err`');
+  }
+  const { app, version } = reply.data || {};
+  if (!app) {
+    throw new Error(`no app for ${appName}`);
+  }
+  if (!version) {
+    // 可能存在有应用但无版本的情况
+    throw new Error(`no version for ${appName}`);
+  }
+  return { app: ensureApp(app), version: ensureVersion(version) };
+}
+
 /**
  * 获取子应用和它的最新在线版本
  */
@@ -339,18 +359,8 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const metaUrl = custUrl || url;
     const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions.semverApi });
-    if (0 !== Number(reply.code) || !reply) {
-      throw new Error(reply?.msg || `${fnName} err`);
-    }
-    const { app, version } = reply.data || {};
-    if (!app) {
-      throw new Error(`no app for ${appName}`);
-    }
-    if (!version) {
-      // 可能存在有应用但无版本的情况
-      throw new Error(`no version for ${appName}`);
-    }
-    return { app: ensureApp(app), version: ensureVersion(version), metaUrl };
+    const meta = extractMetaFromReply(appName, reply);
+    return meta;
   };
 
   // 走用户定义的 getMeta 函数获取数据，用户可在函数里自己预埋的元数据
@@ -359,7 +369,8 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
     const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
     log(`[[ ${fnName} ]] fnParams:`, fnParams);
     const data = (await Promise.resolve(getMetaFn(fnParams))) as IHelMeta;
-    return { app: ensureApp(data.app), version: ensureVersion(data.version) };
+    const meta = extractMetaFromReply(appName, data);
+    return meta;
   }
 
   const data = await innerRequest();

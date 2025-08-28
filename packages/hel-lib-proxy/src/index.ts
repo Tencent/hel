@@ -6,11 +6,12 @@
  */
 import * as apis from './apis';
 import * as ins from './ins';
-export * from './typings';
+import { mayBindIns } from './share';
 
+export * from './typings';
 export const { createInstance } = ins;
 export const { VER, libReady, exposeLib, getLib, isSubApp, isMasterApp, eventBus, appReady, exposeApp } = apis;
-export default {
+const toExport = {
   VER,
   libReady,
   exposeLib,
@@ -22,3 +23,7 @@ export default {
   exposeApp,
   createInstance,
 };
+
+mayBindIns(toExport);
+
+export default toExport;

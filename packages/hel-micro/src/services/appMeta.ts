@@ -1,4 +1,4 @@
-import { getAppMeta } from 'hel-micro-core';
+import { getAppMeta, getVersion } from 'hel-micro-core';
 import type { ApiMode, ISubAppVersion, Platform } from 'hel-types';
 import { API_NORMAL_GET } from '../consts/logic';
 import type { GetCacheKey, IHelMeta } from '../types';
@@ -34,7 +34,11 @@ export async function getSubAppMeta(appName: string, options?: IHelGetOptions): 
   let targetMeta;
   // 尝试复用已缓存的版本
   if (reuseCache && !versionId && !projectId && !branchId) {
-    targetMeta = getAppMeta(appName, platform);
+    const appMeta = getAppMeta(appName, platform);
+    const appVersion = getVersion(appName, { platform });
+    if (appMeta && appVersion) {
+      targetMeta = { app: appMeta, version: appVersion };
+    }
   }
   if (!targetMeta) {
     targetMeta = await innerApiSrv.getSubAppAndItsVersion(appName, options || {});

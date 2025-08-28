@@ -22,14 +22,14 @@ function getStyleList(name: string, options: IInnerUseRemoteCompOptions) {
 
 function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions) {
   const { isLib, compName } = options;
-  const emitApp = logicSrv.getLibOrApp(appName, options);
+  const emitData = logicSrv.getLibOrApp(appName, options);
+  if (!emitData) {
+    return null;
+  }
 
   // 获取的是 libReady 弹射出去的组件
   if (isLib) {
-    if (!emitApp) {
-      return null;
-    }
-    const libRoot: Record<string, any> = emitApp.appProperties || {};
+    const libRoot: Record<string, any> = emitData.appProperties || {};
     // 不传子组件名称， 表示返回的是 libReady 弹出的根模块
     if (!compName) {
       return libRoot;
@@ -41,7 +41,12 @@ function getRemoteModule(appName: string, options: IInnerUseRemoteCompOptions) {
     return libComp;
   }
 
-  return emitApp?.Comp;
+  let RootComp = emitData.Comp;
+  if (RootComp.default) {
+    return RootComp.default;
+  }
+
+  return RootComp;
 }
 
 export default function useLoadRemoteModule(config: IRemoteCompRenderConfig) {

@@ -1,6 +1,14 @@
-import { getAppPlatform, getSharedCache, helConsts, log } from 'hel-micro-core';
+import { commonUtil, getAppPlatform, getGlobalThis, getSharedCache, helConsts, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import type { IOptions, LibProperties } from './typings';
+
+export function mayBindIns(ins: any) {
+  const globalThis: any = getGlobalThis();
+  if (!commonUtil.isServer() && !globalThis.HelLibProxy) {
+    log('auto bind hel-lib-proxy to global.HelLibProxy');
+    globalThis.HelLibProxy = ins;
+  }
+}
 
 export function getMergedOptions(options?: IOptions) {
   const defaultOptions = {

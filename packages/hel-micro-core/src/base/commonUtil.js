@@ -12,6 +12,15 @@ export function noop(...args) {
   return args;
 }
 
+export function hasProp(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+export function isServer() {
+  const globalThis = getGlobalThis();
+  return globalThis.process && globalThis.global && !globalThis.document;
+}
+
 export function safeParse(jsonStr, defaultValue, errMsg) {
   // 防止传入进来的已经是 json 对象
   if (jsonStr && typeof jsonStr !== 'string') {

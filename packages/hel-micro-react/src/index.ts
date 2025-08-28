@@ -1,6 +1,7 @@
 import * as core from 'hel-micro-core';
 import * as apis from './apis';
 import { createInstance } from './ins';
+import { mayBindReactLibs } from './util';
 export type { LocalCompType, MicroAppType } from './components/MicroApp';
 export type { RemoteComp } from './hooks/index';
 export * from './types';
@@ -34,6 +35,7 @@ export const {
 } = apis;
 
 core.log(`hel-micro-react ver ${VER}`);
+mayBindReactLibs();
 
 const toExport = {
   VER,

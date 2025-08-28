@@ -17,7 +17,8 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
   const { helMicroName = HEL_MICRO_NAME, helLibProxyName = HEL_LIB_PROXY_NAME } = devInfo;
 
   helMonoLog(`replace content of ${indexFilePath}`);
-  const hasRootComp = hasFile(appSrcDirPath, 'App.tsx')
+  const hasRootComp =
+    hasFile(appSrcDirPath, 'App.tsx')
     || hasFile(appSrcDirPath, 'App.jsx')
     || hasFile(appSrcDirPath, 'App.js')
     || hasFile(appSrcDirPath, 'App');

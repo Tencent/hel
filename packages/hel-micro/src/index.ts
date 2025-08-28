@@ -13,8 +13,12 @@ import type {
   IPlatformConfigInitFull as t4,
   IShouldUseGray as t5,
 } from 'hel-micro-core';
+import { commonUtil } from 'hel-micro-core';
+import helLibProxy from 'hel-lib-proxy';
 import * as apis from './apis';
 import * as ins from './ins';
+import { mayBindIns } from './shared/util';
+
 export type { ApiMode, IEmitAppInfo, ISubApp, ISubAppVersion, Platform } from 'hel-types';
 export type { CreateInstance, CreateOriginInstance, InsApis } from './ins';
 export type { IGroupedStyleList, IPreFetchAppOptions, IPreFetchLibOptions, IPreFetchOptionsBase, IStyleDataResult } from './types';
@@ -64,7 +68,7 @@ export const eventBus = apis.core.getUserEventBus();
 
 core.log(`hel-micro ver ${VER}`);
 
-export default {
+const toExport = {
   VER,
   preFetchLib,
   preFetchApp,
@@ -90,3 +94,11 @@ export default {
   createInstance,
   createOriginInstance,
 };
+
+// 仅为了用户安装好 hel-micro 时，hel-lib-proxy 逻辑
+// 并触发 hel-lib-proxy 内部的 mayBindIns 逻辑
+// 提供 hel-mono 架构的易用性
+mayBindIns(toExport);
+commonUtil.noop(helLibProxy);
+
+export default toExport;

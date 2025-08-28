@@ -5,6 +5,10 @@ import type { IInnerPreFetchOptions } from './types';
 let seq = 0;
 const detectMark = 'try_detect_latest_ver';
 
+export function hasProp(obj: any, key: string) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 export function perfStart(label: string, addSeq?: boolean) {
   let seqStr = '';
   if (allowLog()) {
