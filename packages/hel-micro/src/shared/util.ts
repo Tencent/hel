@@ -1,4 +1,4 @@
-import { getAppMeta, log, getGlobalThis, commonUtil } from 'hel-micro-core';
+import { commonUtil, getAppMeta, getGlobalThis, log } from 'hel-micro-core';
 import type { Platform } from 'hel-types';
 import * as alt from '../alternative';
 

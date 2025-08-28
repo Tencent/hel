@@ -1,7 +1,7 @@
+import { commonUtil, getGlobalThis, log } from 'hel-micro-core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactIs from 'react-is';
-import { commonUtil, getGlobalThis, log } from 'hel-micro-core';
 import BuildInSkeleton from './components/BuildInSkeleton';
 
 export function getSkeletonEl(UserSkeleton: any) {

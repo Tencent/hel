@@ -1,3 +1,4 @@
+import helLibProxy from 'hel-lib-proxy';
 import type {
   CommonUtil as t13,
   IAppAndVer as t1,
@@ -14,7 +15,6 @@ import type {
   IShouldUseGray as t5,
 } from 'hel-micro-core';
 import { commonUtil } from 'hel-micro-core';
-import helLibProxy from 'hel-lib-proxy';
 import * as apis from './apis';
 import * as ins from './ins';
 import { mayBindIns } from './shared/util';
