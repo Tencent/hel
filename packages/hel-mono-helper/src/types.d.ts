@@ -1,5 +1,5 @@
 import type { ISubAppBuildDesc } from 'hel-dev-utils';
-import type { IMonoDevInfo } from 'hel-mono-types';
+import type { IMonoDevInfo, IPkgHelConf } from 'hel-mono-types';
 
 type Dict<T = any> = Record<string, T>;
 
@@ -79,15 +79,19 @@ export interface INameMap {
 }
 
 export interface IPkgMonoDepData extends IPkgInfo {
+  alias: string;
   appDirPath: string;
   prefixedDir: string;
   deps: Record<string, string>;
+  hel: IPkgHelConf,
 }
 
 export interface IInnerPkgMonoDepData extends IInnerPkgInfo {
+  alias: string;
   appDirPath: string;
   prefixedDir: string;
   deps: Record<string, string>;
+  hel: IPkgHelConf,
 }
 
 export type DepDataDict = Record<string, IPkgMonoDepData>;

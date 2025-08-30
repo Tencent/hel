@@ -24,7 +24,7 @@ function getMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;
@@ -52,7 +52,17 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
         const pkgJson = require(pkgJsonPath);
         const pkgName = pkgJson.name;
         const prefixedDir = `${dir}/${item.name}`;
-        const data = { alias, hel: pkgJson.hel | {}, isSubMod, prefixedDir, pkgName };
+        const data = {
+          pkgName,
+          belongTo: dir,
+          dirName: item.name,
+          prefixedDir,
+          alias,
+          appDirPath: item.path,
+          hel: pkgJson.hel || {},
+          deps: pkgJson.dependencies || {},
+          isSubMod,
+        };
 
         monoDict[pkgName] = data;
         prefixedDirDict[prefixedDir] = data;
@@ -63,9 +73,16 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
   return { monoDict, prefixedDirDict };
 }
 
+function inferMonoDepDict() {
+  const monoJson = getMonoJson();
+  const { monoDict } = getModMonoDataDict(monoJson || { mods: {} });
+  return monoDict;
+}
+
 module.exports = {
   getMonoJsonFilePath,
   getMonoJson,
   getModMonoDataDict,
   rewriteMonoJson,
+  inferMonoDepDict,
 };

@@ -6,11 +6,11 @@ const { purify, clone } = require('./dict');
 const { getMonoJson, rewriteMonoJson, getModMonoDataDict } = require('./monoJson');
 const { getPortByDevInfo } = require('./port');
 
-let ensureHelConfFn = null;
+let ensurePkgHelFn = null;
 let handleDevInfoFn = null;
 
-function setEnsureHelConf(fn) {
-  ensureHelConfFn = fn;
+function setEnsurePkgHel(fn) {
+  ensurePkgHelFn = fn;
 }
 
 function setHandleDevInfo(fn) {
@@ -39,9 +39,9 @@ function getAppConfs(monoJson) {
   const pkgNames = Array.from(new Set(monoJsonPkgNames.concat(repoPkgNames)));
   pkgNames.forEach((pkgName) => {
     const { port, alias, devHostname } = mods[pkgName] || {};
-    const appConf = monoDict[pkgName] || {};
-    let helConf = appConf.hel || {};
-    const repoAlias = appConf.alias;
+    const pkgMonoData = monoDict[pkgName] || {};
+    let pkgHel = pkgMonoData.hel || {};
+    const repoAlias = pkgMonoData.alias;
 
     if (!isChangeAliasCmd && alias && repoAlias && alias !== repoAlias) {
       const tip =
@@ -49,18 +49,18 @@ function getAppConfs(monoJson) {
       throw new Error(tip);
     }
 
-    if (ensureHelConfFn) {
-      helConf = ensureHelConfFn(helConf, pkgName) || helConf;
+    if (ensurePkgHelFn) {
+      pkgHel = ensurePkgHelFn(pkgHel, pkgName) || pkgHel;
     }
     const targetAlias = repoAlias || alias;
 
     appConfs[pkgName] = {
       port,
       alias: targetAlias,
-      devHostname: helConf.devHostname || devHostname,
+      devHostname: pkgHel.devHostname || devHostname,
       hel: {
-        appGroupName: helConf.groupName,
-        appNames: helConf.names || {},
+        appGroupName: pkgHel.groupName,
+        appNames: pkgHel.names || {},
       },
     };
   });
@@ -161,7 +161,7 @@ module.exports = {
   ensureAppConf,
   getDevInfoDirs,
   inferDevInfo,
-  setEnsureHelConf,
+  setEnsurePkgHel,
   setHandleDevInfo,
   toMonoJson,
 };

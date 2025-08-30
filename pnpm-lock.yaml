@@ -400,9 +400,9 @@ importers:
     specifiers:
       hel-dev-utils: ^5.2.6
       hel-iso: ^4.4.0
-      hel-lib-proxy: ^4.11.0
-      hel-micro: ^4.12.2
-      hel-mono-types: ^1.2.2
+      hel-lib-proxy: ^4.12.1
+      hel-micro: ^4.13.2
+      hel-mono-types: ^2.0.0
       jsonc-parser: 3.3.1
       shelljs: ^0.9.2
     dependencies:
@@ -413,7 +413,7 @@ importers:
       jsonc-parser: 3.3.1
       shelljs: 0.9.2
     devDependencies:
-      hel-mono-types: 1.2.3
+      hel-mono-types: link:../hel-mono-types
 
   packages/hel-mono-runtime-helper:
     specifiers:
@@ -15729,10 +15729,6 @@ packages:
   /hel-mono-templates/0.0.3:
     resolution: {integrity: sha512-xw2Qvoh80R9nkb+W4rOgdoC1vNK56TzmWHhf9dHvCquT2OpzfOj8D6/6i84gTdeB3+R6qc7wI31q2+4pioqmAw==}
     dev: false
-
-  /hel-mono-types/1.2.3:
-    resolution: {integrity: sha512-A2CkvJFHrPDI3Y8N1pi0OUQGPGmwX9OQT1BSk04dDpf9e5QNb9rePWH7uYxbkxGIgVSfaFw0wHO86i7EEEelTg==}
-    dev: true
 
   /history/4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}

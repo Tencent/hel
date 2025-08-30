@@ -75,7 +75,7 @@ export declare function getPkgMonoDepData(pkgName: string): IPkgMonoDepData | nu
 /**
  * 获取 hel-mono 大仓里的依赖数据字典
  */
-export declare function getMonoDepDict(): DepDataDict;
+export declare function getPkgMonoDepDataDict(): DepDataDict;
 
 /**
  * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下，

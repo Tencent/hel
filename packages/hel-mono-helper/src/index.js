@@ -1,5 +1,5 @@
 const qpi = require('./api');
-const { inferDevInfo, setEnsureHelConf, setHandleDevInfo } = require('./util/devInfo');
+const { inferDevInfo, setEnsurePkgHel, setHandleDevInfo } = require('./util/devInfo');
 const { monoUtil, cst, buildSrvModToHelDist } = qpi;
 
 function executeStart(options) {
@@ -27,26 +27,16 @@ function getMonoDevData(inputAppSrc) {
   return qpi.getMonoDevData(devInfo, inputAppSrc);
 }
 
-function getPkgMonoDepData(pkgName) {
-  const devInfo = inferDevInfo();
-  return qpi.getPkgMonoDepData(devInfo, pkgName);
-}
-
-function getMonoDepDict() {
-  const devInfo = inferDevInfo();
-  return qpi.getMonoDepDict(devInfo);
-}
-
 module.exports = {
   executeStart,
   executeBuild,
   executeStartDeps,
   prepareHelEntry,
   getMonoDevData,
-  getPkgMonoDepData,
-  getMonoDepDict,
+  getPkgMonoDepData: qpi.getPkgMonoDepData,
+  getPkgMonoDepDataDict: qpi.getPkgMonoDepDataDict,
   buildSrvModToHelDist,
-  setEnsureHelConf,
+  setEnsurePkgHel,
   setHandleDevInfo,
   monoUtil,
   cst,

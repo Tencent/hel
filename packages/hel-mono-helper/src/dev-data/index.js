@@ -5,6 +5,7 @@ const { VER } = require('../consts');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
+const { inferMonoDepDict } = require('../util/monoJson');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
 const { getMonoNameMap } = require('../util/monoName');
 const { getLogTimeLine } = require('../util/time');
@@ -59,19 +60,17 @@ function getPkgLogInfo(info, isForRootHelDir) {
 /**
  * @returns {import('../types').IPkgMonoDepData | null}
  */
-exports.getPkgMonoDepData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgName) {
-  const nameMap = getMonoNameMap(devInfo);
-  const { monoDep } = nameMap;
-  return monoDep.depData[pkgName] || null;
+exports.getPkgMonoDepData = function (pkgName) {
+  const dict = inferMonoDepDict();
+  return dict[pkgName] || null;
 };
 
 /**
  * @returns {import('../types').DepDataDict}
  */
-exports.getMonoDepDict = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
-  const nameMap = getMonoNameMap(devInfo);
-  const { monoDepPure } = nameMap;
-  return monoDepPure.depData;
+exports.getPkgMonoDepDataDict = function () {
+  const dict = inferMonoDepDict();
+  return dict;
 };
 
 /**
