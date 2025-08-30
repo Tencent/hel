@@ -1,9 +1,10 @@
 {
   "name": "hel-mono-runtime-helper",
-  "version": "0.3.1",
+  "version": "1.0.1",
   "description": "micro module mono-repo architecture runtime helper",
   "keywords": [
     "hel",
+    "hel-mono",
     "hel-micro",
     "mono-repo",
     "hel-mono-runtime-helper",
@@ -18,7 +19,7 @@
   "author": {
     "name": "fantasticsoul"
   },
-  "main": "src/index.js",
+  "main": "./src/index.js",
   "files": [
     "src",
     "README.md",
@@ -27,7 +28,7 @@
   "scripts": {},
   "dependencies": {},
   "devDependencies": {
-    "hel-mono-types": "^1.2.2"
+    "hel-mono-types": "^2.0.0"
   },
   "peerDependencies": {},
   "bundleDependencies": [],

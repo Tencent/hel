@@ -1,6 +1,11 @@
-import { IMonoInjectedAppBaseConf, IMonoInjectedDevInfo } from 'hel-mono-types';
+import { IMonoInjectedMod, IMonoInjectedDevInfo } from 'hel-mono-types';
 
-export type HelDep = { appName: string; appGroupName: string; packName: string; platform?: string };
+export interface IHelDep {
+  helModName: string;
+  groupName: string;
+  pkgName: string;
+  platform?: string;
+}
 
 export interface IMakeRuntimeUtilOptions {
   DEV_INFO: IMonoInjectedDevInfo;
@@ -30,9 +35,9 @@ export declare const HEL_DEV_KEY_PREFIX: {
   projectId: 'hel.proj';
 };
 
-export type GetHelDeps = () => HelDep[];
+export type GetHelDeps = () => { helModNames: string[], helDeps: IHelDep[] };
 
-export type GetPrefetchParams = (appName: string, conf: IMonoInjectedAppBaseConf) => IPrefetchParams;
+export type GetPrefetchParams = (helModName: string, mod: IMonoInjectedMod) => IPrefetchParams;
 
 export type RuntimeUtil = {
   getHelDeps: GetHelDeps;

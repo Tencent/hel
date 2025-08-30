@@ -1,8 +1,8 @@
 /**
  * 辅助工具函数
  */
-/** @typedef {import('hel-mono-types').IMonoInjectedAppBaseConf} IMonoInjectedAppBaseConf */
-/** @typedef {import('./types').HelDep} HelDep */
+/** @typedef {import('hel-mono-types').IMonoInjectedMod} IMonoInjectedMod */
+/** @typedef {import('./types').IHelDep} IHelDep */
 /** @typedef {import('./types').IMakeRuntimeUtilOptions} IMakeRuntimeUtilOptions */
 const START_WITH_REMOTE = '3';
 
@@ -20,15 +20,15 @@ export const HEL_DEV_KEY_PREFIX = {
   projectId: 'hel.proj',
 };
 
-export function getDevUrlKey(modName) {
-  return `${HEL_DEV_KEY_PREFIX.devUrl}:${modName}`;
+export function getDevUrlKey(groupName) {
+  return `${HEL_DEV_KEY_PREFIX.devUrl}:${groupName}`;
 }
 
-export function getHelConfKeys(modName) {
+export function getHelConfKeys(groupName) {
   return {
-    branchId: `${HEL_DEV_KEY_PREFIX.branchId}:${modName}`,
-    versionId: `${HEL_DEV_KEY_PREFIX.versionId}:${modName}`,
-    projectId: `${HEL_DEV_KEY_PREFIX.projectId}:${modName}`,
+    branchId: `${HEL_DEV_KEY_PREFIX.branchId}:${groupName}`,
+    versionId: `${HEL_DEV_KEY_PREFIX.versionId}:${groupName}`,
+    projectId: `${HEL_DEV_KEY_PREFIX.projectId}:${groupName}`,
   };
 }
 
@@ -55,34 +55,37 @@ export function monoLog(...args) {
 
 export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
   const { DEV_INFO, APP_GROUP_NAME, DEPLOY_ENV, isDev, startMode } = options;
+  const defaultDH = DEV_INFO.devHostname;
 
   return {
     /**
      * 获取hel模块依赖，根据不同运行环境拉不同hel模块
      */
     getHelDeps() {
-      const depPackNames = Object.keys(DEV_INFO.appConfs);
-      /** @type HelDep[] */
+      const { mods } = DEV_INFO;
+      const depPkgNames = Object.keys(mods);
+      /** @type IHelDep[] */
       const helDeps = [];
+      const helModNames = [];
 
-      depPackNames.forEach((packName) => {
-        const helConf = DEV_INFO.appConfs[packName].hel;
-        if (helConf.appGroupName === APP_GROUP_NAME) return;
+      depPkgNames.forEach((pkgName) => {
+        const mod = mods[pkgName];
+        if (mod.groupName === APP_GROUP_NAME) return;
 
-        const { appNames, appGroupName = '' } = helConf;
-        if (appGroupName) {
-          const helModName = appNames[DEPLOY_ENV] || appGroupName;
-          helDeps.push({ appName: helModName, appGroupName, packName });
+        const { names, groupName = '', platform } = mod;
+        if (groupName) {
+          const helModName = names[DEPLOY_ENV] || groupName;
+          helModNames.push(helModName);
+          helDeps.push({ helModName, groupName, pkgName, platform });
         }
       });
 
-      return helDeps;
+      return { helModNames, helDeps };
     },
-    getPrefetchParams(appName, /** @type {IMonoInjectedAppBaseConf} */ conf) {
-      const { port = 3000, devHostname = DEV_INFO.devHostname } = conf;
-      const { appGroupName } = conf.hel;
-      const devUrl = getStorageValue(getDevUrlKey(appGroupName));
-      const confKeys = getHelConfKeys(appGroupName);
+    getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
+      const { port = 3000, devHostname = defaultDH, groupName } = mod;
+      const devUrl = getStorageValue(getDevUrlKey(groupName));
+      const confKeys = getHelConfKeys(groupName);
       const params = {
         branchId: getStorageValue(confKeys.branchId),
         versionId: getStorageValue(confKeys.versionId),
@@ -90,7 +93,7 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
       };
 
       if (devUrl) {
-        monoLog(`found devUrl ${devUrl} for ${appName}`);
+        monoLog(`found devUrl ${devUrl} for ${helModName}`);
         return { enable: true, host: devUrl, ...params };
       }
 

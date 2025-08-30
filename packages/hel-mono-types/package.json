@@ -1,13 +1,13 @@
 {
   "name": "hel-mono-types",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "description": "hel-mono types file",
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
   },
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "main": "./src/index.cjs",
+  "module": "./src/index.js",
   "scripts": {},
   "deprecated": false
 }

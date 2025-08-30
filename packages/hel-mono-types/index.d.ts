@@ -2,20 +2,9 @@
  * @description: hel-mono-helper 对应的 dev-info 类型文件
  */
 
-/**
- * 通过 entry/replace/replaceDevInfo.js 脚本注入的 hel 模块配置
- */
-export interface IInjectedHelModConf {
-  appGroupName: string;
-  appNames: Record<string, string>;
-  platform?: string;
-}
-
-export interface IMonoInjectedAppBaseConf {
-  port: number;
-  devHostname?: string;
-  hel: IInjectedHelModConf;
-}
+type PkgName = string;
+type DeployEnv = string;
+type HelModName = string;
 
 /**
  * hel应用（模块）配置
@@ -99,7 +88,19 @@ export interface IMonoDevInfo {
   helLibProxyName?: string;
 }
 
-export type MonoInjectedAppConfs = Record<string, IMonoInjectedAppBaseConf>;
+/**
+ * 通过 entry/replace/replaceDevInfo.js 脚本注入的 hel 模块配置
+ */
+export interface IMonoInjectedMod {
+  port: number;
+  devHostname?: string;
+  groupName: string;
+  names: Record<DeployEnv, HelModName>;
+  platform?: string;
+}
+
+
+export type IMonoInjectedModDict = Record<string, IMonoInjectedMod>;
 
 /**
  * 通过脚本裁剪 dev-info 配置后，注入到应用代码里的开发信息
@@ -108,10 +109,30 @@ export interface IMonoInjectedDevInfo {
   /**
    * 各应用（或子模块）的大仓开发配置
    */
-  appConfs: MonoInjectedAppConfs;
+  mods: IMonoInjectedModDict;
   /**
    * default: 'http://localhost'
    * 所有hel模块本地联调时的域名
    */
   devHostname: string;
+}
+
+/**
+ * package.json 里 hel 节点配置描述
+ */
+export interface IPkgHelConf {
+  ciCmd?: string;
+  groupName?: string;
+  names?: Record<DeployEnv, HelModName>;
+  port?: number;
+  alias?: string;
+}
+
+export interface IHelMonoMod {
+  port: number;
+  alias?: string;
+}
+
+export interface IHelMonoJson {
+  mods: Record<PkgName, IHelMonoMod>;
 }
