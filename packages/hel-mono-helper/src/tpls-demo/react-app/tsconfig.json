@@ -1,13 +1,18 @@
 {
-  "extends": "tsconfig/tsconfig.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"]
     },
     "jsx": "react-jsx",
-    "module": "Node16",
-    "moduleResolution": "node16"
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

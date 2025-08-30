@@ -7,6 +7,7 @@ const { changeMod } = require('./change');
 const { delMod } = require('./del');
 const { startHelDeps } = require('./helDeps');
 const { execInit, execInitProxy } = require('./init');
+const { initMono } = require('./initMono');
 const { execCreate, execCreateMod, execCreateStart } = require('./create');
 const { execBuild } = require('./build');
 const { execLint } = require('./lint');
@@ -17,6 +18,7 @@ const { buildSrvModToHelDist } = require('./srvMod');
 const innerActionFns = {
   [INNER_ACTION.init]: execInit,
   [INNER_ACTION.initProxy]: execInitProxy,
+  [INNER_ACTION.initMono]: initMono,
   [INNER_ACTION.change]: changeMod,
   [INNER_ACTION.create]: execCreate,
   [INNER_ACTION.createShort]: execCreate,

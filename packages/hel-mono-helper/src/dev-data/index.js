@@ -12,8 +12,9 @@ const { getLogTimeLine } = require('../util/time');
 let cachedResult = null;
 
 function getExtIndexData(appSrcDirPath, indexName, ext) {
-  const fullPath = path.join(appSrcDirPath, `${indexName}.${ext}`);
-  return { fullPath, isExist: fs.existsSync(fullPath) };
+  const extFileName = `${indexName}.${ext}`;
+  const fullPath = path.join(appSrcDirPath, extFileName);
+  return { fullPath, isExist: fs.existsSync(fullPath), extFileName };
 }
 
 function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
@@ -28,12 +29,12 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   }
 
   const exts = ['js', 'jsx', 'ts', 'tsx'];
-  const indexPaths = [];
+  const indexNames = [];
   let result = null;
   for (let i = 0; i < exts.length; i++) {
     const ext = exts[i];
     const data = getExtIndexData(appSrcDirPath, indexName, ext);
-    indexPaths.push(data.fullPath);
+    indexNames.push(data.extFileName);
     if (data.isExist) {
       result = data;
       break;
@@ -41,7 +42,7 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   }
 
   if (!result) {
-    throw new Error(`Can not find index file in this paths (${indexPaths.join(',')})`);
+    throw new Error(`Can not find index file with names(${indexNames}) under dir ${appSrcDirPath}`);
   }
 
   return result.fullPath;
@@ -126,6 +127,8 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
+  helMonoLog('depInfos', depInfos);
+  helMonoLog('devInfo', devInfo);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);

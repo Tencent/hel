@@ -8,7 +8,7 @@ const { getArgvOptions } = require('./common/getArgvOptions');
 const { rewriteModAlias } = require('./common/rewriteModAlias');
 const { rewritePkgJson } = require('./common/rewritePkgJson');
 const { rewritePkgDeps } = require('./common/rewritePkgDeps');
-const { rewriteRootDevInfoForChange } = require('./common/rewriteRootDevInfo');
+const { rewriteMonoJsonForChange } = require('./common/rewriteMonoJson');
 
 /**
  * 执行启 pnpm start .change <xxx-mod> -n <xxx-name> 命令
@@ -19,7 +19,7 @@ exports.changeMod = function (/** @type {IMonoDevInfo} */ devInfo) {
   const { dirName, belongTo, pkgName, alias } = getCmdDPNameData(devInfo, dirOrPkgName);
   helMonoLog(`.change keywords (${keywords.join(' ')})`);
   const newKeywords = [dirName].concat(keywords.slice(1));
-  const argvOptions = getArgvOptions({ keywords: newKeywords, belongTo, pkgName, actionKey: INNER_ACTION.change });
+  const argvOptions = getArgvOptions({ devInfo, keywords: newKeywords, belongTo, pkgName, actionKey: INNER_ACTION.change });
 
   const oldPkgName = pkgName;
   const newPkgName = argvOptions.pkgName;
@@ -28,9 +28,9 @@ exports.changeMod = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog(`oldPkgName ${pkgName}, newPkgName ${newPkgName}`);
   helMonoLog(`oldAlias ${oldAlias}, newAlias ${newAlias}`);
 
-  // 重写根目录的dev-info
+  // 重写根目录hel-mono.json
   if (oldAlias !== newAlias || oldPkgName !== newPkgName) {
-    rewriteRootDevInfoForChange(devInfo, { oldPkgName, newPkgName, newAlias });
+    rewriteMonoJsonForChange(devInfo, { oldPkgName, newPkgName, newAlias });
   }
   // 重写 package.son 依赖和模块导入语句
   if (oldPkgName !== newPkgName) {

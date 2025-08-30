@@ -2,38 +2,53 @@
 /** @typedef {import('hel-mono-types').IMonoInjectedDevInfo} IMonoInjectedDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
-const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog, getFileJson } = require('../../util');
 const { ensureAppConf } = require('../../util/devInfo');
+const { purifyUndefined } = require('../../util/dict');
+const { getModMonoDataDict } = require('../../util/monoJson');
+const { rewriteFileLine } = require('../../util/rewrite');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 
 function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
-  const { realAppPkgName } = appData;
+  const { realAppPkgName, isSubMod } = appData;
   const { appConfs, devHostname } = devInfo;
   const injectedDevInfo = {
-    appConfs: {},
+    mods: {},
     devHostname: devHostname || HOST_NAME,
   };
-  const assignConf = (name) => {
-    if (injectedDevInfo.appConfs[name]) {
+  const assignMod = (pkgName, isSubMod) => {
+    if (injectedDevInfo.mods[pkgName]) {
       return;
     }
-    const conf = appConfs[name];
+    const conf = appConfs[pkgName];
     if (!conf) {
       return;
     }
-    injectedDevInfo.appConfs[name] = ensureAppConf(devInfo, conf, name);
+    const ensuredConf = ensureAppConf({ devInfo, conf, pkgName, isSubMod });
+    const { port, hel } = ensuredConf;
+    injectedDevInfo.mods[pkgName] = purifyUndefined({
+      port,
+      groupName: hel.appGroupName,
+      names: hel.appNames,
+      platform: hel.platform,
+    });
   };
 
-  assignConf(realAppPkgName);
-  Object.keys(deps).forEach((name) => assignConf(name));
+  assignMod(realAppPkgName, isSubMod);
+
+  const { monoDict } = getModMonoDataDict(devInfo);
+  Object.keys(deps).forEach((name) => {
+    const { isSubMod = false } = monoDict[name] || {};
+    assignMod(name, isSubMod);
+  });
 
   return injectedDevInfo;
 }
 
 /**
  * @returns {IMonoInjectedDevInfo}
+ * 替换胶水代码里的 devInfo 文件
  */
 module.exports = function replaceDevInfo(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
   const { helDirPath, isSubMod, realAppPkgJsonPath } = appData;

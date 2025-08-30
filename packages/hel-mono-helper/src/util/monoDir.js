@@ -1,6 +1,6 @@
 const { lastNItem } = require('./arr');
+const { getDevInfoDirs } = require('./base');
 const { getMonoRootInfo } = require('./rootInfo');
-const { getDevInfoDirs } = require('./devInfo');
 const { pickOneDir } = require('./monoPath');
 
 function inferDirFromDevInfo(devInfo, allowEmptyDir) {

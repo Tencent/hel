@@ -1,21 +1,41 @@
-// shelljs 相比 child_process.execSync 具有更好的控制台回显交互
-// 故 hel-mono-helper 内部使用 shelljs 替代 child_process.execSync
-const cst = require('./consts');
-const { prepareHelEntry } = require('./entry');
-const { getMonoDevData, getPkgMonoDepData, getMonoDepDict } = require('./dev-data');
-const { executeStart, executeBuild, executeStartDeps, buildSrvModToHelDist } = require('./exec');
-const monoUtil = require('./util');
+const qpi = require('./api');
+const { inferDevInfo, setEnsureHelConf, setHandleDevInfo } = require('./util/devInfo');
+const { monoUtil, cst, buildSrvModToHelDist } = qpi;
 
-/**
- * 约定内部临时打印用 mlog(...)，提交时搜 mlog 删除即可，
- * 提供给用户看的日志，需要显式导入 helMonoLog 去打印。
- */
-global.mlog = (...args) => monoUtil.helMonoLogTmp(...args);
-/**
- * 约定临时调试的运行日志打印用 mlog2(...)，提交时搜 mlog2 删除即可，
- * 注：此日志会和运行日志打印到一起。
- */
-global.mlog2 = monoUtil.helMonoLog;
+function executeStart(options) {
+  const devInfo = inferDevInfo();
+  return qpi.executeStart(devInfo, options);
+}
+
+function executeBuild() {
+  const devInfo = inferDevInfo();
+  return qpi.executeBuild(devInfo);
+}
+
+function executeStartDeps() {
+  const devInfo = inferDevInfo();
+  return qpi.executeStartDeps(devInfo);
+}
+
+function prepareHelEntry(pkgOrDir) {
+  const devInfo = inferDevInfo();
+  return qpi.prepareHelEntry(devInfo, pkgOrDir);
+}
+
+function getMonoDevData(inputAppSrc) {
+  const devInfo = inferDevInfo();
+  return qpi.getMonoDevData(devInfo, inputAppSrc);
+}
+
+function getPkgMonoDepData(pkgName) {
+  const devInfo = inferDevInfo();
+  return qpi.getPkgMonoDepData(devInfo, pkgName);
+}
+
+function getMonoDepDict() {
+  const devInfo = inferDevInfo();
+  return qpi.getMonoDepDict(devInfo);
+}
 
 module.exports = {
   executeStart,
@@ -26,6 +46,8 @@ module.exports = {
   getPkgMonoDepData,
   getMonoDepDict,
   buildSrvModToHelDist,
+  setEnsureHelConf,
+  setHandleDevInfo,
   monoUtil,
   cst,
 };

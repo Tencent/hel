@@ -24,7 +24,7 @@ function getNameReg(max = 32) {
 
 exports.getArgvOptions = function (options, topOptions = {}) {
   /** @type {{keywords:string[], actionKey: string}} */
-  const { keywords, actionKey, belongTo, pkgName } = options;
+  const { devInfo, keywords, actionKey, belongTo, pkgName } = options;
   const { monoRoot } = getMonoRootInfo();
   const { isSubMod = false } = topOptions;
 
@@ -75,8 +75,8 @@ exports.getArgvOptions = function (options, topOptions = {}) {
 
       const info = list.find((v) => v.name === targetTpl);
       if (!info) {
-        const these = list.map((v) => v.name).join(' ');
-        throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${these.join(',')})`);
+        const names = list.map((v) => v.name);
+        throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${names.join(',')})`);
       }
       argvOptions.modTemplate = targetTpl;
     }
@@ -97,7 +97,10 @@ exports.getArgvOptions = function (options, topOptions = {}) {
         throw new Error(tip);
       }
       const restValue = value.substring(1);
-      if (!getNameReg(64).test(restValue)) {
+      if (isSubMod && !getNameReg(64).test(restValue)) {
+        throw new Error(tip);
+      } else if (restValue && !getNameReg(64).test(restValue)) {
+        // 允许主应用为 @
         throw new Error(tip);
       }
       argvOptions.alias = value;
@@ -150,6 +153,9 @@ exports.getArgvOptions = function (options, topOptions = {}) {
 
   if (isCreateAction && fs.existsSync(argvOptions.copyToPath)) {
     throw new Error(`you can not create ${argvOptions.pkgName} to an existed dir ${argvOptions.copyToPath}`);
+  }
+  if (isCreateAction && devInfo.appConfs[argvOptions.pkgName]) {
+    throw new Error(`Package name ${argvOptions.pkgName} already exists`);
   }
 
   return argvOptions;

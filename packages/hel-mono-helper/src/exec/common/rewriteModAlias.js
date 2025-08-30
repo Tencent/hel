@@ -32,11 +32,11 @@ function rewriteNewAlias(dirPath, oldAlias, newAlias) {
     let newLines = [];
     lines.forEach((line) => {
       let newLine = line;
-      if (line.includes(`'${oldAlias}/`)) {
-        newLine = line.replace(`'${oldAlias}/`, `'${newAlias}/`);
+      if (line.includes(`from '${oldAlias}/`)) {
+        newLine = line.replace(`from '${oldAlias}/`, `from '${newAlias}/`);
         shouldRewrite = true;
-      } else if (line.includes(`"${oldAlias}/`)) {
-        newLine = line.replace(`"${oldAlias}/`, `"${newAlias}/`);
+      } else if (line.includes(`from "${oldAlias}/`)) {
+        newLine = line.replace(`from "${oldAlias}/`, `from "${newAlias}/`);
         shouldRewrite = true;
       }
       newLines.push(newLine);

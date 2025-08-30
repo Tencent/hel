@@ -1,10 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const jsonc = require('jsonc-parser');
-const { getFileJson } = require('./base');
+const { getFileJson, getDevInfoDirs } = require('./base');
 const { safeGet } = require('./dict');
 const { getMonoRootInfo } = require('./rootInfo');
-const { getDevInfoDirs } = require('./devInfo');
 
 /**
  * 获取 tsconfig.json 里的 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
@@ -21,6 +20,17 @@ function getTsConfigAlias(tsConfigJson) {
     }
   }
   return targetAlias;
+}
+
+function getTsConfigAliasByDirPath(dirPath) {
+  const tsConfigPath = path.join(dirPath, 'tsconfig.json');
+  let alias = '';
+  if (fs.existsSync(tsConfigPath)) {
+    const tsConfigJson = jsonc.parse(fs.readFileSync(tsConfigPath, { encoding: 'utf8' }));
+    alias = getTsConfigAlias(tsConfigJson);
+  }
+
+  return alias;
 }
 
 function getAliasData(devInfo) {
@@ -66,4 +76,5 @@ function getAliasData(devInfo) {
 module.exports = {
   getTsConfigAlias,
   getAliasData,
+  getTsConfigAliasByDirPath,
 };

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const jsonc = require('jsonc-parser');
 const { getTsConfigAlias } = require('./alias');
+const { getMonoRootInfo } = require('./rootInfo');
 
 function getTsConfigJson(appSrc) {
   const strList = appSrc.split(path.sep);
@@ -80,6 +81,12 @@ function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pk
   return appAlias;
 }
 
+function getAppDirPath(appSrc) {
+  const prefixedDir = getPrefixedDirName(appSrc);
+  const { monoRoot } = getMonoRootInfo();
+  return path.join(monoRoot, prefixedDir);
+}
+
 module.exports = {
   inferConfAlias,
   buildAppAlias,
@@ -87,4 +94,5 @@ module.exports = {
   getTsConfigJson,
   getTsConfigAliasByAppSrc,
   getPrefixedDirName,
+  getAppDirPath,
 };

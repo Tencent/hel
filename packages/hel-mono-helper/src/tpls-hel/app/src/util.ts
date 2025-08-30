@@ -13,16 +13,15 @@ const startMode = process.env.REACT_APP_HEL_START || '';
 export const runtimeUtil = makeRuntimeUtil({ DEV_INFO, APP_GROUP_NAME, DEPLOY_ENV, isDev, startMode });
 
 export async function preFetchHelDeps() {
-  const helDeps = runtimeUtil.getHelDeps();
-  if (!helDeps.length) return;
+  const { helModNames, helDeps } = runtimeUtil.getHelDeps();
+  if (!helModNames.length) return;
 
   const start = Date.now();
-  const depNames = helDeps.map((v) => v.appName);
-  monoLog(`start preFetchLib (${depNames}) isDev=${isDev}`);
+  monoLog(`start preFetchLib (${helModNames}) isDev=${isDev}`);
   await Promise.all(
-    helDeps.map(({ appName, appGroupName, packName, platform }) => {
-      const { enable, host, ...rest } = runtimeUtil.getPrefetchParams(appName, DEV_INFO.appConfs[packName]);
-      return preFetchLib(appName, { custom: { enable, host, appGroupName }, platform, ...rest });
+    helDeps.map(({ helModName, groupName, pkgName, platform }) => {
+      const { enable, host, ...rest } = runtimeUtil.getPrefetchParams(helModName, DEV_INFO.mods[pkgName]);
+      return preFetchLib(helModName, { custom: { enable, host, appGroupName: groupName }, platform, ...rest });
     }),
   );
   monoLog(`end preFetchLib, costs ${Date.now() - start} ms`);

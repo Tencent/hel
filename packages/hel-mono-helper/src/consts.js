@@ -64,6 +64,10 @@ const INNER_ACTION = {
    */
   init: '.init',
   /**
+   * 重新生成 hel-mono.json 文件
+   */
+  initMono: '.init-mono',
+  /**
    * 启动数组对应的所以子依赖
    */
   startHelDeps: '.deps',
@@ -82,7 +86,7 @@ const INNER_ACTION = {
 const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);
 
 // 这些模式被 start xx:mode 直接命中时，需要转为 start:mode 去运行
-const START_CMD_MODES = ['hel', 'hwl', 'hwr', 'all'];
+const START_CMD_MODES = ['hel', 'hwl', 'hwr', 'all', 'deps'];
 
 /**
  * .create 命令能识别的短命令参数
@@ -126,10 +130,6 @@ module.exports = {
    * 默认放置 apps 公共依赖的目录名
    */
   PACKAGES: 'packages',
-  /**
-   * 默认放置 apps 公共依赖的第二个目录名
-   */
-  PKGS: 'pkgs',
   /**
    * 当应用以 hel 模式启动时，app/src 下 hel 的目录名称
    */

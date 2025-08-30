@@ -7,10 +7,10 @@ import { monoLog } from 'hel-mono-runtime-helper';
 import { DEPLOY_ENV } from './deployEnv';
 import { DEV_INFO } from './devInfo';
 
-const { appGroupName, appNames } = DEV_INFO.appConfs['{{APP_PACK_NAME}}'].hel;
+const { groupName, names } = DEV_INFO.mods['{{APP_PACK_NAME}}'];
 
-export const APP_GROUP_NAME = appGroupName;
+export const APP_GROUP_NAME = groupName;
 
-export const APP_NAME = appNames[DEPLOY_ENV] || appGroupName;
+export const APP_NAME = names[DEPLOY_ENV] || groupName;
 
 monoLog(`${APP_GROUP_NAME} deployEnv is ${DEPLOY_ENV}`);

@@ -5,7 +5,7 @@ const { helMonoLog } = require('../util');
 const { checkPkgsLenNotGT1 } = require('../util/err');
 const { getCmdKeywordName } = require('../util/keyword');
 const { getMonoNameMap } = require('../util/monoName');
-const { rewriteImpl } = require('./common/rewriteRootDevInfo');
+const { rewriteMonoJson } = require('./common/rewriteMonoJson');
 
 function inferPkgData(devInfo, modDirOrName) {
   const { dir2Pkgs, prefixedDir2Pkg, pkg2Dir, pkg2BelongTo, pkg2AppDirPath, monoNameMap } = getMonoNameMap(devInfo);
@@ -47,7 +47,7 @@ exports.delMod = function (/** @type {IMonoDevInfo} */ devInfo) {
 
   const { pkgName, pkgPath, isSubMod } = inferPkgData(devInfo, modDirOrName);
   if (!pkgName) {
-    throw new Error(`can not infer package name with keyword ${modDirOrName}`);
+    throw new Error(`can not find package with dir or package name ${modDirOrName}`);
   }
 
   if (isSubMod) {
@@ -58,12 +58,9 @@ exports.delMod = function (/** @type {IMonoDevInfo} */ devInfo) {
   helMonoLog(`start to del ${label} dir files ...`);
   fs.rmdirSync(pkgPath, { recursive: true });
 
-  helMonoLog(`start to del ${label} in dev-info ...`);
-  rewriteImpl(devInfo, {
-    beforeRewrite: (rawDevInfoJson) => {
-      delete rawDevInfoJson.appConfs[pkgName];
-    },
-  });
+  helMonoLog(`start to del ${label} in hel-mono.json...`);
+  delete devInfo.appConfs[pkgName];
+  rewriteMonoJson(devInfo);
 
   // 安装依赖
   helMonoLog('start reinstall dependencies ...');

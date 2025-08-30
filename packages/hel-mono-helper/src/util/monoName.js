@@ -5,8 +5,7 @@ const { cst } = require('hel-dev-utils');
 const { safeGet } = require('./dict');
 const { getTsConfigAliasByAppSrc } = require('./appSrc');
 const { getAliasData } = require('./alias');
-const { intersection, getFileJson } = require('./base');
-const { getDevInfoDirs } = require('./devInfo');
+const { intersection, getFileJson, getDevInfoDirs } = require('./base');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./monoPath');
@@ -94,6 +93,7 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
     });
     monoNameMap[belongTo] = { isSubMod, nameMap };
     Object.assign(pkg2Deps, nameMap.pkgName2Deps);
+
     nameMap.packNames.forEach((pkgName) => {
       pkg2BelongTo[pkgName] = belongTo;
       const dirName = nameMap.pkgName2DirName[pkgName];

@@ -1,7 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
 const path = require('path');
-const { HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
+const { HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG, APPS, PACKAGES } = require('../consts');
 const { lastNItem } = require('./arr');
 
 /**
@@ -70,4 +70,10 @@ exports.ensureSlash = function (inputPath, needsSlash) {
     return `${inputPath}/`;
   }
   return inputPath;
+};
+
+exports.getDevInfoDirs = function getDevInfoDirs(/** @type {IDevInfo} */ devInfo) {
+  const { appsDirs = [APPS], subModDirs = [PACKAGES] } = devInfo;
+  const belongToDirs = appsDirs.concat(subModDirs);
+  return { appsDirs, subModDirs, belongToDirs };
 };
