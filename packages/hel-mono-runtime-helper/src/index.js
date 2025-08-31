@@ -10,7 +10,22 @@ function getWindow() {
   if (typeof window !== 'undefined') {
     return window;
   }
-  return null;
+  return {};
+}
+
+function getSpecifiedVer(helModName, platform) {
+  const vers = getWindow().__HEL_MOD_VERS__ || {};
+  const key = platform ? `${platform}/${helModName}` : helModName;
+  return vers[key];
+}
+
+export function setHelModVers(newVers) {
+  let vers = getWindow().__HEL_MOD_VERS__;
+  if (!vers) {
+    vers = {};
+    getWindow().__HEL_MOD_VERS__ = vers;
+  }
+  Object.assign(vers, newVers);
 }
 
 export const HEL_DEV_KEY_PREFIX = {
@@ -33,9 +48,9 @@ export function getHelConfKeys(groupName) {
 }
 
 export function getStorageValue(key) {
-  const windowVar = getWindow();
-  if (windowVar) {
-    return windowVar.localStorage.getItem(key) || '';
+  const win = getWindow();
+  if (win.localStorage) {
+    return win.localStorage.getItem(key) || '';
   }
   return '';
 }
@@ -72,7 +87,7 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
         const mod = mods[pkgName];
         if (mod.groupName === APP_GROUP_NAME) return;
 
-        const { names, groupName = '', platform } = mod;
+        const { names = {}, groupName = '', platform } = mod;
         if (groupName) {
           const helModName = names[DEPLOY_ENV] || groupName;
           helModNames.push(helModName);
@@ -83,12 +98,12 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
       return { helModNames, helDeps };
     },
     getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
-      const { port = 3000, devHostname = defaultDH, groupName } = mod;
+      const { port = 3000, devHostname = defaultDH, groupName, isNm, platform } = mod;
       const devUrl = getStorageValue(getDevUrlKey(groupName));
       const confKeys = getHelConfKeys(groupName);
       const params = {
+        versionId: getStorageValue(confKeys.versionId) || getSpecifiedVer(helModName, platform),
         branchId: getStorageValue(confKeys.branchId),
-        versionId: getStorageValue(confKeys.versionId),
         projectId: getStorageValue(confKeys.projectId),
       };
 
@@ -97,12 +112,12 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
         return { enable: true, host: devUrl, ...params };
       }
 
-      if (!isDev) {
-        return { enable: false, host: '', ...params };
-      }
-
       const isStartWithRemoteDeps = startMode === START_WITH_REMOTE;
-      if (isStartWithRemoteDeps) {
+      // 生产环境、基于 hwr 命令启动、来着 node_module 的 hel模块，任意一个均采用拉取远端已编译模块的模式来执行
+      if (!isDev || isStartWithRemoteDeps || isNm) {
+        if (isNm) {
+          monoLog(`found node module ${helModName} come from hel-micro`);
+        }
         return { enable: false, host: '', ...params };
       }
 

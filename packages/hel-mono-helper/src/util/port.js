@@ -1,4 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+const path = require('path');
+const { lastNItem } = require('./arr');
 const { getModMonoDataDict, getMonoJson } = require('./monoJson');
 
 const defaultAppPort = 3000;
@@ -72,11 +74,10 @@ function getPort(prefixedDir) {
   let targetDir = prefixedDir;
   if (!targetDir) {
     const cwd = process.cwd();
-    const delimiter = cwd.startsWith('/') ? '/' : '\\';
-    const list = cwd.split(delimiter);
-    const appDirName = list[list.length - 1];
-    const appBelongTo = list[list.length - 2];
-    const targetDir = `${appBelongTo}/${appDirName}`;
+    const list = cwd.split(path.sep);
+    const appDirName = lastNItem(list);
+    const appBelongTo = lastNItem(list, 2);
+    targetDir = `${appBelongTo}/${appDirName}`;
   }
   const port = getPortByPrefixedDir(targetDir);
   return port;

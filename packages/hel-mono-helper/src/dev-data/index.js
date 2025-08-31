@@ -5,9 +5,9 @@ const { VER } = require('../consts');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
+const { getDevInfoDirs } = require('../util/devInfo');
 const { inferMonoDepDict } = require('../util/monoJson');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
-const { getMonoNameMap } = require('../util/monoName');
 const { getLogTimeLine } = require('../util/time');
 
 let cachedResult = null;
@@ -97,7 +97,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
   const babelLoaderInclude = [appSrc];
-  const { appExternals } = devInfo;
+  const { appExternals, exclude = [] } = devInfo;
 
   // 启动的是代理目录，需将 appSrc 指向真正的项目 src 目录
   if (isForRootHelDir) {
@@ -118,7 +118,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     shouldGetAllDep = !isMicroStartOrBuild;
   }
 
-  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info } = getMonoAppDepDataImpl({
+  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames } = getMonoAppDepDataImpl({
     appSrc,
     devInfo,
     isAllDep: shouldGetAllDep,
@@ -126,8 +126,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
-  helMonoLog('depInfos', depInfos);
-  helMonoLog('devInfo', devInfo);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
@@ -182,7 +180,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       }
 
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
-      if (isHelMicroMode()) {
+      if (isHelMicroMode() && !exclude.includes(pkgName)) {
         appAlias[pkgName] = `${pkgName}/hel`;
       }
 
@@ -195,6 +193,13 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       if (alias) {
         appAlias[alias] = subModSrcPath;
         pureAlias[alias] = subModSrcPath;
+      }
+    });
+
+    // 来着 node_modules 的 hel 模块，如没有排除的话，也会自动加入微模块构建模式
+    nmHelPkgNames.forEach((nmHelPkgName) => {
+      if (isHelMicroMode() && !exclude.includes(nmHelPkgName)) {
+        appAlias[nmHelPkgName] = `${nmHelPkgName}/hel`;
       }
     });
   }

@@ -1,7 +1,8 @@
 {
   "name": "mono-comps",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "hel-mono demo react lib",
+  "hel": {},
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
@@ -34,8 +35,9 @@
       }
     }
   },
-  "hel": {},
-  "dependencies": {},
+  "dependencies": {
+    "hel-mono-runtime-helper": "^1.0.3"
+  },
   "devDependencies": {
     "esbuild-plugin-module-css": "^0.1.1",
     "hash-css-selector": "^1.1.0",

@@ -9,6 +9,14 @@ import type {
 
 export declare const cst: typeof monoCst;
 
+export type {
+  IExecuteStartOptions,
+  IMonoDevData,
+  IMonoRootInfo,
+  IPkgMonoDepData,
+  DepDataDict,
+};
+
 /**
  * 基于 npm start xxx 来启动或构建应用（模块）
  * @example

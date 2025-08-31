@@ -2,6 +2,7 @@
   "name": "mono-libs",
   "version": "0.0.1",
   "description": "hel-mono demo libs",
+  "hel": {},
   "license": "MIT",
   "author": {
     "name": "fantasticsoul"
@@ -32,8 +33,9 @@
       }
     }
   },
-  "hel": {},
-  "dependencies": {},
+  "dependencies": {
+    "hel-mono-runtime-helper": "^1.0.3"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
     "babel-cli": "^6.26.0"

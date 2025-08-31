@@ -22,7 +22,7 @@ const monoUtil = {
     const devInfo = util.inferDevInfo(true);
     return util.getBuildDirPath(devInfo, pkgName, buildDirName);
   },
-  getMonoJson(){
+  getMonoJson() {
     util.inferDevInfo(true);
   },
   helMonoLog: util.helMonoLog,

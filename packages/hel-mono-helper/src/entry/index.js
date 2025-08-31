@@ -61,7 +61,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
 
       const injectedDevInfo = prepareHelEntryFiles(devInfo, depData, appData);
       if (startDeps) {
-        const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.appConfs[pkgName];
+        const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.mods[pkgName];
         visitDevServer(
           `${devHostname}:${port}`,
           () => {

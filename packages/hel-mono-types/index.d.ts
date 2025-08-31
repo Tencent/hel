@@ -67,9 +67,14 @@ export interface IMonoDevInfo {
    */
   appConfs: MonoAppConfs;
   /** default: ['apps'], 放置应用的目录名列表 */
-  appsDirs?: string;
+  appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
-  subModDirs?: string;
+  subModDirs?: string[];
+  /**
+   * start:hel 或 build:hel 时，这些包排除到微模块构建体系之外，
+   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块时hel模块时才有意义）
+   */
+  exclude?: string[];
   /**
    * default: 'http://localhost'
    * 所有hel模块本地联调时的域名
@@ -97,6 +102,10 @@ export interface IMonoInjectedMod {
   groupName: string;
   names: Record<DeployEnv, HelModName>;
   platform?: string;
+  /**
+   * 是来自 node_modules 的 hel 模块
+   */
+  isNm?: boolean;
 }
 
 
@@ -135,4 +144,8 @@ export interface IHelMonoMod {
 
 export interface IHelMonoJson {
   mods: Record<PkgName, IHelMonoMod>;
+  /**
+   * start:hel 或 build:hel 时，需排除的 hel 模块
+   */
+  exclude: string[];
 }

@@ -1,6 +1,7 @@
+/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
-const { noDupPushCb, noDupPush } = require('./arr');
+const { noDupPushWithCb, noDupPush } = require('./arr');
 const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
 const { helMonoLog } = require('./log');
@@ -8,6 +9,23 @@ const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getLocaleTime } = require('./time');
+
+/**
+ * 这些包一定不需要去查询是否有 hel 导出
+ * TODO: add include exclude to hel-mono.json
+ */
+const pkgNameWhiteList = [
+  '@tencent/hel-micro',
+  '@tencent/hel-lib-proxy',
+  'hel-micro',
+  'hel-micro-core',
+  'hel-lib-proxy',
+  'hel-types',
+  'react',
+  'react-dom',
+  'vue',
+  'react-router',
+];
 
 function logMonoDep(isForRootHelDir, options) {
   const { isAllDep, appSrc, monoDep, depInfos, pkgName } = options;
@@ -49,6 +67,7 @@ function logMonoDep(isForRootHelDir, options) {
 }
 
 function getMonoAppDepDataImpl(options) {
+  /** @type {{devInfo: IDevInfo}} */
   const { appSrc, devInfo, isAllDep = false, isForRootHelDir } = options;
   const belongTo = getAppBelongTo(appSrc);
   const dirName = getDirName(appSrc);
@@ -57,6 +76,7 @@ function getMonoAppDepDataImpl(options) {
   const nameMap = getMonoNameMap(devInfo);
   const appDirPath = getAppDirPath(appSrc);
   const { pkg2Deps, pkg2BelongTo, pkg2Dir, pkg2AppDirPath, monoDep } = nameMap;
+  const excludeHelMods = devInfo.exclude || [];
 
   const pkgNames = [];
   const depInfos = [];
@@ -67,8 +87,21 @@ function getMonoAppDepDataImpl(options) {
   const nmPkg2PkgJsonPath = {};
   const nmPkg2DirPath = {};
   const nmPkg2NmDirPath = {};
+  const nmPkg2HelConf = {};
   // 这些包是非大仓的 hel 包
   const nmHelPkgNames = [];
+
+  const handleNmLoopAssocData = (pkgName, appDirPath) => {
+    if (!pkgNameWhiteList.includes(pkgName) && !excludeHelMods.includes(pkgName)) {
+      noDupPushWithCb(nmPkgNames, pkgName, () => {
+        nmLoopDeps.push(pkgName);
+        // console.log(`appDirPath ${pkgName} ${appDirPath}`);
+        nmPkg2PkgJsonPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/package.json`);
+        nmPkg2DirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}`);
+        nmPkg2NmDirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/node_modules`);
+      });
+    }
+  };
 
   const pushToDeps = (depObj, appDirPath) => {
     Object.keys(depObj).forEach((pkgName) => {
@@ -78,19 +111,14 @@ function getMonoAppDepDataImpl(options) {
         if (!belongToDirs.includes(belongTo)) {
           return;
         }
-        noDupPushCb(pkgNames, pkgName, () => {
+        noDupPushWithCb(pkgNames, pkgName, () => {
           loopDeps.push(pkgName);
           depInfos.push({ pkgName, belongTo, dirName: pkg2Dir[pkgName] });
         });
         return;
       }
-      noDupPushCb(nmPkgNames, pkgName, () => {
-        nmLoopDeps.push(pkgName);
-        console.log(`appDirPath ${pkgName} ${appDirPath}`);
-        nmPkg2PkgJsonPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/package.json`);
-        nmPkg2DirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}`);
-        nmPkg2NmDirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/node_modules`);
-      });
+
+      handleNmLoopAssocData(pkgName, appDirPath);
     });
   };
 
@@ -108,8 +136,9 @@ function getMonoAppDepDataImpl(options) {
         noDupPush(nmHelPkgNames, nmPkgName);
       }
       depObj = pkgJson.dependencies || {};
+      nmPkg2HelConf[nmPkgName] = pkgJson.hel || {};
     } catch (err) {
-      helMonoLog('find npm hel entry fail: ', nmPkgName, pkgJsonPath);
+      helMonoLog(`find npm hel entry fail: ${nmPkgName} `, pkgJsonPath);
     }
 
     if (!depObj) {
@@ -118,11 +147,7 @@ function getMonoAppDepDataImpl(options) {
 
     const pkgDirPath = nmPkg2DirPath[nmPkgName];
     Object.keys(depObj).forEach((pkgName) => {
-      const val = depObj[pkgName];
-      noDupPushCb(nmPkgNames, pkgName, () => {
-        nmLoopDeps.push(pkgName);
-        nmPkg2PkgJsonPath[pkgName] = path.join(pkgDirPath, `./node_modules/${pkgName}/package.json`);
-      });
+      handleNmLoopAssocData(pkgName, pkgDirPath);
     });
   };
 
@@ -148,7 +173,7 @@ function getMonoAppDepDataImpl(options) {
   }
   logMonoDep(isForRootHelDir, { pkgName: json.name, isAllDep, appSrc, monoDep, depInfos });
 
-  return { pkgNames, depInfos, nmHelPkgNames, ...nameMap };
+  return { pkgNames, depInfos, nmHelPkgNames, nmPkg2PkgJsonPath, nmPkg2HelConf, ...nameMap };
 }
 
 /**

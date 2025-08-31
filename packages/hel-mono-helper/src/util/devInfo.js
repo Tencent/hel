@@ -107,13 +107,14 @@ function inferDevInfo(allowMonoJsonNull) {
   }
   monoJson = monoJson || { mods: {} };
 
-  const { appsDirs, subModDirs, externals, devHostname, helMicroName, helLibProxyName } = monoJson;
+  const { appsDirs, subModDirs, externals, devHostname, helMicroName, helLibProxyName, exclude = [] } = monoJson;
   const appConfs = getAppConfs(monoJson);
 
-  const devInfo = {
+  let devInfo = {
     appExternals: externals,
     appsDirs,
     subModDirs,
+    exclude,
     appConfs,
     devHostname,
     helMicroName,
@@ -121,7 +122,7 @@ function inferDevInfo(allowMonoJsonNull) {
   };
 
   if (handleDevInfoFn) {
-    handleDevInfoFn(devInfo);
+    devInfo = handleDevInfoFn(devInfo) || devInfo;
   }
 
   return devInfo;

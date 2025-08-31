@@ -22,7 +22,8 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
     || hasFile(appSrcDirPath, 'App.jsx')
     || hasFile(appSrcDirPath, 'App.js')
     || hasFile(appSrcDirPath, 'App');
-  const hasShareModules = hasFile(appSrcDirPath, 'share-modules');
+  const hasShareModules = hasFile(appSrcDirPath, 'hel-share');
+  const hasHelHook = hasFile(appSrcDirPath, 'helconf/hook');
 
   rewriteFileLine(indexFilePath, (line) => {
     let targetLine = line;
@@ -35,10 +36,14 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
       targetLine = line.replace('{{APP_PACK_NAME}}', importEntry);
     } else if (line.includes('../App')) {
       targetLine = !hasRootComp ? `  const RootComp: any = null; // found no root comp` : line;
-    } else if (line.includes('../share-modules')) {
+    } else if (line.includes('../hel-share')) {
       targetLine = !hasShareModules ? `  const shareModules: any = null; // found no share modules` : line;
     } else if (line.includes('const needHelDeps =')) {
       targetLine = isHelAllBuild() ? `const needHelDeps = false; // found process.env.HEL_BUILD=3 in build process` : line;
+    } else if (line.includes('../helconf/hook')) {
+      targetLine = !hasHelHook ? '  const helHook: any = {}; // found no hel hook' : line;
+    } else if (line.includes('const needRunHook =')) {
+      targetLine = !hasHelHook ? 'const needRunHook = false;' : line;
     }
 
     return { line: targetLine };

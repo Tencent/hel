@@ -8,7 +8,8 @@ import { monoLog } from 'hel-mono-runtime-helper';
 import { APP_GROUP_NAME, APP_NAME } from './subApp';
 import { preFetchHelDeps } from './util';
 
-// process.env.HEL_BUILD=3 时（HEL_ALL_BUILD），此处会编译为 false
+const needRunHook = true;
+// process.env.HEL_BUILD=3 时（HEL_ALL_BUILD），此处 needHelDeps 会编译为 false
 const needHelDeps = true;
 const loadModeLabel = needHelDeps ? 'hel micro-module mode' : 'hel legacy mode';
 
@@ -19,16 +20,27 @@ async function mayLoadAsSubMod() {
     appReady(APP_GROUP_NAME, RootComp, { appName: APP_NAME });
   }
 
-  const shareModules = await import('../share-modules');
+  const shareModules = await import('../hel-share');
   if (shareModules) {
     monoLog('found share modules to emit');
     libReady(APP_GROUP_NAME, shareModules, { appName: APP_NAME });
   }
 }
 
+async function runHelHook() {
+  const helHook: any = await import('../hel-hook');
+  if (helHook.beforeStartApp) {
+    await helHook.beforeStartApp();
+  }
+}
+
 async function main() {
+  if (needRunHook) {
+    await runHelHook();
+  }
   const label = APP_GROUP_NAME === APP_NAME ? APP_NAME : `${APP_GROUP_NAME}(${APP_NAME})`;
   monoLog(`load hel app ${label} as ${loadModeLabel}`);
+
   if (needHelDeps) {
     await preFetchHelDeps();
   }

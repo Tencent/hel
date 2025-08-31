@@ -402,7 +402,7 @@ importers:
       hel-iso: ^4.4.0
       hel-lib-proxy: ^4.12.1
       hel-micro: ^4.13.2
-      hel-mono-types: ^2.0.0
+      hel-mono-types: ^2.0.1
       jsonc-parser: 3.3.1
       shelljs: ^0.9.2
     dependencies:
@@ -417,7 +417,7 @@ importers:
 
   packages/hel-mono-runtime-helper:
     specifiers:
-      hel-mono-types: ^2.0.0
+      hel-mono-types: ^2.0.1
     devDependencies:
       hel-mono-types: link:../hel-mono-types
 

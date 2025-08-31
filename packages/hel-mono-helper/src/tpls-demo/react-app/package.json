@@ -1,7 +1,8 @@
 {
   "name": "hub",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
+  "hel": {},
   "main": "./src/index.ts",
   "scripts": {
     "start": "node ../../dev/scripts/start.js",
@@ -13,14 +14,15 @@
     "build": "node ../../dev/scripts/build.js",
     "build:hel": "node ../../dev/scripts/hel/build.js",
     "build:all": "node ../../dev/scripts/hel/buildAll.js",
-    "build:am": "cross-env-shell \"pnpm run build:all && pnpm run build:meta\"",
-    "build:bm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
+    "build:allm": "cross-env-shell \"pnpm run build:all && pnpm run build:meta\"",
+    "build:helm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
     "build:meta": "node ../../dev/scripts/hel/meta",
     "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
     "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
-  "hel": {},
-  "dependencies": {},
+  "dependencies": {
+    "hel-mono-runtime-helper": "^1.0.3"
+  },
   "babel": {
     "presets": [
       "react-app"

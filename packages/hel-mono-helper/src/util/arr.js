@@ -12,7 +12,7 @@ function noDupPush(/** @type Array */ list, item) {
   }
 }
 
-function noDupPushCb(/** @type Array */ list, item, pushSuccessCb) {
+function noDupPushWithCb(/** @type Array */ list, item, pushSuccessCb) {
   if (!list.includes(item)) {
     list.push(item);
     pushSuccessCb();
@@ -23,5 +23,5 @@ module.exports = {
   lastItem,
   lastNItem,
   noDupPush,
-  noDupPushCb,
+  noDupPushWithCb,
 };
