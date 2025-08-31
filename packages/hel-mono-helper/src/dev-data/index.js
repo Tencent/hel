@@ -61,7 +61,7 @@ function getPkgLogInfo(info, isForRootHelDir) {
 function fmtPkgNameForBound(/** @type string */ pkgName) {
   const fmtBy = (str, sep) => {
     const list = str.split(sep);
-    return list.map(v => `${v.charAt(0).toUpperCase()}${v.substring(1)}`).join('');
+    return list.map((v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`).join('');
   };
   const getResult = (str) => {
     let result = fmtBy(str, '_');
@@ -72,7 +72,7 @@ function fmtPkgNameForBound(/** @type string */ pkgName) {
     const [scope, name] = pkgName.split('/');
     const pure = scope.substring(1);
     // 中间加横线是为了避免 tencent-my-lib 和 @tencent/my-lib 得出一样的全局名字
-    return `${getResult(pure)}_${getResult(name)}`
+    return `${getResult(pure)}_${getResult(name)}`;
   }
 
   return getResult(pkgName);
@@ -155,7 +155,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const autoExternals = {};
 
   if (isHelModeVar && nmL1PkgNames.length) {
-    nmL1PkgNames.forEach(v => autoExternals[v] = fmtPkgNameForBound(v));
+    nmL1PkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
   }
 
   if (!isMicroStartOrBuild) {

@@ -1,5 +1,15 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
-import type { IAssetItem, IAssetItemAttrs, IAttrsBase, ILinkAttrs, ILinkItem, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
+import type {
+  IAssetItem,
+  IAssetItemAttrs,
+  IAttrsBase,
+  ILinkAttrs,
+  ILinkItem,
+  IScriptAttrs,
+  ISubApp,
+  ISubAppVersion,
+  ItemTag,
+} from 'hel-types';
 import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import { getAssetUrlType } from './helper';
@@ -222,30 +232,31 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
 
 async function createAssetListAsync(assetList: IAssetItem[], options: ICreateDomOptions) {
   const { appendToBody } = options;
-  const loadScript = (v: IAssetItem) => new Promise((resolve, reject) => {
-    // 兼容历史元数据，无 append 的话就默认为 true
-    const { tag, attrs, append = true, innerText = '' } = v;
-    if (!append) {
-      return resolve(true);
-    }
-    // 处理 link 标签
-    if (isLinkItem(v)) {
-      handleLinkAsset(v, options);
-      return resolve(true);
-    }
-    // 处理 script 标签
-    if (isScriptAttrs(tag, attrs)) {
-      const onloadCb = () => resolve(true);
-      // @ts-ignore
-      const onerrorCb = (message, url, line, col, errorObj) => {
-        console.error(message, url, line, col, errorObj);
-        const errToThrow = errorObj instanceof Error ? errorObj : new Error(String(message));
-        reject(errToThrow);
-      };
-      return createScriptElement({ appendToBody, attrs, innerText, onloadCb, onerrorCb });
-    }
-    resolve(true);
-  });
+  const loadScript = (v: IAssetItem) =>
+    new Promise((resolve, reject) => {
+      // 兼容历史元数据，无 append 的话就默认为 true
+      const { tag, attrs, append = true, innerText = '' } = v;
+      if (!append) {
+        return resolve(true);
+      }
+      // 处理 link 标签
+      if (isLinkItem(v)) {
+        handleLinkAsset(v, options);
+        return resolve(true);
+      }
+      // 处理 script 标签
+      if (isScriptAttrs(tag, attrs)) {
+        const onloadCb = () => resolve(true);
+        // @ts-ignore
+        const onerrorCb = (message, url, line, col, errorObj) => {
+          console.error(message, url, line, col, errorObj);
+          const errToThrow = errorObj instanceof Error ? errorObj : new Error(String(message));
+          reject(errToThrow);
+        };
+        return createScriptElement({ appendToBody, attrs, innerText, onloadCb, onerrorCb });
+      }
+      resolve(true);
+    });
 
   await Promise.all(assetList.map(loadScript));
 }

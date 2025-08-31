@@ -23,7 +23,6 @@ module.exports = function prepareTplFiles(appData) {
     return;
   }
 
-
   if (isHelExternalBuild()) {
     const fromDir = path.join(tplRootPath, './src/indexEX.ts');
     const toDir = path.join(realAppSrcDirPath, './.hel/indexEX.ts');
@@ -35,7 +34,7 @@ module.exports = function prepareTplFiles(appData) {
   const toDir = path.join(realAppSrcDirPath, './.hel');
 
   const exFile = path.join(toDir, './indexEX.ts');
-  let oldExFileContent = ''
+  let oldExFileContent = '';
   if (fs.existsSync(exFile)) {
     oldExFileContent = fs.readFileSync(exFile, { encoding: 'utf8' });
   }

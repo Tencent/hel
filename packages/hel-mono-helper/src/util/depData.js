@@ -82,7 +82,7 @@ function getMonoAppDepDataImpl(options) {
   const depInfos = [];
   const loopDeps = [];
 
-  const nmL1PkgNames = [];  // 第一层依赖的 node_modules 包名
+  const nmL1PkgNames = []; // 第一层依赖的 node_modules 包名
   const nmPkgNames = [];
   const nmLoopDeps = [];
   const nmPkg2PkgJsonPath = {};
