@@ -39,7 +39,7 @@ const pLib = 'preFetchLib';
 const pApp = 'preFetchApp';
 const pLogic = 'preFetch';
 
-type LoadAssetsStarter = (() => void) | null;
+type LoadAssetsStarter = (() => Promise<void>) | null;
 
 function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | VersionId) {
   const optionsVar: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
@@ -80,7 +80,7 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
     if (loadAssetsStarter) {
       const appMeta = getAppMeta(appName, platform);
       appMeta && markShadowDataBeforeLoad(appName, appMeta.app_group_name, innerOptions);
-      loadAssetsStarter();
+      loadAssetsStarter().catch(reject);
     }
   });
 

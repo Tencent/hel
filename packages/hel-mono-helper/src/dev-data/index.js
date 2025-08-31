@@ -5,9 +5,8 @@ const { VER } = require('../consts');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
-const { getDevInfoDirs } = require('../util/devInfo');
 const { inferMonoDepDict } = require('../util/monoJson');
-const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild } = require('../util/is');
+const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild, isHelExternalBuild } = require('../util/is');
 const { getLogTimeLine } = require('../util/time');
 
 let cachedResult = null;
@@ -25,6 +24,8 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
     indexName = 'index';
   } else if (isHelAllBuild()) {
     indexName = '.hel/index';
+  } else if (isHelExternalBuild()) {
+    indexName = '.hel/indexEX';
   } else {
     indexName = isHelMicroMode() ? '.hel/index' : 'index';
   }
@@ -55,6 +56,26 @@ function getPkgLogInfo(info, isForRootHelDir) {
   }
   const { proxyPkgName, proxySrcPath, ...rest } = info;
   return rest;
+}
+
+function fmtPkgNameForBound(/** @type string */ pkgName) {
+  const fmtBy = (str, sep) => {
+    const list = str.split(sep);
+    return list.map(v => `${v.charAt(0).toUpperCase()}${v.substring(1)}`).join('');
+  };
+  const getResult = (str) => {
+    let result = fmtBy(str, '_');
+    return fmtBy(result, '-');
+  };
+
+  if (pkgName.startsWith('@') && pkgName.includes('/')) {
+    const [scope, name] = pkgName.split('/');
+    const pure = scope.substring(1);
+    // 中间加横线是为了避免 tencent-my-lib 和 @tencent/my-lib 得出一样的全局名字
+    return `${getResult(pure)}_${getResult(name)}`
+  }
+
+  return getResult(pkgName);
 }
 
 /**
@@ -117,8 +138,9 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     // hel 模式启动或构建，只需要获取直接依赖即可，反之则需要获取所有依赖
     shouldGetAllDep = !isMicroStartOrBuild;
   }
+  const isHelModeVar = isHelMode();
 
-  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames } = getMonoAppDepDataImpl({
+  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1PkgNames } = getMonoAppDepDataImpl({
     appSrc,
     devInfo,
     isAllDep: shouldGetAllDep,
@@ -130,6 +152,11 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
   const pureAlias = Object.assign({}, appAlias);
+  const autoExternals = {};
+
+  if (isHelModeVar && nmL1PkgNames.length) {
+    nmL1PkgNames.forEach(v => autoExternals[v] = fmtPkgNameForBound(v));
+  }
 
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {
@@ -214,7 +241,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform });
   const appSrcIndex = getAppSrcIndex(appData);
   let appPublicUrl = `${appData.appPublicUrl}/`;
-  const isHelModeVar = isHelMode();
   if (isHelModeVar) {
     appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);
     if (appInfo.homePage !== appPublicUrl) {
@@ -229,16 +255,19 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   helMonoLog('appSrcIndex ', appSrcIndex);
   helMonoLog('appPublicUrl ', appPublicUrl);
   helMonoLog('appTsConfigPaths', appTsConfigPaths);
-  helMonoLog('babel loader include', babelLoaderInclude);
-  helMonoLog('app alias', appAlias);
-  helMonoLog('jest alias', jestAlias);
+  helMonoLog('babelLoaderInclude', babelLoaderInclude);
+  helMonoLog('appExternals', appExternals);
+  helMonoLog('autoExternals', autoExternals);
+  helMonoLog('appAlias', appAlias);
+  helMonoLog('jestAlias', jestAlias);
   helMonoLog(`getMonoDevData costs ${Date.now() - start} ms`);
 
   cachedResult = {
     babelLoaderInclude,
     appAlias,
     jestAlias,
-    appExternals,
+    appExternals: appExternals,
+    autoExternals: autoExternals,
     appInfo,
     appData,
     appPublicUrl,

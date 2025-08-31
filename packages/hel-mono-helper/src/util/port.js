@@ -1,6 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const path = require('path');
 const { lastNItem } = require('./arr');
+const { isHelExternalBuild } = require('./is');
 const { getModMonoDataDict, getMonoJson } = require('./monoJson');
 
 const defaultAppPort = 3000;
@@ -55,8 +56,17 @@ function getPortByDevInfo(/** @type {IMonoDevInfo} */ devInfo, isSubMod) {
   return computeNewPort(maxPort, isSubMod);
 }
 
+function mayAddPort(port) {
+  // start:helex 触发应用的 external 启动，自动偏移 1000
+  if (isHelExternalBuild()) {
+    return port + 1000;
+  }
+
+  return port;
+}
+
 function getPortByPrefixedDir(prefixedDir) {
-  const monoJson = getMonoJson();
+  const monoJson = getRawMonoJson();
   const { prefixedDirDict } = getModMonoDataDict(monoJson);
   const data = prefixedDirDict[prefixedDir];
   let port = 3000;
@@ -67,7 +77,7 @@ function getPortByPrefixedDir(prefixedDir) {
     port = modConf.port || 3000;
   }
 
-  return port;
+  return mayAddPort(port);
 }
 
 function getPort(prefixedDir) {
@@ -87,4 +97,5 @@ module.exports = {
   getPortByDevInfo,
   getPortByPrefixedDir,
   getPort,
+  mayAddPort,
 };

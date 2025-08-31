@@ -28,7 +28,7 @@ async function mayLoadAsSubMod() {
 }
 
 async function runHelHook() {
-  const helHook: any = await import('../hel-hook');
+  const helHook: any = await import('../hel-conf/hook');
   if (helHook.beforeStartApp) {
     await helHook.beforeStartApp();
   }

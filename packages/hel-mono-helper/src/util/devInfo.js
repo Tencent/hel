@@ -3,7 +3,7 @@
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { getDevInfoDirs } = require('./base');
 const { purify, clone } = require('./dict');
-const { getMonoJson, rewriteMonoJson, getModMonoDataDict } = require('./monoJson');
+const { getRawMonoJson, rewriteMonoJson, getModMonoDataDict } = require('./monoJson');
 const { getPortByDevInfo } = require('./port');
 
 let ensurePkgHelFn = null;
@@ -100,7 +100,7 @@ function inferDevInfo(allowMonoJsonNull) {
     allowNull = getIsAllowNull();
   }
 
-  let monoJson = getMonoJson();
+  let monoJson = getRawMonoJson();
   if (!monoJson && !allowNull) {
     throw new Error(`Missing hel-mono.json file in current repo, please create one by "pnpm start .init-mono"`);
   }
@@ -134,7 +134,7 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
   const newMods = {};
   const pkgNames = Object.keys(pureDevInfo.appConfs);
 
-  const monoJson = getMonoJson() || {};
+  const monoJson = getRawMonoJson() || {};
   const oriMods = monoJson.mods || {};
   const { monoDict } = getModMonoDataDict(monoJson);
   const { mods, ...rest } = monoJson;

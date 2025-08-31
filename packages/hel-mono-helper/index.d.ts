@@ -5,6 +5,7 @@ import type {
   IMonoRootInfo,
   IPkgMonoDepData,
   DepDataDict,
+  ICWDAppData,
 } from './src/types';
 
 export declare const cst: typeof monoCst;
@@ -114,15 +115,19 @@ export declare const monoUtil: {
    */
   isHelMicroMode: () => boolean;
   /**
+   * hel应用（模块）external 构建模式，辅助提取应用的外部静态资源
+   */
+  isHelExternalBuild: () => boolean;
+  /**
    * hel应用（模块）处于整体构建模式（即传统的单一应用构建模式）
    */
   isHelAllBuild: () => boolean;
   /**
    * 获取应用构建hel产物所在的目录路径
-   * @param buildDirName ['hel_dist']
+   * @param defaultDir ['hel_dist']
    * @returns
    */
-  getBuildDirPath: (pkgName: string, buildDirName?: string) => string;
+  getBuildDir: (defaultDir?: string) => string;
   /**
    * 获取端口值，
    * 不传递形如 apps/my-app 的 prefixedDir 变量的话，会根据 cwd 值自动推导，
@@ -132,4 +137,8 @@ export declare const monoUtil: {
    * 某些流水线环境可能无法推导出大仓根目录位置，但流水线上可以读到此位置对应的全局变量，可以调用此接口透传给 hel-mono-helper
    */
   setMonoRoot: (monoRoot: string) => IMonoRootInfo;
+  /**
+   * 根据 cwd 获得运行中的 appData 数据，不传递的话自动读取 process.cwd()
+   */
+  getCWDAppData: (inputCWD?: string) => ICWDAppData;
 };

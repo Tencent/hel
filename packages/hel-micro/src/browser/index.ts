@@ -1,5 +1,5 @@
 import { commonUtil, getGlobalThis } from 'hel-micro-core';
-import type { IAssetItem, IAssetItemAttrs, IAttrsBase, ILinkAttrs, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
+import type { IAssetItem, IAssetItemAttrs, IAttrsBase, ILinkAttrs, ILinkItem, IScriptAttrs, ISubApp, ISubAppVersion, ItemTag } from 'hel-types';
 import type { AssetUrlType, IInnerPreFetchOptions } from '../types';
 import { getAllExtraCssList } from '../util';
 import { getAssetUrlType } from './helper';
@@ -75,10 +75,11 @@ interface ICreateScriptOptions {
   innerText?: string;
   appendToBody?: boolean;
   onloadCb?: () => void;
+  onerrorCb?: (...args: any[]) => void;
 }
 
 function createScriptElement(options: ICreateScriptOptions) {
-  const { attrs, innerText, appendToBody = true, onloadCb } = options;
+  const { attrs, innerText, appendToBody = true, onloadCb, onerrorCb } = options;
   const { src, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
   if (!src && !innerText) {
@@ -97,6 +98,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   if (src) el.setAttribute('src', src);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
   if (onloadCb) el.onload = onloadCb;
+  if (onerrorCb) el.onerror = onerrorCb;
   if (innerText) setInnerText(el, innerText);
 
   appendEl(el, restObj, appendToBody);
@@ -156,9 +158,8 @@ interface ICreateDomOptions {
 }
 
 // 相比 as 写法，谓词可直接将 attrs 类型缩小并适用于整个 if block 块里
-function isLinkAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is ILinkAttrs {
-  noop(attrs);
-  return ['link', 'staticLink', 'relativeLink'].includes(tag);
+function isLinkItem(asset: IAssetItem): asset is ILinkItem {
+  return ['link', 'staticLink', 'relativeLink'].includes(asset.tag);
 }
 
 function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAttrs {
@@ -166,9 +167,36 @@ function isScriptAttrs(tag: ItemTag, attrs: IAssetItemAttrs): attrs is IScriptAt
   return ['script', 'staticScript', 'relativeScript'].includes(tag);
 }
 
-function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOptions) {
-  const { appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList } = options;
+function isStaticScript(tag: ItemTag) {
+  return tag === 'staticScript';
+}
 
+function handleLinkAsset(v: ILinkItem, options: ICreateDomOptions) {
+  const { attrs, innerText = '' } = v;
+  const { appendToBody, appendCss, webDirPath, cssAppendTypes, excludeCssList } = options;
+  const createLinkOptions = { appendToBody, attrs, innerText };
+  const { href } = attrs;
+  // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
+  if (href.endsWith('.ico') && v.append !== true) {
+    return;
+  }
+
+  if (href.endsWith('.css')) {
+    if (
+      appendCss
+      && cssAppendTypes.includes(getAssetUrlType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
+      && !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
+    ) {
+      createLinkElement(createLinkOptions);
+    }
+    return;
+  }
+
+  createLinkElement(createLinkOptions);
+}
+
+function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOptions) {
+  const { appendToBody } = options;
   assetList.forEach((v) => {
     // 兼容历史元数据，无 append 的话就默认为 true
     const { tag, attrs, append = true, innerText = '' } = v;
@@ -176,31 +204,14 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
       return;
     }
     // 处理 link 标签
-    if (isLinkAttrs(tag, attrs)) {
-      const createLinkOptions = { appendToBody, attrs, innerText };
-      const { href } = attrs;
-      // .ico 文件默认不加载（ 除非显式地记录了 append 为 true ）
-      if (href.endsWith('.ico') && v.append !== true) {
-        return;
-      }
-
-      if (href.endsWith('.css')) {
-        if (
-          appendCss
-          && cssAppendTypes.includes(getAssetUrlType(webDirPath, href)) // 当前链接类型是合法的可以附加到 html 文档的链接类型
-          && !excludeCssList.includes(href) // 当前链接没有被设置在排除链接列表里
-        ) {
-          createLinkElement(createLinkOptions);
-        }
-        return;
-      }
-
-      createLinkElement(createLinkOptions);
+    if (isLinkItem(v)) {
+      handleLinkAsset(v, options);
       return;
     }
     // 处理 script 标签
     if (isScriptAttrs(tag, attrs)) {
       createScriptElement({ appendToBody, attrs, innerText });
+      return;
     }
     // 处理 style 标签
     if (tag === 'style') {
@@ -209,10 +220,62 @@ function createDomByAssetList(assetList: IAssetItem[], options: ICreateDomOption
   });
 }
 
+async function createAssetListAsync(assetList: IAssetItem[], options: ICreateDomOptions) {
+  const { appendToBody } = options;
+  const loadScript = (v: IAssetItem) => new Promise((resolve, reject) => {
+    // 兼容历史元数据，无 append 的话就默认为 true
+    const { tag, attrs, append = true, innerText = '' } = v;
+    if (!append) {
+      return resolve(true);
+    }
+    // 处理 link 标签
+    if (isLinkItem(v)) {
+      handleLinkAsset(v, options);
+      return resolve(true);
+    }
+    // 处理 script 标签
+    if (isScriptAttrs(tag, attrs)) {
+      const onloadCb = () => resolve(true);
+      // @ts-ignore
+      const onerrorCb = (message, url, line, col, errorObj) => {
+        console.error(message, url, line, col, errorObj);
+        const errToThrow = errorObj instanceof Error ? errorObj : new Error(String(message));
+        reject(errToThrow);
+      };
+      return createScriptElement({ appendToBody, attrs, innerText, onloadCb, onerrorCb });
+    }
+    resolve(true);
+  });
+
+  await Promise.all(assetList.map(loadScript));
+}
+
+interface ICreateAdditionalAssetsOptions {
+  assetUrlList?: string[];
+  appendToBody?: boolean;
+  appendCss?: any;
+  excludeCssList: string[];
+}
+
+function createAdditionalAssets(options: ICreateAdditionalAssetsOptions) {
+  const { assetUrlList, appendCss, excludeCssList, appendToBody } = options;
+  if (!assetUrlList) return;
+  // 严格按照顺序创建
+  for (const url of assetUrlList) {
+    if (url.endsWith('.css')) {
+      if (appendCss && !excludeCssList.includes(url)) {
+        createLinkElement({ appendToBody, attrs: { href: url } });
+      }
+    } else {
+      createScriptElement({ appendToBody, attrs: { src: url } });
+    }
+  }
+}
+
 /**
  * 加载应用首屏的各项资源
  */
-export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions: IInnerPreFetchOptions) {
+export async function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions: IInnerPreFetchOptions) {
   markHelLoadAssetsFlag();
   // 重命名，避免 @typescript-eslint/naming-convention 警告
   const { additional_scripts: additionalScripts = [], additional_body_scripts: additionalBodyScripts = [] } = app;
@@ -227,29 +290,46 @@ export function loadAppAssets(app: ISubApp, version: ISubAppVersion, loadOptions
   const allCssList = commonUtil.merge2List(allExtraCssList, chunkCssSrcList);
   const excludeCssList = getExcludeCssList?.(allCssList, { version }) || [];
 
-  const createAdditionalAssets = (scripts?: string[], appendToBody?: boolean) => {
-    if (!scripts) return;
-    // 严格按照顺序创建
-    for (const scriptUrl of scripts) {
-      if (scriptUrl.endsWith('.css')) {
-        if (appendCss && !excludeCssList.includes(scriptUrl)) {
-          createLinkElement({ appendToBody, attrs: { href: scriptUrl } });
-        }
-      } else {
-        createScriptElement({ appendToBody, attrs: { src: scriptUrl } });
-      }
-    }
-  };
+  const optionsToHead = { excludeCssList, webDirPath, appendCss, cssAppendTypes, appendToBody: false };
+  const optionsToBody = { excludeCssList, webDirPath, appendCss, cssAppendTypes, appendToBody: true };
 
+  // 处理用户 helpack 后台指定的额外链接
   if (useAdditionalScript) {
-    createAdditionalAssets(additionalScripts, false);
-    createAdditionalAssets(additionalBodyScripts, true);
+    const toAsset = (src: string): IAssetItem => {
+      if (src.endsWith('.css')) {
+        return { tag: 'staticLink', attrs: { href: src } };
+      }
+      return { tag: 'staticScript', attrs: { src } };
+    };
+    const headList: IAssetItem[] = additionalScripts.map(toAsset);
+    const bodyList: IAssetItem[] = additionalBodyScripts.map(toAsset);
+    await createAssetListAsync(headList, optionsToHead);
+    await createAssetListAsync(bodyList, optionsToBody);
   }
 
-  createAdditionalAssets(allExtraCssList, false);
+  // 处理 sdk 额外透传的样式列表
+  if (allExtraCssList.length) {
+    createAdditionalAssets({ assetUrlList: allExtraCssList, excludeCssList, appendToBody: false });
+  }
 
-  const optionsCommon = { excludeCssList, webDirPath, appendCss, cssAppendTypes };
-  // Object.assign is much faster than spread operator
-  createDomByAssetList(headAssetList, assign(optionsCommon, { appendToBody: false }));
-  createDomByAssetList(bodyAssetList, assign(optionsCommon, { appendToBody: true }));
+  const staticScriptList: IAssetItem[] = [];
+  const restHeadAssetList: IAssetItem[] = [];
+  const restBodyAssetList: IAssetItem[] = [];
+  headAssetList.forEach((v) => {
+    isStaticScript(v.tag) ? staticScriptList.push(v) : restHeadAssetList.push(v);
+  });
+  bodyAssetList.forEach((v) => {
+    isStaticScript(v.tag) ? staticScriptList.push(v) : restBodyAssetList.push(v);
+  });
+
+  // 存在静态脚本js时则优先加载脚本，在加载完成后才加载其他的资源
+  if (staticScriptList.length) {
+    await createAssetListAsync(staticScriptList, optionsToHead);
+    createDomByAssetList(restHeadAssetList, optionsToHead);
+    createDomByAssetList(restBodyAssetList, optionsToBody);
+    return;
+  }
+
+  createDomByAssetList(restHeadAssetList, optionsToHead);
+  createDomByAssetList(restBodyAssetList, optionsToBody);
 }

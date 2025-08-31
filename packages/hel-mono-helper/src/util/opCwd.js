@@ -6,7 +6,7 @@ const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
 const { safeOnlyGet } = require('./dict');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./rootInfo');
-const { getPortByDevInfo } = require('./port');
+const { getPortByDevInfo, mayAddPort } = require('./port');
 
 /**
  * 通过分析 cwd 获取应用目录
@@ -57,7 +57,7 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
 
   const defaultDevHostName = devInfo.devHostname || HOST_NAME;
   const { port = getPortByDevInfo(devInfo, isSubMod), devHostname = defaultDevHostName } = devInfo.appConfs[realAppPkgName] || {};
-  const appPublicUrl = `${devHostname}:${port}`;
+  const appPublicUrl = `${devHostname}:${mayAddPort(port)}`;
 
   const appData = {
     isForRootHelDir,

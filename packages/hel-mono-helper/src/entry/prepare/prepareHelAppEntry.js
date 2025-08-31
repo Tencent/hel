@@ -2,12 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 const { HEL_TPL_INNER_APP_PATH } = require('../../consts');
-const { helMonoLog } = require('../../util');
+const { helMonoLog, isHelExternalBuild } = require('../../util');
 const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
 
 function replaceRelevantFiles(appData, devInfo) {
+  if (isHelExternalBuild()) {
+    return r.replaceIndexEXFile(appData, devInfo);
+  }
+
   r.replaceIndexFile(appData, devInfo);
   const injectedDevInfo = r.replaceDevInfo(appData, devInfo);
   r.replaceSubApp(appData);

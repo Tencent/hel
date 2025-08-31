@@ -82,6 +82,7 @@ function getMonoAppDepDataImpl(options) {
   const depInfos = [];
   const loopDeps = [];
 
+  const nmL1PkgNames = [];  // 第一层依赖的 node_modules 包名
   const nmPkgNames = [];
   const nmLoopDeps = [];
   const nmPkg2PkgJsonPath = {};
@@ -118,6 +119,7 @@ function getMonoAppDepDataImpl(options) {
         return;
       }
 
+      nmL1PkgNames.push(pkgName);
       handleNmLoopAssocData(pkgName, appDirPath);
     });
   };
@@ -173,7 +175,7 @@ function getMonoAppDepDataImpl(options) {
   }
   logMonoDep(isForRootHelDir, { pkgName: json.name, isAllDep, appSrc, monoDep, depInfos });
 
-  return { pkgNames, depInfos, nmHelPkgNames, nmPkg2PkgJsonPath, nmPkg2HelConf, ...nameMap };
+  return { pkgNames, depInfos, nmHelPkgNames, nmPkg2PkgJsonPath, nmPkg2HelConf, nmL1PkgNames, ...nameMap };
 }
 
 /**

@@ -315,15 +315,15 @@ export async function loadApp(appName: string, loadOptions: IInnerPreFetchOption
     inner.tryTriggerOnFetchMetaSuccess(appInfo, appVersion, { loadOptions, fromFallback });
     inner.recordAssetCtx(appInfo, appVersion, loadOptions);
 
-    const startLoad = () => {
-      loadAppAssets(appInfo as ISubApp, appVersion as ISubAppVersion, loadOptions);
+    const startLoad = async () => {
+      await loadAppAssets(appInfo as ISubApp, appVersion as ISubAppVersion, loadOptions);
     };
 
     // !!! 需要人工控制开始加载资源的时机
     if (controlLoadAssets) {
       return startLoad;
     }
-    startLoad();
+    await startLoad();
     return null;
   } catch (err: any) {
     if (isFirstCall) {

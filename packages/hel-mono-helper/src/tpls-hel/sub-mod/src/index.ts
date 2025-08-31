@@ -7,7 +7,7 @@ import { preFetchHelDeps } from './configs/util';
 const needRunHook = true;
 
 async function runHelHook() {
-  const helHook: any = await import('../hel-hook');
+  const helHook: any = await import('../hel-conf/hook');
   if (helHook.beforeStartApp) {
     await helHook.beforeStartApp();
   }

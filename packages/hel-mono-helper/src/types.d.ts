@@ -243,7 +243,14 @@ export interface IMonoDevData {
   babelLoaderInclude: string[];
   appAlias: Record<string, string>;
   jestAlias: Record<string, string>;
+  /**
+   * hel-mono.json里全局指定的 externals
+   */
   appExternals: Record<string, string>;
+  /**
+   * 构建应用时自动推导出的 externals
+   */
+  autoExternals: Record<string, string>;
   /**
    * 基于 hel-dev-utils 生成的应用信息
    */

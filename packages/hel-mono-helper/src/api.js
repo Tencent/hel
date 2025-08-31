@@ -5,6 +5,7 @@ const { prepareHelEntry } = require('./entry');
 const { getMonoDevData, getPkgMonoDepData, getPkgMonoDepDataDict } = require('./dev-data');
 const { executeStart, executeBuild, executeStartDeps, buildSrvModToHelDist } = require('./exec');
 const util = require('./util');
+const { getRawMonoJson } = require('./util/monoJson');
 
 /**
  * 约定内部临时打印用 mlog(...)，提交时搜 mlog 删除即可，
@@ -18,12 +19,18 @@ global.mlog = (...args) => util.helMonoLogTmp(...args);
 global.mlog2 = util.helMonoLog;
 
 const monoUtil = {
-  getBuildDirPath(pkgName, buildDirName) {
-    const devInfo = util.inferDevInfo(true);
-    return util.getBuildDirPath(devInfo, pkgName, buildDirName);
+  getBuildDir(defaultDir) {
+    if (util.isHelExternalBuild()) {
+      return cst.HEL_DIST_EX;
+    }
+    if (util.isHelMode()) {
+      return cst.HEL_DIST;
+    }
+    return defaultDir || cst.HEL_DIST;
   },
-  getMonoJson() {
-    util.inferDevInfo(true);
+  getCWDAppData(inputCwd) {
+    const devInfo = util.inferDevInfo(true);
+    return util.getCWDAppData(devInfo, inputCwd);
   },
   helMonoLog: util.helMonoLog,
   helMonoLogTmp: util.helMonoLogTmp,
@@ -31,10 +38,12 @@ const monoUtil = {
   setMonoRoot: util.setMonoRoot,
   ensureSlash: util.ensureSlash,
   getPort: util.getPort,
+  getRawMonoJson: getRawMonoJson,
   isHelStart: util.isHelMode,
   isHelMode: util.isHelMode,
   isHelMicroMode: util.isHelMicroMode,
   isHelAllBuild: util.isHelAllBuild,
+  isHelExternalBuild: util.isHelExternalBuild,
 };
 
 module.exports = {

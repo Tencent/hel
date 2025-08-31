@@ -15,6 +15,10 @@ function safeOnlyGet(dict, key, val = {}) {
   return dict[key] || val;
 }
 
+function isDictNull(dict) {
+  return !dict || Object.keys(dict).length === 0;
+}
+
 function isValNull(val) {
   return [null, undefined, ''].includes(val);
 }
@@ -42,6 +46,7 @@ function clone(dict) {
 }
 
 module.exports = {
+  isDictNull,
   clone,
   safeGet,
   safeOnlyGet,

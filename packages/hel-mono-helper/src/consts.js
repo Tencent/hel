@@ -110,6 +110,7 @@ const MOD_TEMPLATE = {
 
 module.exports = {
   HEL_DIST: devUtils.cst.HEL_DIST_DIR,
+  HEL_DIST_EX: 'hel_dist_ex',
   VER,
   MOD_TEMPLATE,
   INNER_ACTION,
@@ -178,4 +179,8 @@ module.exports = {
    * 赋值给 process.env.HEL_BUILD ，表示使用传统的整体模式构建
    */
   HEL_ALL_BUILD: '3',
+  /**
+   * 赋值给 process.env.HEL_BUILD ，表示构建外部external资源
+   */
+  HEL_EXTERNAL_BUILD: '4',
 };

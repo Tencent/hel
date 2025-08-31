@@ -1,9 +1,14 @@
+const { isHelExternalBuild } = require('../../util');
 const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
 
 module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   prepareTplFiles(appData);
+  if (isHelExternalBuild()) {
+    return r.replaceIndexEXFile(appData, devInfo);
+  }
+
   r.replacePkgJson(appData, depData);
   r.replaceSubModIndex(appData, devInfo);
   r.replaceSubModModulesIndex(appData);

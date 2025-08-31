@@ -15,7 +15,7 @@ exports.prepareHelEntryFiles = function (
   }
 
   if (!devInfo.appConfs[realAppPkgName]) {
-    throw new Error(`package ${realAppPkgName} is not declared in dev-info, please check!`);
+    throw new Error(`package ${realAppPkgName} is not declared in hel-mono.json, please check!`);
   }
 
   if (appData.isSubMod) {

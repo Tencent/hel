@@ -5,6 +5,7 @@ const {
   HEL_MICRO_BUILD,
   HEL_MICRO_BUILD_BS,
   HEL_ALL_BUILD,
+  HEL_EXTERNAL_BUILD,
 } = require('../consts');
 
 const startModes = [HEL_START_WITH_LOCAL_DEPS, HEL_START_WITH_LOCAL_RUNNING_DEPS, HEL_START_WITH_REMOTE_DEPS];
@@ -24,7 +25,7 @@ function isHelMicroMode() {
  * @returns
  */
 function isHelMode() {
-  return isHelMicroMode() || isHelAllBuild();
+  return isHelMicroMode() || isHelAllBuild() || isHelExternalBuild();
 }
 
 /**
@@ -32,6 +33,13 @@ function isHelMode() {
  */
 function isHelAllBuild() {
   return process.env.HEL_BUILD === HEL_ALL_BUILD;
+}
+
+/**
+ * hel应用（模块）external 构建模式，辅助提取应用的外部静态资源
+ */
+function isHelExternalBuild() {
+  return process.env.HEL_BUILD === HEL_EXTERNAL_BUILD;
 }
 
 function isHelStart() {
@@ -44,5 +52,6 @@ module.exports = {
   isHelMode,
   isHelMicroMode,
   isHelAllBuild,
+  isHelExternalBuild,
   isHelStart,
 };

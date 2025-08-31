@@ -19,13 +19,13 @@ function rewriteMonoJson(newJson) {
   fs.writeFileSync(monoJsonPath, JSON.stringify(newJson, null, 2));
 }
 
-function getMonoJson() {
+function getRawMonoJson() {
   const monoJsonPath = getMonoJsonFilePath();
   let monoJson = null;
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) { }
+    } catch (err) {}
   }
 
   return monoJson;
@@ -78,14 +78,14 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
 }
 
 function inferMonoDepDict() {
-  const monoJson = getMonoJson();
+  const monoJson = getRawMonoJson();
   const { monoDict } = getModMonoDataDict(monoJson || { mods: {} });
   return monoDict;
 }
 
 module.exports = {
   getMonoJsonFilePath,
-  getMonoJson,
+  getRawMonoJson,
   getModMonoDataDict,
   rewriteMonoJson,
   inferMonoDepDict,

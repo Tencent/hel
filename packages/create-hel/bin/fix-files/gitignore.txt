@@ -5,7 +5,7 @@
 **/coverage
 **/build
 **/hel_dist
-**/hel-dist
+**/hel_dist_ex
 **/hel_srv
 **/.hel
 **/src-js
@@ -13,6 +13,7 @@
 **/es
 **/lib
 .pnp.js
+tmp
 
 # misc
 **/.DS_Store

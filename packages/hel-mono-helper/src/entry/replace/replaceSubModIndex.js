@@ -16,14 +16,14 @@ module.exports = function replaceSubModIndex(/** @type {ICWDAppData} */ appData,
   const filePath = path.join(helDirPath, './index.ts');
   // replace helLibNames
   const { helLibProxyName = HEL_LIB_PROXY_NAME } = devInfo;
-  const hasHelHook = hasFile(appSrcDirPath, 'helconf/hook');
+  const hasHelHook = hasFile(appSrcDirPath, 'hel-conf/hook');
 
   helMonoLog(`replace content of ${filePath}`);
   rewriteFileLine(filePath, (line) => {
     let targetLine = line;
     if (line.includes(`from '${HEL_LIB_PROXY_NAME}'`)) {
       targetLine = line.replace(`from '${HEL_LIB_PROXY_NAME}'`, `from '${helLibProxyName}'`);
-    } else if (line.includes('../helconf/hook')) {
+    } else if (line.includes('../hel-conf/hook')) {
       targetLine = !hasHelHook ? `  const helHook: any = {}; // found no hel hook` : line;
     } else if (line.includes('const needRunHook =')) {
       targetLine = !hasHelHook ? 'const needRunHook = false;' : line;
