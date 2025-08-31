@@ -1,5 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
+/** @typedef {import('../types').IPkgMonoDepData} IPkgMonoDepData */
 const fs = require('fs');
 const path = require('path');
 const { getTsConfigAliasByDirPath } = require('./alias');
@@ -24,12 +25,15 @@ function getMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;
 }
 
+/**
+ * @returns {{monoDict: Record<string, IPkgMonoDepData>, prefixedDirDict: Record<string, IPkgMonoDepData>}}
+ */
 function getModMonoDataDict(monoJsonOrDevInfo) {
   const { monoRoot } = getMonoRootInfo();
   const { belongToDirs, subModDirs } = getDevInfoDirs(monoJsonOrDevInfo);
