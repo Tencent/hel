@@ -2,7 +2,7 @@
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const { prepareAppFiles, ensureExAppProject } = require('./share');
 
-module.exports = function prepareHelAppEntry(/** @type {Options} */options) {
+module.exports = function prepareHelAppEntry(/** @type {Options} */ options) {
   const { appData, devInfo, forEX } = options;
 
   if (forEX) {

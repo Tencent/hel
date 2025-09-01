@@ -3,7 +3,7 @@ const { getCWDAppData, helMonoLog } = require('../../util');
 const prepareHelAppEntry = require('./prepareHelAppEntry');
 const prepareHelSubModEntry = require('./prepareHelSubModEntry');
 
-function prepareHelEntryFiles(/** @type {Options} */options) {
+function prepareHelEntryFiles(/** @type {Options} */ options) {
   const { devInfo } = options;
   const appData = options.appData || getCWDAppData(devInfo);
   const { belongTo, appDir, appPkgName, realAppPkgName, isForRootHelDir } = appData;
@@ -21,7 +21,7 @@ function prepareHelEntryFiles(/** @type {Options} */options) {
   }
 
   return prepareHelAppEntry(options);
-};
+}
 
 module.exports = {
   prepareHelEntryFiles,

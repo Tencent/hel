@@ -24,12 +24,12 @@ function prepareFiles(devInfo, depData, appData) {
   return injectedDevInfo;
 }
 
-module.exports = function prepareHelSubModEntry(/** @type {Options} */options) {
+module.exports = function prepareHelSubModEntry(/** @type {Options} */ options) {
   const { appData, devInfo, depData, forEx } = options;
 
   if (forEx) {
     return ensureExAppProject(devInfo, appData);
   }
 
-  return prepareFiles(devInfo, depData, appData)
+  return prepareFiles(devInfo, depData, appData);
 };

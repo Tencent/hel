@@ -11,10 +11,10 @@ const r = require('../replace');
 
 /**
  * TODO may del?
- * @param {*} masterAppData 
- * @returns 
+ * @param {*} masterAppData
+ * @returns
  */
-function buildExAppData(/** @type {ICWDAppData} */masterAppData) {
+function buildExAppData(/** @type {ICWDAppData} */ masterAppData) {
   const p = path.sep;
   const {
     appDir,
@@ -44,7 +44,7 @@ function buildExAppData(/** @type {ICWDAppData} */masterAppData) {
     realAppSrcDirPath: replaceDir(realAppSrcDirPath),
     realAppPkgJsonPath: replaceDir(realAppPkgJsonPath),
     realAppPkgName: replaceName(realAppPkgName),
-  }
+  };
 }
 
 function replaceAppRelevantFiles(appData, devInfo, options = {}) {
@@ -99,18 +99,14 @@ function ensureExAppProject(devInfo, options) {
   if (!fs.existsSync(exAppData.appDirPath)) {
     const options = {
       isSubMod: exAppData.isSubMod,
-      keywords: [exAppData.appDir, '-n', exAppData.appPkgName, '-t', MOD_TEMPLATE.exApp]
+      keywords: [exAppData.appDir, '-n', exAppData.appPkgName, '-t', MOD_TEMPLATE.exApp],
     };
     execCreate(devInfo, options);
   }
 
   const newDevInfo = inferDevInfo(true);
   // 注意，此处是通过 masterAppData.appSrcDirPath 获得对应点的 external deps 对象
-  const { autoExternalDeps } = getMonoDevData(
-    newDevInfo,
-    masterAppData.appSrcDirPath,
-    { appData: masterAppData, forEX: true },
-  );
+  const { autoExternalDeps } = getMonoDevData(newDevInfo, masterAppData.appSrcDirPath, { appData: masterAppData, forEX: true });
   r.replaceExProjectPkgJson(exAppData, autoExternalDeps);
   prepareAppFiles(newDevInfo, exAppData, { forEX: true, masterAppData, exAppData });
 

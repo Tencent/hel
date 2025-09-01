@@ -27,7 +27,7 @@ function getRawMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) { }
+    } catch (err) {}
   }
 
   return monoJson;
@@ -100,7 +100,7 @@ function getMonoDataFromDirDict(dirDict, dir) {
 /**
  * @returns {IPkgMonoDepData}
  */
-function getMonoDataFromDictWrap(/** @type {IGetModMonoDataDictResult} */dictWrap, dirOrPkgName) {
+function getMonoDataFromDictWrap(/** @type {IGetModMonoDataDictResult} */ dictWrap, dirOrPkgName) {
   const { monoDict, prefixedDirDict, dirDict } = dictWrap;
   if (monoDict[dirOrPkgName]) {
     return monoDict[dirOrPkgName];

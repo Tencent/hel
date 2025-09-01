@@ -5,7 +5,7 @@ const shell = require('shelljs');
 const { helMonoLog } = require('../../util');
 const { safeGet } = require('../../util/dict');
 
-function writeAndInstall(pkgJson, deps, pkgFilePath, /** @type {ICWDAppData} */appData) {
+function writeAndInstall(pkgJson, deps, pkgFilePath, /** @type {ICWDAppData} */ appData) {
   pkgJson.dependencies = deps;
   const str = JSON.stringify(pkgJson, null, 2);
   fs.writeFileSync(pkgFilePath, str);
@@ -34,11 +34,11 @@ module.exports = function replaceExProjectPkgJson(/** @type {ICWDAppData} */ app
     writeAndInstall(pkgJson, newDeps, pkgFilePath, appData);
     return true;
   }
-  if (newPkgNames.some(v => !oldPkgNames.includes(v))) {
+  if (newPkgNames.some((v) => !oldPkgNames.includes(v))) {
     writeAndInstall(pkgJson, newDeps, pkgFilePath, appData);
     return true;
   }
-  if (newPkgNames.some(v => oldDeps[v] !== newDeps[v])) {
+  if (newPkgNames.some((v) => oldDeps[v] !== newDeps[v])) {
     writeAndInstall(pkgJson, newDeps, pkgFilePath, appData);
     return true;
   }

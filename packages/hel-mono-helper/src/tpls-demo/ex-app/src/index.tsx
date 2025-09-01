@@ -1,2 +1,2 @@
 // this is ex project
-export { };
+export {};

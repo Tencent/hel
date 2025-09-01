@@ -167,9 +167,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const isHelModeVar = isHelMode();
   const shoudComputeAutoExternals = isHelModeVar || isExMode;
 
-  const {
-    pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps,
-  } = getMonoAppDepDataImpl({
+  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps } = getMonoAppDepDataImpl({
     appSrc,
     devInfo,
     isAllDep: shouldGetAllDep,
@@ -315,7 +313,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     resolveMonoRoot: (relativePath) => path.resolve(appData.monoRoot, relativePath),
   };
 
-  const devData = cachedResult[appSrc]
+  const devData = cachedResult[appSrc];
   mlogt('devData', devData);
 
   return devData;

@@ -82,7 +82,7 @@ function getCWDAppData(/** @type {import('hel-mono-types').IMonoDevInfo} */ devI
   }
 
   return appData;
-};
+}
 
 module.exports = {
   getCWDAppData,

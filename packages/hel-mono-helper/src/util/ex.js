@@ -4,13 +4,13 @@ function getMasterAppPrefixedDir(exPrefixedDir) {
   if (exPrefixedDir.endsWith('-ex')) {
     return exPrefixedDir.substring(0, exPrefixedDir.length - 3);
   }
-  return exPrefixedDir
+  return exPrefixedDir;
 }
 
 /**
- * @returns 
+ * @returns
  */
-function buildExAppData(/** @type {ICWDAppData} */masterAppData) {
+function buildExAppData(/** @type {ICWDAppData} */ masterAppData) {
   const p = path.sep;
   const {
     appDir,
@@ -40,7 +40,7 @@ function buildExAppData(/** @type {ICWDAppData} */masterAppData) {
     realAppSrcDirPath: replaceDir(realAppSrcDirPath),
     realAppPkgJsonPath: replaceDir(realAppPkgJsonPath),
     realAppPkgName: replaceName(realAppPkgName),
-  }
+  };
 }
 
 module.exports = {

@@ -8,10 +8,10 @@ const { rewriteFileLine } = require('../../util/rewrite');
 /**
  * 替换 indexEX.ts 文件内容为 externals 构建做准备
  */
-module.exports = function replaceHtmlContent(/** @type {{appData:ICWDAppData }} */options) {
+module.exports = function replaceHtmlContent(/** @type {{appData:ICWDAppData }} */ options) {
   // const { nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX } = options;
   const { nmL1ExternalDeps, appData, forEX } = options;
-  const { monoRoot } = appData
+  const { monoRoot } = appData;
   const rawAppHtml = path.join(monoRoot, './dev/public/index.html');
   let appHtml = rawAppHtml;
 
@@ -33,11 +33,11 @@ module.exports = function replaceHtmlContent(/** @type {{appData:ICWDAppData }} 
         `<h2>app path: ${appDirPath}</h2>`,
         '<h2>serve externals below:</h2>',
       ];
-      targetLine.push('<pre>')
+      targetLine.push('<pre>');
       const str = JSON.stringify(nmL1ExternalDeps, null, 2);
       const rawLines = str.split(os.EOL);
-      rawLines.forEach(v => targetLine.push(v));
-      targetLine.push('</pre>')
+      rawLines.forEach((v) => targetLine.push(v));
+      targetLine.push('</pre>');
     }
     return { line: targetLine };
   });

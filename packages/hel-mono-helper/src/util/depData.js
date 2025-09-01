@@ -193,7 +193,7 @@ function getMonoAppDepDataImpl(options) {
     nmPkg2HelConf,
     nmL1ExternalPkgNames,
     nmL1ExternalDeps,
-    ...nameMap
+    ...nameMap,
   };
 }
 

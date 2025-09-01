@@ -5,7 +5,7 @@ const { INNER_SUB_MOD_ORG, INNER_APP_ORG, ACTION_NAME } = require('../consts');
  * 获取 pnpm --filter xxx run yyy 运行命令
  */
 exports.getPnpmRunCmd = function (packName, options) {
-  const {  scriptCmdKey = ACTION_NAME.start} = options;
+  const { scriptCmdKey = ACTION_NAME.start } = options;
   return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 };
 
