@@ -9,10 +9,15 @@ const { rewriteFileLine } = require('../../util/rewrite');
 /**
  * 替换 indexEX.ts 文件内容为 externals 构建做准备
  */
-module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo) {
+module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo, options) {
   const { appSrcDirPath, helDirPath, appPkgName } = appData;
+  let { autoExternals } = options;
   const filePath = path.join(helDirPath, './indexEX.ts');
-  const { autoExternals } = getMonoDevData(devInfo, appSrcDirPath);
+
+  if (!autoExternals) {
+    const data = getMonoDevData(devInfo, appSrcDirPath, options);
+    autoExternals = data.autoExternals;
+  }
   const hasExternals = !isDictNull(autoExternals);
 
   helMonoLog(`replace content of ${filePath}`);
@@ -21,11 +26,11 @@ module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData,
     if (line.includes('{{BOUND_MODULES}}')) {
       if (hasExternals) {
         const importLines = [];
-        const boundLines = ['// Found these modules to be bound to global'];
+        const boundLines = ['// Found these modules to be bound to global by hel-mono-helper'];
         Object.keys(autoExternals).forEach((pkgName) => {
           const boundName = autoExternals[pkgName];
           importLines.push(`import * as ${boundName} from '${pkgName}';`);
-          boundLines.push(`window.${boundName}=${boundName};`);
+          boundLines.push(`window.${boundName} = ${boundName};`);
         });
 
         targetLine = importLines.concat(['']).concat(boundLines).concat(['']);

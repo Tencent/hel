@@ -25,7 +25,7 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
   const { isSubMod = false, autoStart = false } = options;
   const label = isSubMod ? 'hel-mod' : 'app';
   const actionKey = isSubMod ? INNER_ACTION.createMod : INNER_ACTION.create;
-  const keywords = getCmdKeywords(3);
+  const keywords = options.keywords || getCmdKeywords(3);
   helMonoLog(`${actionKey} keywords (${keywords.join(' ')})`);
   const argvOptions = getArgvOptions({ devInfo, keywords, actionKey }, options);
   const { copyToPath, copyFromPath, pkgName, copyToDir } = argvOptions;
@@ -46,7 +46,8 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
   fs.cpSync(copyFromPath, copyToPath, { recursive: true });
   helMonoLog(`create ${label} ${pkgName} done`);
 
-  // 重写根目录的hel-mono.json
+  // 重写根目录的 hel-mono.json
+  mlogt('rewriteMonoJsonForArgv argvOptions', argvOptions);
   rewriteMonoJsonForArgv(devInfo, argvOptions, isSubMod);
   // 重写模块别名
   rewriteModAlias(argvOptions);

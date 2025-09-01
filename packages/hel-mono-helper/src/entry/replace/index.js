@@ -1,5 +1,6 @@
 module.exports = {
   replacePkgJson: require('./replacePkgJson'),
+  replaceExProjectPkgJson: require('./replaceExProjectPkgJson'),
   replaceIndexFile: require('./replaceIndexFile'),
   replaceIndexEXFile: require('./replaceIndexEXFile'),
   replaceDevInfo: require('./replaceDevInfo'),

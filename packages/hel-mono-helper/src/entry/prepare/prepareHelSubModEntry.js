@@ -1,9 +1,11 @@
+/** @typedef {import('../../types').IPrepareHelEntryFilesOptions} Options */
 const { isHelExternalBuild } = require('../../util');
 const r = require('../replace');
 const prepareTplFiles = require('./prepareTplFiles');
 const prepareNodeModules = require('./prepareNodeModules');
+const { ensureExAppProject } = require('./share');
 
-module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
+function prepareFiles(devInfo, depData, appData) {
   prepareTplFiles(appData);
   if (isHelExternalBuild()) {
     return r.replaceIndexEXFile(appData, devInfo);
@@ -20,4 +22,14 @@ module.exports = function prepareHelSubModEntry(appData, devInfo, depData) {
   prepareNodeModules(appData);
 
   return injectedDevInfo;
+}
+
+module.exports = function prepareHelSubModEntry(/** @type {Options} */options) {
+  const { appData, devInfo, depData, forEx } = options;
+
+  if (forEx) {
+    return ensureExAppProject(devInfo, appData);
+  }
+
+  return prepareFiles(devInfo, depData, appData)
 };

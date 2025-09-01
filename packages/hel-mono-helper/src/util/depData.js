@@ -17,6 +17,7 @@ const { getLocaleTime } = require('./time');
 const pkgNameWhiteList = [
   '@tencent/hel-micro',
   '@tencent/hel-lib-proxy',
+  'hel-iso',
   'hel-micro',
   'hel-micro-core',
   'hel-lib-proxy',
@@ -77,12 +78,14 @@ function getMonoAppDepDataImpl(options) {
   const appDirPath = getAppDirPath(appSrc);
   const { pkg2Deps, pkg2BelongTo, pkg2Dir, pkg2AppDirPath, monoDep } = nameMap;
   const excludeHelMods = devInfo.exclude || [];
+  const excludeAutoExternal = devInfo.excludeAutoExternal || [];
 
   const pkgNames = [];
   const depInfos = [];
   const loopDeps = [];
 
-  const nmL1PkgNames = []; // 第一层依赖的 node_modules 包名
+  const nmL1ExternalPkgNames = []; // 当前大仓所有项目可提取为 external 资源的 node_modules 包名
+  const nmL1ExternalDeps = {}; // 当前大仓所有项目可提取为 external 资源的 node_modules 包名和版本字典
   const nmPkgNames = [];
   const nmLoopDeps = [];
   const nmPkg2PkgJsonPath = {};
@@ -104,6 +107,13 @@ function getMonoAppDepDataImpl(options) {
     }
   };
 
+  const handleL1PkgName = (pkgName, verStr) => {
+    if (!pkgNameWhiteList.includes(pkgName) && !excludeAutoExternal.includes(pkgName)) {
+      noDupPush(nmL1ExternalPkgNames, pkgName);
+      nmL1ExternalDeps[pkgName] = verStr;
+    }
+  };
+
   const pushToDeps = (depObj, appDirPath) => {
     Object.keys(depObj).forEach((pkgName) => {
       const val = depObj[pkgName];
@@ -119,7 +129,7 @@ function getMonoAppDepDataImpl(options) {
         return;
       }
 
-      nmL1PkgNames.push(pkgName);
+      handleL1PkgName(pkgName, val);
       handleNmLoopAssocData(pkgName, appDirPath);
     });
   };
@@ -140,7 +150,7 @@ function getMonoAppDepDataImpl(options) {
       depObj = pkgJson.dependencies || {};
       nmPkg2HelConf[nmPkgName] = pkgJson.hel || {};
     } catch (err) {
-      helMonoLog(`find npm hel entry fail: ${nmPkgName} `, pkgJsonPath);
+      // helMonoLog(`find npm hel entry fail: ${nmPkgName} `, pkgJsonPath);
     }
 
     if (!depObj) {
@@ -175,7 +185,16 @@ function getMonoAppDepDataImpl(options) {
   }
   logMonoDep(isForRootHelDir, { pkgName: json.name, isAllDep, appSrc, monoDep, depInfos });
 
-  return { pkgNames, depInfos, nmHelPkgNames, nmPkg2PkgJsonPath, nmPkg2HelConf, nmL1PkgNames, ...nameMap };
+  return {
+    pkgNames,
+    depInfos,
+    nmHelPkgNames,
+    nmPkg2PkgJsonPath,
+    nmPkg2HelConf,
+    nmL1ExternalPkgNames,
+    nmL1ExternalDeps,
+    ...nameMap
+  };
 }
 
 /**

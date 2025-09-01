@@ -5,13 +5,8 @@ const { INNER_SUB_MOD_ORG, INNER_APP_ORG, ACTION_NAME } = require('../consts');
  * 获取 pnpm --filter xxx run yyy 运行命令
  */
 exports.getPnpmRunCmd = function (packName, options) {
-  const { isForRootHelDir, scriptCmdKey = ACTION_NAME.start, isSubMod, dirName } = options;
-  let targetPackName = packName;
-  if (isForRootHelDir) {
-    targetPackName = `${isSubMod ? `${INNER_SUB_MOD_ORG}/${dirName}` : `${INNER_APP_ORG}/${dirName}`}`;
-  }
-
-  return `pnpm --filter ${targetPackName} run ${scriptCmdKey}`;
+  const {  scriptCmdKey = ACTION_NAME.start} = options;
+  return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 };
 
 exports.getLintCmd = function (appDirName) {

@@ -2,7 +2,7 @@
 const path = require('path');
 const { lastNItem } = require('./arr');
 const { isHelExternalBuild } = require('./is');
-const { getModMonoDataDict, getMonoJson } = require('./monoJson');
+const { getModMonoDataDict, getRawMonoJson } = require('./monoJson');
 
 const defaultAppPort = 3000;
 const defaultSubModPort = 3100;

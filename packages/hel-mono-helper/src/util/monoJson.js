@@ -1,8 +1,10 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
 /** @typedef {import('../types').IPkgMonoDepData} IPkgMonoDepData */
+/** @typedef {import('../types').IGetModMonoDataDictResult} IGetModMonoDataDictResult */
 const fs = require('fs');
 const path = require('path');
+const { safeGet } = require('./dict');
 const { getTsConfigAliasByDirPath } = require('./alias');
 const { getDevInfoDirs } = require('./base');
 const { getFileInfoList } = require('./file');
@@ -25,24 +27,25 @@ function getRawMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;
 }
 
 /**
- * @returns {{monoDict: Record<string, IPkgMonoDepData>, prefixedDirDict: Record<string, IPkgMonoDepData>}}
+ * @returns {IGetModMonoDataDictResult}
  */
 function getModMonoDataDict(monoJsonOrDevInfo) {
   const { monoRoot } = getMonoRootInfo();
   const { belongToDirs, subModDirs } = getDevInfoDirs(monoJsonOrDevInfo);
   const monoDict = {};
   const prefixedDirDict = {};
+  const dirDict = {};
 
-  for (const dir of belongToDirs) {
-    const dirPath = path.join(monoRoot, dir);
-    const isSubMod = subModDirs.includes(dir);
+  for (const belongTo of belongToDirs) {
+    const dirPath = path.join(monoRoot, belongTo);
+    const isSubMod = subModDirs.includes(belongTo);
 
     const list = getFileInfoList(dirPath);
     for (const item of list) {
@@ -55,11 +58,12 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
         const alias = getTsConfigAliasByDirPath(item.path);
         const pkgJson = require(pkgJsonPath);
         const pkgName = pkgJson.name;
-        const prefixedDir = `${dir}/${item.name}`;
+        const dirName = item.name;
+        const prefixedDir = `${belongTo}/${dirName}`;
         const data = {
           pkgName,
-          belongTo: dir,
-          dirName: item.name,
+          belongTo,
+          dirName,
           prefixedDir,
           alias,
           appDirPath: item.path,
@@ -70,11 +74,41 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
 
         monoDict[pkgName] = data;
         prefixedDirDict[prefixedDir] = data;
+        const dataList = safeGet(dirDict, dirName, []);
+        dataList.push(data);
       }
     }
   }
 
-  return { monoDict, prefixedDirDict };
+  return { monoDict, prefixedDirDict, dirDict };
+}
+
+/**
+ * @returns {IPkgMonoDepData}
+ */
+function getMonoDataFromDirDict(dirDict, dir) {
+  const dataList = safeGet(dirDict, dir, []);
+  if (!dataList.length) {
+    throw new Error(`found no project for ${dir}`);
+  }
+  if (dataList.length >= 2) {
+    throw new Error(`found duplcate dir ${dir}, suggest you to prefix it like xxx/${dir}`);
+  }
+  return dataList[0];
+}
+
+/**
+ * @returns {IPkgMonoDepData}
+ */
+function getMonoDataFromDictWrap(/** @type {IGetModMonoDataDictResult} */dictWrap, dirOrPkgName) {
+  const { monoDict, prefixedDirDict, dirDict } = dictWrap;
+  if (monoDict[dirOrPkgName]) {
+    return monoDict[dirOrPkgName];
+  }
+  if (prefixedDirDict[dirOrPkgName]) {
+    return prefixedDirDict[dirOrPkgName];
+  }
+  return getMonoDataFromDirDict(dirDict, dirOrPkgName);
 }
 
 function inferMonoDepDict() {
@@ -89,4 +123,6 @@ module.exports = {
   getModMonoDataDict,
   rewriteMonoJson,
   inferMonoDepDict,
+  getMonoDataFromDirDict,
+  getMonoDataFromDictWrap,
 };

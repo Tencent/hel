@@ -101,6 +101,7 @@ const CREATE_SHORT_PARAM_KEY = {
 const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);
 
 const MOD_TEMPLATE = {
+  exApp: 'ex-app',
   reactApp: 'react-app',
   reactLib: 'react-lib',
   tsLib: 'ts-lib',
@@ -183,4 +184,8 @@ module.exports = {
    * 赋值给 process.env.HEL_BUILD ，表示构建外部external资源
    */
   HEL_EXTERNAL_BUILD: '4',
+  /**
+   * 赋值给 process.env.HEL_BUILD ，表示构建是在提取 external 资源后放置到宿主内部
+   */
+  HEL_EXTERNAL_BUILD_INNER: '5',
 };

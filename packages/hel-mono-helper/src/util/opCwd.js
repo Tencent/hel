@@ -1,8 +1,8 @@
 const path = require('path');
-const { lastNItem } = require('./arr');
 const { getTsConfigJson } = require('./appSrc');
 const { getCWD, getFileJson, getDevInfoDirs } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
+const { inferDirData } = require('./cwd');
 const { safeOnlyGet } = require('./dict');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./rootInfo');
@@ -12,7 +12,7 @@ const { getPortByDevInfo, mayAddPort } = require('./port');
  * 通过分析 cwd 获取应用目录
  * @return {import('../types').ICWDAppData}
  */
-exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputCwd) {
+function getCWDAppData(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputCwd) {
   const curAppData = getCurAppData();
   if (!inputCwd && curAppData) {
     return curAppData;
@@ -26,9 +26,7 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   const { subModDirs } = getDevInfoDirs(devInfo);
 
   const isForRootHelDir = cwd.includes(monoRootHelDir);
-  const list = cwd.split(path.sep);
-  const belongTo = lastNItem(list, 2);
-  const appDir = lastNItem(list, 1);
+  const { belongTo, dirName: appDir } = inferDirData(devInfo, cwd);
   const isSubMod = subModDirs.includes(belongTo);
 
   const root = isForRootHelDir ? monoRootHelDir : monoRoot;
@@ -84,4 +82,8 @@ exports.getCWDAppData = function (/** @type {import('hel-mono-types').IMonoDevIn
   }
 
   return appData;
+};
+
+module.exports = {
+  getCWDAppData,
 };

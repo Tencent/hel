@@ -114,11 +114,19 @@ function getLogFilePath(isTmp) {
 }
 
 function logRunningDetails(options, ...args) {
-  const { isTmp, isRed } = options;
-  const rawPrefix = isTmp ? LOG_PREFIX_TMP : LOG_PREFIX;
-  const prefix = isRed ? chalk.red(rawPrefix) : chalk.cyan(rawPrefix);
-  console.log(prefix, ...args);
-  const logFilePath = getLogFilePath(isTmp);
+  const { isTmp, isRed, isAllTmp } = options;
+
+  let logFilePath = '';
+  if (isAllTmp) {
+    // 仅输出到 .all-tmp.log 中
+    const { monoRootHelTmpLog } = getMonoRootInfo();
+    logFilePath = monoRootHelTmpLog;
+  } else {
+    const rawPrefix = isTmp ? LOG_PREFIX_TMP : LOG_PREFIX;
+    const prefix = isRed ? chalk.red(rawPrefix) : chalk.cyan(rawPrefix);
+    console.log(prefix, ...args);
+    logFilePath = getLogFilePath(isTmp);
+  }
 
   if (args.some((v) => typeof v === 'object')) {
     args.forEach((v) => {
@@ -166,6 +174,13 @@ function helMonoLogTmp(...args) {
   logRunningDetails({ isTmp: true, isRed: false }, ...args);
 }
 
+/**
+ * 打印临时调试日志，全汇总到 _all_tmp.log 中
+ */
+function helMonoLogAllTmp(...args) {
+  logRunningDetails({ isAllTmp: true, isRed: false }, ...args);
+}
+
 module.exports = {
   trySetLogName,
   getCurAppData,
@@ -174,4 +189,5 @@ module.exports = {
   helMonoLog,
   helMonoErrorLog,
   helMonoLogTmp,
+  helMonoLogAllTmp,
 };

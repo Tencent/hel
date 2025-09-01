@@ -2,14 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
+const replaceHtmlContent = require('../entry/replace/replaceHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
 const { inferMonoDepDict } = require('../util/monoJson');
+const { getMonoAppPkgJson, isEXProject } = require('../util/monoPkg');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild, isHelExternalBuild } = require('../util/is');
 const { getLogTimeLine } = require('../util/time');
 
-let cachedResult = null;
+const cachedResult = {};
 
 function getExtIndexData(appSrcDirPath, indexName, ext) {
   const extFileName = `${indexName}.${ext}`;
@@ -19,8 +21,14 @@ function getExtIndexData(appSrcDirPath, indexName, ext) {
 
 function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   let indexName = '';
-  const { isForRootHelDir, appSrcDirPath } = appData;
-  if (isForRootHelDir) {
+  const { isForRootHelDir, appDir, belongTo } = appData;
+  let { appSrcDirPath } = appData;
+  const pkg = getMonoAppPkgJson(appDir, belongTo);
+  const { isEX } = pkg.hel || {};
+
+  if (isEX) {
+    indexName = '.hel/indexEX';
+  } else if (isForRootHelDir) {
     indexName = 'index';
   } else if (isHelAllBuild()) {
     indexName = '.hel/index';
@@ -97,22 +105,40 @@ exports.getPkgMonoDepDataDict = function () {
 /**
  * @returns {import('../types').IMonoDevData}
  */
-exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputAppSrc) {
-  let rawAppSrc = inputAppSrc;
-  if (!rawAppSrc) {
-    rawAppSrc = path.join(getCWD(), './src');
+exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputAppSrc, options = {}) {
+  let targetAppSrc = inputAppSrc;
+  if (!targetAppSrc) {
+    targetAppSrc = path.join(getCWD(), './src');
+  }
+  const { forEX } = options;
+  const isExMode = isEXProject(targetAppSrc) || forEX;
+  if (!isExMode) {
+    console.trace('strange');
+  }
+  if (isExMode === undefined) {
+    mlogt('devInfo ', devInfo);
+    mlogt('inputAppSrc ', inputAppSrc);
+    mlogt('options ', options);
   }
 
-  if (cachedResult) {
-    helMonoLog(`get cached monoDevData for ${rawAppSrc}`);
-    return cachedResult;
+  mlogt('2222 isExMode ', typeof isExMode);
+  mlogt('3333 isExMode ', typeof isExMode);
+  const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
+
+  const key = `${targetAppSrc}_${needAllDep}`;
+  if (cachedResult[key]) {
+    helMonoLog(`get cached monoDevData for ${targetAppSrc} with needAllDep ${needAllDep}`);
+    return cachedResult[targetAppSrc];
   }
 
   helMonoLog(getLogTimeLine());
   const start = Date.now();
-  helMonoLog(`(ver:${VER}) prepare hel dev data for ${rawAppSrc}`);
-  let appSrc = rawAppSrc;
-  const appData = getCWDAppData(devInfo);
+  helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
+  let appSrc = targetAppSrc;
+  const appData = options.appData || getCWDAppData(devInfo);
+
+  console.log('++++++++++++++++++++++++++++++ appData', appData);
+
   const { isForRootHelDir, appTsConfigPaths } = appData;
   helMonoLog('isForRootHelDir ', isForRootHelDir);
 
@@ -129,7 +155,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   let isMicroStartOrBuild;
   let shouldGetAllDep;
   // 设定了 process.env.HEL_BUILD = cst.HEL_ALL_BUILD ，表示走整体构建模式
-  if (isHelAllBuild()) {
+  if (isHelAllBuild() || isHelExternalBuild() || isExMode) {
     isMicroStartOrBuild = false;
     shouldGetAllDep = true;
   } else {
@@ -139,8 +165,11 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     shouldGetAllDep = !isMicroStartOrBuild;
   }
   const isHelModeVar = isHelMode();
+  const shoudComputeAutoExternals = isHelModeVar || isExMode;
 
-  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1PkgNames } = getMonoAppDepDataImpl({
+  const {
+    pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps,
+  } = getMonoAppDepDataImpl({
     appSrc,
     devInfo,
     isAllDep: shouldGetAllDep,
@@ -148,16 +177,21 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
+  console.log('------------------------------------------------------------');
+  console.log('nmL1ExternalPkgNames', nmL1ExternalPkgNames);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
   const pureAlias = Object.assign({}, appAlias);
   const autoExternals = {};
 
-  if (isHelModeVar && nmL1PkgNames.length) {
-    nmL1PkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
+  if (shoudComputeAutoExternals && nmL1ExternalPkgNames.length) {
+    nmL1ExternalPkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
   }
 
+  mlogt('isExMode---->', isExMode);
+
+  const { appHtml, rawAppHtml } = replaceHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
@@ -254,6 +288,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   helMonoLog('isHelMode ', isHelModeVar);
   helMonoLog('appSrcIndex ', appSrcIndex);
   helMonoLog('appPublicUrl ', appPublicUrl);
+  helMonoLog('appHtml ', appHtml);
   helMonoLog('appTsConfigPaths', appTsConfigPaths);
   helMonoLog('babelLoaderInclude', babelLoaderInclude);
   helMonoLog('appExternals', appExternals);
@@ -262,19 +297,26 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   helMonoLog('jestAlias', jestAlias);
   helMonoLog(`getMonoDevData costs ${Date.now() - start} ms`);
 
-  cachedResult = {
+  cachedResult[appSrc] = {
     babelLoaderInclude,
     appAlias,
     jestAlias,
     appExternals: appExternals,
     autoExternals: autoExternals,
+    autoExternalDeps: nmL1ExternalDeps,
     appInfo,
     appData,
     appPublicUrl,
-    appPkgJson,
+    // appPkgJson,
     appSrcIndex,
     appTsConfigPaths,
+    rawAppHtml,
+    appHtml,
     resolveMonoRoot: (relativePath) => path.resolve(appData.monoRoot, relativePath),
   };
-  return cachedResult;
+
+  const devData = cachedResult[appSrc]
+  mlogt('devData', devData);
+
+  return devData;
 };

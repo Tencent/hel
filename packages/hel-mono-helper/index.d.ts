@@ -69,7 +69,7 @@ export declare function executeBuild(): void;
 /**
  * 准备 hel 微模块相关的入口文件，不透传 pkgOrDir 时会根据 cwd 自动推导
  */
-export declare function prepareHelEntry(pkgOrDir?: string): void;
+export declare function prepareHelEntry(options?: { pkgOrDir?: string, forEX?: boolean }): void;
 
 /**
  * 获取 hel-mono 大仓架构里的开发数据

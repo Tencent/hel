@@ -1,13 +1,11 @@
+/** @typedef {import('../../types').IPrepareHelEntryFilesOptions} Options */
 const { getCWDAppData, helMonoLog } = require('../../util');
 const prepareHelAppEntry = require('./prepareHelAppEntry');
 const prepareHelSubModEntry = require('./prepareHelSubModEntry');
 
-exports.prepareHelEntryFiles = function (
-  /** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo,
-  /** @type {import('../../types').IMonoAppDepData} */ depData,
-  /** @type {import('../../types').ICWDAppData} */ inputAppData,
-) {
-  const appData = inputAppData || getCWDAppData(devInfo);
+function prepareHelEntryFiles(/** @type {Options} */options) {
+  const { devInfo } = options;
+  const appData = options.appData || getCWDAppData(devInfo);
   const { belongTo, appDir, appPkgName, realAppPkgName, isForRootHelDir } = appData;
   helMonoLog(`prepare hel entry for ${belongTo}/${appDir} (${appPkgName}):`, appData);
   if (isForRootHelDir) {
@@ -19,8 +17,14 @@ exports.prepareHelEntryFiles = function (
   }
 
   if (appData.isSubMod) {
-    return prepareHelSubModEntry(appData, devInfo, depData);
+    return prepareHelSubModEntry(options);
   }
 
-  return prepareHelAppEntry(appData, devInfo, depData);
+  return prepareHelAppEntry(options);
+};
+
+module.exports = {
+  prepareHelEntryFiles,
+  prepareHelAppEntry,
+  prepareHelSubModEntry,
 };

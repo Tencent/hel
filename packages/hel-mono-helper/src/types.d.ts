@@ -25,6 +25,7 @@ export interface IMonoRootInfo {
   monoRoot: string;
   monoRootHelDir: string;
   monoRootHelLog: string;
+  monoRootHelTmpLog: string;
   monoDepJson: string;
   monoDepForJson;
 }
@@ -265,6 +266,14 @@ export interface IMonoDevData {
    */
   appSrcIndex: string;
   /**
+   * 提供给应用真正使用的 html 文件路径
+   */
+  appHtml: string;
+  /**
+   * 应用对应的原始 html 文件路径
+   */
+  rawAppHtml: string;
+  /**
    * 动态计算出的应用的 tsconfig.json 里的 paths 值
    */
   appTsConfigPaths: string;
@@ -283,4 +292,29 @@ export interface IExecuteStartOptions {
   tplsDemoDirPath: string;
   /** 读取模块模板的目录路径 */
   tplsDemoModDirPath: string;
+}
+
+export interface IPrepareHelEntryFilesOptions {
+  devInfo: IMonoDevInfo;
+  depData: IMonoAppDepData;
+  appData: ICWDAppData;
+  /**
+   * 为 true，表示生成独立的 ex 目录
+   */
+  forEx: boolean;
+}
+
+export interface IGetModMonoDataDictResult {
+  monoDict: Record<string, IPkgMonoDepData>;
+  prefixedDirDict: Record<string, IPkgMonoDepData>;
+  dirDict: Record<string, IPkgMonoDepData>;
+}
+
+/**
+ * cwd 上携带的信息
+ */
+export interface ICWDInfo {
+  curCwd: string;
+  exCwd: string;
+  forEX: string;
 }

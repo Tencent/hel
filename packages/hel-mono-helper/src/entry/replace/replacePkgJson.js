@@ -14,6 +14,7 @@ module.exports = function replacePkgJson(
   const pkgFilePath = path.join(appDirPath, './package.json');
   const proxyPkgName = `@hel-${belongTo}/${appDir}`;
   helMonoLog(`replace name and dep of ${pkgFilePath}`);
+
   const pkgJson = require(pkgFilePath);
   pkgJson.name = proxyPkgName;
   pkgJson.dependencies = pkgJson.dependencies || {};
@@ -22,6 +23,7 @@ module.exports = function replacePkgJson(
 
   const { pkg2Deps } = depData;
   const appDeps = pkg2Deps[realAppPkgName] || {};
+
   Object.keys(appDeps).forEach((depName) => {
     if (depName === proxyPkgName) {
       return;

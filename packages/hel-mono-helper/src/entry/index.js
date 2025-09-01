@@ -3,9 +3,11 @@ const http = require('http');
 const path = require('path');
 const shell = require('shelljs');
 const util = require('../util');
+const cwdUtil = require('../util/cwd');
+const exUtil = require('../util/ex');
 const { getMonoAppDepDataImpl } = require('../util/depData');
 const { getPnpmRunCmd } = require('../exec/cmd');
-const { prepareHelEntryFiles } = require('./prepare');
+const { prepareHelEntryFiles, prepareHelAppEntry } = require('./prepare');
 const { HEL_START_WITH_LOCAL_RUNNING_DEPS } = require('../consts');
 
 const { helMonoLog } = util;
@@ -29,7 +31,7 @@ function visitDevServer(serverUrl, successCb, failCb) {
  * 为宿主和其子模块准备hel相关入口文件
  */
 function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ options) {
-  const { isForRootHelDir, devInfo, nameData, startDeps } = options;
+  const { isForRootHelDir, devInfo, nameData, startDeps, forEX } = options;
   const { belongTo, dirName } = nameData;
   const { monoRootHelDir, monoRoot } = util.getMonoRootInfo();
   const rootDir = isForRootHelDir ? monoRootHelDir : monoRoot;
@@ -39,7 +41,8 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
   const depData = getMonoAppDepDataImpl({ appSrc: appData.realAppSrcDirPath, devInfo, isAllDep: true, isForRootHelDir });
   const { depInfos } = depData;
 
-  if (!util.isHelAllBuild()) {
+  const shouldRunDeps = !util.isHelAllBuild() && !util.isHelExternalBuild();
+  if (shouldRunDeps) {
     util.helMonoLog('depInfos', depInfos);
     // 为宿主的子模块依赖准备 hel 入口文件
     depInfos.forEach((info) => {
@@ -59,7 +62,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
         });
       };
 
-      const injectedDevInfo = prepareHelEntryFiles(devInfo, depData, appData);
+      const injectedDevInfo = prepareHelEntryFiles({ devInfo, depData, appData });
       if (startDeps) {
         const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.mods[pkgName];
         visitDevServer(
@@ -78,10 +81,10 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
   }
 
   // 为宿主准备 hel 入口文件
-  prepareHelEntryFiles(devInfo, depData, appData);
+  prepareHelEntryFiles({ devInfo, depData, appData, forEX });
 }
 
-function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir) {
+function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir, forEX) {
   util.clearMonoLog();
   const pkgOrDirVar = pkgOrDir || util.getCWDPkgPrefixedDir();
   const isForRootHelDir = util.getCWDIsForRootHelDir();
@@ -89,10 +92,28 @@ function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ de
 
   const startDeps = process.env.HEL_START === HEL_START_WITH_LOCAL_RUNNING_DEPS;
   process.env.REACT_APP_HEL_START = process.env.HEL_START || '';
-  prepareHelEntryForMainAndDeps({ isForRootHelDir, devInfo, nameData, startDeps });
+  prepareHelEntryForMainAndDeps({ isForRootHelDir, devInfo, nameData, startDeps, forEX });
+}
+
+/**
+ * 为 ex 项目准备入口文件
+ */
+function prepareExProjHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, exPrefixedDir) {
+  util.clearMonoLog();
+  console.log('exPrefixedDir', exPrefixedDir);
+  const masterAppPrefixedDir = exUtil.getMasterAppPrefixedDir(exPrefixedDir);
+  const masterAppCwd = cwdUtil.getCwdByPrefixedDir(masterAppPrefixedDir);
+  const masterAppData = util.getCWDAppData(devInfo, masterAppCwd);
+
+  const exAppCwd = cwdUtil.getCwdByPrefixedDir(exPrefixedDir);
+  const exAppData = util.getCWDAppData(devInfo, exAppCwd);
+
+  // 为了不混淆，appData 总是指向自身，新启用 masterAppData exAppData
+  prepareHelAppEntry({ devInfo, appData: exAppData, masterAppData, exAppData, forEX: true });
 }
 
 module.exports = {
   prepareHelEntryForMainAndDeps,
   prepareHelEntry,
+  prepareExProjHelEntry,
 };

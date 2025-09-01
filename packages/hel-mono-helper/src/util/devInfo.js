@@ -24,6 +24,9 @@ function getAppConfs(monoJson) {
   const { mods = {} } = monoJson;
   const appConfs = {};
   const { monoDict } = getModMonoDataDict(monoJson);
+
+  mlogt('disk monoDict', monoDict);
+
   const monoJsonPkgNames = Object.keys(mods);
   const repoPkgNames = Object.keys(monoDict);
 
@@ -32,7 +35,8 @@ function getAppConfs(monoJson) {
     console.log(`Found invalid package names(${invalidPkgNames}) in hel-mono.json, mono-helper start to delete them ...`);
     const monoJsonCopy = clone(monoJson);
     invalidPkgNames.forEach((v) => delete monoJsonCopy.mods[v]);
-    rewriteMonoJson(monoJsonCopy);
+    mlogt('???? rewriteMonoJson-->');
+    // rewriteMonoJson(monoJsonCopy);
     console.log(`Delete invalid package names done`);
   }
 

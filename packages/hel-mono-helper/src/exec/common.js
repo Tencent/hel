@@ -48,6 +48,7 @@ function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
 function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, rawScriptCmdKey) {
   let keywordName = rawKeywordName;
   let scriptCmdKey = rawScriptCmdKey;
+  let forEX = false;
 
   // 名字包含了启动方式，例如 hub:hel
   if (rawKeywordName.includes(':')) {
@@ -63,7 +64,15 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
       scriptCmdKey = rawScriptCmdKey;
     } else if (rawScriptCmdKey === 'start') {
       // 除去 START_CMD_MODES 之外的，根目录执行 npm start xx:yy:zz 均表示尝试执行子项目的 yy:zz 命令
-      scriptCmdKey = START_CMD_MODES.includes(mode) ? `${rawScriptCmdKey}:${mode}` : mode;
+      // scriptCmdKey = START_CMD_MODES.includes(mode) ? `${rawScriptCmdKey}:${mode}` : mode;
+      scriptCmdKey = `${rawScriptCmdKey}:${mode}`;
+
+      // 启动对应的ex目录
+      if (mode === 'helex' && !keywordName.endsWith('-ex')) {
+        keywordName = `${keywordName}-ex`;
+        scriptCmdKey = 'start';
+        forEX = true;
+      }
     } else {
       scriptCmdKey = `${rawScriptCmdKey}:${mode}`;
     }
@@ -74,8 +83,9 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
     helMonoLog(`found alias from ${rawKeywordName}, we will use its package name ${pkgName}`);
     keywordName = pkgName;
   }
+  helMonoLog(`result:  keywordName ${keywordName}, scriptCmdKey ${scriptCmdKey}`);
 
-  return { keywordName, scriptCmdKey };
+  return { keywordName, scriptCmdKey, forEX };
 }
 
 exports.extractCmdData = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
