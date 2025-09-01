@@ -4,6 +4,7 @@ const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const replaceHtmlContent = require('../entry/replace/replaceHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
+const { clone } = require('../util/dict');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
 const { inferMonoDepDict } = require('../util/monoJson');
@@ -112,17 +113,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   }
   const { forEX } = options;
   const isExMode = isEXProject(targetAppSrc) || forEX;
-  if (!isExMode) {
-    console.trace('strange');
-  }
-  if (isExMode === undefined) {
-    mlogt('devInfo ', devInfo);
-    mlogt('inputAppSrc ', inputAppSrc);
-    mlogt('options ', options);
-  }
-
-  mlogt('2222 isExMode ', typeof isExMode);
-  mlogt('3333 isExMode ', typeof isExMode);
   const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
 
   const key = `${targetAppSrc}_${needAllDep}`;
@@ -136,10 +126,8 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
   let appSrc = targetAppSrc;
   const appData = options.appData || getCWDAppData(devInfo);
-
-  console.log('++++++++++++++++++++++++++++++ appData', appData);
-
-  const { isForRootHelDir, appTsConfigPaths } = appData;
+  const { isForRootHelDir } = appData;
+  const appTsConfigPaths = clone(appData.appTsConfigPaths);
   helMonoLog('isForRootHelDir ', isForRootHelDir);
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
@@ -175,8 +163,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
-  console.log('------------------------------------------------------------');
-  console.log('nmL1ExternalPkgNames', nmL1ExternalPkgNames);
 
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
@@ -186,8 +172,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   if (shoudComputeAutoExternals && nmL1ExternalPkgNames.length) {
     nmL1ExternalPkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
   }
-
-  mlogt('isExMode---->', isExMode);
 
   const { appHtml, rawAppHtml } = replaceHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
   if (!isMicroStartOrBuild) {
@@ -208,6 +192,9 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       }
     });
   } else {
+    console.log('depInfos', depInfos);
+    console.log(appTsConfigPaths);
+
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
       const subModSrcPath = getMonoSubModSrc(belongTo, dirName);
@@ -233,7 +220,8 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       if (inferAlias) {
         const aliasKey = `${inferAlias}/*`;
         if (appTsConfigPaths[aliasKey]) {
-          throw new Error(`alias ${inferAlias} duplicated, please check.`);
+          console.log(appTsConfigPaths);
+          throw new Error(`found alias ${inferAlias} duplicated while handle ${appSrcPath}, please check.`);
         }
         appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
       }

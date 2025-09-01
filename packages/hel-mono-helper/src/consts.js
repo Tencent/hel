@@ -3,6 +3,8 @@ const devUtils = require('hel-dev-utils');
 
 const VER = '0.6.1';
 
+const HEL_EXTERNAL_HTML_PAH = path.join(__dirname, './tpls-hel/empty-index.html');
+
 /** react 应用 hel 胶水代码模板 */
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
@@ -25,6 +27,8 @@ const FORBIDDEN_DIR_NAMES = ['test'];
 const ACTION_NAME = {
   build: 'build',
   start: 'start',
+  startRaw: 'start:raw',
+  startHel: 'start:hel',
 };
 
 const INNER_ACTION = {
@@ -142,6 +146,7 @@ module.exports = {
   HEL_TPL_INNER_SUB_MOD_PATH,
   HEL_TPL_INNER_DEMO_DIR,
   HEL_TPL_INNER_DEMO_MOD_DIR,
+  HEL_EXTERNAL_HTML_PAH,
   /**
    * 模板文件复制到项目里后，某一行将被删除的标记
    */

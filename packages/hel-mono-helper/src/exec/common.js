@@ -54,6 +54,7 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
   if (rawKeywordName.includes(':')) {
     const list = rawKeywordName.split(':');
     const [str1, ...rest] = list;
+    /** @type string */
     const mode = rest.join(':');
     keywordName = str1;
 
@@ -66,6 +67,14 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
       // 除去 START_CMD_MODES 之外的，根目录执行 npm start xx:yy:zz 均表示尝试执行子项目的 yy:zz 命令
       // scriptCmdKey = START_CMD_MODES.includes(mode) ? `${rawScriptCmdKey}:${mode}` : mode;
       scriptCmdKey = `${rawScriptCmdKey}:${mode}`;
+      if (
+        mode.includes(':') // 把  start:build:hel 修正为 build:hel
+        || mode === 'build' // 把 start:build 修正为 build
+        || mode.startsWith('test') //把 start:test... 修正为 test...
+      ) {
+        // 把  start:build:hel 修正为 build:hel
+        scriptCmdKey = mode;
+      }
 
       // 启动对应的ex目录
       if (mode === 'helex' && !keywordName.endsWith('-ex')) {

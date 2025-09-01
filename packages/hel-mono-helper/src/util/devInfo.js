@@ -2,8 +2,8 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { getDevInfoDirs } = require('./base');
-const { purify, clone } = require('./dict');
-const { getRawMonoJson, rewriteMonoJson, getModMonoDataDict } = require('./monoJson');
+const { purify } = require('./dict');
+const { getRawMonoJson, getModMonoDataDict } = require('./monoJson');
 const { getPortByDevInfo } = require('./port');
 
 let ensurePkgHelFn = null;
@@ -25,20 +25,18 @@ function getAppConfs(monoJson) {
   const appConfs = {};
   const { monoDict } = getModMonoDataDict(monoJson);
 
-  mlogt('disk monoDict', monoDict);
-
-  const monoJsonPkgNames = Object.keys(mods);
+  // const monoJsonPkgNames = Object.keys(mods);
   const repoPkgNames = Object.keys(monoDict);
 
-  const invalidPkgNames = monoJsonPkgNames.filter((v) => !repoPkgNames.includes(v));
-  if (invalidPkgNames.length) {
-    console.log(`Found invalid package names(${invalidPkgNames}) in hel-mono.json, mono-helper start to delete them ...`);
-    const monoJsonCopy = clone(monoJson);
-    invalidPkgNames.forEach((v) => delete monoJsonCopy.mods[v]);
-    mlogt('???? rewriteMonoJson-->');
-    // rewriteMonoJson(monoJsonCopy);
-    console.log(`Delete invalid package names done`);
-  }
+  // 暂不做动态修复，避免 startEX buildEX 生成的 hel-mono.json 被干扰为错误内容
+  // const invalidPkgNames = monoJsonPkgNames.filter((v) => !repoPkgNames.includes(v));
+  // if (invalidPkgNames.length) {
+  //   console.log(`Found invalid package names(${invalidPkgNames}) in hel-mono.json, mono-helper start to delete them ...`);
+  //   const monoJsonCopy = clone(monoJson);
+  //   invalidPkgNames.forEach((v) => delete monoJsonCopy.mods[v]);
+  //   // rewriteMonoJson(monoJsonCopy);
+  //   console.log(`Delete invalid package names done`);
+  // }
 
   repoPkgNames.forEach((pkgName) => {
     const { port, alias, devHostname } = mods[pkgName] || {};

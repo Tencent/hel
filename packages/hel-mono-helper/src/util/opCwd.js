@@ -46,6 +46,8 @@ function getCWDAppData(/** @type {import('hel-mono-types').IMonoDevInfo} */ devI
   const tsConfigJson = getTsConfigJson(appSrcDirPath);
   const compilerOptions = safeOnlyGet(tsConfigJson, 'compilerOptions', {});
   const appTsConfigPaths = compilerOptions.paths || {};
+  console.log('******  appSrcDirPath', appSrcDirPath);
+  console.log('******  appTsConfigPaths', appTsConfigPaths);
 
   const realAppDirPath = path.join(monoRoot, `./${belongTo}/${appDir}`);
   const realAppSrcDirPath = path.join(realAppDirPath, './src');

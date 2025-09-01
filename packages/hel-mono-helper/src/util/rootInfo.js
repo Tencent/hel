@@ -29,6 +29,7 @@ exports.setMonoRoot = function (rootPath) {
     monoRootHelDir,
     monoRootHelLog,
   };
+  console.log(`setMonoRoot is called with rootPath ${rootPath}`);
   return curMonoRootInfo;
 };
 
@@ -62,7 +63,13 @@ exports.getMonoRootInfo = function () {
   }
 
   if (!monoRoot) {
-    throw new Error(`can not decide mono root path for cwd(${cwd})`);
+    const onePresetPath = '/data/landun/workspace';
+    if (!fs.existsSync(onePresetPath)) {
+      throw new Error(`can not decide mono root path for cwd(${cwd})`);
+    }
+
+    console.log(`infer monoRoot failed but found a valid preset path ${onePresetPath}, hel-mono-helper will use it!`);
+    monoRoot = onePresetPath;
   }
 
   const { monoRootHelDir, monoRootHelLog, monoRootHelTmpLog, monoDepJson, monoDepForJson } = getHelAssociatePath(monoRoot);

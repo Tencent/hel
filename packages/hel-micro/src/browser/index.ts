@@ -15,7 +15,6 @@ import { getAllExtraCssList } from '../util';
 import { getAssetUrlType } from './helper';
 
 const { noop, okeys } = commonUtil;
-const assign = Object.assign;
 
 /**
  * hel-iso 4.4.0+ 会读取此变量，用于辅助判断载入的应用是否是子应用
@@ -89,26 +88,30 @@ interface ICreateScriptOptions {
 }
 
 function createScriptElement(options: ICreateScriptOptions) {
-  const { attrs, innerText, appendToBody = true, onloadCb, onerrorCb } = options;
+  const { attrs, innerText, appendToBody = true, onloadCb = noop, onerrorCb = noop } = options;
   const { src, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
+  const callOnloadCb = (result) => {
+    onloadCb(result);
+    return result;
+  };
   if (!src && !innerText) {
-    return false;
+    return callOnloadCb(false);
   }
 
   const doc = getGlobalThis().document;
   if (src && isAssetExisted(`script[src="${src}"]`)) {
-    return false;
+    return callOnloadCb(false);
   }
   if (!canAppendByHelMark(restObj, 'script')) {
-    return false;
+    return callOnloadCb(false);
   }
 
   const el = doc.createElement('script');
   if (src) el.setAttribute('src', src);
   okeys(restObj).forEach((key) => el.setAttribute(key, restObj[key]));
-  if (onloadCb) el.onload = onloadCb;
-  if (onerrorCb) el.onerror = onerrorCb;
+  el.onload = onloadCb;
+  el.onerror = onerrorCb;
   if (innerText) setInnerText(el, innerText);
 
   appendEl(el, restObj, appendToBody);

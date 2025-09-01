@@ -1,4 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').ICWDAppData} ICWDAppData*/
 const fs = require('fs');
 const shell = require('shelljs');
 const { helMonoLog, getNameData, getCWDAppData } = require('../util');
@@ -6,7 +7,7 @@ const { inferDirData, getCwdByPrefixedDir } = require('../util/cwd');
 const { buildExAppData } = require('../util/ex');
 const { ensureExAppProject } = require('../entry/prepare/share');
 const { extractCmdData } = require('./common');
-const { getPnpmRunCmd } = require('./cmd');
+const { genPnpmCmdAndRun } = require('./cmd');
 
 /**
  * 执行应用启动的动作函数
@@ -20,6 +21,7 @@ exports.execAppAction = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywor
     const masterAppCwd = getCwdByPrefixedDir(prefixedDir);
     const masterAppData = getCWDAppData(devInfo, masterAppCwd);
 
+    /** @type ICWDAppData */
     let exAppData;
     const exAppDataCwd = `${masterAppCwd}-ex`;
     if (!fs.existsSync(exAppDataCwd)) {
@@ -29,15 +31,12 @@ exports.execAppAction = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywor
     }
 
     ensureExAppProject(devInfo, { masterAppData, exAppData });
-    const { appPkgName, appDir, isSubMod } = exAppData;
-    const exProjRunCmd = getPnpmRunCmd(appPkgName, { dirName: appDir, scriptCmdKey: 'start:hel', isSubMod });
-
-    shell.exec(exProjRunCmd);
+    const { appPkgName, appDir, belongTo, isSubMod } = exAppData;
+    genPnpmCmdAndRun(appPkgName, { belongTo, dirName: appDir, isSubMod, scriptCmdKey: 'start:hel' });
     return;
   }
 
-  const { pkgName, dirName, isSubMod } = getNameData(keywordName, devInfo);
-  const exeCmd = getPnpmRunCmd(pkgName, { dirName, scriptCmdKey, isSubMod });
-  helMonoLog('shell cmd:', exeCmd);
-  shell.exec(exeCmd);
+  console.log('** ----------------------------->>>', process.cwd());
+  const { pkgName, dirName, belongTo, isSubMod } = getNameData(keywordName, devInfo);
+  genPnpmCmdAndRun(pkgName, { belongTo, dirName, isSubMod, scriptCmdKey });
 };

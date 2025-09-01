@@ -9,7 +9,9 @@ const { lastNItem } = require('./arr');
  * 形如：/your/path/hel-mono/apps/hub
  */
 exports.getCWD = function () {
-  return process.cwd();
+  // why realpathSync
+  // @see https://github.com/facebook/create-react-app/pull/648
+  return fs.realpathSync(process.cwd());
 };
 
 exports.getCWDPkgDir = function () {
@@ -84,3 +86,5 @@ exports.getDevInfoDirs = function getDevInfoDirs(/** @type {IDevInfo} */ devInfo
   const belongToDirs = appsDirs.concat(subModDirs);
   return { appsDirs, subModDirs, belongToDirs };
 };
+
+exports.noop = function () {};

@@ -1,12 +1,13 @@
 /** @typedef {import('../types').IPrepareHelEntrysOptions} IPrepareHelEntrysOptions */
 const http = require('http');
 const path = require('path');
-const shell = require('shelljs');
 const util = require('../util');
+const { noDupPush } = require('../util/arr');
+const { noop } = require('../util/base');
 const cwdUtil = require('../util/cwd');
 const exUtil = require('../util/ex');
 const { getMonoAppDepDataImpl } = require('../util/depData');
-const { getPnpmRunCmd } = require('../exec/cmd');
+const { genPnpmCmdAndRun } = require('../exec/cmd');
 const { prepareHelEntryFiles, prepareHelAppEntry } = require('./prepare');
 const { HEL_START_WITH_LOCAL_RUNNING_DEPS } = require('../consts');
 
@@ -42,6 +43,8 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
   const { depInfos } = depData;
 
   const shouldRunDeps = !util.isHelAllBuild() && !util.isHelExternalBuild();
+  let startedPkgs = [];
+
   if (shouldRunDeps) {
     util.helMonoLog('depInfos', depInfos);
     // 为宿主的子模块依赖准备 hel 入口文件
@@ -50,25 +53,29 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
       const targetCWD = path.join(rootDir, `./${belongTo}/${dirName}`);
       const appData = util.getCWDAppData(devInfo, targetCWD);
       const startHelDep = () => {
-        // 生成类似命令： pnpm --filter @hel-packages/some-sub run start
-        const exeCmd = getPnpmRunCmd(pkgName, { isForRootHelDir, dirName, scriptCmdKey: 'start:hel', isSubMod: true });
         helMonoLog(`starting hel dep ${pkgName}...`);
-        helMonoLog(exeCmd);
-        // 提供 callback，exec 变为异步模式
-        shell.exec(exeCmd, (code, stdout, stderr) => {
-          helMonoLog('Exit code:', code);
-          helMonoLog('Program output:', stdout);
-          helMonoLog('Program stderr:', stderr);
-        });
+        // 生成类似命令并执行： pnpm --filter @hel-packages/some-sub run start
+        genPnpmCmdAndRun(
+          pkgName,
+          { belongTo, dirName, scriptCmdKey: 'start:hel', isSubMod: appData.isSubMod },
+          // 提供 callback，exec 变为异步模式
+          (code, stdout, stderr) => {
+            helMonoLog('Exit code:', code);
+            helMonoLog('Program output:', stdout);
+            helMonoLog('Program stderr:', stderr);
+          },
+        );
       };
 
       const injectedDevInfo = prepareHelEntryFiles({ devInfo, depData, appData });
       if (startDeps) {
         const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.mods[pkgName];
+        const url = `${devHostname}:${port}`;
         visitDevServer(
-          `${devHostname}:${port}`,
+          url,
           () => {
             helMonoLog(`${pkgName} dev-server is already running, hel-mono-helper will reuse it!`);
+            noDupPush.noDupPush(startedPkgs, pkgName);
           },
           (e) => {
             helMonoLog(e.message);
@@ -76,6 +83,14 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
             startHelDep();
           },
         );
+
+        // while (startedPkgs.length !== depInfos.length) {
+        //   console.log('wait');
+        //   visitDevServer(url, () => {
+        //     console.log('success');
+        //     noDupPush(startedPkgs, pkgName);
+        //   }, noop);
+        // }
       }
     });
   }

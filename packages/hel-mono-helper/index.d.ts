@@ -6,6 +6,7 @@ import type {
   IPkgMonoDepData,
   DepDataDict,
   ICWDAppData,
+  ICWDInfo,
 } from './src/types';
 
 export declare const cst: typeof monoCst;
@@ -16,6 +17,7 @@ export type {
   IMonoRootInfo,
   IPkgMonoDepData,
   DepDataDict,
+  ICWDInfo,
 };
 
 /**
@@ -141,4 +143,12 @@ export declare const monoUtil: {
    * 根据 cwd 获得运行中的 appData 数据，不传递的话自动读取 process.cwd()
    */
   getCWDAppData: (inputCWD?: string) => ICWDAppData;
+  /**
+   * 获取 cwd 上携带的信息
+   */
+  getCWDInfo: () => ICWDInfo;
+  /**
+   * 通过 cwd 运行相关脚本
+   */
+  runAppScriptWithCWD: (cwd: string, scriptCmdKey: string) => void;
 };
