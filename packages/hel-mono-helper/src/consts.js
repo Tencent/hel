@@ -5,6 +5,8 @@ const VER = '0.6.1';
 
 const HEL_EXTERNAL_HTML_PAH = path.join(__dirname, './tpls-hel/empty-index.html');
 
+const HEL_SCRIPT_HELPER_JSON_PAH = path.join(__dirname, './tpls-hel/script-helper.json');
+
 /** react 应用 hel 胶水代码模板 */
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
 
@@ -105,7 +107,7 @@ const CREATE_SHORT_PARAM_KEY = {
 const CREATE_SHORT_PARAM_KEY_NAMES = Object.keys(CREATE_SHORT_PARAM_KEY).map((key) => CREATE_SHORT_PARAM_KEY[key]);
 
 const MOD_TEMPLATE = {
-  exApp: 'ex-app',
+  exProject: 'ex-project',
   reactApp: 'react-app',
   reactLib: 'react-lib',
   tsLib: 'ts-lib',
@@ -147,6 +149,7 @@ module.exports = {
   HEL_TPL_INNER_DEMO_DIR,
   HEL_TPL_INNER_DEMO_MOD_DIR,
   HEL_EXTERNAL_HTML_PAH,
+  HEL_SCRIPT_HELPER_JSON_PAH,
   /**
    * 模板文件复制到项目里后，某一行将被删除的标记
    */

@@ -2,6 +2,7 @@ const { buildAppAlias, inferConfAlias } = require('./appSrc');
 const { getCWD, getCWDPkgDir, getCWDPkgPrefixedDir, getCWDIsForRootHelDir, getFileJson, getDevInfoDirs, ensureSlash } = require('./base');
 const { getMonoAppDepData } = require('./depData');
 const { inferDevInfo } = require('./devInfo');
+const { hint } = require('./hint');
 const { getCmdKeywordName, getCmdKeywords } = require('./keyword');
 const { getMonoNameMap, getBuildDirPath } = require('./monoName');
 const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath } = require('./monoPath');
@@ -48,4 +49,5 @@ module.exports = {
   isHelExternalBuild,
   setMonoRoot,
   inferDevInfo,
+  hint,
 };

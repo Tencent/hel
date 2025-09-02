@@ -47,7 +47,6 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
   helMonoLog(`create ${label} ${pkgName} done`);
 
   // 重写根目录的 hel-mono.json
-  mlogt('rewriteMonoJsonForArgv argvOptions', argvOptions);
   rewriteMonoJsonForArgv(devInfo, argvOptions, isSubMod);
   // 重写模块别名
   rewriteModAlias(argvOptions);

@@ -7,13 +7,14 @@ function runAppAction(pkgName, scriptCmdKey) {
   shell.exec(cmd);
 }
 
-function createApp(pkgName, tplType = 'react-app') {
+function createApp(pkgName, tplType = 'react-app', belongTo) {
   const { monoRoot } = getMonoRootInfo();
   const startScript = path.join(monoRoot, './dev/root-scripts/executeStart');
-  // const cmd = `pnpm start .create ${pkgName}`;
-  // shell.exec(`cd ${monoRoot}`);
-  // const cmd = `pnpm start .create ${pkgName}`;
-  shell.exec(`node ${startScript} .create ${pkgName} -t ${tplType}`);
+  let cmd = `node ${startScript} .create ${pkgName} -t ${tplType}`;
+  if (belongTo) {
+    cmd += ` -d ${belongTo}`;
+  }
+  shell.exec(cmd);
 }
 
 module.exports = {

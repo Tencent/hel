@@ -4,6 +4,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
 const { lastItem, lastNItem } = require('./arr');
+const { getCWD } = require('./base');
 const { inferDevInfo } = require('./devInfo');
 const { inferDirFromDevInfo } = require('./monoDir');
 const { getMonoRootInfo } = require('./rootInfo');
@@ -76,7 +77,6 @@ function getLogPathByName(logName, isTmp) {
 }
 
 function getLogFilePath(isTmp) {
-  const { monoRootHelLog, monoRoot } = getMonoRootInfo();
   if (curLogName) {
     return getLogPathByName(curLogName, isTmp);
   }
@@ -84,6 +84,7 @@ function getLogFilePath(isTmp) {
     return getLogPathByName(curAppData.appDir, isTmp);
   }
 
+  const { monoRootHelLog, monoRoot } = getMonoRootInfo();
   // 触发 [.../bin/node, .../root-scripts/executeStart, xx:hel]
   const argv = process.argv;
   const last1Str = lastNItem(argv);
@@ -93,7 +94,7 @@ function getLogFilePath(isTmp) {
     return getLogPathByName(dirOrPkgName, isTmp);
   }
 
-  const cwd = process.cwd();
+  const cwd = getCWD();
   // 避免根目录执行 pnpm start 时创建错误的 log 文件
   if (cwd !== monoRoot) {
     const dirName = lastItem(cwd.split(path.sep));

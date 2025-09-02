@@ -42,7 +42,6 @@ function rewriteMonoJsonForChange(/** @type {IMonoDevInfo} */ devInfo, changeOpt
   const monoJson = toMonoJson(devInfoCopy, { isSubMod });
   const filePath = getMonoJsonFilePath();
 
-  mlogt('3333 rewriteMonoJson-->', monoJson);
   fs.writeFileSync(filePath, JSON.stringify(monoJson, null, 2));
 }
 

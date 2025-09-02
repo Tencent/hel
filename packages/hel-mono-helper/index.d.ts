@@ -151,4 +151,8 @@ export declare const monoUtil: {
    * 通过 cwd 运行相关脚本
    */
   runAppScriptWithCWD: (cwd: string, scriptCmdKey: string) => void;
+  /**
+   * 打印 hel-mono-helper 常用命令提示
+   */
+  hint: () => void;
 };

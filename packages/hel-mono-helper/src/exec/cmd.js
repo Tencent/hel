@@ -8,8 +8,7 @@ const { ACTION_NAME } = require('../consts');
  * 获取 pnpm --filter xxx run yyy 运行命令
  */
 function getPnpmRunCmd(packName, options) {
-  const { scriptCmdKey = ACTION_NAME.start, belongTo, dirName } = options;
-  const cwd = getCWD();
+  const { scriptCmdKey = ACTION_NAME.start } = options;
   return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 }
 
@@ -30,15 +29,25 @@ function genPnpmCmdAndRun(packName, options, cb) {
   }
 
   const pnpmCmd = `pnpm --filter ${packName} run ${targetCmdKey}`;
+  const runCmdWithArgs = (cmd, cb) => {
+    const argv = process.argv;
+    const restArgs = argv.slice(3);
+    let cmdStr = cmd;
+    // 追加其余的参数
+    if (restArgs.length) {
+      cmdStr = `${cmd} ${restArgs.join(' ')}`;
+    }
+    helMonoLog(`will execute shell: ${cmdStr}`);
+    return shell.exec(cmdStr, cb);
+  };
+
   if (cwd.endsWith(`${belongTo}/${dirName}`)) {
     const { monoRoot } = getMonoRootInfo();
     const targetCmd = `cd ${monoRoot} && ${pnpmCmd}`;
-    helMonoLog(`will execute shell: ${targetCmd}`);
-    return shell.exec(targetCmd, cb);
+    return runCmdWithArgs(targetCmd, cb);
   }
 
-  helMonoLog(`will execute shell: ${pnpmCmd}`);
-  return shell.exec(pnpmCmd, cb);
+  return runCmdWithArgs(pnpmCmd, cb);
 }
 
 function getLintCmd(appDirName) {

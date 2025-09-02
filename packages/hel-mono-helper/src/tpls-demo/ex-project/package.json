@@ -1,5 +1,5 @@
 {
-  "name": "ex-proj",
+  "name": "ex-project",
   "version": "0.0.1",
   "hel": {
     "ciCmd": "build:hel",

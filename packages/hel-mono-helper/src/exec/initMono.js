@@ -8,8 +8,5 @@ const { toMonoJson } = require('../util/devInfo');
  */
 exports.initMono = function (/** @type {IMonoDevInfo} */ devInfo) {
   const monoJson = toMonoJson(devInfo);
-
-  mlogt('initMono rewriteMonoJson', monoJson);
-
   rewriteMonoJson(monoJson);
 };

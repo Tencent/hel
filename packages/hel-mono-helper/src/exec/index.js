@@ -59,6 +59,12 @@ function tryExecInnerAction(actionName, devInfo, options) {
 function tryRecordKeywordForLog() {
   const argv = process.argv;
   const last1Str = lastNItem(argv);
+  const th3Item = argv[2] || '';
+  // 是 ['/xx/bin/node', '/xx/root-scripts/executeStart', '<dirOrPkg>:with', '...']
+  if (th3Item.includes(':with')) {
+    console.log(argv);
+    return;
+  }
   if (trySetLogName(last1Str)) {
     return;
   }

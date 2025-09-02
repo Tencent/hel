@@ -99,7 +99,7 @@ function ensureExAppProject(devInfo, options) {
   if (!fs.existsSync(exAppData.appDirPath)) {
     const options = {
       isSubMod: exAppData.isSubMod,
-      keywords: [exAppData.appDir, '-n', exAppData.appPkgName, '-t', MOD_TEMPLATE.exApp],
+      keywords: [exAppData.appDir, '-n', exAppData.appPkgName, '-t', MOD_TEMPLATE.exProject],
     };
     execCreate(devInfo, options);
   }

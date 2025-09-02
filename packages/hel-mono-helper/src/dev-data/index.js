@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
 const { VER } = require('../consts');
-const replaceHtmlContent = require('../entry/replace/replaceHtmlContent');
+const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { clone } = require('../util/dict');
 const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
@@ -153,7 +153,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     shouldGetAllDep = !isMicroStartOrBuild;
   }
   const isHelModeVar = isHelMode();
-  const shoudComputeAutoExternals = isHelModeVar || isExMode;
+  const shouldComputeAutoExternals = isHelModeVar || isExMode;
 
   const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps } = getMonoAppDepDataImpl({
     appSrc,
@@ -169,11 +169,11 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const pureAlias = Object.assign({}, appAlias);
   const autoExternals = {};
 
-  if (shoudComputeAutoExternals && nmL1ExternalPkgNames.length) {
+  if (shouldComputeAutoExternals && nmL1ExternalPkgNames.length) {
     nmL1ExternalPkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
   }
 
-  const { appHtml, rawAppHtml } = replaceHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
+  const { appHtml, rawAppHtml } = replaceExHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
@@ -298,7 +298,5 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   };
 
   const devData = cachedResult[appSrc];
-  mlogt('devData', devData);
-
   return devData;
 };

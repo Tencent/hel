@@ -68,7 +68,8 @@ const monoUtil = {
 
     // 运行 ex 项目但项目不存在，则创建一个
     if (isEXProject(appCwd) && !getMonoAppPkgJsonByCwd(appCwd)) {
-      createApp(getDirData(appCwd).dirName, MOD_TEMPLATE.exApp);
+      const { belongTo } = getDirData(appCwd);
+      createApp(getDirData(appCwd).dirName, MOD_TEMPLATE.exProject, belongTo);
     }
 
     const { appPkgName } = util.getCWDAppData(devInfo, appCwd);
@@ -86,6 +87,7 @@ const monoUtil = {
   isHelMicroMode: util.isHelMicroMode,
   isHelAllBuild: util.isHelAllBuild,
   isHelExternalBuild: util.isHelExternalBuild,
+  hint: util.hint,
 };
 
 module.exports = {
