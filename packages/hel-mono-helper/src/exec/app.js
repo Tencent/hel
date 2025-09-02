@@ -36,7 +36,6 @@ exports.execAppAction = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywor
     return;
   }
 
-  console.log('** ----------------------------->>>', process.cwd());
   const { pkgName, dirName, belongTo, isSubMod } = getNameData(keywordName, devInfo);
   genPnpmCmdAndRun(pkgName, { belongTo, dirName, isSubMod, scriptCmdKey });
 };

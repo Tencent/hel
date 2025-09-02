@@ -54,7 +54,9 @@ const monoUtil = {
     const curCwd = process.cwd();
     let exCwd = '';
     let forEX = false;
-    if (lastItem(argv).endsWith('buildEX')) {
+    const lastArg = lastItem(argv);
+    // startEXS buildEXS，操作应用对应的静态服务
+    if (lastArg.endsWith('EXS.js') || lastArg.endsWith('EXS')) {
       exCwd = `${curCwd}-ex`;
       forEX = true;
     }
@@ -66,12 +68,9 @@ const monoUtil = {
 
     // 运行 ex 项目但项目不存在，则创建一个
     if (isEXProject(appCwd) && !getMonoAppPkgJsonByCwd(appCwd)) {
-      console.log('******** trigger start createApp', appCwd);
       createApp(getDirData(appCwd).dirName, MOD_TEMPLATE.exApp);
-      console.log('******** trigger start createApp done done done done done done ');
     }
 
-    console.log('+++++++++++++++++++++++++++++++++++ 22222222222');
     const { appPkgName } = util.getCWDAppData(devInfo, appCwd);
     runAppAction(appPkgName, scriptKey);
   },

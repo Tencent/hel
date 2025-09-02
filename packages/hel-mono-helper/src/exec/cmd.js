@@ -10,11 +10,12 @@ const { ACTION_NAME } = require('../consts');
 function getPnpmRunCmd(packName, options) {
   const { scriptCmdKey = ACTION_NAME.start, belongTo, dirName } = options;
   const cwd = getCWD();
-  if (cwd.endsWith(`${belongTo}/${dirName}`)) {
-  }
   return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 }
 
+/**
+ * 推导生成 pnpm 命令并运行
+ */
 function genPnpmCmdAndRun(packName, options, cb) {
   const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
   const cwd = getCWD();

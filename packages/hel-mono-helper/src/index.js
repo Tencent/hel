@@ -28,13 +28,10 @@ function prepareHelEntry(options) {
 
   // 自身是 ex 项目，则无效再准备相关入口文件
   if (isEXProject(cwdInfo.curCwd)) {
-    console.log('****************************** *************** ************** prepareExProjHelEntry');
     const exDirData = cwdUtil.getDirData(cwdInfo.curCwd);
     prepareExProjHelEntry(devInfo, exDirData.prefixedDir);
     return;
   }
-
-  console.log('*********not ex *****', cwdInfo);
 
   if (forEX === undefined && cwdInfo.forEX) {
     targetForEX = true;

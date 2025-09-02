@@ -192,9 +192,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       }
     });
   } else {
-    console.log('depInfos', depInfos);
-    console.log(appTsConfigPaths);
-
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
       const subModSrcPath = getMonoSubModSrc(belongTo, dirName);
@@ -220,7 +217,6 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
       if (inferAlias) {
         const aliasKey = `${inferAlias}/*`;
         if (appTsConfigPaths[aliasKey]) {
-          console.log(appTsConfigPaths);
           throw new Error(`found alias ${inferAlias} duplicated while handle ${appSrcPath}, please check.`);
         }
         appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
@@ -293,7 +289,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
     appInfo,
     appData,
     appPublicUrl,
-    // appPkgJson,
+    appPkgJson,
     appSrcIndex,
     appTsConfigPaths,
     rawAppHtml,

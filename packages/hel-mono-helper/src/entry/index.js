@@ -115,7 +115,6 @@ function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ de
  */
 function prepareExProjHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, exPrefixedDir) {
   util.clearMonoLog();
-  console.log('exPrefixedDir', exPrefixedDir);
   const masterAppPrefixedDir = exUtil.getMasterAppPrefixedDir(exPrefixedDir);
   const masterAppCwd = cwdUtil.getCwdByPrefixedDir(masterAppPrefixedDir);
   const masterAppData = util.getCWDAppData(devInfo, masterAppCwd);
