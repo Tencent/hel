@@ -167,7 +167,7 @@ module.exports = {
   /**
    * 本地启动 hel 应用时，仅启动宿主，子模块需要用户主动调用 npm start .deps xx-hub 启动
    */
-  HEL_START_WITH_LOCAL_DEPS: '1',
+  HEL_START_AND_WAIT_LOCAL_DEPS: '1',
   /**
    * 本地启动 hel 应用时，自动启动对应的依赖 hel子模块
    */

@@ -20,6 +20,8 @@ function genPnpmCmdAndRun(packName, options, cb) {
   const cwd = getCWD();
   let targetCmdKey = scriptCmdKey === ACTION_NAME.start ? ACTION_NAME.startRaw : scriptCmdKey;
 
+  console.log(options);
+
   if (isSubMod) {
     // 默认对子模块调用 start 时启用 start:hel，因为对子模块启动 start:raw 是无意义的
     targetCmdKey = scriptCmdKey === ACTION_NAME.start ? ACTION_NAME.startHel : scriptCmdKey;

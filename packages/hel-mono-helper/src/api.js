@@ -55,8 +55,8 @@ const monoUtil = {
     let exCwd = '';
     let forEX = false;
     const lastArg = lastItem(argv);
-    // startEXS buildEXS，操作应用对应的静态服务
-    if (lastArg.endsWith('EXS.js') || lastArg.endsWith('EXS')) {
+    // exs startEXS buildEXS 操作应用对应的静态服务
+    if (lastArg.endsWith('exs') || lastArg.endsWith('EXS.js') || lastArg.endsWith('EXS')) {
       exCwd = `${curCwd}-ex`;
       forEX = true;
     }
@@ -65,7 +65,6 @@ const monoUtil = {
   },
   runAppScriptWithCWD(appCwd, scriptKey) {
     const devInfo = util.inferDevInfo(true);
-
     // 运行 ex 项目但项目不存在，则创建一个
     if (isEXProject(appCwd) && !getMonoAppPkgJsonByCwd(appCwd)) {
       const { belongTo } = getDirData(appCwd);
