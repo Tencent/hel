@@ -47,7 +47,7 @@
   "scripts": {
     "start": "node ../../dev/scripts/start.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
-    "start:hwr": "node ../../dev/scripts/hel/startWR.js",
+    "start:for": "node ../../dev/scripts/hel/startFor",
     "build": "pnpm run build:npm",
     "build:hel": "node ../../dev/scripts/hel/build.js",
     "build:npm": "tsup",

@@ -44,7 +44,7 @@
     "start": "node ../../dev/root-scripts/executeStart",
     "start:raw": "node ../../dev/scripts/start",
     "start:hel": "node ../../dev/scripts/hel/start",
-    "start:hwr": "node ../../dev/scripts/hel/startWR",
+    "start:for": "node ../../dev/scripts/hel/startFor",
     "hint": "node ../../dev/scripts/hel/hint",
     "build": "pnpm run build:npm",
     "build:hel": "node ../../dev/scripts/hel/build",

@@ -1,3 +1,4 @@
+import type { IHelMonoJson, IMonoDevInfo, IPkgHelConf } from 'hel-mono-types';
 import * as monoCst from './src/consts';
 import type {
   IExecuteStartOptions,
@@ -95,6 +96,20 @@ export declare function getPkgMonoDepDataDict(): DepDataDict;
  */
 export declare function buildSrvModToHelDist(isUseTsup?: boolean): IMonoDevData;
 
+type EnsurePkgHelFn = (pkgHel: IPkgHelConf, pkgName: string) => IPkgHelConf;
+
+/**
+ * 自定义 pkgHel 处理函数
+ */
+export declare function setEnsurePkgHel(fn: EnsurePkgHelFn): void;
+
+type HandleDevInfoFn = (devInfo: IMonoDevInfo) => IMonoDevInfo;
+
+/**
+ * 自定义 devInfo 处理函数
+ */
+export declare function setHandleDevInfo(fn: HandleDevInfoFn): void;
+
 export declare const monoUtil: {
   /** 打印hel-mono运行普通日志 */
   helMonoLog: (...args: any[]) => void;
@@ -125,16 +140,23 @@ export declare const monoUtil: {
    */
   isHelAllBuild: () => boolean;
   /**
-   * 获取应用构建hel产物所在的目录路径
+   * 获取应用构建hel产物所在的目录路径，内部通过 cwd 推导
    * @param defaultDir ['hel_dist']
-   * @returns
    */
   getBuildDir: (defaultDir?: string) => string;
+  /**
+   * 传递包名，获取应用构建hel产物所在的目录路径
+   */
+  getBuildDirByPkgName: (pkgName: string, defaultDir?: string) => string;
   /**
    * 获取端口值，
    * 不传递形如 apps/my-app 的 prefixedDir 变量的话，会根据 cwd 值自动推导，
    */
   getPort: (prefixedDir?: string) => number;
+  /**
+   * 获取hel-mono.json文件
+   */
+  getRawMonoJson: () => null | IHelMonoJson;
   /**
    * 某些流水线环境可能无法推导出大仓根目录位置，但流水线上可以读到此位置对应的全局变量，可以调用此接口透传给 hel-mono-helper
    */

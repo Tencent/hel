@@ -8,7 +8,7 @@
     "start": "node ../../dev/root-scripts/executeStart",
     "start:raw": "node ../../dev/scripts/start",
     "start:hel": "node ../../dev/scripts/hel/start",
-    "start:hwr": "node ../../dev/scripts/hel/startWR",
+    "start:for": "node ../../dev/scripts/hel/startFor",
     "start:all": "node ../../dev/scripts/hel/startAll",
     "build": "node ../../dev/scripts/build",
     "build:all": "node ../../dev/scripts/hel/buildAll",

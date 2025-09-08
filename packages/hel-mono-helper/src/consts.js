@@ -5,7 +5,7 @@ const VER = '0.6.1';
 
 const HEL_EXTERNAL_HTML_PAH = path.join(__dirname, './tpls-hel/empty-index.html');
 
-const HEL_SCRIPT_HELPER_JSON_PAH = path.join(__dirname, './tpls-hel/script-helper.json');
+const HEL_README_PATH = path.join(__dirname, './tpls-hel/hel-read-me.md');
 
 /** react 应用 hel 胶水代码模板 */
 const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
@@ -149,7 +149,7 @@ module.exports = {
   HEL_TPL_INNER_DEMO_DIR,
   HEL_TPL_INNER_DEMO_MOD_DIR,
   HEL_EXTERNAL_HTML_PAH,
-  HEL_SCRIPT_HELPER_JSON_PAH,
+  HEL_README_PATH,
   /**
    * 模板文件复制到项目里后，某一行将被删除的标记
    */

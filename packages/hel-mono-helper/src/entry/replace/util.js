@@ -284,20 +284,21 @@ function jsonObj2Lines(jsonObj, options = {}) {
   return targetLines;
 }
 
-function getModEntryFilePath(appSrcDirPath) {
-  let filePath = path.join(appSrcDirPath, './index.ts');
+function getModEntryFilePath(appSrcDirPath, fileName = 'index') {
+  let filePath = path.join(appSrcDirPath, `./${fileName}.ts`);
   if (!fs.existsSync(filePath)) {
-    filePath = path.join(appSrcDirPath, './index.js');
+    filePath = path.join(appSrcDirPath, `./${fileName}.js`);
   }
   if (!fs.existsSync(filePath)) {
-    filePath = path.join(appSrcDirPath, './index.tsx');
+    filePath = path.join(appSrcDirPath, `./${fileName}.tsx`);
   }
   if (!fs.existsSync(filePath)) {
-    filePath = path.join(appSrcDirPath, './index.jsx');
+    filePath = path.join(appSrcDirPath, `./${fileName}.jsx`);
   }
 
   return filePath;
 }
+
 
 module.exports = {
   genExportModuleNames,

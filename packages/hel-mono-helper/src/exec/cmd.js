@@ -2,6 +2,7 @@
 const shell = require('shelljs');
 const { getMonoRootInfo, helMonoLog } = require('../util');
 const { getCWD } = require('../util/base');
+const { cmdHistoryLog } = require('../util/log');
 const { ACTION_NAME } = require('../consts');
 
 /**
@@ -12,44 +13,92 @@ function getPnpmRunCmd(packName, options) {
   return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 }
 
+function getScriptKey(cmdKeyword, isSubMod) {
+  let scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startRaw : cmdKeyword;
+  if (isSubMod) {
+    // 默认对子模块调用 start 时启用 start:hel，因为对子模块启动 start:raw 是无意义的
+    scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startHel : cmdKeyword;
+  } else {
+    // 默认对应用模块调用 start 时启用 start:raw，表示进入原始的一体化开发模式
+    // scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startRaw : cmdKeyword;
+    // 默认对应用模块调用 start 时启用 start:hel，表示进入原始的一体化开发模式
+    scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startHel : cmdKeyword;
+  }
+
+  return scriptKey;
+}
+
+/**
+ * 推导 run 后面的执行内容
+ */
+function inferCmdRunContent(packName, options) {
+  const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
+  const prefixedDir = `${belongTo}/${dirName}`;
+  const argv = process.argv;
+
+  if (argv.length === 2) {
+    // 类似 ['/xx/bin/node', '/xx/root-scripts/executeStart']
+    if (argv[1].includes('root-scripts')) {
+      return ACTION_NAME.startHel;
+    }
+    // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
+    return scriptCmdKey;
+  }
+  const mayDirOrPkgName = argv[2] || '';
+  const restArgs = argv.slice(3);
+  const restArgsLen = restArgs.length;
+
+  // 此时用户表达模块的字符串无其他特殊符号，例如
+  // pnpm start hub xxxx, argv2(hub) is pure
+  // pnpm start @tencent/hub xxx, argv2(@tencent/hub) is pure
+  // pnpm start apps/hub xxx, argv2(apps/hub) is pure
+  // pnpm start hub:for exs, argv2(hub:for) is not pure
+  const isArg2PurePkgLocation = [packName, prefixedDir, dirName].includes(mayDirOrPkgName);
+  if (isArg2PurePkgLocation) {
+    if (!restArgsLen) {
+      // 使用内部推导的 scriptKey
+      const scriptKey = getScriptKey(scriptCmdKey, isSubMod);
+      return scriptKey;
+    }
+    if (restArgs[0] === 'start') {
+      // 避免 pnpm --filter xxx run start 无意义命令
+      return ACTION_NAME.startHel;
+    }
+
+    return restArgs.join(' ');
+  }
+
+  const [, action = ''] = mayDirOrPkgName.split(':');
+  if (action === 'for') {
+    // 执行类似 pnpm start hub:for deps
+    // 转为 pnpm --filter hub run start:for deps 去执行未暴露在 scripts 节点的其他命令
+    return `start:for ${restArgs.join(' ')}`;
+  }
+
+  // 丢弃 restArgs，目前暂无用处
+  return `start${action ? `:${action}` : ACTION_NAME.startHel}`;
+}
+
 /**
  * 推导生成 pnpm 命令并运行
  */
 function genPnpmCmdAndRun(packName, options, cb) {
-  const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
-  const cwd = getCWD();
-  let targetCmdKey = scriptCmdKey === ACTION_NAME.start ? ACTION_NAME.startRaw : scriptCmdKey;
-
-  console.log(options);
-
-  if (isSubMod) {
-    // 默认对子模块调用 start 时启用 start:hel，因为对子模块启动 start:raw 是无意义的
-    targetCmdKey = scriptCmdKey === ACTION_NAME.start ? ACTION_NAME.startHel : scriptCmdKey;
-  } else {
-    // 默认对应用模块调用 start 时启用 start:raw，表示进入原始的一体化开发模式
-    targetCmdKey = scriptCmdKey === ACTION_NAME.start ? ACTION_NAME.startRaw : scriptCmdKey;
-  }
-
-  const pnpmCmd = `pnpm --filter ${packName} run ${targetCmdKey}`;
-  const runCmdWithArgs = (cmd, cb) => {
-    const argv = process.argv;
-    const restArgs = argv.slice(3);
-    let cmdStr = cmd;
-    // 追加其余的参数
-    if (restArgs.length) {
-      cmdStr = `${cmd} ${restArgs.join(' ')}`;
-    }
-    helMonoLog(`will execute shell: ${cmdStr}`);
-    return shell.exec(cmdStr, cb);
+  const content = inferCmdRunContent(packName, options);
+  const pnpmRunCmd = `pnpm --filter ${packName} run ${content}`;
+  const runCmd = (fullCmd, cb) => {
+    cmdHistoryLog(fullCmd);
+    helMonoLog(`will execute shell: ${fullCmd}`);
+    return shell.exec(fullCmd, cb);
   };
 
-  if (cwd.endsWith(`${belongTo}/${dirName}`)) {
-    const { monoRoot } = getMonoRootInfo();
-    const targetCmd = `cd ${monoRoot} && ${pnpmCmd}`;
-    return runCmdWithArgs(targetCmd, cb);
+  const cwd = getCWD();
+  const { monoRoot } = getMonoRootInfo();
+  if (cwd !== monoRoot) {
+    // 执行 pnpm start ... 目录处于非根目录时，跳转到根目录去执行命令
+    return runCmd(`cd ${monoRoot} && ${pnpmRunCmd}`, cb);
   }
 
-  return runCmdWithArgs(pnpmCmd, cb);
+  return runCmd(pnpmRunCmd, cb);
 }
 
 function getLintCmd(appDirName) {

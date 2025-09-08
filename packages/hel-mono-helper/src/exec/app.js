@@ -1,8 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 /** @typedef {import('../types').ICWDAppData} ICWDAppData*/
 const fs = require('fs');
-const shell = require('shelljs');
-const { helMonoLog, getNameData, getCWDAppData } = require('../util');
+const { getNameData, getCWDAppData } = require('../util');
 const { inferDirData, getCwdByPrefixedDir } = require('../util/cwd');
 const { buildExAppData } = require('../util/ex');
 const { ensureExAppProject } = require('../entry/prepare/share');

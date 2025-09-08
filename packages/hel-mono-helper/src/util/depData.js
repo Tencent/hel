@@ -30,7 +30,7 @@ const pkgNameWhiteList = [
 
 function logMonoDep(isForRootHelDir, options) {
   const { isAllDep, appSrc, monoDep, depInfos, pkgName } = options;
-  const { monoDepForJson, monoDepJson } = getMonoRootInfo();
+  const { monoDepJson } = getMonoRootInfo();
   const getLogData = (data) => {
     if (!isForRootHelDir) {
       const { proxyPkgName, proxySrcPath, ...rest } = data;
@@ -55,16 +55,6 @@ function logMonoDep(isForRootHelDir, options) {
 
     return;
   }
-
-  monoDep.for = appSrc;
-  const depData = { [pkgName]: getLogData(monoDep.depData[pkgName]) };
-  const monoDepForApp = { isForRootHelDir, for: appSrc, createdAt: getLocaleTime(), depData };
-  depInfos.forEach((v) => {
-    const data = monoDep.depData[v.pkgName];
-    depData[v.pkgName] = getLogData(data);
-  });
-
-  fs.writeFileSync(monoDepForJson, JSON.stringify(monoDepForApp, null, 2));
 }
 
 function getMonoAppDepDataImpl(options) {

@@ -151,11 +151,16 @@ exports.getArgvOptions = function (options, topOptions = {}) {
   // 复制到指定位置
   argvOptions.copyToPath = path.join(monoRoot, `./${argvOptions.copyToBelongTo}/${argvOptions.copyToDir}`);
 
-  if (isCreateAction && fs.existsSync(argvOptions.copyToPath)) {
-    throw new Error(`you can not create ${argvOptions.pkgName} to an existed dir ${argvOptions.copyToPath}`);
-  }
-  if (isCreateAction && devInfo.appConfs[argvOptions.pkgName]) {
-    throw new Error(`Package name ${argvOptions.pkgName} already exists`);
+  if (isCreateAction) {
+    if (!argvOptions.copyToDir) {
+      throw new Error(`You can not create module with an empty dir name.`);
+    }
+    if (fs.existsSync(argvOptions.copyToPath)) {
+      throw new Error(`You can not create ${argvOptions.pkgName} to an existed dir ${argvOptions.copyToPath}`);
+    }
+    if (devInfo.appConfs[argvOptions.pkgName]) {
+      throw new Error(`Package name ${argvOptions.pkgName} already exists`);
+    }
   }
 
   return argvOptions;

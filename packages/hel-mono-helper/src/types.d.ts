@@ -26,8 +26,8 @@ export interface IMonoRootInfo {
   monoRootHelDir: string;
   monoRootHelLog: string;
   monoRootHelTmpLog: string;
+  cmdHistoryLog: string;
   monoDepJson: string;
-  monoDepForJson;
 }
 
 export interface IPkgInfo {

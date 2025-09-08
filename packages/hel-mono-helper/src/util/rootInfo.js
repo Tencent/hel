@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { HEL_SCRIPT_HELPER_JSON_PAH } = require('../consts');
+const { HEL_README_PATH } = require('../consts');
 const { getCWD } = require('./base');
 
 /** @type {import('../types').IMonoRootInfo} */
@@ -18,23 +18,30 @@ function getHelAssociatePath(monoRoot) {
   const monoRootHelDir = path.join(monoRoot, './.hel');
   const monoRootHelLog = path.join(monoRoot, './.hel/.all.log');
   const monoRootHelTmpLog = path.join(monoRoot, './.hel/.all-tmp.log');
+  const cmdHistoryLog = path.join(monoRoot, './.hel/.cmd-history.log');
   const monoDepJson = path.join(monoRoot, './.hel/.mono-dep.json');
-  const monoDepForJson = path.join(monoRoot, './.hel/.mono-dep-for.json');
-  const scriptHelperJson = path.join(monoRoot, './.hel/.script-helper.json');
-  return { monoRootHelDir, monoRootHelLog, monoRootHelTmpLog, monoDepJson, monoDepForJson, scriptHelperJson };
+  const readMe = path.join(monoRoot, './.hel/.README.md');
+  return {
+    monoRootHelDir,
+    monoRootHelLog,
+    monoRootHelTmpLog,
+    monoDepJson,
+    readMe,
+    cmdHistoryLog,
+  };
 }
 
 function buildRootInfoAndEnsureFiles(monoRoot) {
   const result = getHelAssociatePath(monoRoot);
   const monoRootInfo = { monoRoot, ...result };
 
-  const { monoRootHelDir, scriptHelperJson } = result;
+  const { monoRootHelDir, readMe } = result;
   // 确定完毕 root 路径信息，确保一下 .hel 目录存在
   if (!fs.existsSync(monoRootHelDir)) {
     fs.mkdirSync(monoRootHelDir);
   }
-  if (!fs.existsSync(scriptHelperJson)) {
-    fs.cpSync(HEL_SCRIPT_HELPER_JSON_PAH, scriptHelperJson);
+  if (!fs.existsSync(readMe)) {
+    fs.cpSync(HEL_README_PATH, readMe);
   }
   return monoRootInfo;
 }

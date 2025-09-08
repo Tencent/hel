@@ -30,6 +30,10 @@ global.mlog2 = util.helMonoLog;
 global.mlogt = helMonoLogAllTmp;
 
 const monoUtil = {
+  getBuildDirByPkgName(pkgName, defaultDir) {
+    const devInfo = util.inferDevInfo(true);
+    return util.getBuildDirPath(devInfo, pkgName, defaultDir);
+  },
   getBuildDir(defaultDir) {
     const info = monoUtil.getCWDInfo();
     const pkgJson = getMonoAppPkgJsonByCwd(info.curCwd) || {};

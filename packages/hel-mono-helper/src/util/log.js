@@ -115,18 +115,27 @@ function getLogFilePath(isTmp) {
 }
 
 function logRunningDetails(options, ...args) {
-  const { isTmp, isRed, isAllTmp } = options;
+  const { isTmp, isRed, isAllTmp, isCmdHistoryLog } = options;
 
   let logFilePath = '';
   if (isAllTmp) {
     // 仅输出到 .all-tmp.log 中
     const { monoRootHelTmpLog } = getMonoRootInfo();
     logFilePath = monoRootHelTmpLog;
+  } else if (isCmdHistoryLog) {
+    const { cmdHistoryLog } = getMonoRootInfo();
+    logFilePath = cmdHistoryLog;
   } else {
     const rawPrefix = isTmp ? LOG_PREFIX_TMP : LOG_PREFIX;
     const prefix = isRed ? chalk.red(rawPrefix) : chalk.cyan(rawPrefix);
     console.log(prefix, ...args);
     logFilePath = getLogFilePath(isTmp);
+  }
+
+  if (isCmdHistoryLog) {
+    fs.appendFileSync(logFilePath, `${new Date().toLocaleString()}${os.EOL}`);
+    fs.appendFileSync(logFilePath, `${args.join(' ')}${os.EOL}`);
+    return;
   }
 
   if (args.some((v) => typeof v === 'object')) {
@@ -140,7 +149,7 @@ function logRunningDetails(options, ...args) {
       fs.appendFileSync(logFilePath, line);
     });
   } else {
-    const line = `${args.join('')}${os.EOL}`;
+    const line = `${args.join(' ')}${os.EOL}`;
     fs.appendFileSync(logFilePath, line);
   }
 }
@@ -182,6 +191,10 @@ function helMonoLogAllTmp(...args) {
   logRunningDetails({ isAllTmp: true, isRed: false }, ...args);
 }
 
+function cmdHistoryLog(cmd) {
+  logRunningDetails({ isCmdHistoryLog: true }, cmd);
+}
+
 module.exports = {
   trySetLogName,
   getCurAppData,
@@ -189,6 +202,7 @@ module.exports = {
   clearMonoLog,
   helMonoLog,
   helMonoErrorLog,
+  cmdHistoryLog,
   helMonoLogTmp,
   helMonoLogAllTmp,
 };

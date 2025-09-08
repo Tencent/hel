@@ -91,7 +91,7 @@ function createScriptElement(options: ICreateScriptOptions) {
   const { attrs, innerText, appendToBody = true, onloadCb = noop, onerrorCb = noop } = options;
   const { src, ...rest } = attrs;
   const restObj: Record<string, any> = rest;
-  const callOnloadCb = (result) => {
+  const callOnloadCb = (result: any) => {
     onloadCb(result);
     return result;
   };
