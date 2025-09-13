@@ -23,6 +23,12 @@ module.exports = function replaceExHtmlContent(/** @type {{appData:ICWDAppData }
   // rawAppHtml = HEL_EXTERNAL_HTML_PAH;
   const { belongTo, appDir, appDirPath } = appData;
   appHtml = path.join(monoRoot, `./${belongTo}/${appDir}/.hel/index.html`);
+
+  //  不存在则说明只是单纯的调用  getMonoDevData 方法获取数据，并非需要去替换 .hel/index.html 文件
+  if (!fs.existsSync(appHtml)) {
+    return { appHtml, rawAppHtml };
+  }
+
   fs.cpSync(rawAppHtml, appHtml);
 
   helMonoLog(`replace content of ${appHtml}`);

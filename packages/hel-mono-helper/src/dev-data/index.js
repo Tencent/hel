@@ -1,3 +1,5 @@
+/** @typedef {import('hel-mono-types').IMonoDevInfo} DevInfo */
+/** @typedef {import('../types').IInnerPkgInfo} IInnerPkgInfo */
 const path = require('path');
 const fs = require('fs');
 const { createLibSubApp } = require('hel-dev-utils');
@@ -5,7 +7,7 @@ const { VER } = require('../consts');
 const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
 const { clone } = require('../util/dict');
-const { buildAppAlias, inferConfAlias } = require('../util/appSrc');
+const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
 const { inferMonoDepDict } = require('../util/monoJson');
 const { getMonoAppPkgJson, isEXProject } = require('../util/monoPkg');
@@ -88,6 +90,27 @@ function fmtPkgNameForBound(/** @type string */ pkgName) {
 }
 
 /**
+ * 将大仓里的其他子模块依赖的 paths 合并起来，交给外部注入到 ForkTsCheckerWebpackPlugin 参数里
+ * 避免启动主应用时报错：Cannot find module '@xx/yy/...' or its corresponding type declaration.} pkgInfo
+ */
+function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPkgInfo */ pkgInfo, appTsConfigPaths) {
+  const { alias, appSrcPath } = pkgInfo;
+  if (!alias) {
+    return;
+  }
+  // 可能是在 tsconfigJson.paths 里为 external 库设置类型路径
+  if (devInfo.appExternals[alias]) {
+    return;
+  }
+
+  const aliasKey = `${alias}/*`;
+  if (appTsConfigPaths[alias]) {
+    throw new Error(`found tsconfig.json alias ${alias} duplicated while handle ${appSrcPath}, please check workspace sub deps.`);
+  }
+  appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
+}
+
+/**
  * @returns {import('../types').IPkgMonoDepData | null}
  */
 exports.getPkgMonoDepData = function (pkgName) {
@@ -106,11 +129,12 @@ exports.getPkgMonoDepDataDict = function () {
 /**
  * @returns {import('../types').IMonoDevData}
  */
-exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputAppSrc, options = {}) {
+exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, options = {}) {
   let targetAppSrc = inputAppSrc;
   if (!targetAppSrc) {
     targetAppSrc = path.join(getCWD(), './src');
   }
+  const appCwd = getAppCwd(targetAppSrc);
   const { forEX } = options;
   const isExMode = isEXProject(targetAppSrc) || forEX;
   const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
@@ -125,7 +149,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
   let appSrc = targetAppSrc;
-  const appData = options.appData || getCWDAppData(devInfo);
+  const appData = options.appData || getCWDAppData(devInfo, appCwd);
   const { isForRootHelDir } = appData;
   const appTsConfigPaths = clone(appData.appTsConfigPaths);
   helMonoLog('isForRootHelDir ', isForRootHelDir);
@@ -185,11 +209,14 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
         return;
       }
 
-      const alias = inferConfAlias(subModSrcPath, appConf, pkgName);
+      const alias = inferConfAlias(devInfo, { appSrc: subModSrcPath, appConf, pkgName });
       if (alias) {
         appAlias[alias] = subModSrcPath;
         pureAlias[alias] = subModSrcPath;
       }
+
+      const pkgInfo = pkg2Info[pkgName] || {};
+      maySetAppTsConfigPaths(devInfo, pkgInfo, appTsConfigPaths);
     });
   } else {
     depInfos.forEach((info) => {
@@ -212,15 +239,7 @@ exports.getMonoDevData = function (/** @type {import('hel-mono-types').IMonoDevI
         }
       }
 
-      // 将大仓里的其他子模块依赖的 paths 合并起来，交给外部注入到 ForkTsCheckerWebpackPlugin 参数里
-      // 避免启动主应用时报错：Cannot find module '@xx/yy/...' or its corresponding type declaration.
-      if (inferAlias) {
-        const aliasKey = `${inferAlias}/*`;
-        if (appTsConfigPaths[aliasKey]) {
-          throw new Error(`found alias ${inferAlias} duplicated while handle ${appSrcPath}, please check.`);
-        }
-        appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
-      }
+      maySetAppTsConfigPaths(devInfo, pkgInfo, appTsConfigPaths);
 
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
       if (isHelMicroMode() && !exclude.includes(pkgName)) {

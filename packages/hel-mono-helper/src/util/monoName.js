@@ -103,7 +103,7 @@ function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
       const appDirPath = path.join(monoRoot, `./${prefixedDir}`);
       pkg2AppDirPath[pkgName] = appDirPath;
       const appSrcPath = path.join(appDirPath, './src');
-      const alias = getTsConfigAliasByAppSrc(appSrcPath);
+      const alias = getTsConfigAliasByAppSrc(devInfo, appSrcPath);
       prefixedDir2Pkg[`${belongTo}/${dirName}`] = pkgName;
 
       const pkgs = safeGet(dir2Pkgs, dirName, []);

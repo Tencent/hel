@@ -299,7 +299,6 @@ function getModEntryFilePath(appSrcDirPath, fileName = 'index') {
   return filePath;
 }
 
-
 module.exports = {
   genExportModuleNames,
   getModEntryFilePath,

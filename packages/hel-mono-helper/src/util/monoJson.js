@@ -27,7 +27,7 @@ function getRawMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;
@@ -55,7 +55,7 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
 
       const pkgJsonPath = path.join(item.path, 'package.json');
       if (fs.existsSync(pkgJsonPath)) {
-        const alias = getTsConfigAliasByDirPath(item.path);
+        const alias = getTsConfigAliasByDirPath(monoJsonOrDevInfo, item.path);
         const pkgJson = require(pkgJsonPath);
         const pkgName = pkgJson.name;
         const dirName = item.name;

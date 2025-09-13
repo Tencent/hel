@@ -3,6 +3,7 @@ const shell = require('shelljs');
 const { getMonoRootInfo, helMonoLog } = require('../util');
 const { getCWD } = require('../util/base');
 const { cmdHistoryLog } = require('../util/log');
+const { getRawMonoJson } = require('../util/monoJson');
 const { ACTION_NAME } = require('../consts');
 
 /**
@@ -13,19 +14,17 @@ function getPnpmRunCmd(packName, options) {
   return `pnpm --filter ${packName} run ${scriptCmdKey}`;
 }
 
-function getScriptKey(cmdKeyword, isSubMod) {
-  let scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startRaw : cmdKeyword;
-  if (isSubMod) {
-    // 默认对子模块调用 start 时启用 start:hel，因为对子模块启动 start:raw 是无意义的
-    scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startHel : cmdKeyword;
-  } else {
-    // 默认对应用模块调用 start 时启用 start:raw，表示进入原始的一体化开发模式
-    // scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startRaw : cmdKeyword;
-    // 默认对应用模块调用 start 时启用 start:hel，表示进入原始的一体化开发模式
-    scriptKey = cmdKeyword === ACTION_NAME.start ? ACTION_NAME.startHel : cmdKeyword;
+function getDefaultStart() {
+  const monoJson = getRawMonoJson() || {};
+  return monoJson.defaultStart || '';
+}
+
+function getScriptKey(cmdKeyword) {
+  if (cmdKeyword === ACTION_NAME.start) {
+    return getDefaultStart() || ACTION_NAME.startHel;
   }
 
-  return scriptKey;
+  return cmdKeyword;
 }
 
 /**
@@ -35,11 +34,10 @@ function inferCmdRunContent(packName, options) {
   const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
   const prefixedDir = `${belongTo}/${dirName}`;
   const argv = process.argv;
-
   if (argv.length === 2) {
     // 类似 ['/xx/bin/node', '/xx/root-scripts/executeStart']
     if (argv[1].includes('root-scripts')) {
-      return ACTION_NAME.startHel;
+      return getDefaultStart() || ACTION_NAME.startHel;
     }
     // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
     return scriptCmdKey;

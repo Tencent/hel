@@ -1,6 +1,7 @@
 /** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
+const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
 const { noDupPushWithCb, noDupPush } = require('./arr');
 const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
@@ -8,28 +9,9 @@ const { getDirName, getDevInfoDirs } = require('./base');
 const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getMonoRootInfo } = require('./rootInfo');
-const { getLocaleTime } = require('./time');
-
-/**
- * 这些包一定不需要去查询是否有 hel 导出
- * TODO: add include exclude to hel-mono.json
- */
-const pkgNameWhiteList = [
-  '@tencent/hel-micro',
-  '@tencent/hel-lib-proxy',
-  'hel-iso',
-  'hel-micro',
-  'hel-micro-core',
-  'hel-lib-proxy',
-  'hel-types',
-  'react',
-  'react-dom',
-  'vue',
-  'react-router',
-];
 
 function logMonoDep(isForRootHelDir, options) {
-  const { isAllDep, appSrc, monoDep, depInfos, pkgName } = options;
+  const { isAllDep, monoDep } = options;
   const { monoDepJson } = getMonoRootInfo();
   const getLogData = (data) => {
     if (!isForRootHelDir) {
@@ -52,7 +34,6 @@ function logMonoDep(isForRootHelDir, options) {
       });
       fs.writeFileSync(monoDepJson, JSON.stringify(shallowCopy, null, 2));
     }
-
     return;
   }
 }
@@ -86,7 +67,7 @@ function getMonoAppDepDataImpl(options) {
   const nmHelPkgNames = [];
 
   const handleNmLoopAssocData = (pkgName, appDirPath) => {
-    if (!pkgNameWhiteList.includes(pkgName) && !excludeHelMods.includes(pkgName)) {
+    if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !excludeHelMods.includes(pkgName)) {
       noDupPushWithCb(nmPkgNames, pkgName, () => {
         nmLoopDeps.push(pkgName);
         // console.log(`appDirPath ${pkgName} ${appDirPath}`);
@@ -98,7 +79,7 @@ function getMonoAppDepDataImpl(options) {
   };
 
   const handleL1PkgName = (pkgName, verStr) => {
-    if (!pkgNameWhiteList.includes(pkgName) && !excludeAutoExternal.includes(pkgName)) {
+    if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !excludeAutoExternal.includes(pkgName)) {
       noDupPush(nmL1ExternalPkgNames, pkgName);
       nmL1ExternalDeps[pkgName] = verStr;
     }

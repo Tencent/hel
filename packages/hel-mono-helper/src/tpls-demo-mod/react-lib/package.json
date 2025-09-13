@@ -47,9 +47,11 @@
   "scripts": {
     "start": "node ../../dev/scripts/start.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
+    "start:all": "node ../../dev/scripts/hel/startAll.js",
     "start:for": "node ../../dev/scripts/hel/startFor",
     "build": "pnpm run build:npm",
     "build:hel": "node ../../dev/scripts/hel/build.js",
+    "build:all": "node ../../dev/scripts/hel/buildAll.js",
     "build:npm": "tsup",
     "build:nb": "pnpm run build:npm && pnpm run build:hel",
     "build:meta": "node ../../dev/scripts/hel/meta",

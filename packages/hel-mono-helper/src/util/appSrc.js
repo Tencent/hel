@@ -19,21 +19,22 @@ function getTsConfigJson(appSrc) {
 /**
  * 获取 tsconfig.json 里的 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
  */
-function getTsConfigAliasByAppSrc(appSrc) {
+function getTsConfigAliasByAppSrc(devInfo, appSrc) {
   let targetAlias = '';
   const tsConfigJson = getTsConfigJson(appSrc);
   if (tsConfigJson) {
-    targetAlias = getTsConfigAlias(tsConfigJson);
+    targetAlias = getTsConfigAlias(devInfo, tsConfigJson);
   }
   return targetAlias;
 }
 
-function inferConfAlias(appSrc, appConf, pkgName) {
+function inferConfAlias(devInfo, options) {
+  const { appSrc, appConf, pkgName } = options;
   // const alias = appConf?.alias;
   // 考虑兼容性，不用可选链
   const alias = (appConf || {}).alias || '';
   const tipLabel = `package ${pkgName}`;
-  const tsConfigAlias = getTsConfigAliasByAppSrc(appSrc);
+  const tsConfigAlias = getTsConfigAliasByAppSrc(devInfo, appSrc);
 
   if (alias && !tsConfigAlias) {
     throw new Error(`${tipLabel} has alias ${alias} in dev-info, but has no alias in its tsconfig.json`);
@@ -73,7 +74,7 @@ function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pk
   const appAlias = {};
   const prefixedDirName = getPrefixedDirName(appSrc);
   const packName = prefixedDir2Pkg[prefixedDirName];
-  const targetAlias = inferConfAlias(appSrc, devInfo.appConfs[packName], packName);
+  const targetAlias = inferConfAlias(devInfo, { appSrc, appConf: devInfo.appConfs[packName], packName });
   if (targetAlias) {
     appAlias[targetAlias] = appSrc;
   }
@@ -87,9 +88,18 @@ function getAppDirPath(appSrc) {
   return path.join(monoRoot, prefixedDir);
 }
 
+function getAppCwd(appSrc) {
+  let appCwd = appSrc;
+  if (appCwd.endsWith('/src')) {
+    appCwd = appSrc.substring(0, appSrc.length - 4);
+  }
+  return appCwd;
+}
+
 module.exports = {
   inferConfAlias,
   buildAppAlias,
+  getAppCwd,
   getAppBelongTo,
   getTsConfigJson,
   getTsConfigAliasByAppSrc,

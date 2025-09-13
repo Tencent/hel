@@ -6,6 +6,7 @@ const { helMonoLog, getFileJson } = require('../../util');
 const { ensureAppConf } = require('../../util/devInfo');
 const { getMonoAppDepDataImpl } = require('../../util/depData');
 const { purifyUndefined } = require('../../util/dict');
+const { isHelAllBuild } = require('../../util/is');
 const { getModMonoDataDict } = require('../../util/monoJson');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { HOST_NAME } = require('../../consts');
@@ -41,11 +42,13 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
 
   assignMod(realAppPkgName, isSubMod);
 
-  const { monoDict } = getModMonoDataDict(devInfo);
-  Object.keys(deps).forEach((name) => {
-    const { isSubMod = false } = monoDict[name] || {};
-    assignMod(name, isSubMod);
-  });
+  if (!isHelAllBuild()) {
+    const { monoDict } = getModMonoDataDict(devInfo);
+    Object.keys(deps).forEach((name) => {
+      const { isSubMod = false } = monoDict[name] || {};
+      assignMod(name, isSubMod);
+    });
+  }
 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {

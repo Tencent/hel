@@ -45,9 +45,9 @@ function prepareHelEntry(options) {
   return qpi.prepareHelEntry(devInfo, targetPkgOrDir, targetForEX);
 }
 
-function getMonoDevData(inputAppSrc) {
+function getMonoDevData(inputAppSrc, options) {
   const devInfo = inferDevInfo();
-  return qpi.getMonoDevData(devInfo, inputAppSrc);
+  return qpi.getMonoDevData(devInfo, inputAppSrc, options);
 }
 
 module.exports = {
