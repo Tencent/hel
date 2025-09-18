@@ -77,7 +77,7 @@ export declare function prepareHelEntry(options?: { pkgOrDir?: string, forEX?: b
 /**
  * 获取 hel-mono 大仓架构里的开发数据
  */
-export declare function getMonoDevData(appSrc?: string): IMonoDevData;
+export declare function getMonoDevData(appSrc?: string, options?: { forEX?: boolean }): IMonoDevData;
 
 /**
  * 根据包名获取对应 hel-mono 大仓里的依赖数据

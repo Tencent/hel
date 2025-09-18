@@ -20,7 +20,9 @@ exports.buildSrvModToHelDist = function (isUseTsup = false) {
   helMonoLog(`build hel srv mod done`);
 
   const srvModCopyTo = path.join(projectDir, './hel_dist/srv');
-  fs.mkdirSync(srvModCopyTo);
+  if (!fs.existsSync(srvModCopyTo)) {
+    fs.mkdirSync(srvModCopyTo, { recursive: true });
+  }
   shell.exec('start to copy hel srv mode build assets...');
 
   if (isUseTsup) {
