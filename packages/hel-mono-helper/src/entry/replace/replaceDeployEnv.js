@@ -4,7 +4,7 @@ const { helMonoLog } = require('../../util');
 
 module.exports = function replaceUtil(
   /** @type {import('../../types').ICWDAppData} */ appData,
-  /** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo,
+  /** @type {import('../../types').IMonoDevInfo} */ devInfo,
 ) {
   const { isSubMod, helDirPath, realAppPkgName } = appData;
   const filePath = isSubMod ? path.join(helDirPath, './configs/deployEnv.ts') : path.join(helDirPath, './deployEnv.ts');

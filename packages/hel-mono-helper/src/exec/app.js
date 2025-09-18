@@ -1,5 +1,5 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 /** @typedef {import('../types').ICWDAppData} ICWDAppData*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const { getNameData, getCWDAppData } = require('../util');
 const { inferDirData, getCwdByPrefixedDir } = require('../util/cwd');
@@ -11,7 +11,7 @@ const { genPnpmCmdAndRun } = require('./cmd');
 /**
  * 执行应用启动的动作函数
  */
-exports.execAppAction = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
+exports.execAppAction = function (/** @type {IDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
   const { keywordName, scriptCmdKey, forEX } = extractCmdData(devInfo, rawKeywordName, startOrBuild);
 
   if (forEX) {

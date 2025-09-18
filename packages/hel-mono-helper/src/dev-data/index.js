@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} DevInfo */
+/** @typedef {import('../types').IMonoDevInfo} DevInfo */
 /** @typedef {import('../types').IInnerPkgInfo} IInnerPkgInfo */
 const path = require('path');
 const fs = require('fs');

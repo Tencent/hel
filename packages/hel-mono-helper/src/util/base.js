@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const { HEL_DIR_NAME, INNER_SUB_MOD_ORG, INNER_APP_ORG, APPS, PACKAGES } = require('../consts');

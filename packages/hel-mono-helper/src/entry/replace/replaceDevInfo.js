@@ -1,5 +1,5 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoInjectedDevInfo} IMonoInjectedDevInfo */
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { helMonoLog, getFileJson } = require('../../util');

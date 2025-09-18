@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const jsonc = require('jsonc-parser');
@@ -69,7 +69,7 @@ function getAppBelongTo(appSrc) {
 /**
  * 获得 alias 描述对象
  */
-function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pkg) {
+function buildAppAlias(appSrc, /** @type {IDevInfo} */ devInfo, prefixedDir2Pkg) {
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = {};
   const prefixedDirName = getPrefixedDirName(appSrc);

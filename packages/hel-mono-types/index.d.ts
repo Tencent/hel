@@ -54,31 +54,22 @@ export interface IMonoAppConf extends IMonoAppBaseConf {
  */
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
-/**
- * hel-mono 大仓开发信息
- */
-export interface IMonoDevInfo {
-  /**
-   * externals 映射配置
-   */
-  appExternals: Record<string, string>;
-  /**
-   * 各应用（或子模块）的大仓开发配置
-   */
-  appConfs: MonoAppConfs;
+
+export interface IHelMonoJsonBase {
+  defaultStart?: string;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
   /**
    * start:hel 或 build:hel 时，这些包排除到微模块构建体系之外，
-   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块时hel模块时才有意义）
+   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块是hel模块时设置此参数才有作用）
    */
   exclude?: string[];
   /**
-   * default: 'http://localhost'
-   * 所有hel模块本地联调时的域名
-   */
+ * default: 'http://localhost'
+ * 所有hel模块本地联调时的域名
+ */
   devHostname?: string;
   /**
    * default: hel-micro
@@ -142,10 +133,9 @@ export interface IHelMonoMod {
   alias?: string;
 }
 
-export interface IHelMonoJson {
+/**
+ * 用户可配置的  hel-mono.json 数据
+ */
+export interface IHelMonoJson extends IHelMonoJsonBase {
   mods: Record<PkgName, IHelMonoMod>;
-  /**
-   * start:hel 或 build:hel 时，需排除的 hel 模块
-   */
-  exclude: string[];
 }

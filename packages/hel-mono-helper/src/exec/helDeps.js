@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const { INNER_ACTION } = require('../consts');
 const { prepareHelEntryForMainAndDeps } = require('../entry');
 const { getCmdKeywordName, getNameData, getCWDPkgDir } = require('../util');
@@ -7,7 +7,7 @@ const { inferDirFromArgv2ndItem } = require('../util/monoDir');
 /**
  * 执行启动hel子依赖服务的命令
  */
-exports.startHelDeps = function (/** @type {IMonoDevInfo} */ devInfo) {
+exports.startHelDeps = function (/** @type {IDevInfo} */ devInfo) {
   let mayPkgOrDir = '';
   const wordAt2 = inferDirFromArgv2ndItem(devInfo);
   const wordAt3 = getCmdKeywordName(3);

@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const { getCmdKeywordName, helMonoLog, getNameData } = require('../util');
 const { ACTION_NAME } = require('../consts');
 const { genPnpmCmdAndRun } = require('./cmd');
@@ -6,7 +6,7 @@ const { genPnpmCmdAndRun } = require('./cmd');
 /**
  * 执行 pnpm start .build xxx, pnpm start .build xxx:yyy 时触发
  */
-exports.execBuild = function (/** @type {IMonoDevInfo} */ devInfo) {
+exports.execBuild = function (/** @type {IDevInfo} */ devInfo) {
   let scriptCmdKey = ACTION_NAME.build;
   let keywordName = getCmdKeywordName(3);
 

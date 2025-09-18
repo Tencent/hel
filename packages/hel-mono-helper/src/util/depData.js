@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const { PKG_NAME_WHITE_LIST } = require('../consts/inner');

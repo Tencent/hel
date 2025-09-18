@@ -1,9 +1,9 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo */
-const { START_CMD_MODES } = require('../consts');
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
+// const { START_CMD_MODES } = require('../consts');
 const { getAliasData } = require('../util/alias');
 const { helMonoLog } = require('../util');
 
-function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
+function getPkgNameFromMayAlias(/** @type {IDevInfo} */ devInfo, mayAlias) {
   let pureKeyword = mayAlias;
   // mayAlias 可能形如: @h:start，需要去掉分号，仅取第一位
   if (mayAlias.includes(':')) {
@@ -45,7 +45,7 @@ function getPkgNameFromMayAlias(/** @type {IMonoDevInfo} */ devInfo, mayAlias) {
  * 分析可能带有冒号的名字，
  * 名字包含了冒号时，是 {dirName}:{mode} 格式
  */
-function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, rawScriptCmdKey) {
+function analyzeColonKeywordName(/** @type {IDevInfo} */ devInfo, rawKeywordName, rawScriptCmdKey) {
   let keywordName = rawKeywordName;
   let scriptCmdKey = rawScriptCmdKey;
   let forEX = false;
@@ -97,7 +97,7 @@ function analyzeColonKeywordName(/** @type {IMonoDevInfo} */ devInfo, rawKeyword
   return { keywordName, scriptCmdKey, forEX };
 }
 
-exports.extractCmdData = function (/** @type {IMonoDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
+exports.extractCmdData = function (/** @type {IDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
   const data = analyzeColonKeywordName(devInfo, rawKeywordName, startOrBuild);
   return data;
 };

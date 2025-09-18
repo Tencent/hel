@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const shell = require('shelljs');
 const { INNER_ACTION } = require('../consts');
@@ -21,7 +21,7 @@ const { rewriteMonoJsonForArgv } = require('./common/rewriteMonoJson');
  * npm start .create hub -t other-demo -d my-apps
  * ```
  */
-exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}) {
+exports.execCreate = function (/** @type {IDevInfo} */ devInfo, options = {}) {
   const { isSubMod = false, autoStart = false } = options;
   const label = isSubMod ? 'hel-mod' : 'app';
   const actionKey = isSubMod ? INNER_ACTION.createMod : INNER_ACTION.create;
@@ -62,13 +62,13 @@ exports.execCreate = function (/** @type {IMonoDevInfo} */ devInfo, options = {}
   }
 };
 
-exports.execCreateStart = function (/** @type {IMonoDevInfo} */ devInfo, options) {
+exports.execCreateStart = function (/** @type {IDevInfo} */ devInfo, options) {
   exports.execCreate(devInfo, { autoStart: true, ...(options || {}) });
 };
 
 /**
  * 执行 npm start .create-mod xxx 命令
  */
-exports.execCreateMod = function (/** @type {IMonoDevInfo} */ devInfo, options) {
+exports.execCreateMod = function (/** @type {IDevInfo} */ devInfo, options) {
   exports.execCreate(devInfo, { autoStart: false, isSubMod: true, ...(options || {}) });
 };

@@ -20,10 +20,12 @@ let curLogName = '';
  * 记录 keyword，辅助日志路径定位
  */
 function trySetLogName(keyword, shouldPure = true) {
+  if (!keyword) {
+    return false;
+  }
   if (keyword.startsWith('.')) {
     return false;
   }
-
   // 是 /xxx/yy/.bin/node, /xx/yy/dev/execStart 等完整路径关键字
   const strList = keyword.split(path.sep);
   if (strList.length > 2) {

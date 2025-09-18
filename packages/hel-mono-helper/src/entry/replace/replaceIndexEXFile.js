@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { getMonoDevData } = require('../../dev-data');

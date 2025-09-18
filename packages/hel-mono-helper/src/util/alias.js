@@ -1,4 +1,3 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} DevInfo */
 const path = require('path');
 const fs = require('fs');
 const jsonc = require('jsonc-parser');

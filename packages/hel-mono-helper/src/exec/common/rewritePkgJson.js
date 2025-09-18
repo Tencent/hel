@@ -1,5 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
-/** @typedef {import('../../types').IArgvOptions} IArgvOptions*/
+/** @typedef {import('../../types').IArgvOptions} IArgvOptions */
 const fs = require('fs');
 const path = require('path');
 

@@ -1,5 +1,5 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { getDevInfoDirs } = require('./base');
 const { purify } = require('./dict');
@@ -17,13 +17,13 @@ function setHandleDevInfo(fn) {
   handleDevInfoFn = fn;
 }
 
-function getAppConfs(monoJson) {
+function getAppConfsAndMonoDataDict(monoJson) {
   const argv = process.argv;
   const isChangeAliasCmd = argv.includes(INNER_ACTION.change) && argv.includes(CREATE_SHORT_PARAM_KEY.alias);
 
   const { mods = {} } = monoJson;
   const appConfs = {};
-  const { monoDict } = getModMonoDataDict(monoJson);
+  const { monoDict, prefixedDirDict, dirDict } = getModMonoDataDict(monoJson);
 
   // const monoJsonPkgNames = Object.keys(mods);
   const repoPkgNames = Object.keys(monoDict);
@@ -66,7 +66,7 @@ function getAppConfs(monoJson) {
     };
   });
 
-  return appConfs;
+  return { appConfs, monoDict, prefixedDirDict, dirDict };
 }
 
 function ensureAppConf(options) {
@@ -96,7 +96,7 @@ function getIsAllowNull() {
 }
 
 function inferDevInfo(allowMonoJsonNull) {
-  // 允许 monoJson 为空时，getAppConfs 会自动修正和创建新的 hel-mono.json
+  // 允许 monoJson 为空时，getAppConfsAndMonoDataDict 会自动修正和创建新的 hel-mono.json
   let allowNull = allowMonoJsonNull;
   if (allowNull === undefined) {
     allowNull = getIsAllowNull();
@@ -109,9 +109,12 @@ function inferDevInfo(allowMonoJsonNull) {
   monoJson = monoJson || { mods: {} };
 
   const { appsDirs, subModDirs, externals = {}, devHostname, helMicroName, helLibProxyName, exclude = [] } = monoJson;
-  const appConfs = getAppConfs(monoJson);
+  const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
   let devInfo = {
+    monoDict,
+    prefixedDirDict,
+    dirDict,
     appExternals: externals,
     appsDirs,
     subModDirs,
@@ -168,7 +171,7 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
 }
 
 module.exports = {
-  getAppConfs,
+  getAppConfsAndMonoDataDict,
   ensureAppConf,
   getDevInfoDirs,
   inferDevInfo,
