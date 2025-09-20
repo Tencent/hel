@@ -19,7 +19,7 @@ function getSpecifiedVer(helModName, platform) {
   return vers[key];
 }
 
-export function setHelModVers(newVers) {
+function setHelModVers(newVers) {
   let vers = getWindow().__HEL_MOD_VERS__;
   if (!vers) {
     vers = {};
@@ -28,26 +28,34 @@ export function setHelModVers(newVers) {
   Object.assign(vers, newVers);
 }
 
-export const HEL_DEV_KEY_PREFIX = {
+function getHostNode(id = 'hel-app-root') {
+  const { document } = getWindow();
+  let node = document.getElementById(id);
+  if (!node) {
+    node = document.createElement('div');
+    node.id = id;
+    document.body.appendChild(node);
+  }
+  return node;
+}
+
+const HEL_DEV_KEY_PREFIX = {
   devUrl: 'hel.dev',
   branchId: 'hel.branch',
   versionId: 'hel.ver',
   projectId: 'hel.proj',
 };
 
-export function getDevUrlKey(groupName) {
-  return `${HEL_DEV_KEY_PREFIX.devUrl}:${groupName}`;
-}
-
-export function getHelConfKeys(groupName) {
+function getHelConfKeys(groupName) {
   return {
     branchId: `${HEL_DEV_KEY_PREFIX.branchId}:${groupName}`,
+    devUrl: `${HEL_DEV_KEY_PREFIX.devUrl}:${groupName}`,
     versionId: `${HEL_DEV_KEY_PREFIX.versionId}:${groupName}`,
     projectId: `${HEL_DEV_KEY_PREFIX.projectId}:${groupName}`,
   };
 }
 
-export function getStorageValue(key) {
+function getStorageValue(key) {
   const win = getWindow();
   if (win.localStorage) {
     return win.localStorage.getItem(key) || '';
@@ -55,7 +63,7 @@ export function getStorageValue(key) {
   return '';
 }
 
-export function monoLog(...args) {
+function monoLog(...args) {
   const argv = Array.from(args);
   const len = args.length;
   const prefix = '[hel-mono]';
@@ -68,7 +76,7 @@ export function monoLog(...args) {
   console.log(`[hel-mono]`, ...argv);
 }
 
-export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
+function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
   const { DEV_INFO, APP_GROUP_NAME, DEPLOY_ENV, isDev, startMode } = options;
   const defaultDH = DEV_INFO.devHostname;
 
@@ -99,8 +107,8 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
     },
     getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
       const { port = 3000, devHostname = defaultDH, groupName, isNm, platform } = mod;
-      const devUrl = getStorageValue(getDevUrlKey(groupName));
       const confKeys = getHelConfKeys(groupName);
+      const devUrl = getStorageValue(confKeys.devUrl);
       const params = {
         versionId: getStorageValue(confKeys.versionId) || getSpecifiedVer(helModName, platform),
         branchId: getStorageValue(confKeys.branchId),
@@ -108,15 +116,15 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
       };
 
       if (devUrl) {
-        monoLog(`found devUrl ${devUrl} for ${helModName}`);
+        monoLog(`found devUrl ${devUrl} for ${groupName}`);
         return { enable: true, host: devUrl, ...params };
       }
 
       const isStartWithRemoteDeps = startMode === START_WITH_REMOTE;
-      // 生产环境、基于 hwr 命令启动、来着 node_module 的 hel模块，任意一个均采用拉取远端已编译模块的模式来执行
+      // 生产环境、基于 hwr 命令启动、来自 node_module 的 hel模块，任意一个均采用拉取远端已编译模块的模式来执行
       if (!isDev || isStartWithRemoteDeps || isNm) {
         if (isNm) {
-          monoLog(`found node module ${helModName} come from hel-micro`);
+          monoLog(`found node module ${groupName} compiled with hel mode to run`);
         }
         return { enable: false, host: '', ...params };
       }
@@ -125,3 +133,13 @@ export function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) 
     },
   };
 }
+
+module.exports = {
+  setHelModVers,
+  getHostNode,
+  HEL_DEV_KEY_PREFIX,
+  getHelConfKeys,
+  getStorageValue,
+  monoLog,
+  makeRuntimeUtil,
+};

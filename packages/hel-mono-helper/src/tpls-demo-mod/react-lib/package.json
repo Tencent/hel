@@ -1,7 +1,7 @@
 {
   "name": "mono-comps",
   "version": "0.0.1",
-  "description": "hel-mono demo react lib",
+  "description": "hel-mono demo react comps",
   "hel": {},
   "license": "MIT",
   "author": {
@@ -36,7 +36,7 @@
     }
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^1.0.3"
+    "hel-mono-runtime-helper": "^1.1.2"
   },
   "devDependencies": {
     "esbuild-plugin-module-css": "^0.1.1",
@@ -45,7 +45,8 @@
     "postcss-modules": "^6.0.1"
   },
   "scripts": {
-    "start": "node ../../dev/scripts/start.js",
+    "start": "node ../../dev/root-scripts/executeStart",
+    "start:raw": "node ../../dev/scripts/hel/start.js",
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "start:all": "node ../../dev/scripts/hel/startAll.js",
     "start:for": "node ../../dev/scripts/hel/startFor",

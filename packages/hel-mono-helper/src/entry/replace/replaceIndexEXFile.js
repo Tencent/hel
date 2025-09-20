@@ -27,7 +27,7 @@ module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData,
       if (hasExternals) {
         const importLines = [];
         const boundLines = [
-          `// Content generated at ${new Date().toLocaleString()} by hel-mono-helper'`,
+          `// Content generated at ${new Date().toLocaleString()} by hel-mono-helper`,
           '// Found these modules to be bound to global',
         ];
         Object.keys(autoExternals).forEach((pkgName) => {
