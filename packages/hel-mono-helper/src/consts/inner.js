@@ -16,4 +16,12 @@ module.exports = {
     'vue',
     'react-router',
   ],
+  APP_EXTERNALS: {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    'react-is': 'ReactIs',
+    'react-reconciler': 'ReactReconciler',
+    'hel-micro': 'HelMicro',
+    'hel-lib-proxy': 'HelLibProxy',
+  },
 };

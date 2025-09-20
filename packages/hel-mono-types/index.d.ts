@@ -56,11 +56,28 @@ export type MonoAppConfs = Record<string, IMonoAppConf>;
 
 
 export interface IHelMonoJsonBase {
+  /**
+   * default: 'start:hel'
+   * 执行 pnpm run start 命令时，需要命中的具体 start 脚本
+   */
   defaultStart?: string;
+  /**
+   * default: 'build:hel'
+   * 执行 pnpm run build 命令时，需要命中的具体 build 脚本
+   */
+  defaultBuild?: string;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
+  /**
+   * default: {
+   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
+   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
+   * }，
+   * 全局 externals
+   */
+  appExternals?: Record<string, string>;
   /**
    * start:hel 或 build:hel 时，这些包排除到微模块构建体系之外，
    * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块是hel模块时设置此参数才有作用）
@@ -72,13 +89,13 @@ export interface IHelMonoJsonBase {
  */
   devHostname?: string;
   /**
-   * default: hel-micro
-   * 模板文件里使用的 hel-micro sdk，如用户基于hel-micro向上封装了自己的sdk，这里可配置封装sdk的名称，
+   * default: 'hel-micro'
+   * 模板文件里使用的 hel-micro sdk，如用户基于 hel-micro 向上封装了自己的sdk，这里可配置封装sdk的名称，
    * 让生成的模板文件里 sdk 路径指向用户 sdk
    */
   helMicroName?: string;
   /**
-   * default: hel-lib-proxy
+   * default: 'hel-lib-proxy'
    * 模板文件里使用的 hel-lib-proxy sdk 名称，如有自定义包可定义此值，让生成的模板文件里 sdk 路径指向用户 sdk
    */
   helLibProxyName?: string;
@@ -130,11 +147,14 @@ export interface IPkgHelConf {
 
 export interface IHelMonoMod {
   port: number;
+  /**
+   * 模块的 tsconfig.json 里使用的别名
+   */
   alias?: string;
 }
 
 /**
- * 用户可配置的  hel-mono.json 数据
+ * 用户可配置的  hel-mono.json 数据，通常是在 pnpm start .init-mono 生成的文件里做修改
  */
 export interface IHelMonoJson extends IHelMonoJsonBase {
   mods: Record<PkgName, IHelMonoMod>;

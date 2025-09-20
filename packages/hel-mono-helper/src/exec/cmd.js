@@ -19,9 +19,17 @@ function getDefaultStart() {
   return monoJson.defaultStart || '';
 }
 
+function getDefaultBuild() {
+  const monoJson = getRawMonoJson() || {};
+  return monoJson.defaultBuild || '';
+}
+
 function getScriptKey(cmdKeyword) {
   if (cmdKeyword === ACTION_NAME.start) {
     return getDefaultStart() || ACTION_NAME.startHel;
+  }
+  if (cmdKeyword === ACTION_NAME.build) {
+    return getDefaultBuild() || ACTION_NAME.buildHel;
   }
 
   return cmdKeyword;
@@ -34,9 +42,16 @@ function inferCmdRunContent(packName, options) {
   const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
   const prefixedDir = `${belongTo}/${dirName}`;
   const argv = process.argv;
+
   if (argv.length === 2) {
+    const arg1 = argv[1];
     // 类似 ['/xx/bin/node', '/xx/root-scripts/executeStart']
-    if (argv[1].includes('root-scripts')) {
+    const isRootScriptsCall = arg1.includes('root-scripts');
+    if (isRootScriptsCall) {
+      const isBuild = arg1.includes('buildApp');
+      if (isBuild) {
+        return getDefaultBuild() || ACTION_NAME.buildHel;
+      }
       return getDefaultStart() || ACTION_NAME.startHel;
     }
     // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
@@ -71,6 +86,12 @@ function inferCmdRunContent(packName, options) {
     // 执行类似 pnpm start hub:for deps
     // 转为 pnpm --filter hub run start:for deps 去执行未暴露在 scripts 节点的其他命令
     return `start:for ${restArgs.join(' ')}`;
+  }
+
+  // 接受来着 build 生成的命令
+  // 例如根目录执行 pnpm run build xx:yy --> 翻译为 pnpm --filter xx run build:yy
+  if (scriptCmdKey.startsWith('build:')) {
+    return scriptCmdKey;
   }
 
   // 丢弃 restArgs，目前暂无用处

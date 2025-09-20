@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-helper",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "micro module mono-repo architecture helper",
   "keywords": [
     "hel",
@@ -35,7 +35,7 @@
     "shelljs": "^0.9.2"
   },
   "devDependencies": {
-    "hel-mono-types": "^2.1.0"
+    "hel-mono-types": "^2.1.1"
   },
   "peerDependencies": {
     "hel-iso": "^4.4.0",

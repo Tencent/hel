@@ -245,7 +245,7 @@ export interface IMonoDevData {
   appAlias: Record<string, string>;
   jestAlias: Record<string, string>;
   /**
-   * hel-mono.json里全局指定的 externals
+   * hel-mono.json 里指定的全局 externals
    */
   appExternals: Record<string, string>;
   /**
