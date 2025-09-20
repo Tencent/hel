@@ -106,7 +106,7 @@ function genPnpmCmdAndRun(packName, options, cb) {
   const pnpmRunCmd = `pnpm --filter ${packName} run ${content}`;
   const runCmd = (fullCmd, cb) => {
     cmdHistoryLog(fullCmd);
-    helMonoLog(`will execute shell: ${fullCmd}`);
+    helMonoLog(`shell to be executed: ${fullCmd}`);
     return shell.exec(fullCmd, cb);
   };
 

@@ -1,33 +1,37 @@
 const path = require('path');
 const devUtils = require('hel-dev-utils');
 
-const VER = '0.6.1';
+const srcPath = path.join(__dirname, '../');
 
-const HEL_EXTERNAL_HTML_PAH = path.join(__dirname, './tpls-hel/empty-index.html');
+const VER = '1.3.4';
 
-const HEL_README_PATH = path.join(__dirname, './tpls-hel/hel-read-me.md');
+const HEL_EXTERNAL_HTML_PAH = path.join(srcPath, './tpls-hel/empty-index.html');
+
+const HEL_README_PATH = path.join(srcPath, './tpls-hel/hel-read-me.md');
 
 /** react 应用 hel 胶水代码模板 */
-const HEL_TPL_INNER_APP_PATH = path.join(__dirname, './tpls-hel/app');
+const HEL_TPL_INNER_APP_PATH = path.join(srcPath, './tpls-hel/app');
 
 /** 子模块 hel 胶水代码模板 */
-const HEL_TPL_INNER_SUB_MOD_PATH = path.join(__dirname, './tpls-hel/sub-mod');
+const HEL_TPL_INNER_SUB_MOD_PATH = path.join(srcPath, './tpls-hel/sub-mod');
 
 /**
  * 模板项目所在目录
  * TODO 将来支持网络下载其他模板
  */
-const HEL_TPL_INNER_DEMO_DIR = path.join(__dirname, './tpls-demo');
+const HEL_TPL_INNER_DEMO_DIR = path.join(srcPath, './tpls-demo');
 
-const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(__dirname, './tpls-demo-mod');
+const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(srcPath, './tpls-demo-mod');
+
 
 /**
- * 这些目录不用用来命名为项目目录
+ * 这些目录不能用来命名为项目目录
  */
 const FORBIDDEN_DIR_NAMES = ['test'];
 
 const ACTION_NAME = {
   build: 'build',
+  buildHel: 'build:hel',
   start: 'start',
   startRaw: 'start:raw',
   startHel: 'start:hel',

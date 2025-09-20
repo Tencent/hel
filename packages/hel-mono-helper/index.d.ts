@@ -1,9 +1,10 @@
-import type { IHelMonoJson, IMonoDevInfo, IPkgHelConf } from 'hel-mono-types';
+import type { IHelMonoJson, IPkgHelConf } from 'hel-mono-types';
 import * as monoCst from './src/consts';
 import type {
   IExecuteStartOptions,
   IMonoDevData,
   IMonoRootInfo,
+  IMonoDevInfo,
   IPkgMonoDepData,
   DepDataDict,
   ICWDAppData,

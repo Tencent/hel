@@ -2,7 +2,7 @@
 /** @typedef {import('../types').IInnerPkgInfo} IInnerPkgInfo */
 const path = require('path');
 const fs = require('fs');
-const { createLibSubApp } = require('hel-dev-utils');
+const { createLibSubApp, baseUtils } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
@@ -282,8 +282,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
       appInfo.homePage = appPublicUrl;
     }
   } else {
-    // 非 hel 脚本触发，以 appInfo.homePage 为准
-    appPublicUrl = appInfo.homePage;
+    const isDev = process.env.NODE_ENV === 'development';
+    // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
+    appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
   }
 
   helMonoLog('isHelMode ', isHelModeVar);

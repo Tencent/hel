@@ -1,5 +1,6 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
+const devUtils = require('hel-dev-utils');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { APP_EXTERNALS } = require('../consts/inner');
 const { getDevInfoDirs } = require('./base');
@@ -109,10 +110,20 @@ function inferDevInfo(allowMonoJsonNull) {
   }
   monoJson = monoJson || { mods: {} };
 
-  const { appsDirs, subModDirs, externals = APP_EXTERNALS, devHostname, helMicroName, helLibProxyName, exclude = [] } = monoJson;
+  const {
+    appsDirs,
+    subModDirs,
+    externals = APP_EXTERNALS,
+    devHostname,
+    helMicroName,
+    helLibProxyName,
+    exclude = [],
+    platform = devUtils.cst.DEFAULT_PLAT,
+  } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
   let devInfo = {
+    platform,
     monoDict,
     prefixedDirDict,
     dirDict,
@@ -125,7 +136,6 @@ function inferDevInfo(allowMonoJsonNull) {
     helMicroName,
     helLibProxyName,
   };
-
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;
   }

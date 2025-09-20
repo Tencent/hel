@@ -1,5 +1,5 @@
 /**
- * hel-dev-utils@5.2.7
+ * hel-dev-utils@5.3.2
  */
 import { IMeta } from 'hel-types';
 import { ICheckOptions, ICreateSubAppOptions, ISubAppBuildDesc, IUserExtractOptions, PkgJson } from './src/types';
@@ -21,10 +21,10 @@ export declare const cst: {
 export declare const baseUtils: {
   ensureSlash: (path: string, options: { need: boolean; loc: 'end' | 'start' }) => string;
   slash: {
-    start: (path) => string;
-    noStart: (path) => string;
-    end: (path) => string;
-    noEnd: (path) => string;
+    start: (path: string) => string;
+    noStart: (path: string) => string;
+    end: (path: string) => string;
+    noEnd: (path: string) => string;
   };
   getHelProcessEnvParams: () => {
     appHomePage: string;

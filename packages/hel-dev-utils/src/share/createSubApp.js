@@ -23,6 +23,13 @@ export default function createSubApp(pkg, innerOptions, userOptions) {
     },
     userOptions || {},
   );
+
+  // TODO 核查为何 userOptions 为 {} 时，optionsVar.platform 为 undefined
+  // 看起来上面的 platform 初始值没有生效，这是一个很诡异的问题...
+  if (!optionsVar.platform) {
+    optionsVar.platform = cst.DEFAULT_PLAT;
+  }
+
   const envParams = base.getHelEnvParams(pkg, optionsVar);
   const externals = Object.assign({}, optionsVar.externals || {}, presetExternals[frameworkType] || {});
   const jsonpFnName = base.getJsonpFnName(envParams.appName || pkg.name);

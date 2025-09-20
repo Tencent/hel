@@ -1,4 +1,4 @@
-import { ExtractMode } from 'hel-types';
+import { ExtractMode, ISrcMap } from 'hel-types';
 
 export type PkgJson = Record<string, any>;
 
@@ -21,7 +21,7 @@ export interface FileDesc {
 export interface IAssetOptions {
   el: HTMLScriptElement;
   homePage: string;
-  extractMode: SrcMap;
+  extractMode: ISrcMap;
   enableRelativePath: boolean;
   enableAssetInnerText: boolean;
   innerText: string;
@@ -150,7 +150,7 @@ export interface IInnerSubAppOptions {
 export interface IInnerFillAssetListOptions {
   homePage: string;
   buildDirFullPath: string;
-  srcMap: SrcMap;
+  srcMap: ISrcMap;
   isHead: boolean;
   enableReplaceDevJs: IUserExtractOptions['enableReplaceDevJs'];
   enableRelativePath: IUserExtractOptions['enableRelativePath'];

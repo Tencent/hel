@@ -58,15 +58,25 @@ function tryExecInnerAction(actionName, devInfo, options) {
   process.exit(1);
 }
 
-function tryRecordKeywordForLog() {
+function tryRecordKeywordForLog(/** @type {IDevInfo} */ devInfo) {
   const argv = process.argv;
   const last1Str = lastNItem(argv);
 
   const th3Item = argv[2] || '';
-  const [pureLocation = ''] = th3Item.split(':');
   // 是 ['/xx/bin/node', '/xx/root-scripts/executeStart', '<dirOrPkg>:for', '...']
-  if (trySetLogName(pureLocation)) {
-    return true;
+  const [pureLocation = ''] = th3Item.split(':');
+  if (pureLocation) {
+    const { monoDict } = devInfo;
+    // 暂定统一用二级目录名作为日志名称
+    // TODO：后续统一用包名？普通的 yyy 转为 yyy.log 带 scope 的 @xxx/yyy 转为 @xxx+yyy.log
+    let dirName = pureLocation;
+    if (monoDict[pureLocation]) {
+      dirName = monoDict[pureLocation].dirName;
+    }
+
+    if (trySetLogName(dirName)) {
+      return true;
+    }
   }
 
   if (trySetLogName(last1Str)) {
@@ -77,7 +87,7 @@ function tryRecordKeywordForLog() {
 }
 
 function getRawKeywordName(/** @type {IDevInfo} */ devInfo) {
-  const isSuccess = tryRecordKeywordForLog();
+  const isSuccess = tryRecordKeywordForLog(devInfo);
   const cwd = getCWD();
   let rawKeywordName = getCmdKeywordName();
   if (!rawKeywordName) {
