@@ -1,10 +1,10 @@
-import React from 'react';
-import { hello } from '@hel-demo/mono-bslib';
 import { callFn } from '@/utils/path/to/str';
-import logo from './logo.svg';
+import { hello } from '@hel-demo/mono-bslib';
+import React from 'react';
+import pkg from '../package.json';
 import './App.css';
 import styles from './App.module.css';
-import pkg from '../package.json';
+import logo from './logo.svg';
 
 function App() {
   const [greetLabel] = React.useState(hello());

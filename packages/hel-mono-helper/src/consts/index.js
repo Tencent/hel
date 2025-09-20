@@ -23,7 +23,6 @@ const HEL_TPL_INNER_DEMO_DIR = path.join(srcPath, './tpls-demo');
 
 const HEL_TPL_INNER_DEMO_MOD_DIR = path.join(srcPath, './tpls-demo-mod');
 
-
 /**
  * 这些目录不能用来命名为项目目录
  */
