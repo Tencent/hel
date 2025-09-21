@@ -1,4 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
+/** @typedef {import('hel-mono-types').IHelMonoJson} IHelMonoJson */
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('../types').IGetModMonoDataDictResult} IGetModMonoDataDictResult */
 /** @typedef {import('../types').IPkgMonoDepData} IPkgMonoDepData */
@@ -21,13 +22,16 @@ function rewriteMonoJson(newJson) {
   fs.writeFileSync(monoJsonPath, JSON.stringify(newJson, null, 2));
 }
 
+/**
+ * @returns {IHelMonoJson}
+ */
 function getRawMonoJson() {
   const monoJsonPath = getMonoJsonFilePath();
   let monoJson = null;
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;

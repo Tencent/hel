@@ -113,7 +113,7 @@ function inferDevInfo(allowMonoJsonNull) {
   const {
     appsDirs,
     subModDirs,
-    externals = APP_EXTERNALS,
+    appExternals = APP_EXTERNALS,
     devHostname,
     helMicroName,
     helLibProxyName,
@@ -127,7 +127,7 @@ function inferDevInfo(allowMonoJsonNull) {
     monoDict,
     prefixedDirDict,
     dirDict,
-    appExternals: externals,
+    appExternals,
     appsDirs,
     subModDirs,
     exclude,

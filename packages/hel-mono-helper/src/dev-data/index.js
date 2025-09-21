@@ -138,6 +138,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const { forEX } = options;
   const isExMode = isEXProject(targetAppSrc) || forEX;
   const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
+  const isDev = process.env.NODE_ENV === 'development';
 
   const key = `${targetAppSrc}_${needAllDep}`;
   if (cachedResult[key]) {
@@ -149,6 +150,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
   let appSrc = targetAppSrc;
+  /** @type {import('../types').ICWDAppData} */
   const appData = options.appData || getCWDAppData(devInfo, appCwd);
   const { isForRootHelDir } = appData;
   const appTsConfigPaths = clone(appData.appTsConfigPaths);
@@ -282,7 +284,6 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
       appInfo.homePage = appPublicUrl;
     }
   } else {
-    const isDev = process.env.NODE_ENV === 'development';
     // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
     appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
   }
