@@ -6,7 +6,7 @@ const { createLibSubApp, baseUtils } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD, isFastRefreshMarked } = require('../util');
-const { clone } = require('../util/dict');
+const { clone, chooseBool } = require('../util/dict');
 const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
 const { inferMonoDepDict } = require('../util/monoJson');
@@ -129,6 +129,16 @@ function getExternals(/** @type DevInfo */ devInfo, depInfos) {
   return appExternals;
 }
 
+function getAppInfo(/** @type DevInfo */ devInfo, appPkgJson) {
+  const { platform, deployPath, appConfs } = devInfo;
+  const appConf = appConfs[appPkgJson.name];
+  const homePage = appConf.deployPath || deployPath;
+  const handleHomePage = chooseBool(appConf.handleDeployPath, devInfo.handleDeployPath, true);
+  const appInfo = createLibSubApp(appPkgJson, { platform, homePage, handleHomePage });
+
+  return appInfo;
+}
+
 /**
  * @returns {import('../types').IPkgMonoDepData | null}
  */
@@ -191,7 +201,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     isMicroStartOrBuild = false;
     shouldGetAllDep = true;
   } else {
-    // start xx:proxy 或 start xx:hel 模式启动
+    // start xx:hel 模式启动
     isMicroStartOrBuild = isForRootHelDir || isHelMicroMode();
     // hel 模式启动或构建，只需要获取直接依赖即可，反之则需要获取所有依赖
     shouldGetAllDep = !isMicroStartOrBuild;
@@ -286,14 +296,14 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     });
   }
 
-  // 提供给jest使用的单测别名
+  // 提供给 jest 使用的单测别名
   const jestAlias = {};
   Object.keys(pureAlias).forEach((key) => {
     jestAlias[`^${key}/(.*)$`] = `${pureAlias[key]}/$1`;
   });
 
   const appPkgJson = require(appData.realAppPkgJsonPath);
-  const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform, homePage: devInfo.deployPath });
+  const appInfo = getAppInfo(devInfo, appPkgJson);
   const appSrcIndex = getAppSrcIndex(appData);
   const devPublicUrl = appData.appPublicUrl;
 

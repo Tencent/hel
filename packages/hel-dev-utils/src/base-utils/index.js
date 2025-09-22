@@ -1,5 +1,4 @@
 /** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
-import cst from '../configs/consts';
 import { getNpmCdnHomePage } from '../inner-utils/index';
 
 /**

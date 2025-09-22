@@ -112,6 +112,7 @@ function inferDevInfo(allowMonoJsonNull) {
 
   const {
     deployPath = DEPLOY_PATH,
+    handleDeployPath = true,
     doc = HEL_MONO_DOC,
     appsDirs,
     subModDirs,
@@ -127,6 +128,7 @@ function inferDevInfo(allowMonoJsonNull) {
   let devInfo = {
     deployPath,
     doc,
+    handleDeployPath,
     platform,
     monoDict,
     prefixedDirDict,
@@ -148,12 +150,12 @@ function inferDevInfo(allowMonoJsonNull) {
 }
 
 /**
- * 获取可以合并到 monoJson 里的 devInfo 对象
+ * 获取可以合并到 monoJson 里的 devInfo 部分对象
  */
 function getDevInfoRest(/** @type {IDevInfo} */ devInfo) {
-  const keys = ['deployPath', 'doc'];
+  const keys = ['deployPath', 'doc', 'handleDeployPath'];
   const rest = {};
-  keys.forEach(key => rest[key] = devInfo[key]);
+  keys.forEach((key) => (rest[key] = devInfo[key]));
   return purify(rest);
 }
 

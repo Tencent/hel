@@ -16,9 +16,9 @@ function rewriteMonoJson(/** @type {IDevInfo} */ devInfo) {
 function rewriteMonoJsonForArgv(/** @type {IDevInfo} */ devInfo, /** @type {IArgvOptions} */ argvOptions, isSubMod) {
   const { pkgName, alias } = argvOptions;
 
-  const helConf = safeGet(devInfo.appConfs, pkgName);
-  helConf.port = getPortByDevInfo(devInfo, isSubMod);
-  helConf.alias = alias;
+  const appConf = safeGet(devInfo.appConfs, pkgName);
+  appConf.port = getPortByDevInfo(devInfo, isSubMod);
+  appConf.alias = alias;
   const monoJson = toMonoJson(devInfo);
   const filePath = getMonoJsonFilePath();
   fs.writeFileSync(filePath, JSON.stringify(monoJson, null, 2));

@@ -1,3 +1,30 @@
+
+/**
+ * 考虑兼容性，使用 getBool 替代 ?? 语法
+ */
+function getBool(dict, key, defaultBool = false) {
+  const val = dict[key];
+  if (typeof val === 'boolean') {
+    return val;
+  }
+
+  return defaultBool;
+}
+
+/**
+ * 考虑兼容性，使用 chooseBool 替代 ?? 语法
+ */
+function chooseBool(val1, val2, defaultBool = false) {
+  if (typeof val1 === 'boolean') {
+    return val1;
+  }
+  if (typeof val2 === 'boolean') {
+    return val2;
+  }
+
+  return defaultBool;
+}
+
 function safeGet(dict, key, val = {}) {
   let targetVal = dict[key];
   if (!targetVal) {
@@ -52,4 +79,6 @@ module.exports = {
   safeOnlyGet,
   purify,
   purifyUndefined,
+  getBool,
+  chooseBool,
 };

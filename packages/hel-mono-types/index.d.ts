@@ -6,6 +6,24 @@ type PkgName = string;
 type DeployEnv = string;
 type HelModName = string;
 
+export interface IHelMonoModBase {
+  /**
+   * 模块的 tsconfig.json 里使用的别名
+   */
+  alias?: string;
+  /**
+   * default: IHelMonoJsonBase['deployPath']
+   * 当需要单独对某个模式设置 deployPath 时，可配置此项
+   */
+  deployPath?: string;
+  /**
+   * default: IHelMonoJsonBase['handleDeployPath']
+   * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
+   */
+  handleDeployPath?: boolean;
+}
+
+
 /**
  * hel应用（模块）配置
  */
@@ -26,7 +44,7 @@ export interface IHelModConf {
   platform?: string;
 }
 
-export interface IMonoAppBaseConf {
+export interface IMonoAppConf extends IHelMonoModBase {
   /**
    * 应用启动端口，建议配置，未配置的话内部会自动推导
    */
@@ -40,13 +58,6 @@ export interface IMonoAppBaseConf {
    * hel应用（模块）相关配置，适用于 helpack 平台需要
    */
   hel?: IHelModConf;
-}
-
-export interface IMonoAppConf extends IMonoAppBaseConf {
-  /**
-   * 应用相对路径别名
-   */
-  alias?: string;
 }
 
 /**
@@ -78,6 +89,11 @@ export interface IHelMonoJsonBase {
    * ```
    */
   deployPath?: string;
+  /**
+   * default: true
+   * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
+   */
+  handleDeployPath?: boolean;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
@@ -150,19 +166,22 @@ export interface IMonoInjectedDevInfo {
  * package.json 里 hel 节点配置描述
  */
 export interface IPkgHelConf {
+  /**
+   * 提供给自定义流水线参考的编译命令
+   */
   ciCmd?: string;
+  /**
+   * 提供给自定义流水线参考的模块组名
+   */
   groupName?: string;
+  /**
+   * 提供给自定义流水线参考的各个环境模块名
+   */
   names?: Record<DeployEnv, HelModName>;
-  port?: number;
-  alias?: string;
 }
 
-export interface IHelMonoMod {
+export interface IHelMonoMod extends IHelMonoModBase {
   port: number;
-  /**
-   * 模块的 tsconfig.json 里使用的别名
-   */
-  alias?: string;
 }
 
 /**
