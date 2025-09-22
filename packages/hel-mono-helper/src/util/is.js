@@ -53,8 +53,8 @@ function isHelStartWithLocalDeps() {
   return [HEL_START_AND_WAIT_LOCAL_DEPS, HEL_START_WITH_LOCAL_RUNNING_DEPS].includes(helStartMode);
 }
 
-function isSupportFastRefresh() {
-  const hasFRFlag = process.argv.some(v => v === '-fr') || process.argv.some(v => v === '--fast-refresh');
+function isFastRefreshMarked() {
+  const hasFRFlag = process.argv.some((v) => v === '-fr') || process.argv.some((v) => v === '--fast-refresh');
   return hasFRFlag && isHelStartWithLocalDeps();
 }
 
@@ -65,5 +65,5 @@ module.exports = {
   isHelExternalBuild,
   isHelStart,
   isHelStartWithLocalDeps,
-  isSupportFastRefresh,
+  isFastRefreshMarked,
 };

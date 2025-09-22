@@ -5,7 +5,7 @@ const fs = require('fs');
 const { createLibSubApp, baseUtils } = require('hel-dev-utils');
 const { VER } = require('../consts');
 const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
-const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD } = require('../util');
+const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD, isFastRefreshMarked } = require('../util');
 const { clone } = require('../util/dict');
 const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
@@ -110,6 +110,25 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
   appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
 }
 
+function getExternals(/** @type DevInfo */ devInfo, depInfos) {
+  const { appExternals = {} } = devInfo;
+
+  // react fast refresh 会在 react 使用外部资源时失效
+  // 当用户明确开启了 -fr 标识且以 hel 模式运行，同时存在本仓的多个子依赖时，为保证 fr 体验，剔除掉相关外部资源配置
+  if (isFastRefreshMarked() && depInfos.length > 0) {
+    const newExternals = {};
+    const rLibs = ['react', 'react-dom', 'react-is', 'react-reconciler'];
+    Object.keys(appExternals).forEach((key) => {
+      if (!rLibs.includes(key)) {
+        newExternals[key] = appExternals[key];
+      }
+    });
+    return newExternals;
+  }
+
+  return appExternals;
+}
+
 /**
  * @returns {import('../types').IPkgMonoDepData | null}
  */
@@ -138,7 +157,6 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const { forEX } = options;
   const isExMode = isEXProject(targetAppSrc) || forEX;
   const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
-  const isDev = process.env.NODE_ENV === 'development';
 
   const key = `${targetAppSrc}_${needAllDep}`;
   if (cachedResult[key]) {
@@ -158,7 +176,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
   const babelLoaderInclude = [appSrc];
-  const { appExternals, exclude = [] } = devInfo;
+  const { exclude = [] } = devInfo;
 
   // 启动的是代理目录，需将 appSrc 指向真正的项目 src 目录
   if (isForRootHelDir) {
@@ -284,9 +302,11 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
       appInfo.homePage = appPublicUrl;
     }
   } else {
+    const isDev = process.env.NODE_ENV === 'development';
     // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
     appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
   }
+  const appExternals = getExternals(devInfo, depInfos);
 
   helMonoLog('isHelMode ', isHelModeVar);
   helMonoLog('appSrcIndex ', appSrcIndex);
@@ -304,7 +324,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     babelLoaderInclude,
     appAlias,
     jestAlias,
-    appExternals: appExternals,
+    appExternals,
     autoExternals: autoExternals,
     autoExternalDeps: nmL1ExternalDeps,
     appInfo,

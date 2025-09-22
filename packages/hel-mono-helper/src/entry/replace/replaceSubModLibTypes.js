@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');
-const { helMonoLog, isSupportFastRefresh } = require('../../util');
+const { helMonoLog, isFastRefreshMarked } = require('../../util');
 const { HEL_LIB_PROXY_NAME } = require('../../consts');
 const { genExportModuleNames, getModEntryFilePath } = require('./util');
 
@@ -17,13 +17,13 @@ module.exports = function replaceSubModLibTypes(/** @type {ICWDAppData} */ appDa
     oriModFilePath = getModEntryFilePath(realAppSrcDirPath, 'export');
   }
 
-  const isSupportFR = isSupportFastRefresh();
+  const isFRMarked = isFastRefreshMarked();
 
   helMonoLog(`replace content of ${filePath}`);
   rewriteFileLine(filePath, (line) => {
     let targetLine = line;
 
-    if (isSupportFR) {
+    if (isFRMarked) {
       if (line.includes('../configs/subApp') || line.includes('exposeLib')) {
         targetLine = `// ${line}`;
       } else if (line.includes('./libProperties')) {
@@ -37,7 +37,7 @@ module.exports = function replaceSubModLibTypes(/** @type {ICWDAppData} */ appDa
     } else if (line.includes(`from '${HEL_LIB_PROXY_NAME}'`)) {
       const newLine = line.replace(`from '${HEL_LIB_PROXY_NAME}'`, `from '${helLibProxyName}'`);
       targetLine = newLine;
-      if (isSupportFR) {
+      if (isFRMarked) {
         targetLine = [`// For react fast refresh, 4 lines below will be commented.`, `// ${newLine}`];
       }
     }
