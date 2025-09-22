@@ -31,7 +31,7 @@ function getRawMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) { }
+    } catch (err) {}
   }
 
   return monoJson;

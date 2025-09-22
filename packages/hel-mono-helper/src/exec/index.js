@@ -2,6 +2,7 @@
 const path = require('path');
 const { ACTION_NAME, INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, trySetLogName, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
+const { getPureArgv } = require('../util/argv');
 const { lastNItem } = require('../util/arr');
 const { inferDirFromDevInfo } = require('../util/monoDir');
 const { execAppAction } = require('./app');
@@ -59,7 +60,7 @@ function tryExecInnerAction(actionName, devInfo, options) {
 }
 
 function tryRecordKeywordForLog(/** @type {IDevInfo} */ devInfo) {
-  const argv = process.argv;
+  const argv = getPureArgv();
   const last1Str = lastNItem(argv);
 
   const th3Item = argv[2] || '';

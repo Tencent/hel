@@ -1,6 +1,7 @@
 // shelljs 相比 child_process.execSync 具有更好的控制台回显交互
 const shell = require('shelljs');
 const { getMonoRootInfo, helMonoLog } = require('../util');
+const { getCustomArgvStr, getPureArgv } = require('../util/argv');
 const { getCWD } = require('../util/base');
 const { cmdHistoryLog } = require('../util/log');
 const { getRawMonoJson } = require('../util/monoJson');
@@ -41,7 +42,7 @@ function getScriptKey(cmdKeyword) {
 function inferCmdRunContent(packName, options) {
   const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
   const prefixedDir = `${belongTo}/${dirName}`;
-  const argv = process.argv;
+  const argv = getPureArgv();
 
   if (argv.length === 2) {
     const arg1 = argv[1];
@@ -103,7 +104,8 @@ function inferCmdRunContent(packName, options) {
  */
 function genPnpmCmdAndRun(packName, options, cb) {
   const content = inferCmdRunContent(packName, options);
-  const pnpmRunCmd = `pnpm --filter ${packName} run ${content}`;
+  const customArgvStr = getCustomArgvStr();
+  const pnpmRunCmd = `pnpm --filter ${packName} run ${content}${customArgvStr}`;
   const runCmd = (fullCmd, cb) => {
     cmdHistoryLog(fullCmd);
     helMonoLog(`shell to be executed: ${fullCmd}`);
