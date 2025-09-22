@@ -1,4 +1,5 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
+/** @typedef {import('hel-mono-types').IHelMonoJson} IHelMonoJson */
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const devUtils = require('hel-dev-utils');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
@@ -19,7 +20,7 @@ function setHandleDevInfo(fn) {
   handleDevInfoFn = fn;
 }
 
-function getAppConfsAndMonoDataDict(monoJson) {
+function getAppConfsAndMonoDataDict(/** @type {IHelMonoJson} */ monoJson) {
   const argv = process.argv;
   const isChangeAliasCmd = argv.includes(INNER_ACTION.change) && argv.includes(CREATE_SHORT_PARAM_KEY.alias);
 
@@ -41,7 +42,7 @@ function getAppConfsAndMonoDataDict(monoJson) {
   // }
 
   repoPkgNames.forEach((pkgName) => {
-    const { port, alias, devHostname } = mods[pkgName] || {};
+    const { port, alias, devHostname, deployPath, handleDeployPath } = mods[pkgName] || {};
     const pkgMonoData = monoDict[pkgName] || {};
     let pkgHel = pkgMonoData.hel || {};
     const repoAlias = pkgMonoData.alias;
@@ -61,6 +62,8 @@ function getAppConfsAndMonoDataDict(monoJson) {
       port,
       alias: targetAlias,
       devHostname: pkgHel.devHostname || devHostname,
+      deployPath,
+      handleDeployPath,
       hel: {
         appGroupName: pkgHel.groupName,
         appNames: pkgHel.names || {},
