@@ -29,7 +29,7 @@ function isHelMode() {
 }
 
 /**
- * hel应用（模块）处于整体构建模式（即传统的单一应用构建模式）
+ * hel应用（模块）处于基于 hel 的整体构建模式（即传统的单一应用构建模式）
  */
 function isHelAllBuild() {
   return process.env.HEL_BUILD === HEL_ALL_BUILD;

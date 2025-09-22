@@ -293,11 +293,13 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   });
 
   const appPkgJson = require(appData.realAppPkgJsonPath);
-  const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform });
+  const appInfo = createLibSubApp(appPkgJson, { platform: devInfo.platform, homePage: devInfo.deployPath });
   const appSrcIndex = getAppSrcIndex(appData);
-  let appPublicUrl = `${appData.appPublicUrl}/`;
+  const devPublicUrl = appData.appPublicUrl;
+
+  let appPublicUrl = `${devPublicUrl}/`;
   if (isHelModeVar) {
-    appPublicUrl = isHelStart() ? `${appData.appPublicUrl}/` : appInfo.getPublicPathOrUrl(appData.appPublicUrl);
+    appPublicUrl = isHelStart() ? `${devPublicUrl}/` : appInfo.getPublicPathOrUrl(devPublicUrl);
     if (appInfo.homePage !== appPublicUrl) {
       appInfo.homePage = appPublicUrl;
     }

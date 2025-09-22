@@ -166,30 +166,37 @@ export interface ICreateSubAppOptions {
   externals?: Record<string, any>;
   homePage?: string;
   /**
+   * 本地开发时的 homePage 值，内部会优先从 process.env.HOST 和 process.env.PORT 去推导，
+   * 没有时才会读此值
+   * @since 5.3.3
+   */
+  homePageDev?: string;
+  /**
    * default: true，
-   * 当 platform 为 unpkg ，且用户自定义了 homePage 值时， 此参数才有作用
-   * 表示最终生成的homepage值是否拼接上模块名、版本号、hel内置目录等参数
+   * 表示最终生成的 homePage 值是否拼接上模块名、版本号、hel内置目录等参数
    * 例如用户设定 homePage: https://xxx.yyy.com/sub_path
-   * changeHomePage 为 true ，最终生成的 homePage 形如：https://xxx.yyy.com/sub_path/pack-name@1.0.0/hel_dist/
-   * changeHomePage 为 false ，最终生成的 homePage 形如：https://xxx.yyy.com/sub_path/
+   * handleHomePage 为 true ，最终生成的 homePage 形如：https://xxx.yyy.com/sub_path/pack-name@1.0.0/hel_dist/
+   * handleHomePage 为 false ，最终生成的 homePage 形如：https://xxx.yyy.com/sub_path/
+   * 用户未设定 homePage 时，会依据 npmCdnType 值从内部推导出 homePage
    */
   handleHomePage?: boolean;
   /**
-   * default: 外部包为 unpkg, 内部包为 hel
+   * default: 外部包为 unpkg
    */
   platform?: string;
-  /** default: unpkg ，当 platform 为 unpkg 时，此参数才有效
+  /**
+   * default: unpkg ，当 platform 为 unpkg 时，此参数才有效
    * 需要发布到npm cdn托管元数据时（支持语义化版本资源请求链接）可设定此值，
    * 目前支持 unpkg、jsdelivr，后期支持其他 cdn 类型
    */
   npmCdnType?: 'unpkg' | 'jsdelivr';
   /**
-   * default: true
-   * 是否是语义化api格式的cdn链接
+   * default: true，是否是语义化api格式的cdn链接
    */
   semverApi?: boolean;
   /**
-   * default: 'hel_dist'
+   * default: 'hel_dist'，此值强烈不建议修改，生态里大量库都默认了此目录为hel产物目录
+   * @deprecated
    */
   distDir?: string;
 }

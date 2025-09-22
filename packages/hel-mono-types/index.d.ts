@@ -66,6 +66,18 @@ export interface IHelMonoJsonBase {
    * 执行 pnpm run build 命令时，需要命中的具体 build 脚本
    */
   defaultBuild?: string;
+  /**
+   * default: 'https://unpkg.com'
+   * 部署路径，可设置为其他带子路径的域名，例如 https://cdn.jsdelivr.net/npm'、'https://mycdn.com/hel' 等，
+   * 最终生成的产物路径形如：'https://mycdn.com/hel/some-lib@some-ver/hel_dist'，
+   * 注：此值的优先级低于执行构建命令时传入的 HEL_APP_HOME_PAGE 、HEL_APP_CDN_PATH 环境变量
+   * ```
+   * HEL_APP_HOME_PAGE 优先级高于 HEL_APP_CDN_PATH，2者区别在于：
+   * 内部对 HEL_APP_HOME_PAGE 不做任何处理，直接当做 publicUrl 交给构建脚本
+   * 内对会 HEL_APP_CDN_PATH 做包名、版本号拼接操作后作为 publicUrl 交给构建脚本
+   * ```
+   */
+  deployPath?: string;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */

@@ -24,4 +24,6 @@ module.exports = {
     'hel-micro': 'HelMicro',
     'hel-lib-proxy': 'HelLibProxy',
   },
+  DEPLOY_PATH: 'https://unpkg.com',
+  HEL_MONO_DOC: 'https://tencent.github.io/hel/docs/hel-mono/basic',
 };
