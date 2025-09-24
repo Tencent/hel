@@ -21,6 +21,12 @@ export interface IHelMonoModBase {
    * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
    */
   handleDeployPath?: boolean;
+  /**
+   * default: default: IHelMonoJsonBase['isServerModOneBundle']
+   * true: 将 server 模块构建为一个文件，基于 tsup 构建
+   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   */
+  isServerModOneBundle?: boolean;
 }
 
 
@@ -94,6 +100,12 @@ export interface IHelMonoJsonBase {
    * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
    */
   handleDeployPath?: boolean;
+  /**
+   * default: true
+   * true: 将 server 模块构建为一个文件，基于 tsup 构建
+   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   */
+  isServerModOneBundle?: boolean;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */

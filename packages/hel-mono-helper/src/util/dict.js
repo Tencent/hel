@@ -13,14 +13,19 @@ function getBool(dict, key, defaultBool = false) {
 /**
  * 考虑兼容性，使用 chooseBool 替代 ?? 语法
  */
-function chooseBool(val1, val2, defaultBool = false) {
-  if (typeof val1 === 'boolean') {
-    return val1;
-  }
-  if (typeof val2 === 'boolean') {
-    return val2;
+function chooseBool(valList, defaultBool = false) {
+  let boolVal = null;
+  for (let i = 0; i < valList.length; i++) {
+    const val = valList[i];
+    if (typeof val === 'boolean') {
+      boolVal = val;
+      break;
+    }
   }
 
+  if (boolVal !== null) {
+    return boolVal;
+  }
   return defaultBool;
 }
 

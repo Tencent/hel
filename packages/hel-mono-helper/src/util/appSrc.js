@@ -48,7 +48,7 @@ function inferConfAlias(devInfo, options) {
 }
 
 function getPrefixedDirName(appSrc) {
-  const strList = appSrc.split('/');
+  const strList = appSrc.split(path.sep);
   const len = strList.length;
   return `${strList[len - 3]}/${strList[len - 2]}`;
 }
@@ -62,7 +62,7 @@ function getPrefixedDirName(appSrc) {
  * ```
  */
 function getAppBelongTo(appSrc) {
-  const strList = appSrc.split('/');
+  const strList = appSrc.split(path.sep);
   return strList[strList.length - 3];
 }
 
@@ -90,7 +90,7 @@ function getAppDirPath(appSrc) {
 
 function getAppCwd(appSrc) {
   let appCwd = appSrc;
-  if (appCwd.endsWith('/src')) {
+  if (appCwd.endsWith(`${path.sep}src`)) {
     appCwd = appSrc.substring(0, appSrc.length - 4);
   }
   return appCwd;

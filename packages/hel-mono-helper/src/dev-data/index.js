@@ -133,7 +133,7 @@ function getAppInfo(/** @type DevInfo */ devInfo, appPkgJson) {
   const { platform, deployPath, appConfs } = devInfo;
   const appConf = appConfs[appPkgJson.name];
   const homePage = appConf.deployPath || deployPath;
-  const handleHomePage = chooseBool(appConf.handleDeployPath, devInfo.handleDeployPath, true);
+  const handleHomePage = chooseBool([appConf.handleDeployPath, devInfo.handleDeployPath], true);
   const appInfo = createLibSubApp(appPkgJson, { platform, homePage, handleHomePage });
 
   return appInfo;

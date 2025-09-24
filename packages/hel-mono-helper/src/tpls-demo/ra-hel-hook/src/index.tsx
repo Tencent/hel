@@ -1,12 +1,10 @@
+import { getHostNode } from 'hel-mono-runtime-helper';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
-const helstart = process.env.REACT_APP_HEL_START;
-console.log('process.env.REACT_APP_HEL_START', helstart);
+ReactDOM.render(<App />, getHostNode());
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

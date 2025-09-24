@@ -91,11 +91,11 @@ export declare function getPkgMonoDepData(pkgName: string): IPkgMonoDepData | nu
 export declare function getPkgMonoDepDataDict(): DepDataDict;
 
 /**
- * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下，
- * tsc 产物保留了原始的目录层级结构，产物可能为多个文件，
- * tsup 产物将所有代码合并为一个js文件，
+ * 使用 tsc 或 tsup 构建后台产物（默认 tsup ），并复制到 hel_dist/srv 目录下，
+ * isServerModOneBundle：是否将 server 模块构建为一个文件，default 值取值顺序如下
+ * default: isServerModOneBundle ?? IHelMonoModBase['isServerModOneBundle'] ?? IHelMonoJsonBase['isServerModOneBundle'] ?? true
  */
-export declare function buildSrvModToHelDist(isUseTsup?: boolean): IMonoDevData;
+export declare function buildSrvModToHelDist(isServerModOneBundle?: IHelMonoJson['isServerModOneBundle']): IMonoDevData;
 
 type EnsurePkgHelFn = (pkgHel: IPkgHelConf, pkgName: string) => IPkgHelConf;
 

@@ -5,6 +5,7 @@ const path = require('path');
 const { HEL_EXTERNAL_HTML_PAH } = require('../../consts');
 const { helMonoLog } = require('../../util');
 const { rewriteFileLine } = require('../../util/rewrite');
+const { getContentLines } = require('../../util/xplat');
 
 /**
  * 替换 html 里的内容，提示用户正在提供哪些 external 模块
@@ -41,7 +42,7 @@ module.exports = function replaceExHtmlContent(/** @type {{appData:ICWDAppData }
       ];
       targetLine.push('<pre>');
       const str = JSON.stringify(nmL1ExternalDeps, null, 2);
-      const rawLines = str.split(os.EOL);
+      const rawLines = getContentLines(str);
       rawLines.forEach((v) => targetLine.push(v));
       targetLine.push('</pre>');
     }

@@ -1,10 +1,10 @@
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
+const { getContentLines } = require('./xplat');
 
 function getFileContentLines(filePath) {
   const content = fs.readFileSync(filePath, { encoding: 'utf8' });
-  const lines = content.split(os.EOL);
+  const lines = getContentLines(content);
   return lines;
 }
 

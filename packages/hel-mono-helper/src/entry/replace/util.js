@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
+const { getContentLines } = require('../../util/xplat');
 
 function noop() {}
 
@@ -79,7 +79,7 @@ function getOneLineExportStatement(strList, options) {
 function genExportModuleNames(filePath) {
   const res = fs.readFileSync(filePath);
   const content = res.toString();
-  const strList = content.split(os.EOL);
+  const strList = getContentLines(content);
   const lastIdx = strList.length - 1;
   const ignoreIdx = {};
   let modNames = [];
