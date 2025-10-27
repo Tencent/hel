@@ -1,5 +1,5 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const { rewriteFileLine } = require('../../util/rewrite');

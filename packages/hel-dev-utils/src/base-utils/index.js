@@ -1,5 +1,4 @@
 /** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
-import cst from '../configs/consts';
 import { getNpmCdnHomePage } from '../inner-utils/index';
 
 /**
@@ -53,20 +52,25 @@ export function getHelProcessEnvParams() {
     HEL_APP_HOME_PAGE,
     /** 在构建机环境时，会注入真正对应的应用名 */
     HEL_APP_GROUP_NAME,
+    // cdn 域名，未指定 HEL_APP_HOME_PAGE 但指定了 HEL_APP_CDN_PATH 时，
+    // 会生成形如 {HEL_APP_CDN_PATH}/{lib_name}@{version}/hel_dist 的 homePage 值
+    HEL_APP_CDN_PATH,
     HEL_APP_NAME,
   } = process.env;
 
-  let appHomePage = HEL_APP_HOME_PAGE;
-  // 未传递 HEL_APP_HOME_PAGE 的话，根据 HOST 和 PORT 推导
-  if (!appHomePage && (HOST || PORT)) {
+  let appHomePage = HEL_APP_HOME_PAGE || '';
+  let appHomePageDev = '';
+  if (HOST || PORT) {
     const host = HOST || 'localhost';
     const port = PORT || '80';
     const hotsStr = host.startsWith('http') ? host : `http://${host}`;
-    appHomePage = `${hotsStr}:${port}`;
+    appHomePageDev = `${hotsStr}:${port}`;
   }
 
   return {
     appHomePage,
+    appHomePageDev,
+    appCdnPath: HEL_APP_CDN_PATH,
     appGroupName: HEL_APP_GROUP_NAME,
     appName: HEL_APP_NAME,
   };
@@ -78,18 +82,25 @@ export function getHelProcessEnvParams() {
  * @returns
  */
 export function getHelEnvParams(pkg, options = {}) {
-  const { platform, distDir, homePage: userCustomHomePage, handleHomePage = true, npmCdnType } = options;
-  let cdnHomePage = '';
-  // 计算 unpkg 平台 的 homePage 值，此时如果透传了 homePage，表示 unpkg 为私服
-  if (platform === cst.DEFAULT_PLAT && handleHomePage) {
-    cdnHomePage = getNpmCdnHomePage(pkg, { distDir, npmCdnType, homePage: userCustomHomePage });
-  }
-
+  const { distDir, homePage: userCustomHomePage, handleHomePage = true, npmCdnType, homePageDev } = options;
   // 来自 process.env 的值优先级最高
   const p0EnvParams = getHelProcessEnvParams();
+
+  let cdnHomePage = '';
+  // 通常 unpkg 为私服时会透传 homePage 值
+  if (handleHomePage) {
+    const targetHomePage = p0EnvParams.appCdnPath || userCustomHomePage;
+    cdnHomePage = getNpmCdnHomePage(pkg, { distDir, npmCdnType, homePage: targetHomePage });
+  }
+
+  let appHomePage = p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '/';
+  if (process.env.NODE_ENV === 'development') {
+    appHomePage = p0EnvParams.appHomePageDev || homePageDev || '/';
+  }
+
   const appName = p0EnvParams.appName || pkg.appGroupName || pkg.name || '';
   return {
-    appHomePage: p0EnvParams.appHomePage || cdnHomePage || userCustomHomePage || pkg.homepage || '/',
+    appHomePage,
     appGroupName: p0EnvParams.appGroupName || pkg.appGroupName || appName,
     appName,
   };

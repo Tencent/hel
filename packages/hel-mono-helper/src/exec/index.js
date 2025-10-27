@@ -1,5 +1,8 @@
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
+const path = require('path');
 const { ACTION_NAME, INNER_ACTION, INNER_ACTION_NAMES } = require('../consts');
 const { getCmdKeywordName, trySetLogName, getCWD, helMonoLog, helMonoErrorLog, clearMonoLog } = require('../util');
+const { getPureArgv } = require('../util/argv');
 const { lastNItem } = require('../util/arr');
 const { inferDirFromDevInfo } = require('../util/monoDir');
 const { execAppAction } = require('./app');
@@ -56,36 +59,59 @@ function tryExecInnerAction(actionName, devInfo, options) {
   process.exit(1);
 }
 
-function tryRecordKeywordForLog() {
-  const argv = process.argv;
+function tryRecordKeywordForLog(/** @type {IDevInfo} */ devInfo) {
+  const argv = getPureArgv();
   const last1Str = lastNItem(argv);
 
   const th3Item = argv[2] || '';
-  const [pureLocation = ''] = th3Item.split(':');
   // 是 ['/xx/bin/node', '/xx/root-scripts/executeStart', '<dirOrPkg>:for', '...']
-  if (trySetLogName(pureLocation)) {
-    return;
+  const [pureLocation = ''] = th3Item.split(':');
+  if (pureLocation) {
+    const { monoDict } = devInfo;
+    // 暂定统一用二级目录名作为日志名称
+    // TODO：后续统一用包名？普通的 yyy 转为 yyy.log 带 scope 的 @xxx/yyy 转为 @xxx+yyy.log
+    let dirName = pureLocation;
+    if (monoDict[pureLocation]) {
+      dirName = monoDict[pureLocation].dirName;
+    }
+
+    if (trySetLogName(dirName)) {
+      return true;
+    }
   }
 
   if (trySetLogName(last1Str)) {
-    return;
+    return true;
   }
   const last2Str = lastNItem(argv, 2);
-  trySetLogName(last2Str);
+  return trySetLogName(last2Str);
 }
 
-function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
-  tryRecordKeywordForLog();
-  const { appAction, innerAction } = options;
+function getRawKeywordName(/** @type {IDevInfo} */ devInfo) {
+  const isSuccess = tryRecordKeywordForLog(devInfo);
   const cwd = getCWD();
   let rawKeywordName = getCmdKeywordName();
   if (!rawKeywordName) {
-    rawKeywordName = inferDirFromDevInfo(devInfo);
+    const last1Str = lastNItem(cwd.split(path.sep));
+    if (devInfo.dirDict[last1Str]) {
+      rawKeywordName = last1Str;
+    } else {
+      rawKeywordName = inferDirFromDevInfo(devInfo);
+    }
+  }
+  if (!isSuccess) {
+    trySetLogName(rawKeywordName);
   }
 
+  return rawKeywordName;
+}
+
+function execCmdByActionName(/** @type {IDevInfo} */ devInfo, options) {
+  const { appAction, innerAction } = options;
+  const rawKeywordName = getRawKeywordName(devInfo);
   clearMonoLog();
   clearMonoLog(true, true);
-  helMonoLog(`execCmdByActionName ${appAction}: cwd ${cwd}, rawKeywordName ${rawKeywordName}`);
+  helMonoLog(`execCmdByActionName ${appAction}: cwd ${getCWD()}, rawKeywordName ${rawKeywordName}`);
 
   const innerActionVar = innerAction || rawKeywordName || '';
   // 尝试执行内部预设的动作函数
@@ -100,21 +126,21 @@ function execCmdByActionName(/** @type {import('hel-mono-types').IMonoDevInfo} *
 /**
  * 基于 npm start xxx 来启动或构建宿主
  */
-exports.executeStart = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, options) {
+exports.executeStart = function (/** @type {IDevInfo} */ devInfo, options) {
   execCmdByActionName(devInfo, { appAction: ACTION_NAME.start, ...(options || {}) });
 };
 
 /**
  * 基于 npm build xxx 构建应用
  */
-exports.executeBuild = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+exports.executeBuild = function (/** @type {IDevInfo} */ devInfo) {
   execCmdByActionName(devInfo, { appAction: ACTION_NAME.build });
 };
 
 /**
  * 基于 npm start xxx:deps 启动hel子模块依赖
  */
-exports.executeStartDeps = function (/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo) {
+exports.executeStartDeps = function (/** @type {IDevInfo} */ devInfo) {
   execCmdByActionName(devInfo, { innerAction: INNER_ACTION.startHelDeps });
 };
 

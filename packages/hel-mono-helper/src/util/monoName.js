@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const { cst } = require('hel-dev-utils');
@@ -57,7 +57,7 @@ function getMonoLevel1NameMap(level1DirName) {
  * 获取整个大仓的目录与应用、应用与目录映射关系
  * @returns {import('../types').IMonoNameMap}
  */
-function getMonoNameMap(/** @type {IMonoDevInfo} */ devInfo) {
+function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
   const { appsDirs, subModDirs } = getDevInfoDirs(devInfo);
   const dupDirs = intersection(appsDirs, subModDirs);
   if (dupDirs.length > 0) {
@@ -151,7 +151,7 @@ function getBuildDirPath(devInfo, pkgName, buildDir = cst.HEL_DIST_DIR) {
   return path.join(appDirPath, `./${buildDir}`);
 }
 
-function getCmdDPNameData(/** @type {IMonoDevInfo} */ devInfo, dirOrPkgName) {
+function getCmdDPNameData(/** @type {IDevInfo} */ devInfo, dirOrPkgName) {
   const { pkg2Dir, dir2Pkgs, prefixedDir2Pkg, pkg2BelongTo } = getMonoNameMap(devInfo);
   const dirName = pkg2Dir[dirOrPkgName];
   const pkgName = prefixedDir2Pkg[dirOrPkgName];

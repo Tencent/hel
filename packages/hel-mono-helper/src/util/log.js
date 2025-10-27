@@ -4,6 +4,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { LOG_PREFIX, LOG_PREFIX_TMP } = require('../consts');
 const { lastItem, lastNItem } = require('./arr');
+const { getPureArgv } = require('./argv');
 const { getCWD } = require('./base');
 const { inferDevInfo } = require('./devInfo');
 const { inferDirFromDevInfo } = require('./monoDir');
@@ -20,10 +21,12 @@ let curLogName = '';
  * 记录 keyword，辅助日志路径定位
  */
 function trySetLogName(keyword, shouldPure = true) {
+  if (!keyword) {
+    return false;
+  }
   if (keyword.startsWith('.')) {
     return false;
   }
-
   // 是 /xxx/yy/.bin/node, /xx/yy/dev/execStart 等完整路径关键字
   const strList = keyword.split(path.sep);
   if (strList.length > 2) {
@@ -86,7 +89,7 @@ function getLogFilePath(isTmp) {
 
   const { monoRootHelLog, monoRoot } = getMonoRootInfo();
   // 触发 [.../bin/node, .../root-scripts/executeStart, xx:hel]
-  const argv = process.argv;
+  const argv = getPureArgv();
   const last1Str = lastNItem(argv);
   const last2Str = lastNItem(argv, 2);
   if (last2Str.includes('/executeStart')) {

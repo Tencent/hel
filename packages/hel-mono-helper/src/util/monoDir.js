@@ -1,3 +1,4 @@
+const { getPureArgv } = require('./argv');
 const { lastNItem } = require('./arr');
 const { getDevInfoDirs } = require('./base');
 const { getMonoRootInfo } = require('./rootInfo');
@@ -21,7 +22,7 @@ function inferDirFromDevInfo(devInfo, allowEmptyDir) {
 }
 
 function inferDirFromArgv2ndItem(devInfo, allowEmptyDir) {
-  const argv = process.argv;
+  const argv = getPureArgv();
   const mayDirName = lastNItem(argv, 2);
 
   if (mayDirName) {

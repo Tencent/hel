@@ -1,6 +1,7 @@
 // shelljs 相比 child_process.execSync 具有更好的控制台回显交互
 const shell = require('shelljs');
 const { getMonoRootInfo, helMonoLog } = require('../util');
+const { getCustomArgvStr, getPureArgv } = require('../util/argv');
 const { getCWD } = require('../util/base');
 const { cmdHistoryLog } = require('../util/log');
 const { getRawMonoJson } = require('../util/monoJson');
@@ -19,9 +20,17 @@ function getDefaultStart() {
   return monoJson.defaultStart || '';
 }
 
+function getDefaultBuild() {
+  const monoJson = getRawMonoJson() || {};
+  return monoJson.defaultBuild || '';
+}
+
 function getScriptKey(cmdKeyword) {
   if (cmdKeyword === ACTION_NAME.start) {
     return getDefaultStart() || ACTION_NAME.startHel;
+  }
+  if (cmdKeyword === ACTION_NAME.build) {
+    return getDefaultBuild() || ACTION_NAME.buildHel;
   }
 
   return cmdKeyword;
@@ -33,10 +42,17 @@ function getScriptKey(cmdKeyword) {
 function inferCmdRunContent(packName, options) {
   const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
   const prefixedDir = `${belongTo}/${dirName}`;
-  const argv = process.argv;
+  const argv = getPureArgv();
+
   if (argv.length === 2) {
+    const arg1 = argv[1];
     // 类似 ['/xx/bin/node', '/xx/root-scripts/executeStart']
-    if (argv[1].includes('root-scripts')) {
+    const isRootScriptsCall = arg1.includes('root-scripts');
+    if (isRootScriptsCall) {
+      const isBuild = arg1.includes('buildApp');
+      if (isBuild) {
+        return getDefaultBuild() || ACTION_NAME.buildHel;
+      }
       return getDefaultStart() || ACTION_NAME.startHel;
     }
     // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
@@ -73,6 +89,12 @@ function inferCmdRunContent(packName, options) {
     return `start:for ${restArgs.join(' ')}`;
   }
 
+  // 接受来着 build 生成的命令
+  // 例如根目录执行 pnpm run build xx:yy --> 翻译为 pnpm --filter xx run build:yy
+  if (scriptCmdKey.startsWith('build:')) {
+    return scriptCmdKey;
+  }
+
   // 丢弃 restArgs，目前暂无用处
   return `start${action ? `:${action}` : ACTION_NAME.startHel}`;
 }
@@ -82,10 +104,11 @@ function inferCmdRunContent(packName, options) {
  */
 function genPnpmCmdAndRun(packName, options, cb) {
   const content = inferCmdRunContent(packName, options);
-  const pnpmRunCmd = `pnpm --filter ${packName} run ${content}`;
+  const customArgvStr = getCustomArgvStr();
+  const pnpmRunCmd = `pnpm --filter ${packName} run ${content}${customArgvStr}`;
   const runCmd = (fullCmd, cb) => {
     cmdHistoryLog(fullCmd);
-    helMonoLog(`will execute shell: ${fullCmd}`);
+    helMonoLog(`shell to be executed: ${fullCmd}`);
     return shell.exec(fullCmd, cb);
   };
 

@@ -39,6 +39,17 @@ export type GetHelDeps = () => { helModNames: string[], helDeps: IHelDep[] };
 
 export type GetPrefetchParams = (helModName: string, mod: IMonoInjectedMod) => IPrefetchParams;
 
+export interface IHelConfKeys {
+  /** 具体hel模块的调试链接 key */
+  devUrl: string;
+  /** 具体hel模块的分支 key */
+  branchId: string;
+  /** 具体hel模块的版本号 key */
+  versionId: string;
+  /** 具体hel模块的项目id key */
+  projectId: string;
+}
+
 export type RuntimeUtil = {
   getHelDeps: GetHelDeps;
   getPrefetchParams: GetPrefetchParams;

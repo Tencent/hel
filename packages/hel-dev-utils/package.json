@@ -1,6 +1,6 @@
 {
   "name": "hel-dev-utils",
-  "version": "5.2.7",
+  "version": "5.3.4",
   "description": "hel dev utils",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "hel-types": "^4.3.10",
-    "jsdom": ">=19.0.0"
+    "jsdom": "^19.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -39,7 +39,7 @@
   },
   "peerDependencies": {
     "hel-types": "^4.3.10",
-    "jsdom": ">=19.0.0"
+    "jsdom": "^19.0.0"
   },
   "bundleDependencies": false,
   "deprecated": false

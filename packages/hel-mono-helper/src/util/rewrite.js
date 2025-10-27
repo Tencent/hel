@@ -4,6 +4,7 @@ const path = require('path');
 const { lastItem } = require('./arr');
 const { HEL_DEL_MARK } = require('../consts');
 const { getFileInfoList, getFileContentLines } = require('./file');
+const { getContentLines } = require('./xplat');
 
 /**
  * 重新文件里的每一行数据，支持以下3种模式
@@ -13,7 +14,7 @@ const { getFileInfoList, getFileContentLines } = require('./file');
  */
 function rewriteFileLine(filepath, replaceLineCb) {
   const content = fs.readFileSync(filepath, { encoding: 'utf-8' });
-  const rawLines = content.split(os.EOL);
+  const rawLines = getContentLines(content);
   const targetLines = [];
   const defaultCb = (line) => ({ line });
   const lineCb = replaceLineCb || defaultCb;

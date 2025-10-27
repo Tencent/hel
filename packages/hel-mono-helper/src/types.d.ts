@@ -1,5 +1,5 @@
 import type { ISubAppBuildDesc } from 'hel-dev-utils';
-import type { IMonoDevInfo, IPkgHelConf } from 'hel-mono-types';
+import type { IHelMonoJsonBase, IPkgHelConf, MonoAppConfs } from 'hel-mono-types';
 
 type Dict<T = any> = Record<string, T>;
 
@@ -245,7 +245,7 @@ export interface IMonoDevData {
   appAlias: Record<string, string>;
   jestAlias: Record<string, string>;
   /**
-   * hel-mono.json里全局指定的 externals
+   * hel-mono.json 里指定的全局 externals
    */
   appExternals: Record<string, string>;
   /**
@@ -278,6 +278,16 @@ export interface IMonoDevData {
    */
   appTsConfigPaths: string;
   resolveMonoRoot: (relativePath: string) => string;
+}
+
+/**
+ * hel-mono-helper 内部使用的大仓开发信息数据
+ */
+export interface IMonoDevInfo extends IHelMonoJsonBase, IGetModMonoDataDictResult {
+  /**
+   * 各应用（或子模块）的大仓开发配置
+   */
+  appConfs: MonoAppConfs;
 }
 
 export interface IPrepareHelEntrysOptions {

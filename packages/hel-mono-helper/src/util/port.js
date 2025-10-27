@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const path = require('path');
 const { lastNItem } = require('./arr');
 const { isHelExternalBuild } = require('./is');
@@ -25,7 +25,7 @@ function computeNewPort(maxPort, isSubMod) {
   return newPort;
 }
 
-function getPortByDevInfo(/** @type {IMonoDevInfo} */ devInfo, isSubMod) {
+function getPortByDevInfo(/** @type {IDevInfo} */ devInfo, isSubMod) {
   const mods = devInfo.mods || devInfo.appConfs;
   const { monoDict } = getModMonoDataDict(devInfo);
 

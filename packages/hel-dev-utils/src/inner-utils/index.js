@@ -1,5 +1,6 @@
 /** @typedef {import('../types').FileDesc} FileDesc*/
 import * as fs from 'fs';
+import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
 
 /**
@@ -118,7 +119,8 @@ export function getNpmCdnHomePage(packageJson, options) {
   const { npmCdnType = cst.DEFAULT_NPM_CDN_TYPE, distDir = cst.HEL_DIST_DIR, homePage } = options;
   const { name, version } = packageJson;
   // 优先考虑用户透传的 homePage，表示用户部署了 unpkg 私服
-  const unpkgHost = homePage || cdnType2host[npmCdnType] || '';
+  const deployPath = homePage || cdnType2host[npmCdnType] || '';
+
   // TODO，未来考虑更多类型的 cdn，如：jsdelivr
-  return `${unpkgHost}/${name}@${version}/${distDir}`;
+  return `${slash.end(deployPath)}${name}@${version}/${distDir}`;
 }

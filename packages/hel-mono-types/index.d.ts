@@ -6,6 +6,30 @@ type PkgName = string;
 type DeployEnv = string;
 type HelModName = string;
 
+export interface IHelMonoModBase {
+  /**
+   * 模块的 tsconfig.json 里使用的别名
+   */
+  alias?: string;
+  /**
+   * default: IHelMonoJsonBase['deployPath']
+   * 当需要单独对某个模式设置 deployPath 时，可配置此项
+   */
+  deployPath?: string;
+  /**
+   * default: IHelMonoJsonBase['handleDeployPath']
+   * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
+   */
+  handleDeployPath?: boolean;
+  /**
+   * default: default: IHelMonoJsonBase['isServerModOneBundle']
+   * true: 将 server 模块构建为一个文件，基于 tsup 构建
+   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   */
+  isServerModOneBundle?: boolean;
+}
+
+
 /**
  * hel应用（模块）配置
  */
@@ -26,7 +50,7 @@ export interface IHelModConf {
   platform?: string;
 }
 
-export interface IMonoAppBaseConf {
+export interface IMonoAppConf extends IHelMonoModBase {
   /**
    * 应用启动端口，建议配置，未配置的话内部会自动推导
    */
@@ -42,52 +66,76 @@ export interface IMonoAppBaseConf {
   hel?: IHelModConf;
 }
 
-export interface IMonoAppConf extends IMonoAppBaseConf {
-  /**
-   * 应用相对路径别名
-   */
-  alias?: string;
-}
-
 /**
  * 大仓应用（模块）的配置，key：应用（模块）在大仓里的包名，value：对应的配置对象
  */
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
-/**
- * hel-mono 大仓开发信息
- */
-export interface IMonoDevInfo {
+
+export interface IHelMonoJsonBase {
   /**
-   * externals 映射配置
+   * default: 'start:hel'
+   * 执行 pnpm run start 命令时，需要命中的具体 start 脚本
    */
-  appExternals: Record<string, string>;
+  defaultStart?: string;
   /**
-   * 各应用（或子模块）的大仓开发配置
+   * default: 'build:hel'
+   * 执行 pnpm run build 命令时，需要命中的具体 build 脚本
    */
-  appConfs: MonoAppConfs;
+  defaultBuild?: string;
+  /**
+   * default: 'https://unpkg.com'
+   * 部署路径，可设置为其他带子路径的域名，例如 https://cdn.jsdelivr.net/npm'、'https://mycdn.com/hel' 等，
+   * 最终生成的产物路径形如：'https://mycdn.com/hel/some-lib@some-ver/hel_dist'，
+   * 注：此值的优先级低于执行构建命令时传入的 HEL_APP_HOME_PAGE 、HEL_APP_CDN_PATH 环境变量
+   * ```
+   * HEL_APP_HOME_PAGE 优先级高于 HEL_APP_CDN_PATH，2者区别在于：
+   * 内部对 HEL_APP_HOME_PAGE 不做任何处理，直接当做 publicUrl 交给构建脚本
+   * 内对会 HEL_APP_CDN_PATH 做包名、版本号拼接操作后作为 publicUrl 交给构建脚本
+   * ```
+   */
+  deployPath?: string;
+  /**
+   * default: true
+   * 是否要对 deployPath 做处理，拼接上模块名、版本号参数
+   */
+  handleDeployPath?: boolean;
+  /**
+   * default: true
+   * true: 将 server 模块构建为一个文件，基于 tsup 构建
+   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   */
+  isServerModOneBundle?: boolean;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
   /**
+   * default: {
+   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
+   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
+   * }，
+   * 全局 externals
+   */
+  appExternals?: Record<string, string>;
+  /**
    * start:hel 或 build:hel 时，这些包排除到微模块构建体系之外，
-   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块时hel模块时才有意义）
+   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块是hel模块时设置此参数才有作用）
    */
   exclude?: string[];
   /**
-   * default: 'http://localhost'
-   * 所有hel模块本地联调时的域名
-   */
+ * default: 'http://localhost'
+ * 所有hel模块本地联调时的域名
+ */
   devHostname?: string;
   /**
-   * default: hel-micro
-   * 模板文件里使用的 hel-micro sdk，如用户基于hel-micro向上封装了自己的sdk，这里可配置封装sdk的名称，
+   * default: 'hel-micro'
+   * 模板文件里使用的 hel-micro sdk，如用户基于 hel-micro 向上封装了自己的sdk，这里可配置封装sdk的名称，
    * 让生成的模板文件里 sdk 路径指向用户 sdk
    */
   helMicroName?: string;
   /**
-   * default: hel-lib-proxy
+   * default: 'hel-lib-proxy'
    * 模板文件里使用的 hel-lib-proxy sdk 名称，如有自定义包可定义此值，让生成的模板文件里 sdk 路径指向用户 sdk
    */
   helLibProxyName?: string;
@@ -130,22 +178,27 @@ export interface IMonoInjectedDevInfo {
  * package.json 里 hel 节点配置描述
  */
 export interface IPkgHelConf {
-  ciCmd?: string;
-  groupName?: string;
-  names?: Record<DeployEnv, HelModName>;
-  port?: number;
-  alias?: string;
-}
-
-export interface IHelMonoMod {
-  port: number;
-  alias?: string;
-}
-
-export interface IHelMonoJson {
-  mods: Record<PkgName, IHelMonoMod>;
   /**
-   * start:hel 或 build:hel 时，需排除的 hel 模块
+   * 提供给自定义流水线参考的编译命令
    */
-  exclude: string[];
+  ciCmd?: string;
+  /**
+   * 提供给自定义流水线参考的模块组名
+   */
+  groupName?: string;
+  /**
+   * 提供给自定义流水线参考的各个环境模块名
+   */
+  names?: Record<DeployEnv, HelModName>;
+}
+
+export interface IHelMonoMod extends IHelMonoModBase {
+  port: number;
+}
+
+/**
+ * 用户可配置的  hel-mono.json 数据，通常是在 pnpm start .init-mono 生成的文件里做修改
+ */
+export interface IHelMonoJson extends IHelMonoJsonBase {
+  mods: Record<PkgName, IHelMonoMod>;
 }

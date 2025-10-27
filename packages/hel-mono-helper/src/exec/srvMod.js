@@ -2,28 +2,41 @@ const shell = require('shelljs');
 const path = require('path');
 const fs = require('fs');
 const { getCWD, helMonoLog } = require('../util');
+const { chooseBool } = require('../util/dict');
+const { getRawMonoJson } = require('../util/monoJson');
 
 /**
  * 使用 tsc 或 tsup 构建后台产物（默认tsc），并复制到 hel_dist/srv 目录下
  */
-exports.buildSrvModToHelDist = function (isUseTsup = false) {
+exports.buildSrvModToHelDist = function (isServerModOneBundle) {
   const projectDir = getCWD();
-  const projectJson = require(path.join(projectDir, './package.json'));
-  const projectName = projectJson.name;
-  helMonoLog(`start build hel srv mod of ${projectName}(with arg isUseTsup=${isUseTsup})...`);
+  const pkgJson = require(path.join(projectDir, './package.json'));
+  const pkgName = pkgJson.name;
 
-  if (isUseTsup) {
-    shell.exec(`pnpm --filter ${projectName} run build:npm`);
-  } else {
-    shell.exec(`pnpm --filter ${projectName} run tsc`);
+  let isOneBundle = isServerModOneBundle;
+  if (typeof isOneBundle !== 'boolean') {
+    const monoJson = getRawMonoJson() || {};
+    const mods = monoJson.mods || {};
+    const modConf = mods[pkgName] || {};
+    isOneBundle = chooseBool([modConf.isServerModOneBundle, monoJson.isServerModOneBundle], true);
   }
-  helMonoLog(`build hel srv mod done`);
+
+  helMonoLog(`start build hel srv mod of ${pkgName}(with arg isServerModOneBundle=${isOneBundle})...`);
+
+  if (isOneBundle) {
+    shell.exec(`pnpm --filter ${pkgName} run build:npm`);
+  } else {
+    shell.exec(`pnpm --filter ${pkgName} run tsc`);
+  }
+  helMonoLog(`build ${pkgName} hel srv mod done`);
 
   const srvModCopyTo = path.join(projectDir, './hel_dist/srv');
-  fs.mkdirSync(srvModCopyTo);
+  if (!fs.existsSync(srvModCopyTo)) {
+    fs.mkdirSync(srvModCopyTo, { recursive: true });
+  }
   shell.exec('start to copy hel srv mode build assets...');
 
-  if (isUseTsup) {
+  if (isOneBundle) {
     const srvModFileCopyFrom = path.join(projectDir, './dist/index.js');
     const srvModFileCopyTo = path.join(srvModCopyTo, './index.js');
     fs.copyFileSync(srvModFileCopyFrom, srvModFileCopyTo);

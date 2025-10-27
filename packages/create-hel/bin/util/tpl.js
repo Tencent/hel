@@ -5,6 +5,7 @@ const shell = require('shelljs');
 const { getConfig } = require('../config');
 const { getDepPathStat } = require('./dep');
 const { logDebug, logTip } = require('./log');
+const { fmtPath } = require('./xpath');
 
 /**
  * 推导 hel-mono-templates 包位置，如不存在则尝试安装
@@ -38,8 +39,8 @@ function ensureHelMonoTemplates() {
 
     let npmKey = argv.some((v) => v.includes('.npm')) ? 'npm' : 'pnpm';
 
-    if (argv[0].includes('/bin/node') && npmKey !== 'pnpm') {
-      npmKey = argv[0].replace('/bin/node', '/bin/npm');
+    if (argv[0].includes(fmtPath('/bin/node')) && npmKey !== 'pnpm') {
+      npmKey = argv[0].replace(fmtPath('/bin/node'), fmtPath('/bin/npm'));
       logDebug(`Use new var: npmKey ${npmKey}`);
     }
 
@@ -57,7 +58,7 @@ function ensureHelMonoTemplates() {
 
 function getHelMonoTemplatesVerByPath(mayModIndexPath, clearCache) {
   let modPath = mayModIndexPath;
-  if (modPath.endsWith('/index.js')) {
+  if (modPath.endsWith(fmtPath('/index.js'))) {
     // 去掉末尾的 /index.js
     modPath = modPath.substring(0, modPath.length - 9);
   }

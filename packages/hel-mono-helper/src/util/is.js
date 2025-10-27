@@ -29,7 +29,7 @@ function isHelMode() {
 }
 
 /**
- * hel应用（模块）处于整体构建模式（即传统的单一应用构建模式）
+ * hel应用（模块）处于基于 hel 的整体构建模式（即传统的单一应用构建模式）
  */
 function isHelAllBuild() {
   return process.env.HEL_BUILD === HEL_ALL_BUILD;
@@ -48,10 +48,22 @@ function isHelStart() {
   return isStartWithHel;
 }
 
+function isHelStartWithLocalDeps() {
+  const helStartMode = process.env.HEL_START;
+  return [HEL_START_AND_WAIT_LOCAL_DEPS, HEL_START_WITH_LOCAL_RUNNING_DEPS].includes(helStartMode);
+}
+
+function isFastRefreshMarked() {
+  const hasFRFlag = process.argv.some((v) => v === '-fr') || process.argv.some((v) => v === '--fast-refresh');
+  return hasFRFlag && isHelStartWithLocalDeps();
+}
+
 module.exports = {
   isHelMode,
   isHelMicroMode,
   isHelAllBuild,
   isHelExternalBuild,
   isHelStart,
+  isHelStartWithLocalDeps,
+  isFastRefreshMarked,
 };

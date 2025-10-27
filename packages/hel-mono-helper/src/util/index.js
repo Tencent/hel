@@ -8,7 +8,15 @@ const { getMonoNameMap, getBuildDirPath } = require('./monoName');
 const { getMonoDirOrFilePath, getMonoSubModSrc, getUnderDirSubPath } = require('./monoPath');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getNameData } = require('./nameData');
-const { isHelStart, isHelMicroMode, isHelMode, isHelAllBuild, isHelExternalBuild } = require('./is');
+const {
+  isHelStart,
+  isHelStartWithLocalDeps,
+  isFastRefreshMarked,
+  isHelMicroMode,
+  isHelMode,
+  isHelAllBuild,
+  isHelExternalBuild,
+} = require('./is');
 const { clearMonoLog, helMonoLog, helMonoErrorLog, helMonoLogTmp, trySetLogName } = require('./log');
 const { getCWDAppData } = require('./opCwd');
 const { getMonoRootInfo, setMonoRoot } = require('./rootInfo');
@@ -43,10 +51,12 @@ module.exports = {
   getMonoNameMap,
   getMonoAppDepData,
   isHelStart,
+  isHelStartWithLocalDeps,
   isHelMode,
   isHelMicroMode,
   isHelAllBuild,
   isHelExternalBuild,
+  isFastRefreshMarked,
   setMonoRoot,
   inferDevInfo,
   hint,

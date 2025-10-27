@@ -1,4 +1,3 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
 const fs = require('fs');
 const path = require('path');
 const { getMonoRootInfo } = require('./rootInfo');

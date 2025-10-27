@@ -1,0 +1,20 @@
+module.exports = {
+  preset: 'ts-jest',
+  moduleDirectories: ['node_modules', 'src'],
+  roots: ['<rootDir>'],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
+  // 设置要使用的测试环境
+  setupFiles: [],
+  setupFilesAfterEnv: [],
+  testMatch: ['<rootDir>/test/*.test.ts'],
+  testEnvironment: 'node',
+  transform: {},
+  transformIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/setupProxy.js'],
+  modulePaths: ['<rootDir>/src'],
+  moduleNameMapper: {},
+  moduleFileExtensions: ['js', 'ts'],
+  watchPlugins: [],
+  reporters: ['default'],
+  collectCoverage: true,
+  resetMocks: true,
+};

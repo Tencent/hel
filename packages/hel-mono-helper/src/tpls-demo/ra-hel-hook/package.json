@@ -1,0 +1,55 @@
+{
+  "name": "ra-hel-hook",
+  "version": "0.1.0",
+  "private": true,
+  "hel": {
+    "ciCmd": "build:hel"
+  },
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "node ../../dev/root-scripts/executeStart",
+    "start:raw": "node ../../dev/scripts/start",
+    "start:hel": "node ../../dev/scripts/hel/start",
+    "start:for": "node ../../dev/scripts/hel/startFor",
+    "start:all": "node ../../dev/scripts/hel/startAll",
+    "build": "node ../../dev/scripts/build",
+    "build:all": "node ../../dev/scripts/hel/buildAll",
+    "build:allm": "cross-env-shell \"pnpm run build:all && pnpm run build:meta\"",
+    "build:hel": "node ../../dev/scripts/hel/build",
+    "build:meta": "node ../../dev/scripts/hel/meta",
+    "build:helm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
+    "test": "node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js",
+    "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
+  },
+  "dependencies": {
+    "@hel-demo/mono-bslib": "^0.0.1",
+    "hel-mono-runtime-helper": "^1.1.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "volta": {
+    "node": "18.12.1",
+    "pnpm": "8.6.8"
+  }
+}

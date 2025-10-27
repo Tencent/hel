@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const { helMonoLog } = require('../../util');
@@ -42,7 +42,7 @@ function rewriteImportMod(modSrcPath, oldPkgName, newPkgName) {
   }
 }
 
-exports.rewritePkgDeps = function (/** @type {IMonoDevInfo} */ devInfo, oldPkgName, newPkgName) {
+exports.rewritePkgDeps = function (/** @type {IDevInfo} */ devInfo, oldPkgName, newPkgName) {
   const { monoRoot } = getMonoRootInfo();
   const { belongToDirs } = getDevInfoDirs(devInfo);
 

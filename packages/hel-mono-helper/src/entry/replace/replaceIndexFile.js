@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const fs = require('fs');
@@ -6,7 +6,20 @@ const { HEL_MICRO_NAME, HEL_LIB_PROXY_NAME } = require('../../consts');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { helMonoLog, isHelAllBuild } = require('../../util');
 
-function hasFile(appSrcDirPath, relPath) {
+function hasFile(appSrcDirPath, relPath, options) {
+  const { exts } = options || {};
+  if (exts) {
+    let isFileExist = false;
+    for (const ext of exts) {
+      const filePath = path.join(appSrcDirPath, `${relPath}.${ext}`);
+      if (fs.existsSync(filePath)) {
+        isFileExist = true;
+        break;
+      }
+    }
+    return isFileExist;
+  }
+
   const filePath = path.join(appSrcDirPath, relPath);
   return fs.existsSync(filePath);
 }
@@ -23,7 +36,7 @@ module.exports = function replaceIndexFile(/** @type {ICWDAppData} */ appData, /
     || hasFile(appSrcDirPath, 'App.js')
     || hasFile(appSrcDirPath, 'App');
   const hasShareModules = hasFile(appSrcDirPath, 'hel-share');
-  const hasHelHook = hasFile(appSrcDirPath, 'hel-conf/hook');
+  const hasHelHook = hasFile(appSrcDirPath, 'hel-conf/hook', { exts: ['js', 'ts'] });
 
   rewriteFileLine(indexFilePath, (line) => {
     let targetLine = line;

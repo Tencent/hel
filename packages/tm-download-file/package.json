@@ -1,6 +1,6 @@
 {
-  "name": "hel-fetch-file",
-  "version": "0.0.2",
+  "name": "@tmicro/fetch-file",
+  "version": "0.0.1",
   "description": "download file by url (fork from npm/download and optimize it)",
   "license": "ISC",
   "author": "",
@@ -20,5 +20,10 @@
     "make-dir": "^2.1.0",
     "p-event": "^2.1.0",
     "pify": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "registry": "https://registry.npmjs.org/"
   }
 }

@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const { getMonoNameMap } = require('./monoName');
 const { checkPkgsLenNotGT1 } = require('./err');
 
@@ -6,7 +6,7 @@ const { checkPkgsLenNotGT1 } = require('./err');
  * keywordName 可以是带父目录名的目录名，目录名，包名，格式形如：apps/hub, hub, @xxx/hub
  * @return {import('../types').INameData}
  */
-exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IMonoDevInfo} */ devInfo) {
+exports.getNameData = function (/** @type string */ mayPkgOrDir, /** @type {IDevInfo} */ devInfo) {
   const { monoNameMap, dir2Pkgs } = getMonoNameMap(devInfo);
 
   if (!mayPkgOrDir.startsWith('@') && mayPkgOrDir.includes('/')) {

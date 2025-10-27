@@ -1,4 +1,5 @@
 /** @typedef {import('../types').IPrepareHelEntrysOptions} IPrepareHelEntrysOptions */
+/** @typedef {import('../types').IMonoDevInfo} DevInfo */
 const http = require('http');
 const path = require('path');
 const util = require('../util');
@@ -99,7 +100,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
   prepareHelEntryFiles({ devInfo, depData, appData, forEX });
 }
 
-function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, pkgOrDir, forEX) {
+function prepareHelEntry(/** @type {DevInfo} */ devInfo, pkgOrDir, forEX) {
   util.clearMonoLog();
   const pkgOrDirVar = pkgOrDir || util.getCWDPkgPrefixedDir();
   const isForRootHelDir = util.getCWDIsForRootHelDir();
@@ -113,7 +114,7 @@ function prepareHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ de
 /**
  * 为 ex 项目准备入口文件
  */
-function prepareExProjHelEntry(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, exPrefixedDir) {
+function prepareExProjHelEntry(/** @type {DevInfo} */ devInfo, exPrefixedDir) {
   util.clearMonoLog();
   const masterAppPrefixedDir = exUtil.getMasterAppPrefixedDir(exPrefixedDir);
   const masterAppCwd = cwdUtil.getCwdByPrefixedDir(masterAppPrefixedDir);

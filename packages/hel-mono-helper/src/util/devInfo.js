@@ -1,6 +1,9 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IDevInfo */
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
+/** @typedef {import('hel-mono-types').IHelMonoJson} IHelMonoJson */
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
+const devUtils = require('hel-dev-utils');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
+const { APP_EXTERNALS, DEPLOY_PATH, HEL_MONO_DOC } = require('../consts/inner');
 const { getDevInfoDirs } = require('./base');
 const { purify } = require('./dict');
 const { getRawMonoJson, getModMonoDataDict } = require('./monoJson');
@@ -17,13 +20,13 @@ function setHandleDevInfo(fn) {
   handleDevInfoFn = fn;
 }
 
-function getAppConfs(monoJson) {
+function getAppConfsAndMonoDataDict(/** @type {IHelMonoJson} */ monoJson) {
   const argv = process.argv;
   const isChangeAliasCmd = argv.includes(INNER_ACTION.change) && argv.includes(CREATE_SHORT_PARAM_KEY.alias);
 
   const { mods = {} } = monoJson;
   const appConfs = {};
-  const { monoDict } = getModMonoDataDict(monoJson);
+  const { monoDict, prefixedDirDict, dirDict } = getModMonoDataDict(monoJson);
 
   // const monoJsonPkgNames = Object.keys(mods);
   const repoPkgNames = Object.keys(monoDict);
@@ -39,7 +42,7 @@ function getAppConfs(monoJson) {
   // }
 
   repoPkgNames.forEach((pkgName) => {
-    const { port, alias, devHostname } = mods[pkgName] || {};
+    const { port, alias, devHostname, deployPath, handleDeployPath } = mods[pkgName] || {};
     const pkgMonoData = monoDict[pkgName] || {};
     let pkgHel = pkgMonoData.hel || {};
     const repoAlias = pkgMonoData.alias;
@@ -59,6 +62,8 @@ function getAppConfs(monoJson) {
       port,
       alias: targetAlias,
       devHostname: pkgHel.devHostname || devHostname,
+      deployPath,
+      handleDeployPath,
       hel: {
         appGroupName: pkgHel.groupName,
         appNames: pkgHel.names || {},
@@ -66,7 +71,7 @@ function getAppConfs(monoJson) {
     };
   });
 
-  return appConfs;
+  return { appConfs, monoDict, prefixedDirDict, dirDict };
 }
 
 function ensureAppConf(options) {
@@ -96,7 +101,7 @@ function getIsAllowNull() {
 }
 
 function inferDevInfo(allowMonoJsonNull) {
-  // 允许 monoJson 为空时，getAppConfs 会自动修正和创建新的 hel-mono.json
+  // 允许 monoJson 为空时，getAppConfsAndMonoDataDict 会自动修正和创建新的 hel-mono.json
   let allowNull = allowMonoJsonNull;
   if (allowNull === undefined) {
     allowNull = getIsAllowNull();
@@ -108,11 +113,30 @@ function inferDevInfo(allowMonoJsonNull) {
   }
   monoJson = monoJson || { mods: {} };
 
-  const { appsDirs, subModDirs, externals, devHostname, helMicroName, helLibProxyName, exclude = [] } = monoJson;
-  const appConfs = getAppConfs(monoJson);
+  const {
+    deployPath = DEPLOY_PATH,
+    handleDeployPath = true,
+    doc = HEL_MONO_DOC,
+    appsDirs,
+    subModDirs,
+    appExternals = APP_EXTERNALS,
+    devHostname,
+    helMicroName,
+    helLibProxyName,
+    exclude = [],
+    platform = devUtils.cst.DEFAULT_PLAT,
+  } = monoJson;
+  const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
   let devInfo = {
-    appExternals: externals,
+    deployPath,
+    doc,
+    handleDeployPath,
+    platform,
+    monoDict,
+    prefixedDirDict,
+    dirDict,
+    appExternals,
     appsDirs,
     subModDirs,
     exclude,
@@ -121,12 +145,21 @@ function inferDevInfo(allowMonoJsonNull) {
     helMicroName,
     helLibProxyName,
   };
-
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;
   }
 
   return devInfo;
+}
+
+/**
+ * 获取可以合并到 monoJson 里的 devInfo 部分对象
+ */
+function getDevInfoRest(/** @type {IDevInfo} */ devInfo) {
+  const keys = ['deployPath', 'doc', 'handleDeployPath'];
+  const rest = {};
+  keys.forEach((key) => (rest[key] = devInfo[key]));
+  return purify(rest);
 }
 
 function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
@@ -164,11 +197,11 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
     newMods[name] = purify({ alias, port: targetPort });
   });
 
-  return { ...rest, mods: newMods };
+  return { ...getDevInfoRest(pureDevInfo), ...rest, mods: newMods };
 }
 
 module.exports = {
-  getAppConfs,
+  getAppConfsAndMonoDataDict,
   ensureAppConf,
   getDevInfoDirs,
   inferDevInfo,

@@ -16,4 +16,14 @@ module.exports = {
     'vue',
     'react-router',
   ],
+  APP_EXTERNALS: {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    'react-is': 'ReactIs',
+    'react-reconciler': 'ReactReconciler',
+    'hel-micro': 'HelMicro',
+    'hel-lib-proxy': 'HelLibProxy',
+  },
+  DEPLOY_PATH: 'https://unpkg.com',
+  HEL_MONO_DOC: 'https://tencent.github.io/hel/docs/hel-mono/basic',
 };

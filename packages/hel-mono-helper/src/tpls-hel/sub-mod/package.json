@@ -30,7 +30,9 @@
       "react-app/jest"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "hel-mono-runtime-helper": "^1.1.2"
+  },
   "volta": {
     "node": "18.12.1",
     "pnpm": "8.6.8"

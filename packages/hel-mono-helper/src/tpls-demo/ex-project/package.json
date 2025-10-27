@@ -8,16 +8,15 @@
   "main": "./src/index.ts",
   "private": true,
   "scripts": {
-    "start": "node ../../dev/scripts/start.js",
+    "start": "node ../../dev/root-scripts/executeStart",
+    "start:raw": "node ../../dev/scripts/start",
     "start:hel": "node ../../dev/scripts/hel/start.js",
     "build": "node ../../dev/scripts/build.js",
     "build:hel": "node ../../dev/scripts/hel/build.js",
     "build:helm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
     "build:meta": "node ../../dev/scripts/hel/meta"
   },
-  "dependencies": {
-    "hel-mono-runtime-helper": "^1.0.3"
-  },
+  "dependencies": {},
   "eslintConfig": {
     "extends": [
       "react-app",

@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
 const jsonc = require('jsonc-parser');
@@ -48,7 +48,7 @@ function inferConfAlias(devInfo, options) {
 }
 
 function getPrefixedDirName(appSrc) {
-  const strList = appSrc.split('/');
+  const strList = appSrc.split(path.sep);
   const len = strList.length;
   return `${strList[len - 3]}/${strList[len - 2]}`;
 }
@@ -62,14 +62,14 @@ function getPrefixedDirName(appSrc) {
  * ```
  */
 function getAppBelongTo(appSrc) {
-  const strList = appSrc.split('/');
+  const strList = appSrc.split(path.sep);
   return strList[strList.length - 3];
 }
 
 /**
  * 获得 alias 描述对象
  */
-function buildAppAlias(appSrc, /** @type IMonoDevInfo */ devInfo, prefixedDir2Pkg) {
+function buildAppAlias(appSrc, /** @type {IDevInfo} */ devInfo, prefixedDir2Pkg) {
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = {};
   const prefixedDirName = getPrefixedDirName(appSrc);
@@ -90,7 +90,7 @@ function getAppDirPath(appSrc) {
 
 function getAppCwd(appSrc) {
   let appCwd = appSrc;
-  if (appCwd.endsWith('/src')) {
+  if (appCwd.endsWith(`${path.sep}src`)) {
     appCwd = appSrc.substring(0, appSrc.length - 4);
   }
   return appCwd;

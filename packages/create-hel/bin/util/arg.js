@@ -1,5 +1,7 @@
+const { getConfig } = require('../config');
 const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST, ALL_CMD_TYPE_LIST, CMD_SHORT_TYPE } = require('../consts');
 const { setIsDebug } = require('./debug');
+const { logPurple } = require('./log');
 
 /** 获取描述 args 的对象 */
 function getArgObject(args) {
@@ -47,8 +49,9 @@ function getArgObject(args) {
 
     // 未命中内置命令时则报错
     if (!ALL_CMD_TYPE_LIST.includes(cmdType)) {
+      const config = getConfig();
       logPurple(
-        "You can just type 'hel',"
+        `You can just type '${config.cliKeyword}',`
           + 'then cli will trigger interactive commands to ask you input project name '
           + 'if you forget the command.',
       );

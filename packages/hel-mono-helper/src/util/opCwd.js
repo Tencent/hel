@@ -1,3 +1,4 @@
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const path = require('path');
 const { getTsConfigJson } = require('./appSrc');
 const { getCWD, getFileJson, getDevInfoDirs } = require('./base');
@@ -12,7 +13,7 @@ const { getPortByDevInfo, mayAddPort } = require('./port');
  * 通过分析 cwd 获取应用目录
  * @return {import('../types').ICWDAppData}
  */
-function getCWDAppData(/** @type {import('hel-mono-types').IMonoDevInfo} */ devInfo, inputCwd) {
+function getCWDAppData(/** @type {IDevInfo} */ devInfo, inputCwd) {
   const curAppData = getCurAppData();
   if (!inputCwd && curAppData) {
     return curAppData;

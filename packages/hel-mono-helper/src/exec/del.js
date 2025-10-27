@@ -1,4 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const shell = require('shelljs');
 const { helMonoLog } = require('../util');
@@ -38,7 +38,7 @@ function inferPkgData(devInfo, modDirOrName) {
 /**
  * 执行启 pnpm start .del xxx-mod 命令
  */
-exports.delMod = function (/** @type {IMonoDevInfo} */ devInfo) {
+exports.delMod = function (/** @type {IDevInfo} */ devInfo) {
   const modDirOrName = getCmdKeywordName(3);
   helMonoLog(`prepare del process for ${modDirOrName}`);
   if (!modDirOrName) {

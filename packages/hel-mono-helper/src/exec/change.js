@@ -1,5 +1,4 @@
-/** @typedef {import('hel-mono-types').IMonoDevInfo} IMonoDevInfo*/
-const fs = require('fs');
+/** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const shell = require('shelljs');
 const { INNER_ACTION } = require('../consts');
 const { helMonoLog, getCmdKeywords } = require('../util');
@@ -13,7 +12,7 @@ const { rewriteMonoJsonForChange } = require('./common/rewriteMonoJson');
 /**
  * 执行启 pnpm start .change <xxx-mod> -n <xxx-name> 命令
  */
-exports.changeMod = function (/** @type {IMonoDevInfo} */ devInfo) {
+exports.changeMod = function (/** @type {IDevInfo} */ devInfo) {
   const keywords = getCmdKeywords(3);
   const dirOrPkgName = keywords[0];
   const { dirName, belongTo, pkgName, alias } = getCmdDPNameData(devInfo, dirOrPkgName);
