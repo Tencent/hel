@@ -194,9 +194,9 @@ export default function Welcome() {
               logo="https://user-images.githubusercontent.com/7334950/197116513-7c7382b6-a5b5-4fb9-bcd7-2ec891804b7d.png"
             />
             <User
-              label="腾讯音乐"
-              site="https://www.tencentmusic.com"
-              logo="https://user-images.githubusercontent.com/7334950/253788999-40ca0ea2-e73d-4e7b-b932-162826d5bf97.png"
+              label="QQ音乐"
+              site="https://y.qq.com"
+              logo="https://tnfe.gtimg.com/hel-img/WX20251027-174122.png"
             />
             <User
               label="腾讯文档"
