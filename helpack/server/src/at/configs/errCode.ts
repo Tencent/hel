@@ -1,0 +1,5 @@
+export default {
+  HEL_ERR_TIME_EXPIRED: 'hel_1000',
+  HEL_ERR_NONCE_INVALID: 'hel_2000',
+  HEL_ERR_UPLOAD_TO_CDN_FAILED: 'hel_3000',
+};

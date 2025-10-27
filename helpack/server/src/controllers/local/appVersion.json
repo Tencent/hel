@@ -1,0 +1,71 @@
+{
+  "desc": "模拟数据库存储的 t_sub_app_version 数据",
+  "data": [
+    {
+      "plugin_ver": "5.2.2",
+      "extract_mode": "build",
+      "sub_app_name": "@hel-demo/lib1",
+      "sub_app_version": "@hel-demo/lib1@0.2.1",
+      "version_tag": "0.2.1",
+      "src_map": {
+        "webDirPath": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist",
+        "htmlIndexSrc": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/index.html",
+        "extractMode": "all",
+        "iframeSrc": "",
+        "chunkCssSrcList": [],
+        "chunkJsSrcList": [
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/main.d3ac32ec.js",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/241.7a86ff4c.chunk.js",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/244.07502d42.chunk.js"
+        ],
+        "staticCssSrcList": [],
+        "staticJsSrcList": ["https://tnfe.gtimg.com/hel-mono/l1/react-hel/v1.js"],
+        "relativeCssSrcList": [],
+        "relativeJsSrcList": [],
+        "headAssetList": [
+          {
+            "tag": "link",
+            "append": true,
+            "attrs": {
+              "href": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/manifest.json",
+              "rel": "manifest"
+            }
+          },
+          {
+            "tag": "script",
+            "append": true,
+            "attrs": {
+              "src": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/main.d3ac32ec.js",
+              "defer": "defer"
+            }
+          }
+        ],
+        "bodyAssetList": [
+          {
+            "tag": "staticScript",
+            "append": false,
+            "attrs": {
+              "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v1.js"
+            }
+          }
+        ],
+        "otherSrcList": [
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/asset-manifest.json",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/index.html",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/robots.txt",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/241.7a86ff4c.chunk.js.LICENSE.txt",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/241.7a86ff4c.chunk.js.map",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/244.07502d42.chunk.js.map",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/main.d3ac32ec.js.map"
+        ],
+        "srvModSrcList": [
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/srv/index.js",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/srv/utils/index.js",
+          "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/srv/utils/path/to/async-hello.js"
+        ],
+        "srvModSrcIndex": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/srv/index.js"
+      },
+      "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created using create-react-app\"/><link rel=\"manifest\" href=\"https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/manifest.json\"/><title>React App</title><script defer=\"defer\" src=\"https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/main.d3ac32ec.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v1.js\"></script><div id=\"root\"></div></body></html>"
+    }
+  ]
+}

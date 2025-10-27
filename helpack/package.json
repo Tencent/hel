@@ -1,0 +1,14 @@
+{
+  "name": "hel-pack",
+  "version": "1.0.0",
+  "description": "海拉Hel Pack，动态化模块发布、托管服务",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "fantasticoul",
+  "license": "ISC",
+  "dependencies": {
+    "download": "^8.0.0",
+    "joi": "^17.9.1"
+  }
+}

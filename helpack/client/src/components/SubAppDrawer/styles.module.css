@@ -1,0 +1,34 @@
+.controlLine {
+  width: 100%;
+  height: 36px;
+  margin-bottom: 12px;
+  background-color: rgb(244, 245, 245);
+}
+
+.controlArea {
+  float: right;
+  padding-right: 12px;
+  line-height: 34px;
+}
+
+.controlItem {
+  width: 66px !important;
+  text-align: center;
+}
+
+.srvModCardWrap {
+  border: 1px solid lightgrey;
+  background: #e2f0df5c;
+  position: relative;
+}
+
+.srvModJsLogo {
+  position: absolute;
+  background-image: url(https://tnfe.gtimg.com/hel-img/nodejs.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  right: 2px;
+  top: 6px;
+}

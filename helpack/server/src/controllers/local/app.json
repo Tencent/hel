@@ -1,0 +1,12 @@
+{
+  "desc": "模拟数据库存储的 t_sub_app_infos 数据",
+  "data": [
+    {
+      "name": "@hel-demo/lib1",
+      "app_group_name": "@hel-demo/lib1",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.2.1",
+      "build_version": "0.2.1"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+## 说明
+queryStoreAssetsProgress 触发的网络下载文件会临时存放到此目录

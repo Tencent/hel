@@ -1,0 +1,39 @@
+{
+  "files": {
+    "main.css": "/web-app/app-manager/static/css/main.255eb761.chunk.css",
+    "main.js": "/web-app/app-manager/static/js/main.c76b6308.chunk.js",
+    "main.js.map": "/web-app/app-manager/static/js/main.c76b6308.chunk.js.map",
+    "runtime-main.js": "/web-app/app-manager/static/js/runtime-main.da577ff8.js",
+    "runtime-main.js.map": "/web-app/app-manager/static/js/runtime-main.da577ff8.js.map",
+    "static/css/2.c7f2d819.chunk.css": "/web-app/app-manager/static/css/2.c7f2d819.chunk.css",
+    "static/js/2.3a8b03b6.chunk.js": "/web-app/app-manager/static/js/2.3a8b03b6.chunk.js",
+    "static/js/2.3a8b03b6.chunk.js.map": "/web-app/app-manager/static/js/2.3a8b03b6.chunk.js.map",
+    "static/js/3.9fcee7a1.chunk.js": "/web-app/app-manager/static/js/3.9fcee7a1.chunk.js",
+    "static/js/3.9fcee7a1.chunk.js.map": "/web-app/app-manager/static/js/3.9fcee7a1.chunk.js.map",
+    "static/js/4.1051f92c.chunk.js": "/web-app/app-manager/static/js/4.1051f92c.chunk.js",
+    "static/js/4.1051f92c.chunk.js.map": "/web-app/app-manager/static/js/4.1051f92c.chunk.js.map",
+    "static/js/5.da6ef249.chunk.js": "/web-app/app-manager/static/js/5.da6ef249.chunk.js",
+    "static/js/5.da6ef249.chunk.js.map": "/web-app/app-manager/static/js/5.da6ef249.chunk.js.map",
+    "static/js/6.53f44270.chunk.js": "/web-app/app-manager/static/js/6.53f44270.chunk.js",
+    "static/js/6.53f44270.chunk.js.map": "/web-app/app-manager/static/js/6.53f44270.chunk.js.map",
+    "editor.worker.js": "/web-app/app-manager/editor.worker.js",
+    "editor.worker.js.map": "/web-app/app-manager/editor.worker.js.map",
+    "index.html": "/web-app/app-manager/index.html",
+    "json.worker.js": "/web-app/app-manager/json.worker.js",
+    "json.worker.js.map": "/web-app/app-manager/json.worker.js.map",
+    "precache-manifest.fe1f53c33531621f8486ce03242d729b.js": "/web-app/app-manager/precache-manifest.fe1f53c33531621f8486ce03242d729b.js",
+    "service-worker.js": "/web-app/app-manager/service-worker.js",
+    "static/css/2.c7f2d819.chunk.css.map": "/web-app/app-manager/static/css/2.c7f2d819.chunk.css.map",
+    "static/css/main.255eb761.chunk.css.map": "/web-app/app-manager/static/css/main.255eb761.chunk.css.map",
+    "static/media/codicon.css": "/web-app/app-manager/static/media/codicon.805fb6ad.ttf",
+    "ts.worker.js": "/web-app/app-manager/ts.worker.js",
+    "ts.worker.js.map": "/web-app/app-manager/ts.worker.js.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.da577ff8.js",
+    "static/css/2.c7f2d819.chunk.css",
+    "static/js/2.3a8b03b6.chunk.js",
+    "static/css/main.255eb761.chunk.css",
+    "static/js/main.c76b6308.chunk.js"
+  ]
+}

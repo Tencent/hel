@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`{"name":"App 组件单元测试","author":"billyjwang","priority":"P0","casetype":"unit"} {"name":"生成 App 组件快照","author":"billyjwang","priority":"P0","casetype":"unit"} 1`] = `<OmApp />`;
