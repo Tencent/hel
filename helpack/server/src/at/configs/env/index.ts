@@ -17,8 +17,8 @@ const env = {
   dbConf: {
     username: 'writeuser',
     password: '',
-    database: 'tnews_cms_portal',
-    host: 'transformer.mdb.mig',
+    database: 'your-database',
+    host: 'your-db-host',
     port: '20385',
     dialect: 'mysql',
   } as unknown as nsdb.DBConfigItem,
