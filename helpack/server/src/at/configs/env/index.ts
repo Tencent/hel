@@ -40,22 +40,6 @@ const env = {
     /** 后台加密 hmnApiKey 之用 */
     hmnApiSecForBackend: '',
   },
-  /** 敏感权限系统中的相关配置 */
-  sec: {
-    sysId: 23338,
-    appId: 10721,
-    appKey: 'R&#&H@%C38f~cvbd',
-  },
-  /**
-   * 不区分环境的无为配置，即不同环境的123镜像都读取的相同配置
-   * appid、masterkey由tconf填充，
-   */
-  cmmonWuwei: {
-    legacyAppid: '', // 遗留业务需要的无为配置
-    legacyMasterkey: '',
-    appPlatformMetaAppid: '', // app_platform_meta的无为配置
-    appPlatformMetaMasterkey: '',
-  },
 };
 
 export default env;
