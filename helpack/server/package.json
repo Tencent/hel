@@ -3,8 +3,8 @@
   "version": "1.0.1",
   "main": "./build/index.js",
   "scripts": {
-    "build": "cross-env node ./scripts/replaceToRelativePath.js && tsc -p ./tsconfigForBuild.json && cp -r ./src/views ./build",
-    "start": "IS_LOCAL_MODE=true IS_SIMPLE_SERVER=0 NODE_PATH=./build nodemon -e ts ./build/index.js",
+    "build": "cross-env node ./scripts/replaceToRelativePath.js && tsc -p ./tsconfigForBuild.json && node ./scripts/copy-views.js",
+    "start": "cross-env IS_LOCAL_MODE=true IS_SIMPLE_SERVER=0 NODE_PATH=./build nodemon -e ts ./build/index.js",
     "start:simple": "IS_LOCAL_MODE=true NODE_PATH=./build nodemon -e ts ./build/index.js",
     "[[start hint]]": "your must execute build before execute start"
   },
