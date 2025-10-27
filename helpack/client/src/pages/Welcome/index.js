@@ -193,11 +193,7 @@ export default function Welcome() {
               site="https://console.cloud.tencent.com/wedata/share/overview"
               logo="https://user-images.githubusercontent.com/7334950/197116513-7c7382b6-a5b5-4fb9-bcd7-2ec891804b7d.png"
             />
-            <User
-              label="QQ音乐"
-              site="https://y.qq.com"
-              logo="https://tnfe.gtimg.com/hel-img/WX20251027-174122.png"
-            />
+            <User label="QQ音乐" site="https://y.qq.com" logo="https://tnfe.gtimg.com/hel-img/WX20251027-174122.png" />
             <User
               label="腾讯文档"
               site="https://docs.qq.com"
