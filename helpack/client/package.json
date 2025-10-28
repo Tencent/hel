@@ -105,7 +105,7 @@
   "scripts": {
     "start": "node scripts/wrap/start",
     "build": "node scripts/wrap/build",
-    "build:local": "node scripts/wrap/build && rm -rf ../server-ts/public/web-app/app-manager/* && cp -r ./hel_dist/* ../server-ts/public/web-app/app-manager/ && cp -r ./hel_dist/index.html ../server-ts/src/views/",
+    "build:local": "cross-env node scripts/wrap/build && node scripts/buildLocal.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
