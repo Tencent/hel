@@ -177,13 +177,16 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "fsevents": "2.0.0",
     "http-proxy-middleware": "^2.0.9",
     "monaco-editor-webpack-plugin": "6.0.0",
     "semver": "^7.7.1",
     "shelljs": "^0.10.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "2.0.0"
   },
   "files": [
     "build"
