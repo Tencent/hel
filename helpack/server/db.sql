@@ -66,8 +66,8 @@ CREATE TABLE `t_sub_app_version` (
   `pipeline_id` varchar(255) DEFAULT '' COMMENT 'pipeline_id',
   `build_id` varchar(255) DEFAULT '' COMMENT 'pipeline.build.id',
   `git_branch` varchar(255) DEFAULT '' COMMENT 'BK_CI_HOOK_BRANCH',
-  `git_hashes` varchar(8192) DEFAULT '' COMMENT 'git_hashes';
-  `git_messages` varchar(2048) DEFAULT '' COMMENT 'git_messages';
+  `git_hashes` varchar(8192) DEFAULT '' COMMENT 'git_hashes',
+  `git_messages` varchar(2048) DEFAULT '' COMMENT 'git_messages',
   `git_repo_url` varchar(255) DEFAULT '' COMMENT 'BK_CI_GIT_REPO_URL',
   `ext` varchar(8192) DEFAULT '' COMMENT '用户自定义的扩展数据',
   `plugin_ver` varchar(255) DEFAULT '' COMMENT '插件版本',
