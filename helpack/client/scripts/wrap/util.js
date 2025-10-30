@@ -26,7 +26,7 @@ exports.runScript = function (scriptName) {
     prefix = 'NODE_OPTIONS=--openssl-legacy-provider ';
   }
   const dirPath = exports.getScriptsDirPath();
-  const cmd = `${prefix}IS_LOCAL_MODE=true node ${dirPath}/${scriptName}`;
+  const cmd = `cross-env ${prefix}IS_LOCAL_MODE=true node ${dirPath}${scriptName}`;
 
   shell.exec(cmd);
 };
