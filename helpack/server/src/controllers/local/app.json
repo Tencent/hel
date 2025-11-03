@@ -19,7 +19,7 @@
       "name": "hdemo-lib",
       "app_group_name": "hdemo-lib",
       "git_repo_url": "https://github.com/hel-eco/hel-mono",
-      "online_version": "0.0.1",
+      "online_version": "0.0.3",
       "build_version": "0.0.1"
     },
     {
