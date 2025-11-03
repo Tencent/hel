@@ -66,6 +66,475 @@
         "srvModSrcIndex": "https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/srv/index.js"
       },
       "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created using create-react-app\"/><link rel=\"manifest\" href=\"https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/manifest.json\"/><title>React App</title><script defer=\"defer\" src=\"https://unpkg.com/@hel-demo/lib1@0.2.1/hel_dist/static/js/main.d3ac32ec.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v1.js\"></script><div id=\"root\"></div></body></html>"
-    }
+    },
+    {
+      "plugin_ver": "5.2.7",
+      "extract_mode": "build",
+      "sub_app_name": "hdemo-hub",
+      "sub_app_version": "hdemo-hub@0.1.3",
+      "version_tag": "0.1.3",
+      "src_map": {
+        "webDirPath": "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/",
+        "htmlIndexSrc": "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/index.html",
+        "extractMode": "all",
+        "iframeSrc": "",
+        "chunkCssSrcList": [
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/css/180.00ea233a.chunk.css",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/css/31.d2ea9760.chunk.css"
+        ],
+        "chunkJsSrcList": [
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/main.23e67e5b.js",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/180.2d797836.chunk.js",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/31.c59daa8e.chunk.js",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/379.a394703f.chunk.js"
+        ],
+        "staticCssSrcList": [],
+        "staticJsSrcList": [
+          "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+        ],
+        "relativeCssSrcList": [],
+        "relativeJsSrcList": [],
+        "headAssetList": [
+          {
+            "tag": "script",
+            "append": true,
+            "attrs": {
+              "src": "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/main.23e67e5b.js",
+              "defer": "defer"
+            }
+          }
+        ],
+        "bodyAssetList": [
+          {
+            "tag": "staticScript",
+            "append": false,
+            "attrs": {
+              "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+            }
+          }
+        ],
+        "otherSrcList": [
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/asset-manifest.json",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/index.html",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/robots.txt",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/css/180.00ea233a.chunk.css.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/css/31.d2ea9760.chunk.css.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/180.2d797836.chunk.js.LICENSE.txt",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/180.2d797836.chunk.js.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/31.c59daa8e.chunk.js.LICENSE.txt",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/31.c59daa8e.chunk.js.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/379.a394703f.chunk.js.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/main.23e67e5b.js.map",
+          "https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+        ],
+        "srvModSrcList": [],
+        "srvModSrcIndex": ""
+      },
+      "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-hub@0.1.3/hel_dist/static/js/main.23e67e5b.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+      "create_at": "2025-10-31T06:29:50.696Z",
+      "desc": "this version meta is created by hel-dev-utils@5.2.7"
+    },
+    {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib",
+    "sub_app_version": "hdemo-lib@0.0.1",
+    "version_tag": "0.0.1",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/main.50fecb38.js",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/31.0566ad6d.chunk.js",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/379.49cbcc3f.chunk.js",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/710.20471a99.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/main.50fecb38.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/31.0566ad6d.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/31.0566ad6d.chunk.js.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/379.49cbcc3f.chunk.js.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/710.20471a99.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/710.20471a99.chunk.js.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/main.50fecb38.js.map",
+        "https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib@0.0.1/hel_dist/static/js/main.50fecb38.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:43:47.374Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  },
+  {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib2",
+    "sub_app_version": "hdemo-lib2@0.0.1",
+    "version_tag": "0.0.1",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/main.2f5e511e.js",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/31.2f258a2c.chunk.js",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/379.8c70a476.chunk.js",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/710.5d34beb0.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/main.2f5e511e.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/31.2f258a2c.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/31.2f258a2c.chunk.js.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/379.8c70a476.chunk.js.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/710.5d34beb0.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/710.5d34beb0.chunk.js.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/main.2f5e511e.js.map",
+        "https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib2@0.0.1/hel_dist/static/js/main.2f5e511e.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:44:34.138Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  },
+  {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib3",
+    "sub_app_version": "hdemo-lib3@0.0.1",
+    "version_tag": "0.0.1",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/main.ffc8ddb3.js",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/31.bef49108.chunk.js",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/379.e24d01c5.chunk.js",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/710.ccecee56.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/main.ffc8ddb3.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/31.bef49108.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/31.bef49108.chunk.js.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/379.e24d01c5.chunk.js.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/710.ccecee56.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/710.ccecee56.chunk.js.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/main.ffc8ddb3.js.map",
+        "https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib3@0.0.1/hel_dist/static/js/main.ffc8ddb3.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:45:12.116Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  },
+  {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib4",
+    "sub_app_version": "hdemo-lib4@0.0.1",
+    "version_tag": "0.0.1",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/main.631aae55.js",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/31.c8d5cead.chunk.js",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/379.7ab2af50.chunk.js",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/710.dad17278.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/main.631aae55.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/31.c8d5cead.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/31.c8d5cead.chunk.js.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/379.7ab2af50.chunk.js.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/710.dad17278.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/710.dad17278.chunk.js.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/main.631aae55.js.map",
+        "https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib4@0.0.1/hel_dist/static/js/main.631aae55.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:45:48.232Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  },
+  {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib5",
+    "sub_app_version": "hdemo-lib5@0.0.1",
+    "version_tag": "0.0.1",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/main.38a7171d.js",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/31.5c4f484a.chunk.js",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/379.91693801.chunk.js",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/710.74b179b3.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/main.38a7171d.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/31.5c4f484a.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/31.5c4f484a.chunk.js.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/379.91693801.chunk.js.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/710.74b179b3.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/710.74b179b3.chunk.js.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/main.38a7171d.js.map",
+        "https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib5@0.0.1/hel_dist/static/js/main.38a7171d.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:46:21.244Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  },
+  {
+    "plugin_ver": "5.2.7",
+    "extract_mode": "build",
+    "sub_app_name": "hdemo-lib6",
+    "sub_app_version": "hdemo-lib6@0.0.2",
+    "version_tag": "0.0.2",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/",
+      "htmlIndexSrc": "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/css/31.04c23b79.chunk.css",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/css/710.efbbbb73.chunk.css"
+      ],
+      "chunkJsSrcList": [
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/main.2e3cde7c.js",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/31.5aa9779b.chunk.js",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/379.52581c83.chunk.js",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/710.e97ef33c.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": [
+        "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+      ],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/main.2e3cde7c.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/asset-manifest.json",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/index.html",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/robots.txt",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/css/31.04c23b79.chunk.css.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/css/710.efbbbb73.chunk.css.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/31.5aa9779b.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/31.5aa9779b.chunk.js.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/379.52581c83.chunk.js.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/710.e97ef33c.chunk.js.LICENSE.txt",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/710.e97ef33c.chunk.js.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/main.2e3cde7c.js.map",
+        "https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg"
+      ],
+      "srvModSrcList": [],
+      "srvModSrcIndex": ""
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/hdemo-lib6@0.0.2/hel_dist/static/js/main.2e3cde7c.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-03T06:48:41.325Z",
+    "desc": "this version meta is created by hel-dev-utils@5.2.7"
+  }
   ]
 }
