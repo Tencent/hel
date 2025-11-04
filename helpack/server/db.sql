@@ -44,8 +44,9 @@ CREATE TABLE `t_sub_app_infos` (
   `owners` text default NULL COMMENT '负责人',
   `gray_users` text default NULL COMMENT '灰度用户名单',
   `proj_ver` varchar(4096) NOT NULL default '{"map":{},utime:0}' COMMENT '项目id和版本号配置',
-  `is_xc` int default 0 COMMENT '是否是星辰的子应用',
-  PRIMARY KEY (`id`)
+  `platform` varchar(32) DEFAULT 'hel' COMMENT '平台值',
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='子应用信息';
 
 DROP TABLE IF EXISTS `t_sub_app_version`;
@@ -72,8 +73,10 @@ CREATE TABLE `t_sub_app_version` (
   `git_repo_url` varchar(255) DEFAULT '' COMMENT 'BK_CI_GIT_REPO_URL',
   `ext` varchar(8192) DEFAULT '' COMMENT '用户自定义的扩展数据',
   `plugin_ver` varchar(255) DEFAULT '' COMMENT '插件版本',
-  UNIQUE (`sub_app_version`),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sub_app_version` (`sub_app_version`),
+  KEY `idx_sub_app_name` (`sub_app_name`),
+  KEY `idx_create_by` (`create_by`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='子应用版本信息';
 
 

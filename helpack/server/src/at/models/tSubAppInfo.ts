@@ -41,7 +41,6 @@ export interface tSubAppInfoAttribute {
   is_in_gray?: number;
   owners?: string;
   gray_users?: string;
-  is_xc?: number;
   platform?: string;
 }
 
@@ -87,7 +86,6 @@ export class SubAppInfo extends Model<tSubAppInfoAttribute, ttSubAppInfoAttribut
   public is_in_gray?: number;
   public owners?: string;
   public gray_users?: string;
-  public is_xc?: number;
   public platform?: string;
 }
 
@@ -366,13 +364,6 @@ export default function Factory(sequelize: Sequelize) {
         defaultValue: '',
         comment: '',
         field: 'gray_users',
-      },
-      is_xc: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1,
-        comment: '',
-        field: 'is_xc',
       },
       platform: {
         type: DataTypes.STRING(32),

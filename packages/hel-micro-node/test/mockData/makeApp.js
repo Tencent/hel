@@ -69,7 +69,6 @@ function makeApp(options) {
     owners: [],
     gray_users: [],
     proj_ver: { map: {}, utime: 0 },
-    is_xc: FALSE,
     create_at: '2022-05-31T17:34:13.000Z',
     update_at: '2022-06-01T18:29:18.000Z',
   };
