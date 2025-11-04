@@ -1,5 +1,5 @@
 /**
-   用于适配windows下复制views目录
+ * 用于适配windows下复制views目录
  */
 const fs = require('fs');
 const path = require('path');
