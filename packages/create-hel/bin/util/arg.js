@@ -100,8 +100,8 @@ function getArgObject(args) {
 
 function getRestArgsStr(keyword, excludes = []) {
   const argv = process.argv;
-  const pure = argv.filter(v => !excludes.includes(v));
-  const keywordIdx = pure.findIndex(v => v === keyword);
+  const pure = argv.filter((v) => !excludes.includes(v));
+  const keywordIdx = pure.findIndex((v) => v === keyword);
   const restArgs = pure.slice(keywordIdx + 1);
   return restArgs.join(' ');
 }
