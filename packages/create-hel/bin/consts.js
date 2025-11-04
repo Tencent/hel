@@ -25,6 +25,7 @@ const CMD_SHORT_TYPE = {
 
 /** hel-mono 大仓相关的内置命令 */
 const HEL_MONO_CMD_TYPE_LIST = [
+  CMD_TYPE.start,
   CMD_TYPE.build,
   CMD_TYPE.create,
   CMD_TYPE.createMod,

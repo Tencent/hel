@@ -32,15 +32,10 @@ async function tryExecCmd(argObj) {
     return;
   }
 
-  if (CMD_TYPE.start === cmdType) {
-    const helMonoStartCmd = cmdValue ? `start ${cmdValue}` : 'start';
-    return shell.exec(`pnpm run ${helMonoStartCmd}`);
-  }
-
   if (HEL_MONO_CMD_TYPE_LIST.includes(cmdType)) {
-    // 把有歧义的 -d --debug 排除掉
-    const argsStr = util.getRestArgsStr(cmdType, ['-d', '--debug']);
-    const startCmd = argsStr ? `start .${cmdType} ${argsStr}` : `start .${cmdType}`;
+    const argsStr = util.getRestArgsStr(cmdType);
+    const startPrefix = cmdType === CMD_TYPE.start ? 'start' : `start .${cmdType}`;
+    const startCmd = argsStr ? `${startPrefix} ${argsStr}` : startPrefix;
     const helMonoCmd = `pnpm run ${startCmd}`;
     util.logDebug(`See var: helMonoCmd ( ${helMonoCmd} )`);
     return shell.exec(helMonoCmd);
