@@ -1,4 +1,4 @@
--- db config
+-- db sql
 
 DROP TABLE IF EXISTS `t_sub_app_infos`;
 CREATE TABLE `t_sub_app_infos` (
@@ -23,6 +23,7 @@ CREATE TABLE `t_sub_app_infos` (
   `pre_version` varchar(255) default '' COMMENT '预发布版本ID',
   `test_version` varchar(255) default '' COMMENT '测试版本ID',
   `build_version` varchar(255) default '' COMMENT '构建版本ID',
+  `npm_version` varchar(32) DEFAULT '' COMMENT '构建时刻对应的package version值',
   `enable_display` int default 1 COMMENT '是否允许下发给客户端做展示',
   `api_host` varchar(255) default '' COMMENT '请求host',
   `render_mode` varchar(255) default 'react' COMMENT '渲染模式',
@@ -47,7 +48,6 @@ CREATE TABLE `t_sub_app_infos` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='子应用信息';
 
-
 DROP TABLE IF EXISTS `t_sub_app_version`;
 CREATE TABLE `t_sub_app_version` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -55,6 +55,7 @@ CREATE TABLE `t_sub_app_version` (
   `sub_app_name` varchar(255) default '' COMMENT '子应用名称',
   `sub_app_version` varchar(255) NOT NULL COMMENT '用于创建唯一索引的子应用版本号，旧格式xxx_time，新格式 xxx@ver, @scope/xxx@ver',
   `version_tag` varchar(120) NOT NULL COMMENT 'sub_app_version中的版本号字符串',
+  `npm_version` varchar(32) DEFAULT '' COMMENT '构建时刻对应的package version值',
   `src_map` text NOT NULL COMMENT '资源文件映射',
   `html_content` text default NULL COMMENT 'index.html内容',
   `create_by` varchar(255) DEFAULT NULL COMMENT '创建人',
