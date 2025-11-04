@@ -15,8 +15,8 @@ exports.getCmdKeywordName = function (nameIndex = 2) {
 /**
  * 获取有效的关键字数组
  */
-exports.getCmdKeywords = function (sliceStart = 2) {
-  const argv = getPureArgv();
+exports.getCmdKeywords = function (sliceStart = 2, isPure = true) {
+  const argv = isPure ? getPureArgv() : process.argv;
   // argv 形如 ['**/**/bin/node', '**/**/hel-mono/dev/root-scripts/executeStart', 'dirName', ...]
   const allKeywords = argv || [];
   // 默认截掉前2位，通常来说从第二位开始取是我们想要的

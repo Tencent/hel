@@ -47,7 +47,6 @@ function logKeyParams(args, argObj) {
 }
 
 function logCliInfo() {
-  logKeyParams();
   const { cliPkgName, cliPkgVersion, cliKeyword, basedOn, contactAuthor, contactAuthorReferLen, helMonoTemplates, repoUrlPrefix } =
     getConfig();
   const fixedLen = seLine.length - 1;
@@ -88,7 +87,6 @@ function logHelpInfo() {
 
 function logCliVersion() {
   console.log(getConfig().cliPkgVersion);
-  logKeyParams();
 }
 
 function logFinalError(e) {

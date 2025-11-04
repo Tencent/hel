@@ -38,11 +38,15 @@ async function tryExecCmd(argObj) {
   }
 
   if (HEL_MONO_CMD_TYPE_LIST.includes(cmdType)) {
-    const helMonoStartCmd = cmdValue ? `start .${cmdType} ${cmdValue}` : 'build';
-    return shell.exec(`pnpm run ${helMonoStartCmd}`);
+    // 把有歧义的 -d --debug 排除掉
+    const argsStr = util.getRestArgsStr(cmdType, ['-d', '--debug']);
+    const startCmd = argsStr ? `start .${cmdType} ${argsStr}` : `start .${cmdType}`;
+    const helMonoCmd = `pnpm run ${startCmd}`;
+    util.logDebug(`See var: helMonoCmd ( ${helMonoCmd} )`);
+    return shell.exec(helMonoCmd);
   }
 
-  console.log(`Unhandled command: "${cmdType}"`);
+  util.logError(`Unhandled command: "${cmdType}"`);
 }
 
 /**
@@ -52,6 +56,7 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   const args = process.argv.slice(2);
   try {
     const argObj = util.getArgObject(args);
+    util.logKeyParams(args, argObj);
     const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
 
     if (isSeeVersion) {
