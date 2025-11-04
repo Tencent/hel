@@ -3,7 +3,6 @@ const path = require('path');
 const { getTsConfigAliasByDirPath } = require('./alias');
 const { getMonoRootInfo } = require('./rootInfo');
 
-
 function getTsConfigDirPathByAppSrc(appSrc) {
   const strList = appSrc.split(path.sep);
   const tsConfigDirPath = strList.slice(0, strList.length - 1).join(path.sep);
