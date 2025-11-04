@@ -11,6 +11,7 @@ import subAppVersionFactory from './tSubAppVersion';
 import trackFactory from './tTrack';
 import uploadCosFactory from './tUploadCosLog';
 import userExtendFactory from './tUserExtend';
+import userInfoFactory from './tUserInfo'; 
 
 type DBModels = nsdb.DBModels;
 type DBConfigItem = nsdb.DBConfigItem;
@@ -31,6 +32,7 @@ export let models: DBModels = {
   statDist: {},
   HMNStat: {},
   HMNStatLog: {},
+  UserInfo:{},
 } as unknown as DBModels;
 
 export async function initModels(dbConf: DBConfigItem) {
@@ -51,6 +53,7 @@ export async function initModels(dbConf: DBConfigItem) {
     statDist: statDistFactory(sequelize),
     HMNStat: HMNStatFactory(sequelize),
     HMNStatLog: HMNStatLogFactory(sequelize),
+    UserInfo: userInfoFactory(sequelize),
   };
 
   Object.values(models).forEach((model: any) => {

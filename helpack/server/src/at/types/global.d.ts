@@ -45,6 +45,7 @@ declare global {
       statDist: typeof import('../models/tStatDist').StatDist;
       HMNStat: typeof import('../models/tHMNStat').HMNStat;
       HMNStatLog: typeof import('../models/tHMNStatLog').HMNStatLog;
+      UserInfo: typeof import('../models/tUserInfo').UserInfo;
     }
 
     type SubAppInfo = DBModels['subAppInfo'];

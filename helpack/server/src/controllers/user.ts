@@ -2,6 +2,7 @@ import { ConcurrencyGuard } from '@tmicro/f-guard';
 import { ICuteExpressCtxBase } from 'at/types';
 import { isLocal } from 'at/utils/deploy';
 import axios from 'axios';
+import { models } from 'at/models';
 import { getOtherCache, handleStaffChange } from 'services/dataCache';
 
 interface User {
@@ -89,12 +90,46 @@ async function getUsersFromCors(remoteCacheKey?: string) {
   return parsedUserList;
 }
 
+async function getUsersFromDB(): Promise<ParsedUser[]> {
+  try {
+    // 从 t_user_infos 表中获取用户信息
+    const userRecords = await models.UserInfo.findAll();
+
+    const parsedUserList: ParsedUser[] = [];
+    
+    for (const record of userRecords) {
+      try {
+        const full = record.full || `${record.en}(默认用户)`;
+        const leftBraceIdx = full.indexOf('(');
+        const cnName = leftBraceIdx > -1 ? full.substring(leftBraceIdx + 1, full.length - 1) : '默认用户';
+        
+        const parsedUser: ParsedUser = {
+          en: record.en || '',
+          full,
+          cnName
+        };
+        
+        parsedUserList.push(parsedUser);
+        cachedUserMap[parsedUser.en] = parsedUser;
+      } catch (parseError) {
+        console.error(`Error parsing user data for ${record.en}:`, parseError);
+      }
+    }
+    
+    return parsedUserList;
+  } catch (error) {
+    console.error('Error fetching users from database:', error);
+    return [];
+  }
+}
+
 export const inner = {
   getUser(name) {
     return cachedUserMap[name];
   },
   async precacheUsers() {
     if (isLocal()) {
+      console.log('---------------------------->[user] isLocal, return empty user list');
       return [];
     }
 
@@ -107,6 +142,9 @@ export const inner = {
     }
     if (parsedUserList.length === 0) {
       parsedUserList = await getUsersFromCors('STAFF_STR_wsdUsers');
+    }
+    if (parsedUserList.length === 0) {
+      parsedUserList = await getUsersFromDB();
     }
     if (parsedUserList.length > 0) {
       cachedUserList = parsedUserList;
