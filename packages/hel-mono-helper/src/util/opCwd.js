@@ -1,10 +1,10 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const path = require('path');
-const { getTsConfigJson } = require('./appSrc');
+const { getTsConfigDirPathByAppSrc } = require('./appSrc');
+const { getTsConfigPaths } = require('./alias');
 const { getCWD, getFileJson, getDevInfoDirs } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
 const { inferDirData } = require('./cwd');
-const { safeOnlyGet } = require('./dict');
 const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getPortByDevInfo, mayAddPort } = require('./port');
@@ -44,10 +44,8 @@ function getCWDAppData(/** @type {IDevInfo} */ devInfo, inputCwd) {
     // assign appPkgName later
   }
 
-  const tsConfigJson = getTsConfigJson(appSrcDirPath);
-  const compilerOptions = safeOnlyGet(tsConfigJson, 'compilerOptions', {});
-  const appTsConfigPaths = compilerOptions.paths || {};
-
+  const tsConfigDirPath = getTsConfigDirPathByAppSrc(appSrcDirPath);
+  const appTsConfigPaths = getTsConfigPaths(tsConfigDirPath);
   const realAppDirPath = path.join(monoRoot, `./${belongTo}/${appDir}`);
   const realAppSrcDirPath = path.join(realAppDirPath, './src');
   const realAppPkgJsonPath = path.join(realAppDirPath, './package.json');

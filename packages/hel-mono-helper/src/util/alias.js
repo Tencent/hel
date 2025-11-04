@@ -7,15 +7,65 @@ const { safeGet } = require('./dict');
 const { getMonoRootInfo } = require('./rootInfo');
 
 /**
- * 获取 tsconfig.json 里的 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
+ * 解析出可能存在的继承的 tsconfig 配置
+ * @param {*} tsConfigJson
+ * @returns
  */
-function getTsConfigAlias(/** @type DevInfo */ devInfo, tsConfigJson) {
-  let targetAlias = '';
-  const compilerOptions = tsConfigJson.compilerOptions || {};
-  const paths = compilerOptions.paths || {};
-  const { appExternals = {} } = devInfo;
-  const keys = Object.keys(paths);
+function getParentTsConfigJson(tsConfigDirPath, tsConfigJson) {
+  let parentTsConfigJson = {};
+  const extendsPath = tsConfigJson.extends;
+  if (extendsPath) {
+    let parentTsConfigPath = '';
+    if (extendsPath.startsWith('.')) {
+      // 使用了相对路径
+      parentTsConfigPath = path.join(tsConfigDirPath, extendsPath);
+    } else {
+      const { monoRoot } = getMonoRootInfo();
+      parentTsConfigPath = path.join(monoRoot, extendsPath);
+    }
 
+    if (fs.existsSync(parentTsConfigPath)) {
+      parentTsConfigJson = jsonc.parse(fs.readFileSync(parentTsConfigPath, { encoding: 'utf8' }));
+    }
+  }
+
+  return parentTsConfigJson;
+}
+
+/**
+ * 获取 tsConfigJson 里的 paths 配置，自动合并可能包含的继承配置
+ */
+function getTsConfigPaths(tsConfigDirPath) {
+  const tsConfigPath = path.join(tsConfigDirPath, 'tsconfig.json');
+  if (!fs.existsSync(tsConfigPath)) {
+    return null;
+  }
+  const tsConfigJson = jsonc.parse(fs.readFileSync(tsConfigPath, { encoding: 'utf8' }));
+  const compilerOptions = tsConfigJson.compilerOptions || {};
+  const childPaths = compilerOptions.paths || {};
+
+  const parentTsConfigJson = getParentTsConfigJson(tsConfigDirPath, tsConfigJson);
+  const parentCompilerOptions = parentTsConfigJson.compilerOptions || {};
+  const parentPaths = parentCompilerOptions.paths || {};
+
+  const paths = Object.assign({}, parentPaths, childPaths);
+
+  return paths;
+}
+
+/**
+ * 获取 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
+ */
+function getTsConfigAliasByDirPath(devInfo, tsConfigDirPath) {
+  const tsConfigPath = path.join(tsConfigDirPath, 'tsconfig.json');
+  if (!fs.existsSync(tsConfigPath)) {
+    return '';
+  }
+
+  let alias = '';
+  const { appExternals = {} } = devInfo;
+  const paths = getTsConfigPaths(tsConfigDirPath);
+  const keys = Object.keys(paths);
   for (const key of keys) {
     // 可能是在 tsConfigJson.paths 里配置 external 库的类型路径别名
     if (appExternals[key] || PKG_NAME_WHITE_LIST.includes(key)) {
@@ -23,20 +73,9 @@ function getTsConfigAlias(/** @type DevInfo */ devInfo, tsConfigJson) {
     }
     const [mayAlias] = key.split('/');
     if (mayAlias) {
-      targetAlias = mayAlias;
+      alias = mayAlias;
       break;
     }
-  }
-
-  return targetAlias;
-}
-
-function getTsConfigAliasByDirPath(devInfo, dirPath) {
-  const tsConfigPath = path.join(dirPath, 'tsconfig.json');
-  let alias = '';
-  if (fs.existsSync(tsConfigPath)) {
-    const tsConfigJson = jsonc.parse(fs.readFileSync(tsConfigPath, { encoding: 'utf8' }));
-    alias = getTsConfigAlias(devInfo, tsConfigJson);
   }
 
   return alias;
@@ -58,17 +97,12 @@ function getAliasData(devInfo) {
     const names = fs.readdirSync(dirPath);
     for (const name of names) {
       const modPath = path.join(dirPath, `./${name}`);
-      if (!fs.statSync(modPath).isDirectory()) {
+      const stat = fs.statSync(modPath);
+      if (!stat || !stat.isDirectory()) {
         continue;
       }
 
-      const tsConfigPath = path.join(modPath, './tsconfig.json');
-      if (!fs.existsSync(tsConfigPath)) {
-        continue;
-      }
-
-      const tsConfig = jsonc.parse(fs.readFileSync(tsConfigPath, { encoding: 'utf8' }));
-      const alias = getTsConfigAlias(devInfo, tsConfig);
+      const alias = getTsConfigAliasByDirPath(devInfo, modPath);
       if (alias) {
         const pkgJsonPath = path.join(modPath, './package.json');
         const pkgJson = getFileJson(pkgJsonPath);
@@ -83,7 +117,7 @@ function getAliasData(devInfo) {
 }
 
 module.exports = {
-  getTsConfigAlias,
+  getTsConfigPaths,
   getAliasData,
   getTsConfigAliasByDirPath,
 };

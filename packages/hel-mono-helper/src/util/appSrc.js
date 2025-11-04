@@ -1,30 +1,20 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
-const fs = require('fs');
 const path = require('path');
-const jsonc = require('jsonc-parser');
-const { getTsConfigAlias } = require('./alias');
+const { getTsConfigAliasByDirPath } = require('./alias');
 const { getMonoRootInfo } = require('./rootInfo');
 
-function getTsConfigJson(appSrc) {
+function getTsConfigDirPathByAppSrc(appSrc) {
   const strList = appSrc.split(path.sep);
-  const tsConfigJsonPath = path.join(strList.slice(0, strList.length - 1).join(path.sep), './tsconfig.json');
-  let tsConfigJson = null;
-  if (fs.existsSync(tsConfigJsonPath)) {
-    const str = fs.readFileSync(tsConfigJsonPath, { encoding: 'utf-8' });
-    tsConfigJson = jsonc.parse(str);
-  }
-  return tsConfigJson;
+  const tsConfigDirPath = strList.slice(0, strList.length - 1).join(path.sep);
+  return tsConfigDirPath;
 }
 
 /**
- * 获取 tsconfig.json 里的 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
+ * 通过 appSrc 获取 tsconfig.json 里的 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
  */
 function getTsConfigAliasByAppSrc(devInfo, appSrc) {
-  let targetAlias = '';
-  const tsConfigJson = getTsConfigJson(appSrc);
-  if (tsConfigJson) {
-    targetAlias = getTsConfigAlias(devInfo, tsConfigJson);
-  }
+  const tsConfigDirPath = getTsConfigDirPathByAppSrc(appSrc);
+  const targetAlias = getTsConfigAliasByDirPath(devInfo, tsConfigDirPath);
   return targetAlias;
 }
 
@@ -101,8 +91,8 @@ module.exports = {
   buildAppAlias,
   getAppCwd,
   getAppBelongTo,
-  getTsConfigJson,
   getTsConfigAliasByAppSrc,
+  getTsConfigDirPathByAppSrc,
   getPrefixedDirName,
   getAppDirPath,
 };
