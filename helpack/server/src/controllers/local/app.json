@@ -7,6 +7,55 @@
       "git_repo_url": "https://github.com/hel-eco/hel-mono",
       "online_version": "0.2.1",
       "build_version": "0.2.1"
+    },
+    {
+      "name": "hdemo-hub",
+      "app_group_name": "hdemo-hub",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.1.3",
+      "build_version": "0.1.3"
+    },
+    {
+      "name": "hdemo-lib",
+      "app_group_name": "hdemo-lib",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.3",
+      "build_version": "0.0.1"
+    },
+    {
+      "name": "hdemo-lib2",
+      "app_group_name": "hdemo-lib2",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.1",
+      "build_version": "0.0.1"
+    },
+    {
+      "name": "hdemo-lib3",
+      "app_group_name": "hdemo-lib3",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.1",
+      "build_version": "0.0.1"
+    },
+    {
+      "name": "hdemo-lib4",
+      "app_group_name": "hdemo-lib4",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.1",
+      "build_version": "0.0.1"
+    },
+    {
+      "name": "hdemo-lib5",
+      "app_group_name": "hdemo-lib5",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.1",
+      "build_version": "0.0.1"
+    },
+    {
+      "name": "hdemo-lib6",
+      "app_group_name": "hdemo-lib6",
+      "git_repo_url": "https://github.com/hel-eco/hel-mono",
+      "online_version": "0.0.2",
+      "build_version": "0.0.2"
     }
   ]
 }
