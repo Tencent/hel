@@ -121,7 +121,7 @@ CREATE TABLE `t_user_extend` (
 DROP TABLE IF EXISTS `t_class_info`;
 CREATE TABLE `t_class_info` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `class_key` varchar(64) NOT NULL DEFAULT '' '组织分类key，对应t_sub_app_infos.class_key',
+  `class_key` varchar(64) NOT NULL DEFAULT '' COMMENT '组织分类key，对应t_sub_app_infos.class_key',
   `class_label` varchar(128) NOT NULL DEFAULT '' COMMENT '组织分类的名称，对应t_sub_app_infos.class_name',
   `class_token` varchar(64) NOT NULL DEFAULT '' COMMENT '组织分类的授权token，可用于帮助openapi调用时计算签名',
   `create_app_limit` int default 50 NOT NULL COMMENT 'oepnapi创建应用的上限数量',
