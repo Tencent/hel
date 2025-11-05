@@ -52,8 +52,8 @@ function getArgObject(args) {
       const config = getConfig();
       logPurple(
         `You can just type '${config.cliKeyword}',`
-          + 'then cli will trigger interactive commands to ask you input project name '
-          + 'if you forget the command.',
+        + 'then cli will trigger interactive commands to ask you input project name '
+        + 'if you forget the command.',
       );
       throw new Error(`Unknown command: "${cmdType}", it must be one of (${CMD_TYPE_LIST.join(', ')})`);
     }
@@ -98,6 +98,15 @@ function getArgObject(args) {
   return argObj;
 }
 
+function getRestArgsStr(keyword, excludes = []) {
+  const argv = process.argv;
+  const pure = argv.filter((v) => !excludes.includes(v));
+  const keywordIdx = pure.findIndex((v) => v === keyword);
+  const restArgs = pure.slice(keywordIdx + 1);
+  return restArgs.join(' ');
+}
+
 module.exports = {
   getArgObject,
+  getRestArgsStr,
 };

@@ -25,7 +25,8 @@ exports.execCreate = function (/** @type {IDevInfo} */ devInfo, options = {}) {
   const { isSubMod = false, autoStart = false } = options;
   const label = isSubMod ? 'hel-mod' : 'app';
   const actionKey = isSubMod ? INNER_ACTION.createMod : INNER_ACTION.create;
-  const keywords = options.keywords || getCmdKeywords(3);
+  // getCmdKeywords 第二位参数传 false 是为了拿到 -t -n 等命令关键字
+  const keywords = options.keywords || getCmdKeywords(3, false);
   helMonoLog(`${actionKey} keywords (${keywords.join(' ')})`);
   const argvOptions = getArgvOptions({ devInfo, keywords, actionKey }, options);
   const { copyToPath, copyFromPath, pkgName, copyToDir } = argvOptions;
