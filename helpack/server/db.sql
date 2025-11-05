@@ -236,3 +236,11 @@ CREATE TABLE `t_hmn_stat_log` (
   PRIMARY KEY (`id`),
   INDEX (`mod_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='hel服务端模块统计相关日志';
+
+DROP TABLE IF EXISTS `t_user_infos`;
+CREATE TABLE `t_user_infos` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `en` varchar(128) DEFAULT 'hi-bro' COMMENT '英文名',
+  `cn` varchar(128) DEFAULT 'hi-bro' COMMENT '中文名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='用户信息';
