@@ -25,6 +25,7 @@ const CMD_SHORT_TYPE = {
 
 /** hel-mono 大仓相关的内置命令 */
 const HEL_MONO_CMD_TYPE_LIST = [
+  CMD_TYPE.start,
   CMD_TYPE.build,
   CMD_TYPE.create,
   CMD_TYPE.createMod,
@@ -34,9 +35,9 @@ const HEL_MONO_CMD_TYPE_LIST = [
   CMD_TYPE.deps,
 ];
 
-const CMD_TYPE_LIST = Object.keys(CMD_TYPE);
+const CMD_TYPE_LIST = Object.values(CMD_TYPE);
 
-const ALL_CMD_TYPE_LIST = Object.keys(CMD_TYPE).concat(Object.keys(CMD_SHORT_TYPE));
+const ALL_CMD_TYPE_LIST = Object.keys(CMD_SHORT_TYPE).concat(Object.values(CMD_SHORT_TYPE));
 
 module.exports = {
   TEMPLATE_REACT_MONO: 'react-mono',

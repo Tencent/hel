@@ -1,4 +1,4 @@
-const { getArgObject } = require('./arg');
+const { getArgObject, getRestArgsStr } = require('./arg');
 const { askQuestion } = require('./ask');
 const { getIsDebug, setIsDebug } = require('./debug');
 const { ensureHelMonoTemplates, viewTplStoreVerByPkgManager } = require('./tpl');
@@ -21,6 +21,7 @@ module.exports = {
   logCliInfo,
   logCreateSuccess,
   getArgObject,
+  getRestArgsStr,
   logError,
   logPurple,
   logDebug,
