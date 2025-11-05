@@ -99,9 +99,9 @@ async function getUsersFromDB(): Promise<ParsedUser[]> {
     
     for (const record of userRecords) {
       try {
-        const full = record.full || `${record.en}(默认用户)`;
+        const full = `${record.en}(${record.cn})`;
         const leftBraceIdx = full.indexOf('(');
-        const cnName = leftBraceIdx > -1 ? full.substring(leftBraceIdx + 1, full.length - 1) : '默认用户';
+        const cnName = `(${record.cn})` || `(默认用户)`;
         
         const parsedUser: ParsedUser = {
           en: record.en || '',

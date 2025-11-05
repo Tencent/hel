@@ -4,7 +4,7 @@ import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 export interface tUserInfoAttribute {
   id?: number;
   en?: string;
-  full?: string;
+  cn?: string;
 }
 
 type tUserInfoCreationAttributes = Optional<tUserInfoAttribute, 'id'>;
@@ -12,7 +12,7 @@ type tUserInfoCreationAttributes = Optional<tUserInfoAttribute, 'id'>;
 export class UserInfo extends Model<tUserInfoAttribute, tUserInfoCreationAttributes> implements tUserInfoAttribute {
   public id?: number;
   public en?: string;
-  public full?: string;
+  public cn?: string;
 
 
 }
@@ -33,11 +33,11 @@ export default function Factory(sequelize: Sequelize) {
         defaultValue: 'hi-bro',
         comment: '英文名',
       },
-      full: {
+      cn: {
         type: DataTypes.STRING(128),
         allowNull: true,
-        defaultValue: 'hi-bro',
-        comment: '全名',
+        defaultValue: '你好兄弟',
+        comment: '中文名',
       },
     },
     {
