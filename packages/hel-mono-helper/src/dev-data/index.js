@@ -305,7 +305,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const appPkgJson = require(appData.realAppPkgJsonPath);
   const appInfo = getAppInfo(devInfo, appPkgJson);
   const appSrcIndex = getAppSrcIndex(appData);
-  const devPublicUrl = appData.appPublicUrl;
+  const devPublicUrl = baseUtils.slash.noEnd(appData.appPublicUrl);
 
   let appPublicUrl = `${devPublicUrl}/`;
   if (isHelModeVar) {

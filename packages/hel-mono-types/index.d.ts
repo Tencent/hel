@@ -13,7 +13,7 @@ export interface IHelMonoModBase {
   alias?: string;
   /**
    * default: IHelMonoJsonBase['deployPath']
-   * 当需要单独对某个模式设置 deployPath 时，可配置此项
+   * 当需要单独对某个模块设置 deployPath 时，可配置此项
    */
   deployPath?: string;
   /**
@@ -22,7 +22,7 @@ export interface IHelMonoModBase {
    */
   handleDeployPath?: boolean;
   /**
-   * default: default: IHelMonoJsonBase['isServerModOneBundle']
+   * default: IHelMonoJsonBase['isServerModOneBundle']
    * true: 将 server 模块构建为一个文件，基于 tsup 构建
    * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
    */
@@ -124,7 +124,7 @@ export interface IHelMonoJsonBase {
    */
   exclude?: string[];
   /**
- * default: 'http://localhost'
+ * default: '0.0.0.0'
  * 所有hel模块本地联调时的域名
  */
   devHostname?: string;
@@ -168,7 +168,7 @@ export interface IMonoInjectedDevInfo {
    */
   mods: IMonoInjectedModDict;
   /**
-   * default: 'http://localhost'
+   * default: 'localhost'
    * 所有hel模块本地联调时的域名
    */
   devHostname: string;
@@ -193,6 +193,11 @@ export interface IPkgHelConf {
 }
 
 export interface IHelMonoMod extends IHelMonoModBase {
+  /**
+   * default: IHelMonoJsonBase.devHostname
+   * 当前hel模块本地联调时的域名
+   */
+  devHostname?: string;
   port: number;
 }
 

@@ -54,7 +54,14 @@ function getCWDAppData(/** @type {IDevInfo} */ devInfo, inputCwd) {
 
   const defaultDevHostName = devInfo.devHostname || HOST_NAME;
   const { port = getPortByDevInfo(devInfo, isSubMod), devHostname = defaultDevHostName } = devInfo.appConfs[realAppPkgName] || {};
-  const appPublicUrl = `${devHostname}:${mayAddPort(port)}`;
+  let appPublicUrl = `${devHostname}:${mayAddPort(port)}`;
+
+  // 很重要，避免本地开发式出现 webpack 找不到资源的情况出现
+  // appPublicUrl 设置绝对路径是为了本地开发时，html 文档树上的资源都是带域名的，
+  // 生成资源形如 localhost:3000/static/js/xx.js 而非 /static/js/xx.js，后者在微模块模式下不能被宿主正常加载
+  if (!appPublicUrl.startsWith('http')) {
+    appPublicUrl = `http://${appPublicUrl}`;
+  }
 
   const appData = {
     isForRootHelDir,
