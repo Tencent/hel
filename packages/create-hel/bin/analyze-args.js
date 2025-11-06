@@ -25,7 +25,7 @@ function execHelMonoCmd(helMonoStartCmd) {
 }
 
 async function tryExecCmd(argObj) {
-  const { cmdType, cmdValue } = argObj;
+  const { cmdType } = argObj;
 
   if (CMD_TYPE.init === cmdType) {
     await createTemplate(argObj);

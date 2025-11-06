@@ -41,6 +41,7 @@ function logCreateSuccess({ projectName, dirPath, template }) {
  */
 function logKeyParams(args, argObj) {
   logDepPath();
+  logDebug(`See var: argv ${process.argv}`);
   logDebug(`See var: args ${args}`);
   logDebug('See var: argObj', argObj);
   logDebug(`See var: cwd ${process.cwd()}`);

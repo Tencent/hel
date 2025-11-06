@@ -58,9 +58,15 @@ function inferCmdRunContent(packName, options) {
     // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
     return scriptCmdKey;
   }
-  const mayDirOrPkgName = argv[2] || '';
-  const restArgs = argv.slice(3);
-  const restArgsLen = restArgs.length;
+
+  let mayDirOrPkgName = argv[2] || '';
+  let restArgs = argv.slice(3);
+
+  // 可能执行的是 pnpm start .build xxx，故这里需判断一下
+  if (mayDirOrPkgName.startsWith('.')) {
+    mayDirOrPkgName = argv[3] || '';
+    restArgs = argv.slice(4);
+  }
 
   // 此时用户表达模块的字符串无其他特殊符号，例如
   // pnpm start hub xxxx, argv2(hub) is pure
@@ -69,17 +75,15 @@ function inferCmdRunContent(packName, options) {
   // pnpm start hub:for exs, argv2(hub:for) is not pure
   const isArg2PurePkgLocation = [packName, prefixedDir, dirName].includes(mayDirOrPkgName);
   if (isArg2PurePkgLocation) {
-    if (!restArgsLen) {
-      // 使用内部推导的 scriptKey
-      const scriptKey = getScriptKey(scriptCmdKey, isSubMod);
-      return scriptKey;
-    }
     if (restArgs[0] === 'start') {
       // 避免 pnpm --filter xxx run start 无意义命令
       return ACTION_NAME.startHel;
     }
+    // 使用内部推导的 scriptKey
+    const scriptKey = getScriptKey(scriptCmdKey, isSubMod);
+    const newArgs = [scriptKey].concat(restArgs);
 
-    return restArgs.join(' ');
+    return newArgs.join(' ');
   }
 
   const [, action = ''] = mayDirOrPkgName.split(':');

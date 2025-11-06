@@ -5,6 +5,7 @@ const { logPurple } = require('./log');
 
 /** 获取描述 args 的对象 */
 function getArgObject(args) {
+  let isCmdTypeChanged = false;
   const argObj = {
     cmdType: CMD_TYPE.init,
     cmdValue: '',
@@ -40,9 +41,11 @@ function getArgObject(args) {
     argObj[objKey] = args[i + 1];
   };
 
-  const maySetCmdTypeAndValue = () => {
-    const [cmdType = '', cmdValue] = args;
-
+  const maySetCmdTypeAndValue = (idx) => {
+    if (isCmdTypeChanged) {
+      return false;
+    }
+    const [cmdType = '', cmdValue] = args.slice(idx);
     if (cmdType.startsWith('-') || cmdType.startsWith('--')) {
       return false;
     }
@@ -51,8 +54,8 @@ function getArgObject(args) {
     if (!ALL_CMD_TYPE_LIST.includes(cmdType)) {
       const config = getConfig();
       logPurple(
-        `You can just type '${config.cliKeyword}',`
-        + 'then cli will trigger interactive commands to ask you input project name '
+        `You can just type '${config.cliKeyword}', `
+        + 'then cli will trigger interactive commands to ask you to input project name '
         + 'if you forget the command.',
       );
       throw new Error(`Unknown command: "${cmdType}", it must be one of (${CMD_TYPE_LIST.join(', ')})`);
@@ -61,6 +64,7 @@ function getArgObject(args) {
     // 命中了内置命令
     const targetCmdType = CMD_SHORT_TYPE[cmdType] || cmdType;
     argObj.cmdType = targetCmdType;
+    isCmdTypeChanged = true;
     skipIdx[0] = true;
     if (CMD_TYPE.init === targetCmdType) {
       argObj.projectName = cmdValue;
@@ -76,7 +80,10 @@ function getArgObject(args) {
   };
 
   for (let i = 0; i < args.length; i++) {
-    if (i === 0 && maySetCmdTypeAndValue()) {
+    // 可能出现以下两种情况，故检查 0 和 1 两个位置
+    // hel -d build ...
+    // hel build ...
+    if ((i === 0 || i === 1) && maySetCmdTypeAndValue(i)) {
       continue;
     }
 
