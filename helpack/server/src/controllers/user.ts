@@ -1,8 +1,8 @@
 import { ConcurrencyGuard } from '@tmicro/f-guard';
+import { models } from 'at/models';
 import { ICuteExpressCtxBase } from 'at/types';
 import { isLocal } from 'at/utils/deploy';
 import axios from 'axios';
-import { models } from 'at/models';
 import { getOtherCache, handleStaffChange } from 'services/dataCache';
 
 interface User {
@@ -96,26 +96,26 @@ async function getUsersFromDB(): Promise<ParsedUser[]> {
     const userRecords = await models.UserInfo.findAll();
 
     const parsedUserList: ParsedUser[] = [];
-    
+
     for (const record of userRecords) {
       try {
         const full = `${record.en}(${record.cn})`;
         const leftBraceIdx = full.indexOf('(');
         const cnName = `(${record.cn})` || `(默认用户)`;
-        
+
         const parsedUser: ParsedUser = {
           en: record.en || '',
           full,
-          cnName
+          cnName,
         };
-        
+
         parsedUserList.push(parsedUser);
         cachedUserMap[parsedUser.en] = parsedUser;
       } catch (parseError) {
         console.error(`Error parsing user data for ${record.en}:`, parseError);
       }
     }
-    
+
     return parsedUserList;
   } catch (error) {
     console.error('Error fetching users from database:', error);

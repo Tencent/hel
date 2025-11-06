@@ -11,7 +11,7 @@ import subAppVersionFactory from './tSubAppVersion';
 import trackFactory from './tTrack';
 import uploadCosFactory from './tUploadCosLog';
 import userExtendFactory from './tUserExtend';
-import userInfoFactory from './tUserInfo'; 
+import userInfoFactory from './tUserInfo';
 
 type DBModels = nsdb.DBModels;
 type DBConfigItem = nsdb.DBConfigItem;
@@ -32,7 +32,7 @@ export let models: DBModels = {
   statDist: {},
   HMNStat: {},
   HMNStatLog: {},
-  UserInfo:{},
+  UserInfo: {},
 } as unknown as DBModels;
 
 export async function initModels(dbConf: DBConfigItem) {
