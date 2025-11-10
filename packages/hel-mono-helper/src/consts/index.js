@@ -3,7 +3,7 @@ const devUtils = require('hel-dev-utils');
 
 const srcPath = path.join(__dirname, '../');
 
-const VER = '1.3.19';
+const VER = '1.3.23';
 
 const HEL_EXTERNAL_HTML_PAH = path.join(srcPath, './tpls-hel/empty-index.html');
 
@@ -90,8 +90,6 @@ const INNER_ACTION = {
   lint: '.lint',
   tsup: '.tsup',
   test: '.test',
-  testOnce: '.test-once',
-  testWatch: '.test-watch',
 };
 
 const INNER_ACTION_NAMES = Object.keys(INNER_ACTION).map((key) => INNER_ACTION[key]);

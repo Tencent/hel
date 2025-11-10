@@ -15,7 +15,7 @@ const { execCreate, execCreateMod, execCreateStart } = require('./create');
 const { execBuild } = require('./build');
 const { execLint } = require('./lint');
 const { execTsup } = require('./tsup');
-const { execTestWatch, execTestOnce } = require('./test');
+const { execTest } = require('./test');
 const { buildSrvModToHelDist } = require('./srvMod');
 
 const innerActionFns = {
@@ -34,9 +34,7 @@ const innerActionFns = {
   [INNER_ACTION.createStartShort]: execCreateStart,
   [INNER_ACTION.startHelDeps]: startHelDeps,
   [INNER_ACTION.tsup]: execTsup,
-  [INNER_ACTION.test]: execTestOnce,
-  [INNER_ACTION.testOnce]: execTestOnce,
-  [INNER_ACTION.testWatch]: execTestWatch,
+  [INNER_ACTION.test]: execTest,
 };
 
 /**

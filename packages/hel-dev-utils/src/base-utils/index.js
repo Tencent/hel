@@ -1,64 +1,22 @@
 /** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
 import { getNpmCdnHomePage } from '../inner-utils/index';
-
-/**
- * @param {string} inputPath
- * @param {Object} options
- * @param {'end' | 'start'} [options.loc='end']
- * @param {boolean} [options.need=false]
- */
-export function ensureSlash(inputPath, options) {
-  const { need, loc = 'end' } = options;
-  const isEnd = loc === 'end';
-  const hasSlash = isEnd ? inputPath.endsWith('/') : inputPath.startsWith('/');
-
-  const shouldDelSlash = hasSlash && !need;
-  const shouldAddSlash = !hasSlash && need;
-  if (isEnd) {
-    if (shouldDelSlash) {
-      return inputPath.substring(0, inputPath.length - 1);
-    }
-    if (shouldAddSlash) {
-      return `${inputPath}/`;
-    }
-  }
-  if (!isEnd) {
-    if (shouldDelSlash) {
-      // del start slash
-      return inputPath.substring(1);
-    }
-    if (shouldAddSlash) {
-      return `/${inputPath}`;
-    }
-  }
-
-  return inputPath;
-}
-
-/** 语义化 slash 相关操作，方便上层理解和使用 */
-export const slash = {
-  start: (path) => ensureSlash(path, { loc: 'start', need: true }),
-  noStart: (path) => ensureSlash(path, { loc: 'start', need: false }),
-  end: (path) => ensureSlash(path, { loc: 'end', need: true }),
-  noEnd: (path) => ensureSlash(path, { loc: 'end', need: false }),
-};
+import { ensureSlash } from '../inner-utils/slash';
 
 export function getHelProcessEnvParams() {
-  // 以下常量由蓝盾流水线注入（由流水线变量或bash脚本注入）
-  const {
-    HOST,
-    PORT,
-    // appHomePage, 形如 http://xxx.cdn.com/hel/app1_2020121201011666
-    HEL_APP_HOME_PAGE,
-    /** 在构建机环境时，会注入真正对应的应用名 */
-    HEL_APP_GROUP_NAME,
-    // cdn 域名，未指定 HEL_APP_HOME_PAGE 但指定了 HEL_APP_CDN_PATH 时，
-    // 会生成形如 {HEL_APP_CDN_PATH}/{lib_name}@{version}/hel_dist 的 homePage 值
-    HEL_APP_CDN_PATH,
-    HEL_APP_NAME,
-  } = process.env;
+  const { env } = process;
+  // 用户可在本地或流水线脚本执行时注入这些变量，取 CMS_xx 仅为了兼容一些历史脚本能正常运行
+  const { HOST, PORT } = env;
+  // appHomePage, 形如 http://xxx.com/hel/app1@1.1.1
+  // 或 http://xxx.com/hel/app1_20191219024010 等用户自定义的部署位置
+  const envHomePage = env.HEL_APP_HOME_PAGE || env.CMS_APP_HOME_PAGE;
+  // cdn 域名，未指定 HEL_APP_HOME_PAGE 但指定了 HEL_APP_CDN_PATH 时，
+  // 会生成形如 {HEL_APP_CDN_PATH}/{lib_name}@{version}/hel_dist 的 homePage 值
+  const envCdnPath = env.HEL_APP_CDN_PATH || env.CMS_APP_CDN_PATH;
+  // 某些构建场景，通过命令行注入了应用名
+  const envGroupName = env.HEL_APP_GROUP_NAME || env.CMS_APP_GROUP_NAME;
+  const envName = env.HEL_APP_NAME || env.CMS_APP_NAME;
 
-  let appHomePage = HEL_APP_HOME_PAGE || '';
+  let appHomePage = envHomePage || '';
   let appHomePageDev = '';
   if (HOST || PORT) {
     const host = HOST || 'localhost';
@@ -70,9 +28,9 @@ export function getHelProcessEnvParams() {
   return {
     appHomePage,
     appHomePageDev,
-    appCdnPath: HEL_APP_CDN_PATH,
-    appGroupName: HEL_APP_GROUP_NAME,
-    appName: HEL_APP_NAME,
+    appCdnPath: envCdnPath,
+    appGroupName: envGroupName,
+    appName: envName,
   };
 }
 

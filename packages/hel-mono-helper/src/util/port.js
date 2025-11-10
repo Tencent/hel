@@ -27,6 +27,8 @@ function computeNewPort(maxPort, isSubMod) {
 function getPortByDevInfo(/** @type {IDevInfo} */ devInfo, isSubMod) {
   const mods = devInfo.mods || devInfo.appConfs;
   const { monoDict } = getModMonoDataDict(devInfo);
+  const appPortStart = devInfo.defaultAppPortStart || defaultAppPort;
+  const subModPortStart = devInfo.defaultSubModPortStart || defaultSubModPort;
 
   let appMaxPort = 0;
   let subModMaxPort = 0;
@@ -49,7 +51,7 @@ function getPortByDevInfo(/** @type {IDevInfo} */ devInfo, isSubMod) {
   if (maxPort) {
     maxPort = maxPort + 1;
   } else {
-    maxPort = isSubMod ? lastSubModPort || defaultSubModPort : lastAppPort || defaultAppPort;
+    maxPort = isSubMod ? lastSubModPort || subModPortStart : lastAppPort || appPortStart;
   }
 
   return computeNewPort(maxPort, isSubMod);

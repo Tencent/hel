@@ -75,14 +75,29 @@ export type MonoAppConfs = Record<string, IMonoAppConf>;
 export interface IHelMonoJsonBase {
   /**
    * default: 'start:hel'
-   * 执行 pnpm run start 命令时，需要命中的具体 start 脚本
+   * 执行 pnpm run start xxx 或 pnpm start xxx 命令时，需要命中的具体 start 脚本
    */
   defaultStart?: string;
   /**
    * default: 'build:hel'
-   * 执行 pnpm run build 命令时，需要命中的具体 build 脚本
+   * 执行 pnpm start .build xxx 命令时，需要命中的具体 build 脚本
    */
   defaultBuild?: string;
+  /**
+   * default: 'test'
+   * 执行 pnpm start .test xxx 命令时，需要命中的具体 test 脚本
+   */
+  defaultTest?: string;
+  /**
+   * default: 3000
+   * 执行 pnpm start .init-mono 时，以此值作为初始值逐渐加1，得到各个应用本地运行的端口值
+   */
+  defaultAppPortStart?: number;
+  /**
+   * default: 3100
+   * 执行 pnpm start .init-mono 时，以此值作为初始值逐渐加1，得到各个子模块本地运行的端口值
+   */
+  defaultSubModPortStart?: number;
   /**
    * default: 'https://unpkg.com'
    * 部署路径，可设置为其他带子路径的域名，例如 https://cdn.jsdelivr.net/npm'、'https://mycdn.com/hel' 等，
