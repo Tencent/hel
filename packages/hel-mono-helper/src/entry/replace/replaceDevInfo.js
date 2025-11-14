@@ -23,7 +23,6 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
     devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
   };
 
-
   const assignMod = (pkgName, isSubMod) => {
     if (injectedDevInfo.mods[pkgName]) {
       return;
