@@ -22,7 +22,7 @@ function getExtIndexData(appSrcDirPath, indexName, ext) {
   return { fullPath, isExist: fs.existsSync(fullPath), extFileName };
 }
 
-function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
+function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData, allowEmptySrcIndex) {
   let indexName = '';
   const { isForRootHelDir, appDir, belongTo } = appData;
   let { appSrcDirPath } = appData;
@@ -55,6 +55,9 @@ function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData) {
   }
 
   if (!result) {
+    if (allowEmptySrcIndex) {
+      return '';
+    }
     throw new Error(`Can not find index file with names(${indexNames}) under dir ${appSrcDirPath}`);
   }
 
@@ -186,7 +189,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
   const babelLoaderInclude = [appSrc];
-  const { exclude = [] } = devInfo;
+  const { excludeWorkspaceHelPackages = [], exclude = [] } = devInfo;
+  const isExcludeWorkspaceHelPackagesAll = excludeWorkspaceHelPackages === '*';
+  const isExcludeNpmHelPackagesAll = exclude === '*';
 
   // 启动的是代理目录，需将 appSrc 指向真正的项目 src 目录
   if (isForRootHelDir) {
@@ -270,9 +275,8 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
       }
 
       maySetAppTsConfigPaths(devInfo, pkgInfo, appTsConfigPaths);
-
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
-      if (isHelMicroMode() && !exclude.includes(pkgName)) {
+      if (isHelMicroMode() && !isExcludeWorkspaceHelPackagesAll && !excludeWorkspaceHelPackages.includes(pkgName)) {
         appAlias[pkgName] = `${pkgName}/hel`;
       }
 
@@ -290,7 +294,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
     // 来着 node_modules 的 hel 模块，如没有排除的话，也会自动加入微模块构建模式
     nmHelPkgNames.forEach((nmHelPkgName) => {
-      if (isHelMicroMode() && !exclude.includes(nmHelPkgName)) {
+      if (isHelMicroMode() && !isExcludeNpmHelPackagesAll && !exclude.includes(nmHelPkgName)) {
         appAlias[nmHelPkgName] = `${nmHelPkgName}/hel`;
       }
     });
@@ -304,7 +308,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
   const appPkgJson = require(appData.realAppPkgJsonPath);
   const appInfo = getAppInfo(devInfo, appPkgJson);
-  const appSrcIndex = getAppSrcIndex(appData);
+  const appSrcIndex = getAppSrcIndex(appData, devInfo.allowEmptySrcIndex);
   const devPublicUrl = baseUtils.slash.noEnd(appData.appPublicUrl);
 
   let appPublicUrl = `${devPublicUrl}/`;

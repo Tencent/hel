@@ -372,12 +372,12 @@ importers:
 
   packages/hel-mono-helper:
     specifiers:
-      hel-dev-utils: ^5.3.5
+      hel-dev-utils: ^5.3.7
       hel-iso: ^4.4.0
       hel-lib-proxy: ^4.12.1
       hel-micro: ^4.14.2
       hel-mono-runtime-helper: ^1.1.2
-      hel-mono-types: ^2.1.6
+      hel-mono-types: ^2.2.3
       jsonc-parser: 3.3.1
       shelljs: ^0.9.2
     dependencies:

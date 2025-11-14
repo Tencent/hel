@@ -1,6 +1,10 @@
 /** @typedef {import('../types').ICreateSubAppOptions} ICreateSubAppOptions */
 import { getNpmCdnHomePage } from '../inner-utils/index';
-import { ensureSlash } from '../inner-utils/slash';
+import * as slashMod from '../inner-utils/slash';
+
+export const slash = slashMod.slash;
+
+export const ensureSlash = slashMod.ensureSlash;
 
 export function getHelProcessEnvParams() {
   const { env } = process;
@@ -85,5 +89,5 @@ export function getJsonpFnName(appName, useTimestampSuffix = true) {
  * @returns
  */
 export function getPublicPathOrUrl(homePage, needSlash = true) {
-  return ensureSlash(homePage, { loc: 'end', need: needSlash });
+  return slashMod.ensureSlash(homePage, { loc: 'end', need: needSlash });
 }

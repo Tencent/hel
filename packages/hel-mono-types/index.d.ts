@@ -116,6 +116,13 @@ export interface IHelMonoJsonBase {
    */
   handleDeployPath?: boolean;
   /**
+   * default: false
+   * 允许大仓里模块的src目录下没有 index 导出文件，正常情况所有模块都需要有 index 来做统一导出，如存在特殊情况，
+   * 为避免 getMonoDevData 获取 appSrcIndex 报错 Can not find index file ...， 可配置此参数，
+   * 此时 appSrcIndex 会为空字符串 ''
+   */
+  allowEmptySrcIndex?: boolean;
+  /**
    * default: true
    * true: 将 server 模块构建为一个文件，基于 tsup 构建
    * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
@@ -130,18 +137,26 @@ export interface IHelMonoJsonBase {
    *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
    *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
    * }，
-   * 全局 externals
+   * 全局 externals，用户可以按需重写此配置
    */
   appExternals?: Record<string, string>;
   /**
-   * start:hel 或 build:hel 时，这些包排除到微模块构建体系之外，
-   * 可以指定大仓里的模块，也可以指定 node_modules 里的模块（此模块是hel模块时设置此参数才有作用）
+   * default: []
+   * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，
    */
-  exclude?: string[];
+  excludeWorkspaceHelPackages?: '*' | string[];
   /**
- * default: '0.0.0.0'
- * 所有hel模块本地联调时的域名
- */
+   * default: []，
+   * start:hel 或 build:hel 时，npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
+   * 即它们会以原始的npm模块形式运行或被打包到宿主中
+   * - '*' 表示排除所有
+   * - []表示不排除，如有具体的排除项可配置具体的包名到数组里
+   */
+  exclude?: '*' | string[];
+  /**
+   * default: '0.0.0.0'
+   * 所有hel模块本地联调时的域名
+   */
   devHostname?: string;
   /**
    * default: 'hel-micro'
@@ -154,6 +169,10 @@ export interface IHelMonoJsonBase {
    * 模板文件里使用的 hel-lib-proxy sdk 名称，如有自定义包可定义此值，让生成的模板文件里 sdk 路径指向用户 sdk
    */
   helLibProxyName?: string;
+  /**
+   * 其他扩展参数，基于 hel-mono-helper 封装新的 sdk 时需要用到的自定义参数
+   */
+  extra?: Record<string, any>;
 }
 
 /**

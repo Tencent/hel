@@ -9,6 +9,7 @@ const { purifyUndefined } = require('../../util/dict');
 const { isHelAllBuild } = require('../../util/is');
 const { getModMonoDataDict } = require('../../util/monoJson');
 const { rewriteFileLine } = require('../../util/rewrite');
+const { ensureHttpPrefix } = require('../../util/url');
 const { HOST_NAME } = require('../../consts');
 const { jsonObj2Lines } = require('./util');
 
@@ -19,8 +20,9 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { appConfs, devHostname } = devInfo;
   const injectedDevInfo = {
     mods: {},
-    devHostname: devHostname || HOST_NAME,
+    devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
   };
+
 
   const assignMod = (pkgName, isSubMod) => {
     if (injectedDevInfo.mods[pkgName]) {

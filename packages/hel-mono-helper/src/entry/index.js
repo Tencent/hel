@@ -8,6 +8,7 @@ const { noop } = require('../util/base');
 const cwdUtil = require('../util/cwd');
 const exUtil = require('../util/ex');
 const { getMonoAppDepDataImpl } = require('../util/depData');
+const { ensureHttpPrefix } = require('../util/url');
 const { genPnpmCmdAndRun } = require('../exec/cmd');
 const { prepareHelEntryFiles, prepareHelAppEntry } = require('./prepare');
 const { HEL_START_WITH_LOCAL_RUNNING_DEPS } = require('../consts');
@@ -71,7 +72,7 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
       const injectedDevInfo = prepareHelEntryFiles({ devInfo, depData, appData });
       if (startDeps) {
         const { devHostname = injectedDevInfo.devHostname, port } = injectedDevInfo.mods[pkgName];
-        const url = `${devHostname}:${port}`;
+        const url = ensureHttpPrefix(`${devHostname}:${port}`);
         visitDevServer(
           url,
           () => {

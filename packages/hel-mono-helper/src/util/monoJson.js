@@ -109,7 +109,7 @@ function getMonoDataFromDirDict(dirDict, dir) {
     throw new Error(`found no project for ${dir}`);
   }
   if (dataList.length >= 2) {
-    throw new Error(`found duplcate dir ${dir}, suggest you to prefix it like xxx/${dir}`);
+    throw new Error(`found duplicate dir ${dir}, suggest you to prefix it like xxx/${dir}`);
   }
   return dataList[0];
 }

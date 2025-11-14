@@ -48,7 +48,13 @@ function getTsConfigPaths(tsConfigDirPath) {
   const parentCompilerOptions = parentTsConfigJson.compilerOptions || {};
   const parentPaths = parentCompilerOptions.paths || {};
 
-  const paths = Object.assign({}, parentPaths, childPaths);
+  // 此处避免父亲配置覆盖掉孩子的
+  const paths = Object.assign({}, childPaths);
+  Object.keys(parentPaths).forEach((alias) => {
+    if (!childPaths[alias]) {
+      paths[alias] = parentPaths[alias];
+    }
+  });
 
   return paths;
 }
@@ -71,8 +77,12 @@ function getTsConfigAliasByDirPath(devInfo, tsConfigDirPath) {
     if (appExternals[key] || PKG_NAME_WHITE_LIST.includes(key)) {
       continue;
     }
-    const [mayAlias] = key.split('/');
-    if (mayAlias) {
+
+    const pathArr = paths[key] || [];
+    const pathValue = pathArr[0] || '';
+    const [mayAlias, mayStar] = key.split('/');
+    // 确保找到的是 "@xx/*": ["./*"] 配置项
+    if (mayAlias && mayStar === '*' && pathValue === './*') {
       alias = mayAlias;
       break;
     }

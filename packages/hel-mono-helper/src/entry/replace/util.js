@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { getContentLines } = require('../../util/xplat');
 
-function noop() {}
+function noop() { }
 
 /**
  * 去多余的空格：'a   b c d' --> 'a b c d'
@@ -93,7 +93,7 @@ function genExportModuleNames(filePath) {
       return;
     }
     const pured = compactBlank(trimed);
-    if (!pured.startsWith('export ') || pured.startsWith('export type')) {
+    if (!pured.startsWith('export ') || pured.startsWith('export type') || pured.startsWith('export interface')) {
       return;
     }
 
@@ -105,7 +105,7 @@ function genExportModuleNames(filePath) {
 
     if (pured.startsWith('export * from')) {
       const restStr = pured.split('export * from')[1];
-      // TODO 奖励支持分析 export * from './xxx' 语句
+      // TODO 将来支持分析 export * from './xxx' 语句
       throw new Error(`'export * from' in ${filePath} is not supported currently, please use named export statement`);
     }
 
