@@ -23,6 +23,8 @@ export const IS_SHARED = createSymbol('HeluxIsShared');
 
 export const SKIP_MERGE = createSymbol('HeluxSkipMerge');
 
+export const KEYED_SHARED_KEY = createSymbol('HeluxKeyedSharedKey');
+
 /** 第一次卸载 */
 export const FIRST_UNMOUNT = 1;
 

@@ -9,7 +9,8 @@ helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全�
 - 轻量，压缩后 2kb
 - 简单，仅暴露 6 个 api
 - 高性能，自带依赖收集
-- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图
+- 无需套 Provider，状态随取随用
+- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图，无 Proxy 环境自动降级为 defineProperty
 - 服务注入，配合`useService`接口轻松控制复杂业务逻辑，返回稳定的方法引用
 - 状态提升 0 改动，所以地方仅需将`useObject`换为`useSharedObject`即可提升状态共享到其他组件
 - 避免 forwordRef 地狱，内置的`exposeService`模式将轻松解决父调子时的`ref`转发晦涩理解问题和传染性（隔代组件需要层层转发）
@@ -169,6 +170,55 @@ const [obj, setObj] = useShared(sharedObj);
 setInterval(() => {
   state.a = Date.now(); // 触发视图更新
 }, 2000);
+```
+
+### createKeyedShared
+创建带 key 的共享状态上下文，其具体状态在 useKeyedShared 时才创建
+
+```ts
+export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
+  // 透传函数工厂
+  () => ({ name: 1 }),
+  {
+    // [可选]，透传 actions 工厂
+    actionsFactory: (state, setState) => ({
+      // state 会自动带 key，由 useKeyedShared 传入
+      changeName() {
+        console.log(state.name);
+        setState({ name: Date.now() });
+      },
+    }),
+    // [可选]，透传 store 名
+    storeName: 'Test',
+  }
+);
+
+// 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
+// 返回结果形如 { actions, state, setState } | null
+const ctx = getKeyedSharedCtx('some-key')
+ctx?.actions.changeName();
+```
+
+### useKeyedShared
+使用 keyedShared 获得 actions 或 state
+```tsx
+export function Demo() {
+  const { state, actions } = useKeyedShared(keyedShared, 'id1');
+  const change = () => {
+    // 将获得详细的类型提示
+    actions.changeName();
+  };
+
+  return (
+    <div>
+      hello {state.key}
+      <br />
+      name: {state.name}
+      <br />
+      <button onClick={change}>change</button>
+    </div>
+  );
+}
 ```
 
 ### useService

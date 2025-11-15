@@ -56,3 +56,9 @@ export function mapSharedState(sharedKey: number, state: Dict) {
 export function getSharedState(sharedKey: number) {
   return SHARED_KEY_STATE_MAP.get(sharedKey);
 }
+
+let keyedSharedStoreSeed = 0;
+export function getKeyedSharedStoreName() {
+  keyedSharedStoreSeed += 1;
+  return `KeyedShared_${keyedSharedStoreSeed}`;
+}

@@ -14,7 +14,8 @@ export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive
     readMapPrev: {} as any, // 上一次渲染完毕所依赖的 key 记录
     readMapStrict: null as any, // StrictMode 下辅助 resetDepMap 函数能够正确重置 readMapPrev 值
     insKey: 0,
-    sharedState: rawState,
+    rawState,
+    sharedState: null as unknown as T,
     updater: null as unknown as (partialState: Partial<T>) => void,
     renderStatus: RENDER_START,
   });

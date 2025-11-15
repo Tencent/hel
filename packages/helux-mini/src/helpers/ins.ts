@@ -16,30 +16,30 @@ export function buildInsCtx(insCtx: any, options: any) {
   const proxyedState = IS_SERVER
     ? state
     : createOb(
-        state,
-        // setter
-        (target, key, val) => {
-          // @ts-ignore
-          target[key] = val;
-          if (enableReactive) {
-            internal.setState({ [key]: val });
-          }
-          return true;
-        },
-        // getter
-        (target, key) => {
-          if (isSymbol(key)) {
-            return target[key];
-          }
-          const depKey = prefixValKey(key, internal.sharedKey);
-
-          insCtx.readMap[depKey] = 1;
-          if (insCtx.renderStatus !== RENDER_END) {
-            internal.recordDep(depKey, insCtx.insKey);
-          }
+      state,
+      // setter
+      (target: any, key: any, val: any) => {
+        // @ts-ignore
+        target[key] = val;
+        if (enableReactive) {
+          internal.setState({ [key]: val });
+        }
+        return true;
+      },
+      // getter
+      (target: any, key: any) => {
+        if (isSymbol(key)) {
           return target[key];
-        },
-      );
+        }
+        const depKey = prefixValKey(key, internal.sharedKey);
+
+        insCtx.readMap[depKey] = 1;
+        if (insCtx.renderStatus !== RENDER_END) {
+          internal.recordDep(depKey, insCtx.insKey);
+        }
+        return target[key];
+      },
+    );
   const updater = IS_SERVER ? setState : internal.setState;
   insCtx.updater = updater;
   insCtx.sharedState = proxyedState;

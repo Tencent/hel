@@ -109,6 +109,47 @@ export function useSharedObject<T extends Dict = Dict>(
  */
 export const useShared: typeof useSharedObject;
 
+
+export function createKeyedShared<T extends Dict = Dict, A extends Dict = {}>(
+  stateFactory: () => T,
+  options?: {
+    /** actions 工厂函数 */
+    actionsFactory?: (state: KeyedState<T>, setState: (partialState: Partial<T>) => void) => A,
+    /** store 名称，未传递的话内部会自动生成一个，建议传递 */
+    storeName?: string,
+  },
+): {
+  /**
+   * 提供给 useKeyedShared 使用的对象
+   */
+  keyedShared: IKeyedShared<T, A>,
+  /**
+   * 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
+   */
+  getKeyedSharedCtx: (key: string) => {
+    state: KeyedState<T>,
+    setState: (partialState: Partial<T>) => void,
+    actions: A,
+  } | null,
+}
+
+type KeyedState<T extends Dict> = T & { key: string };
+
+interface IKeyedShared<T extends Dict = Dict, A extends Dict = Dict> {
+  stateFactory: () => T;
+  actionsFactory: (state: KeyedState<T>, setState: (partialState: Partial<T>) => void) => A,
+  moduleNamePrefix: string;
+}
+
+export function useKeyedShared<K extends IKeyedShared<any, any>>(
+  keyedShared: K,
+  key: string,
+): {
+  state: K extends IKeyedShared<infer S> ? KeyedState<S> : Dict,
+  setState: K extends IKeyedShared<infer S> ? (partialState: Partial<S>) => void : (partialState: Dict) => void,
+  actions: K extends IKeyedShared<infer S, infer A> ? A : {},
+}
+
 /**
  * 使用普通对象，需注意此接口只接受普通对象，如传递共享对象给它会报错 OBJ_NOT_NORMAL_ERR
  * 应用里使用 useObject 替代 React.useState 将享受到以下两个好处

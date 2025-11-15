@@ -1,7 +1,7 @@
 import { IS_SERVER, SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
-import type { Dict, DictN, EenableReactive, ICreateOptions, ModuleName } from '../typing';
+import type { Dict, DictN, EnableReactive, ICreateOptions, ModuleName } from '../typing';
 import { isSymbol, nodupPush, prefixValKey, safeGet } from '../utils';
 import { record } from './root';
 
@@ -24,7 +24,7 @@ function recordDep(sharedKey: number, stateKey: string | symbol) {
   nodupPush(keys, stateKey);
 }
 
-function parseOptions(options?: ModuleName | EenableReactive | ICreateOptions) {
+function parseOptions(options?: ModuleName | EnableReactive | ICreateOptions) {
   let enableReactive = false;
   let enableRecordDep = false;
   let copyObj = false;
@@ -63,7 +63,7 @@ function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
 }
 
 function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
-  const { copyObj, enableSyncOriginal } = options;
+  const { copyObj, enableSyncOriginal = false } = options;
   let heluxObj;
   let shouldSync = false;
   if (copyObj) {
@@ -84,7 +84,7 @@ function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
     sharedState = createOb(
       heluxObj,
       // setter
-      (target, key: any, val) => {
+      (target: any, key: any, val: any) => {
         // @ts-ignore
         heluxObj[key] = val;
         if (shouldSync) {
@@ -97,7 +97,7 @@ function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
         return true;
       },
       // getter
-      (target, key) => {
+      (target: any, key: any) => {
         if (isSymbol(key)) {
           return target[key];
         }
@@ -190,7 +190,7 @@ export function getDepStats() {
 
 export function buildSharedObject<T extends Dict = Dict>(
   stateOrStateFn: T | (() => T),
-  options?: ModuleName | EenableReactive | ICreateOptions,
+  options?: ModuleName | EnableReactive | ICreateOptions,
 ): [T, (partialState: Partial<T>) => void] {
   const parsedOpts = parseOptions(options);
   const rawState = parseRawState(stateOrStateFn);
