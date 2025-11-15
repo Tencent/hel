@@ -6,7 +6,27 @@ import { buildInsCtx } from '../helpers/ins';
 import type { Dict } from '../typing';
 import { useObjectLogic } from './useObject';
 
-export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [T, (partialState: Partial<T>) => void] {
+function extractOptions(options?: { actions?: Dict, enableReactive?: boolean }) {
+  const optionsVar = { enableReactive: false, actions: {} };
+  const optionsType = typeof options;
+
+  if (optionsType === 'boolean') {
+    // @ts-ignore
+    optionsVar.enableReactive = options;
+  } else if (options && optionsType === 'object') {
+    Object.assign(optionsVar, options);
+  }
+
+  return optionsVar;
+}
+
+export function useShared<T extends Dict = Dict>(
+  sharedObject: T,
+  options?: { actions?: Dict, enableReactive?: boolean },
+): [T, (partialState: Partial<T>) => void] {
+  const { enableReactive, actions } = extractOptions(options);
+
+  // TODO  优化 sharedObject 变化的情况
   const rawState = getRawState(sharedObject);
   const [, setState] = useObjectLogic(rawState, { isStable: true, [IS_SHARED]: true, [SKIP_MERGE]: true });
   const { current: insCtx } = useRef({
@@ -29,6 +49,10 @@ export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive
 
   resetReadMap(insCtx);
   if (!updater) {
+    internal.insCount += 1;
+    if (internal.insCount === 1) {
+      internal.lifecycle.beforeMount({ actions, state: sharedObject, setState });
+    }
     const ret = buildInsCtx(insCtx, { state: rawState, setState, internal, enableReactive });
     updater = ret.updater;
     sharedState = ret.proxyedState;
@@ -44,10 +68,21 @@ export function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive
     const { readMap, insKey } = insCtx;
     // recover dep and updater for double mount behavior under react strict mode
     recoverDep(insKey, { readMap, internal, setState });
+    // 注此处不能使用 internal.insCount === 1 来判定，多个组件同时挂载，进入此逻辑时 insCount 已大于1
+    if (internal.insCount > 0 && !internal.lifecycleMountedCalled) {
+      internal.lifecycle.mounted({ actions, state: sharedObject, setState });
+      internal.lifecycleMountedCalled = true;
+    }
+
     return () => {
+      internal.insCount -= 1;
+      if (internal.insCount === 0) {
+        internal.lifecycle.willUnmount({ actions, state: sharedObject, setState });
+        internal.lifecycleMountedCalled = false;
+      }
       clearDep(insKey, readMap, internal);
     };
-  }, []);
+  }, [internal]);
 
   return [sharedState, updater];
 }

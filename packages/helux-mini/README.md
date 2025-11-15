@@ -182,9 +182,9 @@ export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
   {
     // [可选]，透传 actions 工厂
     actionsFactory: (state, setState) => ({
-      // state 会自动带 key，由 useKeyedShared 传入
-      changeName() {
-        console.log(state.name);
+      changeName(payload?: number) {
+        // state 会自动带 key，由 useKeyedShared 传入
+        console.log(state.name, state.key);
         setState({ name: Date.now() });
       },
     }),
@@ -197,6 +197,47 @@ export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
 // 返回结果形如 { actions, state, setState } | null
 const ctx = getKeyedSharedCtx('some-key')
 ctx?.actions.changeName();
+```
+
+- 使用生命周期
+支持透传 `options.lifecycle` 给 `createKeyedShared` 将共享数据的初始化、清理等动作脱离到组件之外。
+
+类型定义：
+```ts
+interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
+  /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
+  beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
+  mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
+  willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+}
+```
+
+使用示范：
+```ts
+export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
+  () => ({ name: 1 }),
+  {
+    actionsFactory: (state, setState) => ({
+      log(label: string) {
+        console.log('dome some data initial logic ...');
+      }
+    }),
+    lifecycle: {
+      mounted(params) {
+        // 调用 actions 处理相关逻辑
+        params.actions.log('mounted');
+      },
+      beforeMount(params) {
+        // params.actions.xxx
+      },
+      willUnmount(params) {
+        // params.actions.log('willUnmount');
+      },
+    },
+  }
+);
 ```
 
 ### useKeyedShared

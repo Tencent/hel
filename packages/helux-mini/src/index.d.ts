@@ -1,6 +1,6 @@
 /*
 |------------------------------------------------------------------------------------------------
-| helux@1.3.4
+| helux-mini@1.1.1
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
@@ -109,12 +109,21 @@ export function useSharedObject<T extends Dict = Dict>(
  */
 export const useShared: typeof useSharedObject;
 
+export interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
+  /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
+  beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
+  mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
+  willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+}
 
-export function createKeyedShared<T extends Dict = Dict, A extends Dict = {}>(
-  stateFactory: () => T,
+export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
+  stateFactory: () => S,
   options?: {
     /** actions 工厂函数 */
-    actionsFactory?: (state: KeyedState<T>, setState: (partialState: Partial<T>) => void) => A,
+    actionsFactory?: (state: KeyedState<S>, setState: (partialState: Partial<S>) => void) => A,
+    lifecycle?: ILifeCycle<S, A>,
     /** store 名称，未传递的话内部会自动生成一个，建议传递 */
     storeName?: string,
   },
@@ -122,32 +131,32 @@ export function createKeyedShared<T extends Dict = Dict, A extends Dict = {}>(
   /**
    * 提供给 useKeyedShared 使用的对象
    */
-  keyedShared: IKeyedShared<T, A>,
+  keyedShared: IKeyedShared<S, A>,
   /**
    * 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
    */
   getKeyedSharedCtx: (key: string) => {
-    state: KeyedState<T>,
-    setState: (partialState: Partial<T>) => void,
+    state: KeyedState<S>,
+    setState: (partialState: Partial<S>) => void,
     actions: A,
   } | null,
 }
 
 type KeyedState<T extends Dict> = T & { key: string };
 
-interface IKeyedShared<T extends Dict = Dict, A extends Dict = Dict> {
-  stateFactory: () => T;
-  actionsFactory: (state: KeyedState<T>, setState: (partialState: Partial<T>) => void) => A,
+interface IKeyedShared<S extends Dict = Dict, A extends Dict = Dict> {
+  stateFactory: () => S;
+  actionsFactory: (state: KeyedState<S>, setState: (partialState: Partial<S>) => void) => A,
   moduleNamePrefix: string;
 }
 
-export function useKeyedShared<K extends IKeyedShared<any, any>>(
-  keyedShared: K,
+export function useKeyedShared<S extends IKeyedShared<any, any>>(
+  keyedShared: S,
   key: string,
 ): {
-  state: K extends IKeyedShared<infer S> ? KeyedState<S> : Dict,
-  setState: K extends IKeyedShared<infer S> ? (partialState: Partial<S>) => void : (partialState: Dict) => void,
-  actions: K extends IKeyedShared<infer S, infer A> ? A : {},
+  state: S extends IKeyedShared<infer S> ? KeyedState<S> : Dict,
+  setState: S extends IKeyedShared<infer S> ? (partialState: Partial<S>) => void : (partialState: Dict) => void,
+  actions: S extends IKeyedShared<infer S, infer A> ? A : {},
 }
 
 /**

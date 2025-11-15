@@ -45,16 +45,17 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
   options?: {
     actionsFactory?: (state: T, setState: (partialState: Partial<T>) => void) => R,
     storeName?: string,
+    lifecycle?: Dict,
   }
 ) {
   const noop = () => ({});
-  const { actionsFactory = noop, storeName } = options || {};
+  const { actionsFactory = noop, storeName, lifecycle = {} } = options || {};
   let storeNameVar = storeName;
   if (!storeNameVar) {
     storeNameVar = getKeyedSharedStoreName();
   }
 
-  const keyedShared: any = { stateFactory, actionsFactory, storeName: storeNameVar };
+  const keyedShared: any = { stateFactory, actionsFactory, storeName: storeNameVar, lifecycle };
   keyedShared[KEYED_SHARED_KEY] = 1;
   return {
     getKeyedSharedCtx: (key: string) => {

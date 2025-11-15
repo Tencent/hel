@@ -1,7 +1,7 @@
 import { IS_SERVER, SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
-import type { Dict, DictN, EnableReactive, ICreateOptions, ModuleName } from '../typing';
+import type { Dict, DictN, EnableReactive, ICreateOptions, ModuleName, ILifeCycle } from '../typing';
 import { isSymbol, nodupPush, prefixValKey, safeGet } from '../utils';
 import { record } from './root';
 
@@ -10,9 +10,11 @@ interface IHeluxParams {
   rawState: Dict;
   shouldSync: boolean;
   sharedKey: number;
+  lifecycle: ILifeCycle;
 }
 
 let depStats: DictN<Array<string>> = {};
+const noop = () => ({});
 
 function mapDepStats(sharedKey: number) {
   const keys = safeGet(depStats, sharedKey, []);
@@ -30,6 +32,7 @@ function parseOptions(options?: ModuleName | EnableReactive | ICreateOptions) {
   let copyObj = false;
   let enableSyncOriginal = true;
   let moduleName = '';
+  let lifecycle = {};
 
   // for ts check, write 'typeof options' 3 times
   if (typeof options === 'boolean') {
@@ -42,9 +45,10 @@ function parseOptions(options?: ModuleName | EnableReactive | ICreateOptions) {
     copyObj = options.copyObj ?? false;
     enableSyncOriginal = options.enableSyncOriginal ?? true;
     moduleName = options.moduleName || '';
+    lifecycle = options.lifecycle || {};
   }
 
-  return { enableReactive, enableRecordDep, copyObj, enableSyncOriginal, moduleName };
+  return { enableReactive, enableRecordDep, copyObj, enableSyncOriginal, moduleName, lifecycle };
 }
 
 function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
@@ -63,7 +67,7 @@ function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
 }
 
 function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
-  const { copyObj, enableSyncOriginal = false } = options;
+  const { copyObj, enableSyncOriginal = false, lifecycle = {} } = options;
   let heluxObj;
   let shouldSync = false;
   if (copyObj) {
@@ -73,7 +77,7 @@ function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
     heluxObj = injectHeluxProto(rawState);
   }
   const sharedKey = markSharedKey(heluxObj);
-  return { rawState, heluxObj, shouldSync, sharedKey };
+  return { rawState, heluxObj, shouldSync, sharedKey, lifecycle };
 }
 
 function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
@@ -120,14 +124,23 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
     return;
   }
 
-  const { heluxObj, rawState, shouldSync, sharedKey } = heluxParams;
+  const { heluxObj, rawState, shouldSync, sharedKey, lifecycle } = heluxParams;
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: Record<string, number[]> = {};
+  const lifecycleVar = Object.assign({}, lifecycle);
+
+  lifecycleVar.beforeMount = lifecycleVar.beforeMount || noop;
+  lifecycleVar.mounted = lifecycleVar.mounted || noop;
+  lifecycleVar.willUnmount = lifecycleVar.willUnmount || noop;
+
   bindInternal(sharedState, {
+    lifecycle: lifecycleVar,
+    lifecycleMountedCalled: false,
     rawState: heluxObj, // helux raw state
     key2InsKeys,
     insKey2Updater,
     sharedKey,
+    insCount: 0,
     setState(partialState: any) {
       Object.assign(heluxObj, partialState);
       if (shouldSync) {

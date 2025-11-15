@@ -12,18 +12,20 @@ export function useKeyedShared<T extends Dict = Dict>(
     throw new Error('ERR_OBJ_NOT_KEYED_SHARED: can not pass a non-keyedShared obj to useKeyedShared!');
   }
 
-  const { storeName, stateFactory, actionsFactory } = keyedShared;
+  const { storeName } = keyedShared;
   const moduleName = `${storeName}@${key}`;
   let keyedSharedCtx = KEYED_SHARED_CTX_MAP[moduleName];
   if (!keyedSharedCtx) {
+    const { stateFactory, actionsFactory, lifecycle } = keyedShared;
     const oriState = { ...stateFactory(), key };
-    const { state, setState } = createShared(oriState, { moduleName });
+    const { state, setState } = createShared(oriState, { moduleName, lifecycle });
     const actions = actionsFactory(state, setState);
     keyedSharedCtx = { state, setState, actions };
     KEYED_SHARED_CTX_MAP[moduleName] = keyedSharedCtx;
   }
+  const { actions } = keyedSharedCtx;
+  const [state, setState] = useShared(keyedSharedCtx.state, { actions });
+  const keySharedInsCtx = { state, setState, actions };
 
-  const [state, setState] = useShared(keyedSharedCtx.state);
-  const keySharedInsCtx = { state, setState, actions: keyedSharedCtx.actions }
   return keySharedInsCtx;
 }
