@@ -22,7 +22,7 @@ function extractOptions(options?: { actions?: Dict; enableReactive?: boolean }) 
 
 export function useShared<T extends Dict = Dict>(
   sharedObject: T,
-  options?: { actions?: Dict; enableReactive?: boolean },
+  options: { actions?: Dict; enableReactive?: boolean },
 ): [T, (partialState: Partial<T>) => void] {
   const { enableReactive, actions } = extractOptions(options);
 

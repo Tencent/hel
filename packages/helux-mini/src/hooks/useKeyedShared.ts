@@ -1,5 +1,5 @@
 import { KEYED_SHARED_KEY } from '../consts';
-import { createShared } from '../factory/createShared';
+import { createSharedLogic } from '../factory/createShared';
 import { KEYED_SHARED_CTX_MAP } from '../helpers/keyedShared';
 import type { Dict } from '../typing';
 import { useShared } from './useShared';
@@ -18,7 +18,7 @@ export function useKeyedShared<T extends Dict = Dict>(
   if (!keyedSharedCtx) {
     const { stateFactory, actionsFactory, lifecycle } = keyedShared;
     const oriState = { ...stateFactory(), key };
-    const { state, setState } = createShared(oriState, { moduleName, lifecycle });
+    const { state, setState } = createSharedLogic(true, oriState, { moduleName, lifecycle });
     const actions = actionsFactory({ state, setState });
     keyedSharedCtx = { state, setState, actions };
     KEYED_SHARED_CTX_MAP[moduleName] = keyedSharedCtx;

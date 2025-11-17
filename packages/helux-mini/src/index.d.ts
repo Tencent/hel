@@ -1,10 +1,20 @@
 /*
 |------------------------------------------------------------------------------------------------
-| helux-mini@1.2.0
+| helux-mini@1.2.2
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
-import type { Dict, DictN, EffectCb, ICreateOptionsType, SharedObject } from './typing';
+import type {
+  Dict, DictN, EffectCb, ModuleName, EnableReactive, ICreateOptions,
+  SharedObject, KeyedState, ILifeCycle, IKeyedLifeCycle,
+} from './typing';
+
+export type {
+  ILifeCycle,
+  IKeyedLifeCycle,
+  KeyedState,
+  ICreateOptions,
+};
 
 type Advance = {
   /** after calling getDepStats, mem depStats will be cleanup automatically */
@@ -76,16 +86,22 @@ export function createReactiveSharedObject<T extends Dict = Dict>(
  * ```
  * 如需感知组件上下文，则需要`useService`接口去定义服务函数，可查看 useService 相关说明
  */
-export function createShared<T extends Dict = Dict>(
-  rawState: T | (() => T),
-  strBoolOrCreateOptions?: ICreateOptionsType,
+export function createShared<S extends Dict = Dict, A extends Dict = {}>(
+  rawState: S | (() => S),
+  strBoolOrCreateOptions?: ModuleName | EnableReactive | ICreateOptions<S, A>,
 ): {
-  state: SharedObject<T>;
+  state: SharedObject<S>;
   call: <A extends any[] = any[]>(
-    srvFn: (ctx: { args: A; state: T; setState: (partialState: Partial<T>) => void }) => Promise<Partial<T>> | Partial<T> | void,
+    srvFn: (ctx: { args: A; state: S; setState: (partialState: Partial<S>) => void }) => Promise<Partial<S>> | Partial<S> | void,
     ...args: A
   ) => void;
-  setState: (partialState: Partial<T>) => void;
+  setState: (partialState: Partial<S>) => void;
+  actions: A,
+  useState: () => {
+    state: S,
+    setState: (partialState: Partial<S>) => void,
+    actions: A,
+  },
 };
 
 /**
@@ -109,29 +125,18 @@ export function useSharedObject<T extends Dict = Dict>(
  */
 export const useShared: typeof useSharedObject;
 
-export interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
-  /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
-  beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
-  mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
-  willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** setState 之前触发，可用于辅助 console.trace 来查看调用源头 */
-  beforeSetState?: () => void,
-}
-
 export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
   stateFactory: () => S,
   options?: {
     /** actions 工厂函数 */
     actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
-    lifecycle?: ILifeCycle<S, A>,
+    lifecycle?: IKeyedLifeCycle<S, A>,
     /** store 名称，未传递的话内部会自动生成一个，建议传递 */
     storeName?: string,
   },
 ): {
   /**
-   * 提供给 useKeyedShared 使用的对象
+   * 提供给 useKeyedShared 使用的对象， 也是 createKeyedShared 导出的 useState 内部使用的对象
    */
   keyedShared: IKeyedShared<S, A>,
   /**
@@ -142,9 +147,12 @@ export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
     setState: (partialState: Partial<S>) => void,
     actions: A,
   } | null,
+  useState: (key: string) => {
+    state: KeyedState<S>,
+    setState: (partialState: Partial<S>) => void,
+    actions: A,
+  },
 }
-
-type KeyedState<T extends Dict> = T & { key: string };
 
 interface IKeyedShared<S extends Dict = Dict, A extends Dict = Dict> {
   stateFactory: () => S;

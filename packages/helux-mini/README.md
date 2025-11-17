@@ -176,7 +176,7 @@ setInterval(() => {
 创建带 key 的共享状态上下文，其具体状态在 useKeyedShared 时才创建
 
 ```ts
-export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
+export const store = createKeyedShared(
   // 透传函数工厂
   () => ({ name: 1 }),
   {
@@ -195,7 +195,7 @@ export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
 
 // 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
 // 返回结果形如 { actions, state, setState } | null
-const ctx = getKeyedSharedCtx('some-key')
+const ctx = store.getKeyedSharedCtx('some-key')
 ctx?.actions.changeName();
 ```
 
@@ -204,19 +204,21 @@ ctx?.actions.changeName();
 
 类型定义：
 ```ts
-interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
+interface IKeyedLifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
   /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
   beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
   /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
   mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
   /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
   willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** setState 之前触发，可用于辅助 console.trace 来查看调用源头 */
+  beforeSetState?: () => void,
 }
 ```
 
 使用示范：
 ```ts
-export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
+export const store = createKeyedShared(
   () => ({ name: 1 }),
   {
     actionsFactory: ({ state, setState }) => ({
@@ -242,9 +244,15 @@ export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
 
 ### useKeyedShared
 使用 keyedShared 获得 actions 或 state
+
+> 推荐 store.useState 替代 store.useKeyedShared(store.keyedShared), 更简洁，不用额外透传 keyedShared
+
 ```tsx
 export function Demo() {
-  const { state, actions } = useKeyedShared(keyedShared, 'id1');
+  const { state, actions } = useKeyedShared(store.keyedShared, 'id1');
+  // 推荐 store.useState, 更简洁，不用额外透传 keyedShared
+  // const { state, actions } = store.useState('id1');
+
   const change = () => {
     // 将获得详细的类型提示
     actions.changeName();

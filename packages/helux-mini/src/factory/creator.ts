@@ -1,7 +1,7 @@
 import { IS_SERVER, SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
-import type { Dict, DictN, EnableReactive, ICreateOptions, ILifeCycle, ILifeCycleFull, ModuleName } from '../typing';
+import type { Dict, DictN, EnableReactive, ICreateOptions, ILifeCycleInner, ModuleName } from '../typing';
 import { isSymbol, nodupPush, prefixValKey, safeGet } from '../utils';
 import { record } from './root';
 
@@ -10,7 +10,10 @@ interface IHeluxParams {
   rawState: Dict;
   shouldSync: boolean;
   sharedKey: number;
-  lifecycle: ILifeCycle;
+  lifecycle: ILifeCycleInner;
+  actionsFactory: Dict;
+  isKeyed: boolean;
+  moduleName: string;
 }
 
 let depStats: DictN<Array<string>> = {};
@@ -26,13 +29,14 @@ function recordDep(sharedKey: number, stateKey: string | symbol) {
   nodupPush(keys, stateKey);
 }
 
-function parseOptions(options?: ModuleName | EnableReactive | ICreateOptions) {
+function parseOptions(isKeyed: boolean, options?: ModuleName | EnableReactive | ICreateOptions) {
   let enableReactive = false;
   let enableRecordDep = false;
   let copyObj = false;
   let enableSyncOriginal = true;
   let moduleName = '';
   let lifecycle = {};
+  let actionsFactory: any = noop;
 
   // for ts check, write 'typeof options' 3 times
   if (typeof options === 'boolean') {
@@ -46,9 +50,10 @@ function parseOptions(options?: ModuleName | EnableReactive | ICreateOptions) {
     enableSyncOriginal = options.enableSyncOriginal ?? true;
     moduleName = options.moduleName || '';
     lifecycle = options.lifecycle || {};
+    actionsFactory = options.actionsFactory || noop;
   }
 
-  return { enableReactive, enableRecordDep, copyObj, enableSyncOriginal, moduleName, lifecycle };
+  return { enableReactive, enableRecordDep, copyObj, enableSyncOriginal, moduleName, lifecycle, actionsFactory, isKeyed };
 }
 
 function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
@@ -66,8 +71,8 @@ function parseRawState<T extends Dict = Dict>(stateOrStateFn: T | (() => T)) {
   return rawState;
 }
 
-function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
-  const { copyObj, enableSyncOriginal = false, lifecycle = {} } = options;
+function getHeluxParams(isKeyed: boolean, rawState: Dict, options: ICreateOptions): IHeluxParams {
+  const { copyObj, enableSyncOriginal = false, lifecycle = {}, actionsFactory = noop, moduleName } = options;
   let heluxObj;
   let shouldSync = false;
   if (copyObj) {
@@ -77,7 +82,8 @@ function getHeluxParams(rawState: Dict, options: ICreateOptions): IHeluxParams {
     heluxObj = injectHeluxProto(rawState);
   }
   const sharedKey = markSharedKey(heluxObj);
-  return { rawState, heluxObj, shouldSync, sharedKey, lifecycle };
+  // @ts-ignore
+  return { rawState, heluxObj, shouldSync, sharedKey, lifecycle, actionsFactory, isKeyed, moduleName };
 }
 
 function getSharedState(heluxParams: IHeluxParams, options: ICreateOptions) {
@@ -124,10 +130,10 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
     return;
   }
 
-  const { heluxObj, rawState, shouldSync, sharedKey, lifecycle } = heluxParams;
+  const { heluxObj, rawState, shouldSync, sharedKey, lifecycle, isKeyed, moduleName } = heluxParams;
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: Record<string, number[]> = {};
-  const lifecycleVar = Object.assign({}, lifecycle) as unknown as ILifeCycleFull;
+  const lifecycleVar = Object.assign({}, lifecycle) as unknown as ILifeCycleInner;
 
   lifecycleVar.beforeMount = lifecycleVar.beforeMount || noop;
   lifecycleVar.mounted = lifecycleVar.mounted || noop;
@@ -135,6 +141,8 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
   lifecycleVar.beforeSetState = lifecycleVar.beforeSetState || noop;
 
   bindInternal(sharedState, {
+    isKeyed,
+    moduleName,
     lifecycle: lifecycleVar,
     lifecycleStats: {
       isMountedCalled: false,
@@ -144,7 +152,18 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
     insKey2Updater,
     sharedKey,
     insCount: 0,
-    setState(partialState: any) {
+    setState(inputPartial: any) {
+      if (!inputPartial) {
+        return;
+      }
+
+      let partialState = inputPartial;
+      // keyed 共享状态，暂不允许用户通过 setState 修改 key，让 key 固定下来
+      if (isKeyed) {
+        const { key, ...rest } = inputPartial;
+        partialState = rest;
+      }
+
       Object.assign(heluxObj, partialState);
       if (shouldSync) {
         Object.assign(rawState, partialState);
@@ -206,15 +225,20 @@ export function getDepStats() {
 }
 
 export function buildSharedObject<T extends Dict = Dict>(
+  isKeyed: boolean,
   stateOrStateFn: T | (() => T),
   options?: ModuleName | EnableReactive | ICreateOptions,
-): [T, (partialState: Partial<T>) => void] {
-  const parsedOpts = parseOptions(options);
+): [T, (partialState: Partial<T>) => void, Dict] {
+  const parsedOpts = parseOptions(isKeyed, options);
   const rawState = parseRawState(stateOrStateFn);
-  const heluxParams = getHeluxParams(rawState, parsedOpts);
+  const heluxParams = getHeluxParams(isKeyed, rawState, parsedOpts);
   const sharedState = getSharedState(heluxParams, parsedOpts);
   bindInternalToShared(sharedState, heluxParams);
   record(parsedOpts.moduleName, sharedState);
 
-  return [sharedState, getInternal(sharedState).setState];
+  const state = sharedState;
+  const setState = getInternal(sharedState).setState;
+  const actions = parsedOpts.actionsFactory({ state, setState });
+
+  return [sharedState, getInternal(sharedState).setState, actions];
 }
