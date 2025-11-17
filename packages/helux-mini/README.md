@@ -181,7 +181,7 @@ export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
   () => ({ name: 1 }),
   {
     // [可选]，透传 actions 工厂
-    actionsFactory: (state, setState) => ({
+    actionsFactory: ({ state, setState }) => ({
       changeName(payload?: number) {
         // state 会自动带 key，由 useKeyedShared 传入
         console.log(state.name, state.key);
@@ -219,7 +219,7 @@ interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
 export const { keyedShared, getKeyedSharedCtx } = createKeyedShared(
   () => ({ name: 1 }),
   {
-    actionsFactory: (state, setState) => ({
+    actionsFactory: ({ state, setState }) => ({
       log(label: string) {
         console.log('dome some data initial logic ...');
       }

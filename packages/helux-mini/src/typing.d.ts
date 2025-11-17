@@ -8,14 +8,18 @@ export type SharedObject<T extends Dict = any> = T;
 
 export type EnableReactive = boolean;
 
-export interface ILifeCycle {
+export interface ILifeCycleFull {
   /** 第一个使用此共享状态的组件 beforeMount 时触发 */
-  beforeMount?: () => void,
+  beforeMount: () => void,
   /** 第一个使用此共享状态的组件 mounted 时触发 */
-  mounted?: () => void,
+  mounted: () => void,
   /** 最后一个使用此共享状态的组件 willUnmount 时触发 */
-  willUnmount?: () => void,
+  willUnmount: () => void,
+  /** setState 之前触发 */
+  beforeSetState: () => void,
 }
+
+export type ILifeCycle = Partial<ILifeCycleFull>
 
 export interface ICreateOptions {
   /** default: false，是否创建响应式状态，true：是，false：否 */

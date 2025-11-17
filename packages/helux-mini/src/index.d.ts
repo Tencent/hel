@@ -1,6 +1,6 @@
 /*
 |------------------------------------------------------------------------------------------------
-| helux-mini@1.1.1
+| helux-mini@1.2.0
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
@@ -116,13 +116,15 @@ export interface ILifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
   mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
   /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
   willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** setState 之前触发，可用于辅助 console.trace 来查看调用源头 */
+  beforeSetState?: () => void,
 }
 
 export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
   stateFactory: () => S,
   options?: {
     /** actions 工厂函数 */
-    actionsFactory?: (state: KeyedState<S>, setState: (partialState: Partial<S>) => void) => A,
+    actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
     lifecycle?: ILifeCycle<S, A>,
     /** store 名称，未传递的话内部会自动生成一个，建议传递 */
     storeName?: string,
@@ -146,7 +148,7 @@ type KeyedState<T extends Dict> = T & { key: string };
 
 interface IKeyedShared<S extends Dict = Dict, A extends Dict = Dict> {
   stateFactory: () => S;
-  actionsFactory: (state: KeyedState<S>, setState: (partialState: Partial<S>) => void) => A,
+  actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
   moduleNamePrefix: string;
 }
 

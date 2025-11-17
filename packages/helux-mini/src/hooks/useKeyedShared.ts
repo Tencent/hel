@@ -19,7 +19,7 @@ export function useKeyedShared<T extends Dict = Dict>(
     const { stateFactory, actionsFactory, lifecycle } = keyedShared;
     const oriState = { ...stateFactory(), key };
     const { state, setState } = createShared(oriState, { moduleName, lifecycle });
-    const actions = actionsFactory(state, setState);
+    const actions = actionsFactory({ state, setState });
     keyedSharedCtx = { state, setState, actions };
     KEYED_SHARED_CTX_MAP[moduleName] = keyedSharedCtx;
   }

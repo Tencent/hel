@@ -69,16 +69,16 @@ export function useShared<T extends Dict = Dict>(
     // recover dep and updater for double mount behavior under react strict mode
     recoverDep(insKey, { readMap, internal, setState });
     // 注此处不能使用 internal.insCount === 1 来判定，多个组件同时挂载，进入此逻辑时 insCount 已大于1
-    if (internal.insCount > 0 && !internal.lifecycleMountedCalled) {
+    if (internal.insCount > 0 && !internal.lifecycleStats.isMountedCalled) {
       internal.lifecycle.mounted({ actions, state: sharedObject, setState });
-      internal.lifecycleMountedCalled = true;
+      internal.lifecycleStats.isMountedCalled = true;
     }
 
     return () => {
       internal.insCount -= 1;
       if (internal.insCount === 0) {
         internal.lifecycle.willUnmount({ actions, state: sharedObject, setState });
-        internal.lifecycleMountedCalled = false;
+        internal.lifecycleStats.isMountedCalled = false;
       }
       clearDep(insKey, readMap, internal);
     };

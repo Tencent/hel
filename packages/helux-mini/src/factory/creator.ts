@@ -1,7 +1,7 @@
 import { IS_SERVER, SHARED_KEY } from '../consts';
 import { bindInternal, getInternal, getSharedKey, mapSharedState, markSharedKey } from '../helpers/feature';
 import { createHeluxObj, createOb, injectHeluxProto } from '../helpers/obj';
-import type { Dict, DictN, EnableReactive, ICreateOptions, ILifeCycle, ModuleName } from '../typing';
+import type { Dict, DictN, EnableReactive, ICreateOptions, ILifeCycle, ILifeCycleFull, ModuleName } from '../typing';
 import { isSymbol, nodupPush, prefixValKey, safeGet } from '../utils';
 import { record } from './root';
 
@@ -127,15 +127,18 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
   const { heluxObj, rawState, shouldSync, sharedKey, lifecycle } = heluxParams;
   const insKey2Updater: Record<string, any> = {};
   const key2InsKeys: Record<string, number[]> = {};
-  const lifecycleVar = Object.assign({}, lifecycle);
+  const lifecycleVar = Object.assign({}, lifecycle) as unknown as ILifeCycleFull;
 
   lifecycleVar.beforeMount = lifecycleVar.beforeMount || noop;
   lifecycleVar.mounted = lifecycleVar.mounted || noop;
   lifecycleVar.willUnmount = lifecycleVar.willUnmount || noop;
+  lifecycleVar.beforeSetState = lifecycleVar.beforeSetState || noop;
 
   bindInternal(sharedState, {
     lifecycle: lifecycleVar,
-    lifecycleMountedCalled: false,
+    lifecycleStats: {
+      isMountedCalled: false,
+    },
     rawState: heluxObj, // helux raw state
     key2InsKeys,
     insKey2Updater,
@@ -156,6 +159,7 @@ function bindInternalToShared(sharedState: Dict, heluxParams: IHeluxParams) {
       });
       // deduplicate
       allInsKeys = Array.from(new Set(allInsKeys));
+      lifecycleVar.beforeSetState();
       // start update
       allInsKeys.forEach((insKey) => {
         const updater = insKey2Updater[insKey];
