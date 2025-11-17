@@ -1,13 +1,13 @@
 import { KEYED_SHARED_KEY } from '../consts';
-import { KEYED_SHARED_CTX_MAP } from '../helpers/keyedShared';
 import { createShared } from '../factory/createShared';
+import { KEYED_SHARED_CTX_MAP } from '../helpers/keyedShared';
 import type { Dict } from '../typing';
 import { useShared } from './useShared';
 
 export function useKeyedShared<T extends Dict = Dict>(
   keyedShared: T,
   key: string,
-): { state: T, setState: (partialState: Partial<T>) => void, actions: any } {
+): { state: T; setState: (partialState: Partial<T>) => void; actions: any } {
   if (!keyedShared[KEYED_SHARED_KEY]) {
     throw new Error('ERR_OBJ_NOT_KEYED_SHARED: can not pass a non-keyedShared obj to useKeyedShared!');
   }

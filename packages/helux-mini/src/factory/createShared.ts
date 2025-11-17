@@ -43,10 +43,10 @@ export function createShared<T extends Dict = Dict>(
 export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
   stateFactory: () => T,
   options?: {
-    actionsFactory?: (state: T, setState: (partialState: Partial<T>) => void) => R,
-    storeName?: string,
-    lifecycle?: Dict,
-  }
+    actionsFactory?: (state: T, setState: (partialState: Partial<T>) => void) => R;
+    storeName?: string;
+    lifecycle?: Dict;
+  },
 ) {
   const noop = () => ({});
   const { actionsFactory = noop, storeName, lifecycle = {} } = options || {};
