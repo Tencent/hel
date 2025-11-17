@@ -1,8 +1,8 @@
 import { KEYED_SHARED_KEY } from '../consts';
 import { getKeyedSharedStoreName } from '../helpers/feature';
 import { KEYED_SHARED_CTX_MAP } from '../helpers/keyedShared';
-import * as keyedSharedHook from '../hooks/useKeyedShared';
-import * as sharedHook from '../hooks/useShared';
+import { useKeyedShared } from '../hooks/useKeyedShared';
+import { useShared } from '../hooks/useShared';
 import type { Dict, ICreateOptionsType, SharedObject } from '../typing';
 import { buildSharedObject } from './creator';
 
@@ -32,11 +32,17 @@ export function createSharedLogic<T extends Dict = Dict>(
   setState: (partialState: Partial<T>) => void;
   actions: Dict;
   useState: () => any;
+  useStore: () => any;
+  isKeyed: boolean;
 } {
   const [sharedState, setState, actions] = buildSharedObject(isKeyed, rawState, strBoolOrCreateOptions);
   const useState = () => {
-    const [state, setState] = sharedHook.useShared(sharedState, { actions });
-    return { state, setState, actions };
+    const tuple = useShared(sharedState, { actions });
+    return tuple;
+  };
+  const useStore = () => {
+    const [state, setState] = useShared(sharedState, { actions });
+    return { state, setState, actions, isKeyed };
   };
 
   return {
@@ -49,6 +55,8 @@ export function createSharedLogic<T extends Dict = Dict>(
     setState,
     actions,
     useState,
+    useStore,
+    isKeyed,
   };
 }
 
@@ -88,7 +96,11 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
   keyedShared[KEYED_SHARED_KEY] = 1;
 
   const useState = (key: string) => {
-    const insCtx = keyedSharedHook.useKeyedShared(keyedShared, key);
+    const { state, setState } = useKeyedShared(keyedShared, key);
+    return [state, setState];
+  };
+  const useStore = (key: string) => {
+    const insCtx = useKeyedShared(keyedShared, key);
     return insCtx;
   };
 
@@ -100,5 +112,7 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
     },
     keyedShared,
     useState,
+    useStore,
+    isKeyed: true,
   };
 }

@@ -245,13 +245,13 @@ export const store = createKeyedShared(
 ### useKeyedShared
 使用 keyedShared 获得 actions 或 state
 
-> 推荐 store.useState 替代 store.useKeyedShared(store.keyedShared), 更简洁，不用额外透传 keyedShared
+> 推荐 store.useStore 替代 store.useKeyedShared(store.keyedShared), 更简洁，不用额外透传 keyedShared
 
 ```tsx
 export function Demo() {
   const { state, actions } = useKeyedShared(store.keyedShared, 'id1');
-  // 推荐 store.useState, 更简洁，不用额外透传 keyedShared
-  // const { state, actions } = store.useState('id1');
+  // 推荐 store.useStore, 更简洁，不用额外透传 keyedShared
+  // const { state, actions } = store.useStore('id1');
 
   const change = () => {
     // 将获得详细的类型提示

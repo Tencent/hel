@@ -1,6 +1,6 @@
 /*
 |------------------------------------------------------------------------------------------------
-| helux-mini@1.2.2
+| helux-mini@1.2.3
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
@@ -97,11 +97,14 @@ export function createShared<S extends Dict = Dict, A extends Dict = {}>(
   ) => void;
   setState: (partialState: Partial<S>) => void;
   actions: A,
-  useState: () => {
+  useStore: () => {
     state: S,
     setState: (partialState: Partial<S>) => void,
     actions: A,
+    isKeyed: boolean,
   },
+  useState: () => [state: S, setState: (partialState: Partial<S>) => void],
+  isKeyed: boolean,
 };
 
 /**
@@ -147,11 +150,14 @@ export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
     setState: (partialState: Partial<S>) => void,
     actions: A,
   } | null,
-  useState: (key: string) => {
-    state: KeyedState<S>,
+  useStore: () => {
+    state: S,
     setState: (partialState: Partial<S>) => void,
     actions: A,
+    isKeyed: boolean,
   },
+  useState: () => [state: S, setState: (partialState: Partial<S>) => void],
+  isKeyed: boolean,
 }
 
 interface IKeyedShared<S extends Dict = Dict, A extends Dict = Dict> {

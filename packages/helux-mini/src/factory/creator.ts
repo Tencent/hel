@@ -237,8 +237,10 @@ export function buildSharedObject<T extends Dict = Dict>(
   record(parsedOpts.moduleName, sharedState);
 
   const state = sharedState;
-  const setState = getInternal(sharedState).setState;
+  const internal = getInternal(sharedState);
+  const setState = internal.setState;
   const actions = parsedOpts.actionsFactory({ state, setState });
+  internal.actions = actions;
 
-  return [sharedState, getInternal(sharedState).setState, actions];
+  return [sharedState, setState, actions];
 }
