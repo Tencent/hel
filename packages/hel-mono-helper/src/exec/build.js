@@ -1,5 +1,5 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
-const { getCmdKeywordName, helMonoLog, getNameData } = require('../util');
+const { getCmdKeywordName, getNameData } = require('../util');
 const { ACTION_NAME } = require('../consts');
 const { genPnpmCmdAndRun } = require('./cmd');
 

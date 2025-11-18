@@ -1,7 +1,7 @@
-/** @typedef {import('../types').SrcMap} SrcMap*/
+/** @typedef {import('hel-types').ISrcMap} SrcMap*/
 import * as fs from 'fs';
-import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
+import { slash } from '../inner-utils/slash';
 
 export function getIndexHtmlFileName(dirPath) {
   const names = fs.readdirSync(dirPath);

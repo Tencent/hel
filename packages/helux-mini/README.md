@@ -9,7 +9,8 @@ helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全�
 - 轻量，压缩后 2kb
 - 简单，仅暴露 6 个 api
 - 高性能，自带依赖收集
-- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图
+- 无需套 Provider，状态随取随用
+- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图，无 Proxy 环境自动降级为 defineProperty
 - 服务注入，配合`useService`接口轻松控制复杂业务逻辑，返回稳定的方法引用
 - 状态提升 0 改动，所以地方仅需将`useObject`换为`useSharedObject`即可提升状态共享到其他组件
 - 避免 forwordRef 地狱，内置的`exposeService`模式将轻松解决父调子时的`ref`转发晦涩理解问题和传染性（隔代组件需要层层转发）
@@ -169,6 +170,104 @@ const [obj, setObj] = useShared(sharedObj);
 setInterval(() => {
   state.a = Date.now(); // 触发视图更新
 }, 2000);
+```
+
+### createKeyedShared
+创建带 key 的共享状态上下文，其具体状态在 useKeyedShared 时才创建
+
+```ts
+export const store = createKeyedShared(
+  // 透传函数工厂
+  () => ({ name: 1 }),
+  {
+    // [可选]，透传 actions 工厂
+    actionsFactory: ({ state, setState }) => ({
+      changeName(payload?: number) {
+        // state 会自动带 key，由 useKeyedShared 传入
+        console.log(state.name, state.key);
+        setState({ name: Date.now() });
+      },
+    }),
+    // [可选]，透传 store 名
+    storeName: 'Test',
+  }
+);
+
+// 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
+// 返回结果形如 { actions, state, setState } | null
+const ctx = store.getKeyedSharedCtx('some-key')
+ctx?.actions.changeName();
+```
+
+- 使用生命周期
+支持透传 `options.lifecycle` 给 `createKeyedShared` 将共享数据的初始化、清理等动作脱离到组件之外。
+
+类型定义：
+```ts
+interface IKeyedLifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
+  /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
+  beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
+  mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
+  willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
+  /** setState 之前触发，可用于辅助 console.trace 来查看调用源头 */
+  beforeSetState?: () => void,
+}
+```
+
+使用示范：
+```ts
+export const store = createKeyedShared(
+  () => ({ name: 1 }),
+  {
+    actionsFactory: ({ state, setState }) => ({
+      log(label: string) {
+        console.log('dome some data initial logic ...');
+      }
+    }),
+    lifecycle: {
+      mounted(params) {
+        // 调用 actions 处理相关逻辑
+        params.actions.log('mounted');
+      },
+      beforeMount(params) {
+        // params.actions.xxx
+      },
+      willUnmount(params) {
+        // params.actions.log('willUnmount');
+      },
+    },
+  }
+);
+```
+
+### useKeyedShared
+使用 keyedShared 获得 actions 或 state
+
+> 推荐 store.useStore 替代 store.useKeyedShared(store.keyedShared), 更简洁，不用额外透传 keyedShared
+
+```tsx
+export function Demo() {
+  const { state, actions } = useKeyedShared(store.keyedShared, 'id1');
+  // 推荐 store.useStore, 更简洁，不用额外透传 keyedShared
+  // const { state, actions } = store.useStore('id1');
+
+  const change = () => {
+    // 将获得详细的类型提示
+    actions.changeName();
+  };
+
+  return (
+    <div>
+      hello {state.key}
+      <br />
+      name: {state.name}
+      <br />
+      <button onClick={change}>change</button>
+    </div>
+  );
+}
 ```
 
 ### useService

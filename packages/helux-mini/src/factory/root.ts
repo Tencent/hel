@@ -46,5 +46,6 @@ export function record(moduleName: string, sharedState: Dict) {
   }
   // may hot replace for dev mode or add new mod
   rootState[treeKey] = sharedState;
-  help.mod[treeKey] = { setState: getInternal(sharedState).setState };
+  const { setState, actions, rawState } = getInternal(sharedState);
+  help.mod[treeKey] = { setState, actions, rawState };
 }

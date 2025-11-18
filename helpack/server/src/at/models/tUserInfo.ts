@@ -13,8 +13,6 @@ export class UserInfo extends Model<tUserInfoAttribute, tUserInfoCreationAttribu
   public id?: number;
   public en?: string;
   public cn?: string;
-
-
 }
 
 export default function Factory(sequelize: Sequelize) {

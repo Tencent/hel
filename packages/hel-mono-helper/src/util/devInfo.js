@@ -125,6 +125,7 @@ function inferDevInfo(allowMonoJsonNull) {
     helLibProxyName,
     exclude = [],
     platform = devUtils.cst.DEFAULT_PLAT,
+    extra = {},
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
@@ -144,6 +145,7 @@ function inferDevInfo(allowMonoJsonNull) {
     devHostname,
     helMicroName,
     helLibProxyName,
+    extra,
   };
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;

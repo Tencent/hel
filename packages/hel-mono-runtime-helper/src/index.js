@@ -129,7 +129,11 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
         return { enable: false, host: '', ...params };
       }
 
-      return { enable: true, host: `${devHostname}:${port}`, ...params };
+      let host = `${devHostname}:${port}`;
+      if (!host.startsWith('http')) {
+        host = `http://${host}`;
+      }
+      return { enable: true, host, ...params };
     },
   };
 }

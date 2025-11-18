@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-helper",
-  "version": "1.3.15",
+  "version": "1.4.7",
   "description": "micro module mono-repo architecture helper",
   "keywords": [
     "hel",
@@ -30,20 +30,19 @@
     "hel-iso": "^4.4.0",
     "hel-lib-proxy": "^4.12.1",
     "hel-micro": "^4.14.2",
-    "hel-dev-utils": "^5.3.4",
+    "hel-dev-utils": "^5.3.7",
     "hel-mono-runtime-helper": "^1.1.2",
+    "hel-mono-types": "^2.2.4",
     "jsonc-parser": "3.3.1",
     "shelljs": "^0.9.2"
-  },
-  "devDependencies": {
-    "hel-mono-types": "^2.1.3"
   },
   "peerDependencies": {
     "hel-iso": "^4.4.0",
     "hel-lib-proxy": "^4.12.1",
     "hel-micro": "^4.14.2",
-    "hel-dev-utils": "^5.3.4",
+    "hel-dev-utils": "^5.3.7",
     "hel-mono-runtime-helper": "^1.1.2",
+    "hel-mono-types": "^2.2.4",
     "jsonc-parser": "3.3.1",
     "shelljs": "^0.9.2"
   },

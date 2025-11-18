@@ -111,6 +111,44 @@ type HandleDevInfoFn = (devInfo: IMonoDevInfo) => IMonoDevInfo;
  */
 export declare function setHandleDevInfo(fn: HandleDevInfoFn): void;
 
+export interface IGetHostOptions {
+  /**
+   * default: 'HOST'，从 process.env 里取值的 key 名称
+   */
+  envHostKey?: string;
+  /**
+   * default: true，true 表示尝试从 process.env[envHostKey] 获取 host 值
+   */
+  isGetEnvVal?: string;
+  /**
+   * default: '0.0.0.0'
+   */
+  fallbackHost?: string;
+  /**
+   * 不传递形如 apps/my-app 的 prefixedDir 变量的话，会根据 cwd 值自动推导
+   */
+  prefixedDir?: string;
+}
+
+export interface IGetPortOptions {
+  /**
+   * default: 'PORT'，从 process.env 里取值的 key 名称
+   */
+  envPortKey?: string;
+  /**
+   * default: true，true 表示尝试从 process.env[envPortKey] 获取 host 值
+   */
+  isGetEnvVal?: string;
+  /**
+   * default: 3000
+   */
+  fallbackPort?: number;
+  /**
+   * 不传递形如 apps/my-app 的 prefixedDir 变量的话，会根据 cwd 值自动推导
+   */
+  prefixedDir?: string;
+}
+
 export declare const monoUtil: {
   /** 打印hel-mono运行普通日志 */
   helMonoLog: (...args: any[]) => void;
@@ -150,10 +188,23 @@ export declare const monoUtil: {
    */
   getBuildDirByPkgName: (pkgName: string, defaultDir?: string) => string;
   /**
-   * 获取端口值，
-   * 不传递形如 apps/my-app 的 prefixedDir 变量的话，会根据 cwd 值自动推导，
+   * 获取本地调试的端口值，
+   * 按 process.env.PORT || getHelMonoPort() || 3000 取 port
    */
-  getPort: (prefixedDir?: string) => number;
+  getPort: (options?: IGetPortOptions) => number;
+  /**
+   * 获取本地调试的 hostname 值，
+   * 按 process.env.HOST || getHelMonoHost() || '0.0.0.0' 取 host
+   */
+  getHost: (options?: IGetHostOptions) => string;
+  /**
+   * 尝试获取 hel-mono.json 里的端口值，不传递形 prefixedDir 的时会根据 cwd 值自动推导
+   */
+  getHelMonoPort: (prefixedDir?: string) => number;
+  /**
+   * 尝试获取 hel-mono.json 里的host值，不传递形 prefixedDir 的时会根据 cwd 值自动推导
+   */
+  getHelMonoHost: (prefixedDir?: string) => string;
   /**
    * 获取hel-mono.json文件
    */

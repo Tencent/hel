@@ -1,7 +1,7 @@
 /** @typedef {import('../types').FileDesc} FileDesc*/
 import * as fs from 'fs';
-import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
+import { slash } from './slash';
 
 /**
  * 递归获得某个目录下的所有文件绝对路径

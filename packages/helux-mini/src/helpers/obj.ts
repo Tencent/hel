@@ -1,9 +1,9 @@
-function setProtoOf(obj, proto) {
+function setProtoOf(obj: any, proto: any) {
   obj.__proto__ = proto;
   return obj;
 }
 
-function mixinProperties(obj, proto) {
+function mixinProperties(obj: any, proto: any) {
   for (var prop in proto) {
     if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
       obj[prop] = proto[prop];
@@ -32,7 +32,7 @@ export function createHeluxObj(rawObj?: any) {
 /**
  * inject helux prototype to raw object
  */
-export function injectHeluxProto(rawObj) {
+export function injectHeluxProto(rawObj: any) {
   const protoCopy = { ...Object.prototype };
   setProto(rawObj, protoCopy);
   return rawObj;

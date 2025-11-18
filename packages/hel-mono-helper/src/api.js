@@ -10,6 +10,7 @@ const { helMonoLogAllTmp } = require('./util/log');
 const { lastItem } = require('./util/arr');
 const { runAppAction, createApp } = require('./util/cmd');
 const { getDirData } = require('./util/cwd');
+const { getHost, getHelMonoHost } = require('./util/devHost');
 const { getRawMonoJson } = require('./util/monoJson');
 const { getMonoAppPkgJsonByCwd, isEXProject } = require('./util/monoPkg');
 
@@ -84,6 +85,9 @@ const monoUtil = {
   setMonoRoot: util.setMonoRoot,
   ensureSlash: util.ensureSlash,
   getPort: util.getPort,
+  getHelMonoPort: util.getHelMonoPort,
+  getHost,
+  getHelMonoHost,
   getRawMonoJson: getRawMonoJson,
   isHelStart: util.isHelMode,
   isHelMode: util.isHelMode,
