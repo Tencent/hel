@@ -2,21 +2,21 @@
 
 helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全新数据流方案，为了更符合现在流行的 DDD 围绕业务构建领域模型而生。
 
-> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`，现降`2.*`版本独立为`helux-mini`来发布
+> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`，现再次裁剪一个精简版本为`helux-mini`来独立发布
 
 它拥有以下优势：
 
 - 轻量，压缩后 2kb
 - 高性能，带一层 proxy 依赖收集，不支持proxy环境的降级使用 defineProperty
 - 无 Provider 嵌套，共享状态随取随用
-- 有强大的生命周期管理
+- 有强大的生命周期管理，让你彻底逃离 useEffect
 - 支持带 key 的 store 创建
 - 100% ts 类型推导
 - 接近 react useState 的对等使用体验，也支持配置 actions 集中管理修改状态行为
 
 ![2](https://user-images.githubusercontent.com/7334950/232248704-95532231-ae99-4555-adcd-8d5999a0c5d4.gif)
 
-see oneline [demo1](https://codesandbox.io/s/helux-effect-qyv6xz?file=/src/App.tsx)，[demo2](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
+see oneline [demo](https://codesandbox.io/p/devbox/helux-effect-forked-5nstwt)
 
 ## quick start
 
@@ -38,7 +38,7 @@ function HelloHelux(props: any) {
 
 ### 配置 actions
 
-配置 `actionsFactory` 选项可创建同步或异步的修改状态函数
+配置 `actionsFactory` 选项可创建同步或异步的修改状态函数，方便逻辑复用
 
 ```ts
 export const store = createShared(
@@ -57,7 +57,7 @@ export const store = createShared(
 );
 ```
 
-组件中使用
+组件中使用 actions
 
 ```tsx
 export function Demo() {
