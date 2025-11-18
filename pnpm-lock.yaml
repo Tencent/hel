@@ -143,7 +143,7 @@ importers:
     dependencies:
       chalk: 4.1.2
       fs-extra: 11.3.2
-      hel-mono-templates: 1.0.0
+      hel-mono-templates: 1.0.1
       readline: 1.3.0
       shelljs: 0.9.2
 
@@ -372,12 +372,12 @@ importers:
 
   packages/hel-mono-helper:
     specifiers:
-      hel-dev-utils: ^5.3.7
+      hel-dev-utils: ^5.3.8
       hel-iso: ^4.4.0
       hel-lib-proxy: ^4.12.1
       hel-micro: ^4.14.2
       hel-mono-runtime-helper: ^1.1.2
-      hel-mono-types: ^2.2.3
+      hel-mono-types: ^2.2.4
       jsonc-parser: 3.3.1
       shelljs: ^0.9.2
     dependencies:
@@ -392,7 +392,7 @@ importers:
 
   packages/hel-mono-runtime-helper:
     specifiers:
-      hel-mono-types: ^2.1.0
+      hel-mono-types: ^2.2.3
     devDependencies:
       hel-mono-types: link:../hel-mono-types
 
@@ -15713,8 +15713,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /hel-mono-templates/1.0.0:
-    resolution: {integrity: sha512-YX2lxf26s7s1BqTqwPOuzp6xTGyOziQPLk9Ti6fJ8R6LMzOM73KTXr4l+/5BEp1Z98IidWYIfh5/UvNefMpN+g==}
+  /hel-mono-templates/1.0.1:
+    resolution: {integrity: sha512-RQ5sRwiDD/gS16FpvEvDgr8D7T0NlxfIa1J+w+6909DecN8KlsUDDmOJnf8u4MberDk3/0pOUqGTrlprlhTQTQ==}
     dev: false
 
   /history/4.10.1:

@@ -1,6 +1,6 @@
 {
   "name": "helux-mini",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "A React state library that encourages service injection and supports reactive updates",
   "repository": {
     "type": "git",

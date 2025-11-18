@@ -234,13 +234,13 @@ export function buildSharedObject<T extends Dict = Dict>(
   const heluxParams = getHeluxParams(isKeyed, rawState, parsedOpts);
   const sharedState = getSharedState(heluxParams, parsedOpts);
   bindInternalToShared(sharedState, heluxParams);
-  record(parsedOpts.moduleName, sharedState);
 
   const state = sharedState;
   const internal = getInternal(sharedState);
   const setState = internal.setState;
   const actions = parsedOpts.actionsFactory({ state, setState });
   internal.actions = actions;
+  record(parsedOpts.moduleName, sharedState);
 
   return [sharedState, setState, actions];
 }
