@@ -7,14 +7,12 @@ helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全�
 它拥有以下优势：
 
 - 轻量，压缩后 2kb
-- 简单，仅暴露 6 个 api
-- 高性能，自带依赖收集
-- 无需套 Provider，状态随取随用
-- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图，无 Proxy 环境自动降级为 defineProperty
-- 服务注入，配合`useService`接口轻松控制复杂业务逻辑，返回稳定的方法引用
-- 状态提升 0 改动，所以地方仅需将`useObject`换为`useSharedObject`即可提升状态共享到其他组件
-- 避免 forwordRef 地狱，内置的`exposeService`模式将轻松解决父调子时的`ref`转发晦涩理解问题和传染性（隔代组件需要层层转发）
-- ts 友好，100% ts 编写，为你提供全方位类型提示
+- 高性能，带一层 proxy 依赖收集，不支持proxy环境的降级使用 defineProperty
+- 无 Provider 嵌套，共享状态随取随用
+- 有强大的生命周期管理
+- 支持带 key 的 store 创建
+- 100% ts 类型推导
+- 接近 react useState 的对等使用体验，也支持配置 actions 集中管理修改状态行为
 
 ![2](https://user-images.githubusercontent.com/7334950/232248704-95532231-ae99-4555-adcd-8d5999a0c5d4.gif)
 
@@ -134,7 +132,7 @@ export function Demo() {
 
 ### 创建响应式对象
 
-用于应该总是优先考试使用 `actionsFactory` 来统一里管理修改状态的行为，此特性用于展示响应性功能。
+用户应该总是优先考试使用 `actionsFactory` 来统一里管理修改状态的行为，此特性用于展示响应性功能。
 
 ```ts
 const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, true);
