@@ -106,11 +106,17 @@ export const store2 = createShared(() => ({ a: 1 }), {
 
 ### 创建带 key 的共享状态
 
+创建带 key 的 store，当前多个实体需要共享状态到不同组件并复用一模一样的 actions 逻辑时，使用 `createKeyedShared` 创建带 key 共享状态
+
 ```ts
 export const store = createKeyedShared(
   () => ({ name: 1 }),
   {
-    actionsFactory: ()=>({ /** 略... */ })
+    actionsFactory: ({ state, setState })=>({ 
+      someAction(){
+        console.log('state.key'); // 此处能读取到 key
+      }
+    }),
     storeName: 'Test', // 【可选】配置 store 名称
     lifecycle: { /** 略... */ },
   }
@@ -121,6 +127,7 @@ export const store = createKeyedShared(
 
 ```tsx
 export function Demo() {
+  // 此处透传 key 后，state 里将自动拥有 key 值
   const { state, actions } = store.useStore('someKey');
   return /** 略... */;
 ```
