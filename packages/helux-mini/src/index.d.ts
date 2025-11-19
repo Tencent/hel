@@ -1,6 +1,6 @@
 /*
 |------------------------------------------------------------------------------------------------
-| helux-mini@1.2.6
+| helux-mini@1.2.7
 | A React state library that encourages service injection and supports reactive updates
 |------------------------------------------------------------------------------------------------
 */
@@ -36,7 +36,7 @@ export const advance: Advance;
  * const sharedObj = createSharedObject({a:1, b:2});
  * ```
  */
-export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T), moduleName?: string): SharedObject<T>;
+export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T), moduleName?: string): SharedObject<T>
 
 /**
  *  创建响应式的共享对象，可透传给 useSharedObject
@@ -49,7 +49,25 @@ export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T
 export function createReactiveSharedObject<T extends Dict = Dict>(
   rawState: T | (() => T),
   moduleName?: string,
-): [SharedObject<T>, (partialState: Partial<T>) => void];
+): [SharedObject<T>, (partialState: Partial<T>) => void]
+
+export interface IStore<S extends Dict = Dict, A extends Dict = {}> {
+  state: SharedObject<S>;
+  call: <A extends any[] = any[]>(
+    srvFn: (ctx: { args: A; state: S; setState: (partialState: Partial<S>) => void }) => Promise<Partial<S>> | Partial<S> | void,
+    ...args: A
+  ) => void;
+  setState: (partialState: Partial<S>) => void;
+  actions: A,
+  useStore: () => {
+    state: S,
+    setState: (partialState: Partial<S>) => void,
+    actions: A,
+    isKeyed: boolean,
+  },
+  useState: () => [state: S, setState: (partialState: Partial<S>) => void],
+  isKeyed: boolean,
+}
 
 /**
  * 创建响应式的共享对象，当需要调用脱离函数上下文的服务函数（即不需要感知props时），
@@ -89,23 +107,7 @@ export function createReactiveSharedObject<T extends Dict = Dict>(
 export function createShared<S extends Dict = Dict, A extends Dict = {}>(
   rawState: S | (() => S),
   strBoolOrCreateOptions?: ModuleName | EnableReactive | ICreateOptions<S, A>,
-): {
-  state: SharedObject<S>;
-  call: <A extends any[] = any[]>(
-    srvFn: (ctx: { args: A; state: S; setState: (partialState: Partial<S>) => void }) => Promise<Partial<S>> | Partial<S> | void,
-    ...args: A
-  ) => void;
-  setState: (partialState: Partial<S>) => void;
-  actions: A,
-  useStore: () => {
-    state: S,
-    setState: (partialState: Partial<S>) => void,
-    actions: A,
-    isKeyed: boolean,
-  },
-  useState: () => [state: S, setState: (partialState: Partial<S>) => void],
-  isKeyed: boolean,
-};
+): IStore<S, A>
 
 /**
  * 使用共享对象，需注意此接口只接受共享对象，如传递普通对象给它会报错 OBJ_NOT_SHARED_ERR
@@ -121,23 +123,14 @@ export function createShared<S extends Dict = Dict, A extends Dict = {}>(
 export function useSharedObject<T extends Dict = Dict>(
   sharedObject: T | (() => T),
   enableReactive?: boolean,
-): [SharedObject<T>, (partialState: Partial<T>) => void];
+): [SharedObject<T>, (partialState: Partial<T>) => void]
 
 /**
  * alias of useSharedObject
  */
 export const useShared: typeof useSharedObject;
 
-export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
-  stateFactory: () => S,
-  options?: {
-    /** actions 工厂函数 */
-    actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
-    lifecycle?: IKeyedLifeCycle<S, A>,
-    /** store 名称，未传递的话内部会自动生成一个，建议传递 */
-    storeName?: string,
-  },
-): {
+export interface IKeyedStore<S extends Dict = Dict, A extends Dict = {}> {
   /**
    * 提供给 useKeyedShared 使用的对象， 也是 createKeyedShared 导出的 useState 内部使用的对象
    */
@@ -160,10 +153,24 @@ export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
   isKeyed: boolean,
 }
 
+export function createKeyedShared<S extends Dict = Dict, A extends Dict = {}>(
+  stateFactory: () => S,
+  options?: {
+    /** actions 工厂函数 */
+    actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
+    lifecycle?: IKeyedLifeCycle<S, A>,
+    /** module 名称，未传递的话内部会自动生成一个，建议传递 */
+    moduleName?: string,
+  },
+): IKeyedStore<S, A>
+
 interface IKeyedShared<S extends Dict = Dict, A extends Dict = Dict> {
   stateFactory: () => S;
   actionsFactory: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void }) => A,
-  moduleNamePrefix: string;
+  /**
+   * use as module name prefix
+   */
+  moduleName: string;
 }
 
 export function useKeyedShared<S extends IKeyedShared<any, any>>(
@@ -188,7 +195,7 @@ export function useKeyedShared<S extends IKeyedShared<any, any>>(
  * @param isStable - 是否返回稳定对象
  * @returns
  */
-export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void];
+export function useObject<T extends Dict = Dict>(initialState: T | (() => T), isStable?: boolean): [T, (partialState: Partial<T>) => void]
 
 /**
  * 使用服务注入模式开发 react 组件，可配和`useObject`和`useSharedObject`同时使用，详细使用方式见在线示例：
@@ -233,12 +240,12 @@ export function useService<P extends Dict = Dict, S extends Dict = Dict, T exten
     getState: () => S;
     getProps: () => P;
   };
-};
+}
 
 /**
  * 强制更新
  */
-export function useForceUpdate(): () => void;
+export function useForceUpdate(): () => void
 
 /**
  * 对齐 React.useEffect
@@ -246,7 +253,7 @@ export function useForceUpdate(): () => void;
  * @param cb
  * @param deps
  */
-export function useEffect(cb: EffectCb, deps?: any[]): void;
+export function useEffect(cb: EffectCb, deps?: any[]): void
 
 /**
  * 对齐 React.useLayoutEffect
@@ -254,7 +261,7 @@ export function useEffect(cb: EffectCb, deps?: any[]): void;
  * @param cb
  * @param deps
  */
-export function useLayoutEffect(cb: EffectCb, deps?: any[]): void;
+export function useLayoutEffect(cb: EffectCb, deps?: any[]): void
 
 type DefaultExport = {
   /**

@@ -6,8 +6,8 @@ import { buildInsCtx } from '../helpers/ins';
 import type { Dict } from '../typing';
 import { useObjectLogic } from './useObject';
 
-function extractOptions(options?: { actions?: Dict; enableReactive?: boolean }) {
-  const optionsVar = { enableReactive: false, actions: {} };
+function extractOptions(options?: { enableReactive?: boolean }) {
+  const optionsVar = { enableReactive: false };
   const optionsType = typeof options;
 
   if (optionsType === 'boolean') {
@@ -22,9 +22,9 @@ function extractOptions(options?: { actions?: Dict; enableReactive?: boolean }) 
 
 export function useShared<T extends Dict = Dict>(
   sharedObject: T,
-  options: { actions?: Dict; enableReactive?: boolean },
+  options?: { enableReactive?: boolean },
 ): [T, (partialState: Partial<T>) => void] {
-  const { enableReactive, actions } = extractOptions(options);
+  const { enableReactive } = extractOptions(options);
 
   // TODO  优化 sharedObject 变化的情况
   const rawState = getRawState(sharedObject);
@@ -51,7 +51,7 @@ export function useShared<T extends Dict = Dict>(
   if (!updater) {
     internal.insCount += 1;
     if (internal.insCount === 1) {
-      internal.lifecycle.beforeMount({ actions, state: sharedObject, setState });
+      internal.lifecycle.beforeMount({ actions: internal.actions, state: sharedObject, setState });
     }
     const ret = buildInsCtx(insCtx, { state: rawState, setState, internal, enableReactive });
     updater = ret.updater;
@@ -70,14 +70,14 @@ export function useShared<T extends Dict = Dict>(
     recoverDep(insKey, { readMap, internal, setState });
     // 注此处不能使用 internal.insCount === 1 来判定，多个组件同时挂载，进入此逻辑时 insCount 已大于1
     if (internal.insCount > 0 && !internal.lifecycleStats.isMountedCalled) {
-      internal.lifecycle.mounted({ actions, state: sharedObject, setState });
+      internal.lifecycle.mounted({ actions: internal.actions, state: sharedObject, setState });
       internal.lifecycleStats.isMountedCalled = true;
     }
 
     return () => {
       internal.insCount -= 1;
       if (internal.insCount === 0) {
-        internal.lifecycle.willUnmount({ actions, state: sharedObject, setState });
+        internal.lifecycle.willUnmount({ actions: internal.actions, state: sharedObject, setState });
         internal.lifecycleStats.isMountedCalled = false;
       }
       clearDep(insKey, readMap, internal);

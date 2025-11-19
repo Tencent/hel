@@ -110,7 +110,7 @@ export const store = createKeyedShared(
         console.log('state.key'); // 此处能读取到 key
       }
     }),
-    storeName: 'Test', // 【可选】配置 store 名称
+    moduleName: 'Test', // 【可选】配置模块名称
     lifecycle: { /** 略... */ },
   }
 );

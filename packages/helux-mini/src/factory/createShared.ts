@@ -6,6 +6,8 @@ import { useShared } from '../hooks/useShared';
 import type { Dict, ICreateOptionsType, SharedObject } from '../typing';
 import { buildSharedObject } from './creator';
 
+const noop = () => ({});
+
 export function createSharedObject<T extends Dict = Dict>(rawState: T | (() => T), moduleName?: string): T {
   const [sharedState] = buildSharedObject(false, rawState, { moduleName, enableReactive: false });
   return sharedState;
@@ -37,11 +39,11 @@ export function createSharedLogic<T extends Dict = Dict>(
 } {
   const [sharedState, setState, actions] = buildSharedObject(isKeyed, rawState, strBoolOrCreateOptions);
   const useState = () => {
-    const tuple = useShared(sharedState, { actions });
+    const tuple = useShared(sharedState);
     return tuple;
   };
   const useStore = () => {
-    const [state, setState] = useShared(sharedState, { actions });
+    const [state, setState] = useShared(sharedState);
     return { state, setState, actions, isKeyed };
   };
 
@@ -81,18 +83,22 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
   stateFactory: () => T,
   options?: {
     actionsFactory?: (state: T, setState: (partialState: Partial<T>) => void) => R;
-    storeName?: string;
+    moduleName?: string;
     lifecycle?: Dict;
   },
 ) {
-  const noop = () => ({});
-  const { actionsFactory = noop, storeName, lifecycle = {} } = options || {};
-  let storeNameVar = storeName;
-  if (!storeNameVar) {
-    storeNameVar = getKeyedSharedStoreName();
+  if (typeof stateFactory !== 'function') {
+    throw new Error('state must be a function for createKeyedShared');
   }
 
-  const keyedShared: any = { stateFactory, actionsFactory, storeName: storeNameVar, lifecycle, isKeyed: true };
+  const { actionsFactory = noop, moduleName, lifecycle = {} } = options || {};
+  let moduleNameVar = moduleName;
+  console.log('moduleNameVar', moduleNameVar);
+  if (!moduleNameVar) {
+    moduleNameVar = getKeyedSharedStoreName();
+  }
+
+  const keyedShared: any = { stateFactory, actionsFactory, moduleName: moduleNameVar, lifecycle };
   keyedShared[KEYED_SHARED_KEY] = 1;
 
   const useState = (key: string) => {
@@ -106,7 +112,7 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
 
   return {
     getKeyedSharedCtx: (key: string) => {
-      const moduleName = `${storeName}@${key}`;
+      const moduleName = `${moduleNameVar}@${key}`;
       const ctx = KEYED_SHARED_CTX_MAP[moduleName] || null;
       return ctx;
     },

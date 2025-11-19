@@ -224,6 +224,34 @@ export function getDepStats() {
   return curDepStats;
 }
 
+// TODO for createSharedV2, 思考非 keyed actions dispatch keyed actions 方法，需要如何处理
+// 提供 dispatch 内部调用 或 dispatchX 跨模块调用两个句柄？
+// function extractActions(isV2, parsedOpts, { state, setState }) {
+//   if (!isV2) {
+//     const actions = parsedOpts.actionsFactory({ state, setState });
+//     return actions;
+//   }
+
+//   const actions: any = {};
+//   const defActions = parsedOpts.actions;
+//   const dispatch = (fn, ...args: any[]) => {
+//     const payload = args[0];
+//     const result = fn({ state, setState, payload, args, dispatch });
+//     return result;
+//   };
+
+//   Object.keys(defActions).forEach((fnName) => {
+//     const fn = defActions[fnName];
+//     fn.__fn = fnName;
+//     actions[fnName] = (...args: any[]) => {
+//       const payload = args[0];
+
+//       const result = fn({ state, setState, payload, args, dispatch });
+//       return result;
+//     }
+//   });
+// }
+
 export function buildSharedObject<T extends Dict = Dict>(
   isKeyed: boolean,
   stateOrStateFn: T | (() => T),
