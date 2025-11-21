@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <style>
+    fieldset {
+      margin-top: 10px;
+    }
+  </style>
+  {{{data.desc}}}
+  <legend>
+    <fieldset>测试 hello 函数：<a href="http://localhost:7776/api/hello" target="_blank">http://localhost:7776/api/hello</a></fieldset>
+    <fieldset>
+      更新 hello 函数版本：http://localhost:7776/api/changeVer/:ver
+      <hr />
+      👉🏼 例如更新到 1.0.1 版本：<a href="http://localhost:7776/api/changeVer/1.0.1" target="_blank"
+        >http://localhost:7776/api/changeVer/1.0.1</a
+      >
+    </fieldset>
+    <fieldset>
+      查看当前hel最新的版本号：
+      <a href="http://localhost:7776/api/getModVer" target="_blank">http://localhost:7776/api/getModVer</a>
+    </fieldset>
+    <fieldset>
+      查看当前hel模块描述：
+      <a href="http://localhost:7776/api/getModDesc" target="_blank">http://localhost:7776/api/getModDesc</a>
+    </fieldset>
+    <fieldset>
+      查看当前hel激活模块路径信息：
+      <a href="http://localhost:7776/api/resolveMod" target="_blank">http://localhost:7776/api/resolveMod</a>
+    </fieldset>
+  </legend>
+</html>

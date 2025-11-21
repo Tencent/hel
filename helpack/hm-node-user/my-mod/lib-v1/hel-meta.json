@@ -1,0 +1,67 @@
+{
+  "app": {
+    "name": "@hel-demo/mono-libs",
+    "app_group_name": "@hel-demo/mono-libs",
+    "git_repo_url": "https://github.com/hel-eco/hel-mono",
+    "online_version": "1.0.2",
+    "build_version": "1.0.2",
+    "platform": "unpkg",
+    "create_at": "2025-11-19T07:59:43.397Z"
+  },
+  "version": {
+    "plugin_ver": "5.3.8",
+    "extract_mode": "build",
+    "sub_app_name": "@hel-demo/mono-libs",
+    "sub_app_version": "@hel-demo/mono-libs@1.0.2",
+    "version_tag": "1.0.2",
+    "src_map": {
+      "webDirPath": "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist",
+      "htmlIndexSrc": "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/index.html",
+      "extractMode": "all",
+      "iframeSrc": "",
+      "chunkCssSrcList": [],
+      "chunkJsSrcList": [
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/main.707b5e8a.js",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/241.f55920ff.chunk.js",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/244.f09e22c8.chunk.js"
+      ],
+      "staticCssSrcList": [],
+      "staticJsSrcList": ["https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"],
+      "relativeCssSrcList": [],
+      "relativeJsSrcList": [],
+      "headAssetList": [
+        {
+          "tag": "script",
+          "append": true,
+          "attrs": {
+            "src": "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/main.707b5e8a.js",
+            "defer": "defer"
+          }
+        }
+      ],
+      "bodyAssetList": [
+        {
+          "tag": "staticScript",
+          "append": false,
+          "attrs": {
+            "src": "https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js"
+          }
+        }
+      ],
+      "otherSrcList": [
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/asset-manifest.json",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/index.html",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/robots.txt",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/241.f55920ff.chunk.js.LICENSE.txt",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/241.f55920ff.chunk.js.map",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/244.f09e22c8.chunk.js.map",
+        "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/main.707b5e8a.js.map"
+      ],
+      "srvModSrcList": ["https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/srv/index.js"],
+      "srvModSrcIndex": "https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/srv/index.js"
+    },
+    "html_content": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#000000\"/><meta name=\"description\" content=\"Web site created by create-hel\"/><title>Create Hel App</title><script defer=\"defer\" src=\"https://unpkg.com/@hel-demo/mono-libs@1.0.2/hel_dist/static/js/main.707b5e8a.js\"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><script src=\"https://tnfe.gtimg.com/hel-mono/l1/react-hel/v3.js\"></script><div id=\"hel-app-root\"></div></body></html>",
+    "create_at": "2025-11-19T07:59:43.397Z",
+    "desc": "this version meta is created by hel-dev-utils@5.3.8"
+  }
+}
