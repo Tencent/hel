@@ -20,7 +20,7 @@ const {
 const { clearMonoLog, helMonoLog, helMonoErrorLog, helMonoLogTmp, trySetLogName } = require('./log');
 const { getCWDAppData } = require('./opCwd');
 const { getMonoRootInfo, setMonoRoot } = require('./rootInfo');
-const { getPort } = require('./port');
+const { getPort, getHelMonoPort } = require('./port');
 
 module.exports = {
   helMonoLog,
@@ -48,6 +48,7 @@ module.exports = {
   getUnderDirSubPath,
   getFileJson,
   getPort,
+  getHelMonoPort,
   getMonoNameMap,
   getMonoAppDepData,
   isHelStart,

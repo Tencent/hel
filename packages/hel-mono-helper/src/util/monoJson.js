@@ -38,9 +38,19 @@ function getRawMonoJson() {
 }
 
 /**
+ * 服务于 getModMonoDataDict，相同的脚本上下文多次命中此函数时，可读取缓存数据
+ */
+const innerCache = new Map();
+
+/**
  * @returns {IGetModMonoDataDictResult}
  */
 function getModMonoDataDict(monoJsonOrDevInfo) {
+  const cachedResult = innerCache.get(monoJsonOrDevInfo);
+  if (cachedResult) {
+    cachedResult;
+  }
+
   const { monoRoot } = getMonoRootInfo();
   const { belongToDirs, subModDirs } = getDevInfoDirs(monoJsonOrDevInfo);
   const monoDict = {};
@@ -84,7 +94,10 @@ function getModMonoDataDict(monoJsonOrDevInfo) {
     }
   }
 
-  return { monoDict, prefixedDirDict, dirDict };
+  const result = { monoDict, prefixedDirDict, dirDict };
+  innerCache.set(monoJsonOrDevInfo, result);
+
+  return result;
 }
 
 /**
@@ -96,7 +109,7 @@ function getMonoDataFromDirDict(dirDict, dir) {
     throw new Error(`found no project for ${dir}`);
   }
   if (dataList.length >= 2) {
-    throw new Error(`found duplcate dir ${dir}, suggest you to prefix it like xxx/${dir}`);
+    throw new Error(`found duplicate dir ${dir}, suggest you to prefix it like xxx/${dir}`);
   }
   return dataList[0];
 }

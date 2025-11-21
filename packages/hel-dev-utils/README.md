@@ -8,10 +8,11 @@
 
 ```ts
 // 头部添加
-/** @typedef {import('../typings').SrcMap} SrcMap*/
-/** @typedef {import('../typings').IAssetOptions} IAssetOptions*/
-/** @typedef {import('../typings').IAssetInfo} IAssetInfo */
-/** @typedef {import('../typings').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
+/** @typedef {import('hel-types').ISrcMap} SrcMap */
+/** @typedef {import('../src/types').IAssetOptions} IAssetOptions */
+/** @typedef {import('../src/types').IAssetInfo} IAssetInfo */
+/** @typedef {import('../src/types').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
+/** @typedef {import('../src/types').ICheckOptions} ICheckOptions */
 
-//  import('../../typings') 替换为 import('../typings')
+//  import('../types') 替换为 import('../src/types')
 ```

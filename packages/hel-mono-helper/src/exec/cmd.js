@@ -40,7 +40,7 @@ function getScriptKey(cmdKeyword) {
  * 推导 run 后面的执行内容
  */
 function inferCmdRunContent(packName, options) {
-  const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName, isSubMod } = options;
+  const { scriptCmdKey = ACTION_NAME.startRaw, belongTo, dirName } = options;
   const prefixedDir = `${belongTo}/${dirName}`;
   const argv = getPureArgv();
 
@@ -58,9 +58,15 @@ function inferCmdRunContent(packName, options) {
     // 类似 ['/xx/bin/node', '/xx/scripts/hel/start']
     return scriptCmdKey;
   }
-  const mayDirOrPkgName = argv[2] || '';
-  const restArgs = argv.slice(3);
-  const restArgsLen = restArgs.length;
+
+  let mayDirOrPkgName = argv[2] || '';
+  let restArgs = argv.slice(3);
+
+  // 可能执行的是 pnpm start .build xxx，故这里需判断一下
+  if (mayDirOrPkgName.startsWith('.')) {
+    mayDirOrPkgName = argv[3] || '';
+    restArgs = argv.slice(4);
+  }
 
   // 此时用户表达模块的字符串无其他特殊符号，例如
   // pnpm start hub xxxx, argv2(hub) is pure
@@ -69,17 +75,20 @@ function inferCmdRunContent(packName, options) {
   // pnpm start hub:for exs, argv2(hub:for) is not pure
   const isArg2PurePkgLocation = [packName, prefixedDir, dirName].includes(mayDirOrPkgName);
   if (isArg2PurePkgLocation) {
-    if (!restArgsLen) {
-      // 使用内部推导的 scriptKey
-      const scriptKey = getScriptKey(scriptCmdKey, isSubMod);
-      return scriptKey;
-    }
     if (restArgs[0] === 'start') {
-      // 避免 pnpm --filter xxx run start 无意义命令
+      // 避免 pnpm start xxx start 转换为 pnpm --filter xxx run start 这样的无意义命令（会造成循环调用）
       return ACTION_NAME.startHel;
     }
+    // 是执行 pnpm start xx-dir yy-script-key 这样的命令
+    // 翻译为 pnpm --filter xx-dir run yy-script-key
+    if (ACTION_NAME.start === scriptCmdKey && restArgs.length) {
+      return restArgs.join(' ');
+    }
+    // 使用内部推导的 scriptKey
+    const scriptKey = getScriptKey(scriptCmdKey);
+    const newArgs = [scriptKey].concat(restArgs);
 
-    return restArgs.join(' ');
+    return newArgs.join(' ');
   }
 
   const [, action = ''] = mayDirOrPkgName.split(':');

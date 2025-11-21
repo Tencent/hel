@@ -1,6 +1,5 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
-const path = require('path');
-const { lastNItem } = require('./arr');
+const { getDirData } = require('./cwd');
 const { isHelExternalBuild } = require('./is');
 const { getModMonoDataDict, getRawMonoJson } = require('./monoJson');
 
@@ -28,6 +27,8 @@ function computeNewPort(maxPort, isSubMod) {
 function getPortByDevInfo(/** @type {IDevInfo} */ devInfo, isSubMod) {
   const mods = devInfo.mods || devInfo.appConfs;
   const { monoDict } = getModMonoDataDict(devInfo);
+  const appPortStart = devInfo.defaultAppPortStart || defaultAppPort;
+  const subModPortStart = devInfo.defaultSubModPortStart || defaultSubModPort;
 
   let appMaxPort = 0;
   let subModMaxPort = 0;
@@ -50,7 +51,7 @@ function getPortByDevInfo(/** @type {IDevInfo} */ devInfo, isSubMod) {
   if (maxPort) {
     maxPort = maxPort + 1;
   } else {
-    maxPort = isSubMod ? lastSubModPort || defaultSubModPort : lastAppPort || defaultAppPort;
+    maxPort = isSubMod ? lastSubModPort || subModPortStart : lastAppPort || appPortStart;
   }
 
   return computeNewPort(maxPort, isSubMod);
@@ -80,22 +81,35 @@ function getPortByPrefixedDir(prefixedDir) {
   return mayAddPort(port);
 }
 
-function getPort(prefixedDir) {
+function getHelMonoPort(prefixedDir) {
   let targetDir = prefixedDir;
   if (!targetDir) {
-    const cwd = process.cwd();
-    const list = cwd.split(path.sep);
-    const appDirName = lastNItem(list);
-    const appBelongTo = lastNItem(list, 2);
-    targetDir = `${appBelongTo}/${appDirName}`;
+    const data = getDirData();
+    targetDir = data.prefixedDir;
   }
-  const port = getPortByPrefixedDir(targetDir);
-  return port;
+  return getPortByPrefixedDir(targetDir);
+}
+
+function getPort(options) {
+  let optionsVar = options || {};
+  // 兼容旧版本
+  if (typeof optionsVar === 'string') {
+    optionsVar = { prefixedDir: optionsVar };
+  }
+
+  const { envPortKey = 'PORT', fallbackPort = 3000, prefixedDir, isGetEnvVal = true } = optionsVar;
+  const envPort = process.env[envPortKey];
+  if (isGetEnvVal && envPort) {
+    return parseInt(envPort, 10);
+  }
+
+  return getHelMonoPort(prefixedDir) || fallbackPort;
 }
 
 module.exports = {
   getPortByDevInfo,
   getPortByPrefixedDir,
   getPort,
+  getHelMonoPort,
   mayAddPort,
 };

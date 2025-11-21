@@ -4,11 +4,11 @@
 /** @typedef {import('../types').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import fs from 'fs';
 import util from 'util';
-import { slash } from '../base-utils/index';
 import { makeFileDescList } from '../inner-utils';
 import { noDupPush } from '../inner-utils/arr';
 import { verbose } from '../inner-utils/index';
 import { isNull } from '../inner-utils/obj';
+import { slash } from '../inner-utils/slash';
 import { pfstr } from '../inner-utils/str';
 import { getAllFilePath } from './utils';
 

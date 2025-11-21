@@ -18,7 +18,7 @@ export function buildInsCtx(insCtx: any, options: any) {
     : createOb(
         state,
         // setter
-        (target, key, val) => {
+        (target: any, key: any, val: any) => {
           // @ts-ignore
           target[key] = val;
           if (enableReactive) {
@@ -27,7 +27,7 @@ export function buildInsCtx(insCtx: any, options: any) {
           return true;
         },
         // getter
-        (target, key) => {
+        (target: any, key: any) => {
           if (isSymbol(key)) {
             return target[key];
           }

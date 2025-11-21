@@ -4,7 +4,8 @@ const { getMonoRootInfo } = require('./rootInfo');
 const { getModMonoDataDict, getMonoDataFromDictWrap } = require('./monoJson');
 
 function getDirData(cwd) {
-  const list = cwd.split(path.sep);
+  const cwdVar = cwd || process.cwd();
+  const list = cwdVar.split(path.sep);
   const belongTo = lastNItem(list, 2);
   const dirName = lastNItem(list, 1);
   const prefixedDir = `${belongTo}/${dirName}`;

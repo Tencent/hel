@@ -1,7 +1,7 @@
-/** @typedef {import('../types').SrcMap} SrcMap*/
+/** @typedef {import('hel-types').ISrcMap} SrcMap*/
 import * as fs from 'fs';
-import { slash } from '../base-utils/index';
 import cst from '../configs/consts';
+import { slash } from '../inner-utils/slash';
 
 export function getIndexHtmlFileName(dirPath) {
   const names = fs.readdirSync(dirPath);
@@ -52,10 +52,11 @@ export function getAllFilePath(dirPath) {
 export function makeAppVersionSrcMap(extractOptions) {
   const { appInfo, indexHtmlName = cst.DEFAULT_HTML_INDEX_NAME, extractMode = 'all' } = extractOptions;
   const { homePage } = appInfo;
+
   // 用于更新到数据库的app信息，通常来说在构建机器上触发
   // 从上往下的key顺序也是在html创建的顺序
   return {
-    webDirPath: homePage,
+    webDirPath: slash.noEnd(homePage),
     htmlIndexSrc: `${slash.end(homePage)}${indexHtmlName}`,
     extractMode,
     iframeSrc: '',
@@ -98,8 +99,9 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       versionIndex = `${packageJson.name}@${packVer}`;
     } else {
       try {
+        const pureHomePage = slash.noEnd(homePage);
         // ${cdnHost}/${appZone}/${appName}_${dateStr}
-        const [, restStr] = homePage.split('//');
+        const [, restStr] = pureHomePage.split('//');
 
         const strList = restStr.split('/');
         const lastStr = strList[strList.length - 1];
