@@ -2,25 +2,25 @@
 
 helux-mini 是一个鼓励服务注入，并支持响应式变更 react 的全新数据流方案，为了更符合现在流行的 DDD 围绕业务构建领域模型而生。
 
-> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`，现降`2.*`版本独立为`helux-mini`来发布
+> 它的前身是[concent](https://github.com/concentjs/concent)，经过抛弃面向 class 组件的 api 处理并做大量裁剪后，诞生了`helux`，现再次裁剪一个精简版本为`helux-mini`来独立发布
 
 它拥有以下优势：
 
 - 轻量，压缩后 2kb
-- 简单，仅暴露 6 个 api
-- 高性能，自带依赖收集
-- 无需套 Provider，状态随取随用
-- 响应式，支持创建响应式对象，在视图之外变更对象将同步更新视图，无 Proxy 环境自动降级为 defineProperty
-- 服务注入，配合`useService`接口轻松控制复杂业务逻辑，返回稳定的方法引用
-- 状态提升 0 改动，所以地方仅需将`useObject`换为`useSharedObject`即可提升状态共享到其他组件
-- 避免 forwordRef 地狱，内置的`exposeService`模式将轻松解决父调子时的`ref`转发晦涩理解问题和传染性（隔代组件需要层层转发）
-- ts 友好，100% ts 编写，为你提供全方位类型提示
+- 高性能，带一层 proxy 依赖收集，不支持proxy环境的降级使用 defineProperty
+- 无 Provider 嵌套，共享状态随取随用
+- 有强大的生命周期管理，让你彻底逃离 useEffect
+- 支持带 key 的 store 创建
+- 100% ts 类型推导
+- 接近 react useState 的对等使用体验，也支持配置 actions 集中管理修改状态行为
 
 ![2](https://user-images.githubusercontent.com/7334950/232248704-95532231-ae99-4555-adcd-8d5999a0c5d4.gif)
 
-see oneline [demo1](https://codesandbox.io/s/helux-effect-qyv6xz?file=/src/App.tsx)，[demo2](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx)
+see oneline [demo](https://codesandbox.io/p/devbox/helux-effect-forked-5nstwt)
 
-## 30s 上手
+## quick start
+
+### 简单上手
 
 使用 npm 命令`npm i helux-mini`安装`helux-mini`，然后调用`createShared`创建共享状态，调用`useShared`使用共享状态，that's all，你已接入`helux-mini`来提升局部状态为共享状态. ✨
 
@@ -36,7 +36,98 @@ function HelloHelux(props: any) {
 }
 ```
 
-创建响应式对象
+### 配置 actions
+
+配置 `actionsFactory` 选项可创建同步或异步的修改状态函数，方便逻辑复用
+
+```ts
+export const store = createShared(
+  () => ({ a: 1, b: 2 }),
+  {
+    actionsFactory: ({ state, setState }) => ({
+      changeName() {
+        setState({ a: Date.now() }); // 注意：变谁就修改谁即可
+      },
+      async someCall(label: string) {
+        // const b await youApi();
+        setState({ b: 2 });
+      }
+    }),
+  },
+);
+```
+
+组件中使用 actions
+
+```tsx
+export function Demo() {
+  const { state, actions } = store.useStore();
+
+  return (
+    <div>
+      stat.a {state.a}
+      <button onClick={actions.changeName}>change</button>
+    </div>
+  );
+}
+```
+
+### 配置 lifecycle
+
+解决react的useEffect在共享状态里的使用局限性，举个例子，有些状态需要组件初始前willMount或首次挂载后mounted去获取，卸载后清理willUnmount , 如果按照传统思路需要在组件的 useEffect 实现相关代码，但 react 自生的生命周期只能服务于局部状态，应对共享状态存在天然的不足，需要约定一个顶层组件来做这个事情，这本身就是一个脆弱的约定，组件位置随着迭代可能变更，框架层面提供lifecycle 可完美解决此问题（框架内部很容易知道共享状态被多少组件使用中），用户不再需要关注组件位置在哪里，同时相关代码也不在需要和组件耦合在一起。
+
+```ts
+export const store2 = createShared(() => ({ a: 1 }), {
+  actionsFactory: ({ state, setState }) => ({
+    /** 略... */
+  }),
+  lifecycle: {
+    // 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发
+    mounted(params) {
+      // 调用 actions 处理相关逻辑
+      // params.actions.xxx('some params');
+    },
+    // 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发
+    beforeMount(params) { },
+    // 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发
+    willUnmount(params) {},
+    // setState 之前触发，可用于辅助 console.trace 来查看调用源头
+    beforeSetState() {},
+  },
+});
+```
+
+### 创建带 key 的共享状态
+
+创建带 key 的 store，当前多个实体需要共享状态到不同组件并复用一模一样的 actions 逻辑时，使用 `createKeyedShared` 创建带 key 共享状态
+
+```ts
+export const store = createKeyedShared(
+  () => ({ name: 1 }),
+  {
+    actionsFactory: ({ state, setState })=>({ 
+      someAction(){
+        console.log('state.key'); // 此处能读取到 key
+      }
+    }),
+    moduleName: 'Test', // 【可选】配置模块名称
+    lifecycle: { /** 略... */ },
+  }
+);
+```
+
+组件中使用 `store.useStore` 透传 key 即可
+
+```tsx
+export function Demo() {
+  // 此处透传 key 后，state 里将自动拥有 key 值
+  const { state, actions } = store.useStore('someKey');
+  return /** 略... */;
+```
+
+### 创建响应式对象
+
+用户应该总是优先考试使用 `actionsFactory` 来统一里管理修改状态的行为，此特性用于展示响应性功能。
 
 ```ts
 const { state: sharedObj, setState } = createShared({ a: 100, b: 2 }, true);
@@ -48,345 +139,5 @@ sharedObj.a++;
 setState({ a: sharedObj.a + 1 });
 ```
 
-## api 详解
-
-极致的简单是 helux 最大的优势，了解以下 6 个 api 后，你可以轻松应付任何复杂场景，最大的魅力在于`useSharedObject`和`useService`两个接口，且看如下 api 介绍
-
-> 以下所有 api 均对应有在线[示例 1](https://codesandbox.io/s/demo-show-service-dev-mode-ikybly?file=/src/App.tsx)和[示例 2](https://codesandbox.io/p/sandbox/use-service-to-replace-ref-e5mgr4?file=%2Fsrc%2FApp.tsx),欢迎 fork 并修改体验。
-
-### useObject
-
-使用 useObject 有两个好处
-
-- 1 方便定义多个状态值时，少写很多 useState
-- 2 内部做了 unmount 判断，让异步函数也可以安全的调用 setState，避免 react 出现警告 : "Called SetState() on an Unmounted Component" Errors
-
-```ts
-// 基于对象初始化一个视图状态
-const [state, setState] = useObject({ a: 1 });
-// 基于函数初始化一个视图状态
-const [state, setState] = useObject(() => ({ a: 1 }));
-```
-
-### useForceUpdate
-
-强制更新当前组件视图，某些特殊的场景可以使用它来做视图重刷新
-
-```ts
-const forUpdate = useForceUpdate();
-```
-
-### createSharedObject
-
-创建一个共享对象，可透传给 `useSharedObject`，具体使用见 useSharedObject
-
-```ts
-// 初始化一个共享对象
-const sharedObj = createSharedObject({ a: 1, b: 2 });
-// 基于函数初始化一个共享对象
-const sharedObj = createSharedObject(() => ({ a: 1, b: 2 }));
-```
-
-### createReactiveSharedObject
-
-创建一个响应式的共享对象，可透传给 useSharedObject
-
-```ts
-// 初始化一个共享对象
-const [reactiveObj, setState] = createReactiveSharedObject({ a: 1, b: 2 });
-
-sharedObj.a = 111; // 任意地方修改 a 属性，触发视图渲染
-setSharedObj({ a: 111 }); // 使用此方法修改 a 属性，同样也能触发视图渲染，深层次的数据修改可使用此方法
-```
-
-### createShared
-
-函数签名
-
-```ts
-function createShared<T extends Dict = Dict>(
-  rawState: T | (() => T),
-  strBoolOrCreateOptions?: ICreateOptionsType,
-): {
-  state: SharedObject<T>;
-  call: <A extends any[] = any[]>(
-    srvFn: (ctx: { args: A; state: T; setState: (partialState: Partial<T>) => void }) => Promise<Partial<T>> | Partial<T> | void,
-    ...args: A
-  ) => void;
-  setState: (partialState: Partial<T>) => void;
-};
-```
-
-创建一个响应式的共享对象，可透传给 useSharedObject，它是`createReactiveSharedObject`和`createSharedObject`的结合体，当需要调用脱离函数上下文的服务函数时（即不需要感知组件 props 时），可使用该接口，第二位参数为是否创建响应式状态，为 true 时效果同 `createReactiveSharedObject` 返回的 sharedObj
-
-```ts
-const ret = createShared({ a: 100, b: 2 });
-const ret2 = createShared({ a: 100, b: 2 }, true); // 创建响应式状态
-// ret.state 可透传给 useSharedObject
-// ret.setState 可以直接修改状态
-// ret.call 可以调用服务函数，并透传上下文
-```
-
-以下将举例两种具体的定义服务函数的方式，之后用户便可在其他其他地方任意调用这些服务函数修改共享状态了，如需感知组件上下文（例如 props），则需要用到下面介绍的`useService`接口去定义服务函数。
-
-```ts
-// 调用服务函数第一种方式，直接调用定义的函数，配合 ret.setState 修改状态
-function changeAv2(a: number, b: number) {
-   ret.setState({ a, b });
-}
-*
-// 第二种方式，使用 ret.call(srvFn, ...args) 调用定义在call函数参数第一位的服务函数
-function changeA(a: number, b: number) {
-   ret.call(async function (ctx) { // ctx 即是透传的调用上下文，
-     // args：使用 call 调用函数时透传的参数列表，state：状态，setState：更新状态句柄
-     // 此处可全部感知到具体的类型
-     // const { args, state, setState } = ctx;
-     return { a, b };
-   }, a, b);
- }
-```
-
-### useShared
-
-函数签名
-
-```ts
-function useShared<T extends Dict = Dict>(sharedObject: T, enableReactive?: boolean): [SharedObject<T>, (partialState: Partial<T>) => void];
-```
-
-接收一个共享对象，多个视图里将共享此对象，内部有依赖收集机制，不依赖到的数据变更将不会影响当前组件更新
-
-> `useSharedObject` 和 `useShared` 是同一个函数
-
-```ts
-const [obj, setObj] = useShared(sharedObj);
-```
-
-`useShared`默认返回非响应式状态，如需要使用响应式状态，透传第二位参数为 true 即可
-
-```ts
-const [obj, setObj] = useShared(sharedObj);
-// now obj is reactive
-setInterval(() => {
-  state.a = Date.now(); // 触发视图更新
-}, 2000);
-```
-
-### createKeyedShared
-创建带 key 的共享状态上下文，其具体状态在 useKeyedShared 时才创建
-
-```ts
-export const store = createKeyedShared(
-  // 透传函数工厂
-  () => ({ name: 1 }),
-  {
-    // [可选]，透传 actions 工厂
-    actionsFactory: ({ state, setState }) => ({
-      changeName(payload?: number) {
-        // state 会自动带 key，由 useKeyedShared 传入
-        console.log(state.name, state.key);
-        setState({ name: Date.now() });
-      },
-    }),
-    // [可选]，透传 store 名
-    storeName: 'Test',
-  }
-);
-
-// 需要在函数组件外部调用某个 key 对应的上下文来获取数据或触发 actions 方法，可以调用此函数
-// 返回结果形如 { actions, state, setState } | null
-const ctx = store.getKeyedSharedCtx('some-key')
-ctx?.actions.changeName();
-```
-
-- 使用生命周期
-支持透传 `options.lifecycle` 给 `createKeyedShared` 将共享数据的初始化、清理等动作脱离到组件之外。
-
-类型定义：
-```ts
-interface IKeyedLifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
-  /** 第一个使用此共享状态的组件 beforeMount 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发   */
-  beforeMount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** 第一个使用此共享状态的组件 mounted 时触发，其他组件再挂载时不会触发，当所有组件都卸载后若满足条件会重新触发 */
-  mounted?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** 最后一个使用此共享状态的组件 willUnmount 时触发，多个组件挂载又卸载干净会重新触发 */
-  willUnmount?: (params: { state: KeyedState<S>, setState: (partialState: Partial<S>) => void, actions: A }) => void,
-  /** setState 之前触发，可用于辅助 console.trace 来查看调用源头 */
-  beforeSetState?: () => void,
-}
-```
-
-使用示范：
-```ts
-export const store = createKeyedShared(
-  () => ({ name: 1 }),
-  {
-    actionsFactory: ({ state, setState }) => ({
-      log(label: string) {
-        console.log('dome some data initial logic ...');
-      }
-    }),
-    lifecycle: {
-      mounted(params) {
-        // 调用 actions 处理相关逻辑
-        params.actions.log('mounted');
-      },
-      beforeMount(params) {
-        // params.actions.xxx
-      },
-      willUnmount(params) {
-        // params.actions.log('willUnmount');
-      },
-    },
-  }
-);
-```
-
-### useKeyedShared
-使用 keyedShared 获得 actions 或 state
-
-> 推荐 store.useStore 替代 store.useKeyedShared(store.keyedShared), 更简洁，不用额外透传 keyedShared
-
-```tsx
-export function Demo() {
-  const { state, actions } = useKeyedShared(store.keyedShared, 'id1');
-  // 推荐 store.useStore, 更简洁，不用额外透传 keyedShared
-  // const { state, actions } = store.useStore('id1');
-
-  const change = () => {
-    // 将获得详细的类型提示
-    actions.changeName();
-  };
-
-  return (
-    <div>
-      hello {state.key}
-      <br />
-      name: {state.name}
-      <br />
-      <button onClick={change}>change</button>
-    </div>
-  );
-}
-```
-
-### useService
-
-函数签名
-
-```ts
-/**
- * 使用用服务模式开发 react 组件：
- * @param compCtx
- * @param serviceImpl
- */
-function useService<P extends Dict = Dict, S extends Dict = Dict, T extends Dict = Dict>(
-  compCtx: {
-    props: P;
-    state: S;
-    setState: (partialState: Partial<S>) => void;
-  },
-  serviceImpl: T,
-): T & {
-  ctx: {
-    setState: (partialState: Partial<S>) => void;
-    getState: () => S;
-    getProps: () => P;
-  };
-};
-```
-
-它可搭配`useObject`和`useSharedObject`一起使用，会创建服务对象并返回，该服务对象是一个稳定的引用，且它包含的所有方法也是稳定的引用，可安全方法交给其它组件且不会破会组件的 pros 比较规则，避免烦恼的`useMemo`和`useCallback`遗漏相关依赖
-
-搭配`useObject`时
-
-```ts
-function DemoUseService(props: any) {
-  const [state, setState] = useObject({ a: 100, b: 2 );
-  // srv本身和它包含的方法是一个稳定的引用，
-  // 可安全的将 srv.change 方法交给其它组件且不会破会组件的pros比较规则
-  const srv = useService({ props, state, setState }, {
-    change(a: number) {
-      srv.ctx.setState({ a });
-    },
-  });
-
-  return <div>
-    DemoUseService:
-    <button onClick={() => srv.change(Date.now())}>change a</button>
-  </div>;
-}
-```
-
-搭配`useSharedObject`时，只需替换`useObject`即可，其他代码不用做任何改变
-
-```diff
-+ const sharedObj = createSharedObject({a:100, b:2})
-
-function DemoUseService(props: any) {
--  const [state, setState] = useObject({ a: 100, b: 2 );
-+  const [state, setState] = useSharedObject(sharedObj);
-```
-
-#### getState 和 getProps
-
-因 `state` 和 `props` 是不稳定的，所以服务内部函数取的时候需从`srv.ctx.getState`或`srv.ctx.getProps`
-
-```ts
-// 抽象服务函数
-export function useChildService(compCtx: { props: IProps; state: S; setState: (partialState: Partial<S>) => void }) {
-  const srv = useService<IProps, S>(compCtx, {
-    change(label: string) {
-      // !!! do not use compCtx.state or compCtx.state due to closure trap
-      // console.log("expired state:", compCtx.state.label);
-
-      // get latest state
-      const state = srv.ctx.getState();
-      console.log('the latest label in state:', state.label);
-      // get latest props
-      const props = srv.ctx.getProps();
-      console.log('the latest props when calling change', props);
-
-      // your logic
-      compCtx.setState({ label });
-    },
-  });
-  return srv;
-}
-
-export function ChildComp(props: IProps) {
-  const [state, setState] = useObject(initFn);
-  const srv = useChildService({ props, state, setState });
-}
-
-return (
-  <div>
-    i am child <br />
-    <button onClick={() => srv.change(`self:${Date.now()}`)}>change by myself</button>
-    <h1>{state.label}</h1>;
-  </div>
-);
-```
-
-#### exposeService
-
-当孩子组件 props 上透传了`exposeService`函数时，`useService` 将自动透传服务对象给父亲组件，是一种比较方便的逃离`forwardRef`完成父调子的模式
-
-```ts
-import { ChildSrv, Child } from './Child';
-
-function App() {
-  // 保存孩子的服务
-  const childSrv = React.useRef<{ srv?: ChildSrv }>({});
-  const seeState = () => {
-    console.log('seeState', childSrv.current.srv?.ctx.getState());
-  };
-
-  return (
-    <div>
-      <button onClick={() => childSrv.current.srv?.change(`${Date.now()}`)}>call child logic</button>
-      <Child unstableProp={`${Date.now()}`} exposeService={(srv) => (childSrv.current.srv = srv)} />
-    </div>
-  );
-}
-```
+## api 详情
+查看[api 详情](./API_DETAIL.md)

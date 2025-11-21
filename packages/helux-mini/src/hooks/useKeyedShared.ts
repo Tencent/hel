@@ -12,8 +12,8 @@ export function useKeyedShared<T extends Dict = Dict>(
     throw new Error('ERR_OBJ_NOT_KEYED_SHARED: can not pass a non-keyedShared obj to useKeyedShared!');
   }
 
-  const { storeName } = keyedShared;
-  const moduleName = `${storeName}@${key}`;
+  // 用户传的 moduleName 仅作为 moduleNamePrefix 用，内部使用的完整 moduleName 如下
+  const moduleName = `${keyedShared.moduleName}@${key}`;
   let keyedSharedCtx = KEYED_SHARED_CTX_MAP[moduleName];
   if (!keyedSharedCtx) {
     const { stateFactory, actionsFactory, lifecycle } = keyedShared;
@@ -23,7 +23,7 @@ export function useKeyedShared<T extends Dict = Dict>(
     KEYED_SHARED_CTX_MAP[moduleName] = keyedSharedCtx;
   }
   const { actions } = keyedSharedCtx;
-  const [state, setState] = useShared(keyedSharedCtx.state, { actions });
+  const [state, setState] = useShared(keyedSharedCtx.state);
   const keySharedInsCtx = { state, setState, actions, isKeyed: true };
 
   return keySharedInsCtx;

@@ -105,10 +105,13 @@ if (isSimpleServer()) {
   post('/api/v1/classInfo/create', classInfo.createClassInfo);
   post('/api/v1/classInfo/update', classInfo.updateClassInfo);
   get('/api/v1/classInfo/getFull', classInfo.getFullClassInfoById);
-  // hel-micro-node 相关接口
-  get('/api/v1/hmnStat/list', hmn.getStatList);
+  // hel-micro-node sdk相关接口
+  get('/openapi/v1/hmn/ping', hmn.ping);
   get('/openapi/v1/hmn/getHmnApiParams', hmn.getHmnApiParams);
   post('/openapi/v1/hmn/reportHelModStat', hmn.reportHelModStat);
+  // 获取 hmn 相关统计的接口
+  post('/api/v1/hmn/statList', hmn.getStatList);
+  post('/api/v1/hmn/statLogList', hmn.getStatLogList);
 
   get('/api/v1/app/info/combine3api', appCtrl.combine3api);
   get('/api/v1/app/info/querySubApps', appCtrl.querySubApps);

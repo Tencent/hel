@@ -39,6 +39,8 @@ export interface IKeyedLifeCycle<S extends Dict = Dict, A extends Dict = Dict> {
   beforeSetState?: () => void,
 }
 
+type SetState<S extends Dict> = (partialState: Partial<S>) => void;
+
 export interface ICreateOptions<S extends Dict = Dict, A extends Dict = {}> {
   /** default: false，是否创建响应式状态，true：是，false：否 */
   enableReactive?: EnableReactive;
