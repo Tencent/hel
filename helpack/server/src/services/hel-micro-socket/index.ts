@@ -32,6 +32,7 @@ class SdkSocketServer {
 
   /** 通知 hel-micro-node 某个 hel 模块元数据有变化 */
   public notifySDKMetaChanged(modName: string, data: object) {
+    console.log('----------------------------------------->notifySDKMetaChanged', modName, data);
     const { containerName, workerID } = getServerEnv();
     const targetList: { socket: IClientSocket; info: ClientInfo }[] = [];
     // 仅通知关心此模块变化的客户端
@@ -66,17 +67,20 @@ class SdkSocketServer {
 
     // 有新的客户端连接时触发此回调
     wsServer.on(WS_EVENT.connection, (socket, req) => {
+      console.log('----------------------------------------->wsServer.on(WS_EVENT.connection)', socket, req);
       if (isClientValid(socket)) {
         this.onClientOpen();
         this.saveWSClient(socket, req);
       }
       // 收到客户端消息
       socket.on(WS_EVENT.message, (message) => {
+        console.log('----------------------------------------->socket.on(WS_EVENT.message)', message);
         const msgStr = message.toString();
         this.handleMsg(socket, msgStr);
       });
       // 客户端已断开连接
       socket.on(WS_EVENT.close, () => {
+        console.log('----------------------------------------->socket.on(WS_EVENT.close)');
         this.handleClose(socket);
       });
     });
