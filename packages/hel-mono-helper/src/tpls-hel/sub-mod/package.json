@@ -34,7 +34,7 @@
     "hel-mono-runtime-helper": "^1.1.2"
   },
   "volta": {
-    "node": "18.12.1",
+    "node": "20.19.5",
     "pnpm": "8.6.8"
   }
 }

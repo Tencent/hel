@@ -39,5 +39,8 @@
     "react-dom": "18",
     "react-monaco-editor": "0.47.0",
     "styled-components": "^5.3.5"
+  },
+  "volta": {
+    "node": "20.19.5"
   }
 }
