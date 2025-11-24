@@ -8,6 +8,7 @@ const { getPureArgv } = require('./argv');
 const { getCWD } = require('./base');
 const { inferDevInfo } = require('./devInfo');
 const { inferDirFromDevInfo } = require('./monoDir');
+const { getIsDisplayConsoleLog } = require('./globalSig');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getLogTimeLine } = require('./time');
 
@@ -131,7 +132,9 @@ function logRunningDetails(options, ...args) {
   } else {
     const rawPrefix = isTmp ? LOG_PREFIX_TMP : LOG_PREFIX;
     const prefix = isRed ? chalk.red(rawPrefix) : chalk.cyan(rawPrefix);
-    console.log(prefix, ...args);
+    if (getIsDisplayConsoleLog()) {
+      console.log(prefix, ...args);
+    }
     logFilePath = getLogFilePath(isTmp);
   }
 

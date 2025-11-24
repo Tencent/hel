@@ -5,7 +5,8 @@ const devUtils = require('hel-dev-utils');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { APP_EXTERNALS, DEPLOY_PATH, HEL_MONO_DOC } = require('../consts/inner');
 const { getDevInfoDirs } = require('./base');
-const { purify } = require('./dict');
+const { purify, orValue } = require('./dict');
+const { setIsDisplayConsoleLog } = require('./globalSig');
 const { getRawMonoJson, getModMonoDataDict } = require('./monoJson');
 const { getPortByDevInfo } = require('./port');
 
@@ -112,6 +113,7 @@ function inferDevInfo(allowMonoJsonNull) {
     throw new Error(`Missing hel-mono.json file in current repo, please create one by "pnpm start .init-mono"`);
   }
   monoJson = monoJson || { mods: {} };
+  setIsDisplayConsoleLog(orValue(monoJson.displayConsoleLog, true));
 
   const {
     deployPath = DEPLOY_PATH,

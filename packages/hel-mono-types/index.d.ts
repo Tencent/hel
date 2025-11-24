@@ -128,6 +128,11 @@ export interface IHelMonoJsonBase {
    * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
    */
   isServerModOneBundle?: boolean;
+  /**
+   * default: true
+   * 是否在控制台展示 hel-mono 相关log
+   */
+  displayConsoleLog?: boolean;
   /** default: ['apps'], 放置应用的目录名列表 */
   appsDirs?: string[];
   /** default: ['packages'], 放置子模块的目录名列表 */
