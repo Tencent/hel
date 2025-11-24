@@ -2,12 +2,7 @@
 sidebar_position: 4
 ---
 
-# Helpack 管控台
-
-[Hel Pack](https://your-deployed-helpack-site.com)，海拉HelPack，动态化模块发布、托管服务
-
-![](https://tnfe.gtimg.com/hel-img/WX20251027-120047.png)
-
+# 目录说明
 
 ## 结构链路
 - 入口脚本 `src/index.ts` 依次加载全局 `HelError`、环境配置初始化 `initAppEnvConf`、依赖初始化 `initAppLibs`、应用级监听 `initAppListeners`，最终执行 `runApp` 启动 HTTP 与 WebSocket 服务。

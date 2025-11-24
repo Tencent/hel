@@ -79,10 +79,10 @@ get('/path/hello', ()=>{
 
 ### 手动更新模块版本
 
-使用 `importMod` 来更新模块运行版本
+使用 `importNodeMod` 来更新模块运行版本
 
 ```ts
-import { importMod } from 'hel-micro-node';
+import { importNodeMod } from 'hel-micro-node';
 import { hello } from '@hel-demo/mono-libs';
 
 get('/path/hello', ()=>{
@@ -90,7 +90,7 @@ get('/path/hello', ()=>{
 });
 
 get('/update', ()=>{
-  importMod('@hel-demo/mono-libs', { ver: '1.0.0' })
+  importNodeMod('@hel-demo/mono-libs', { ver: '1.0.0' })
 });
 ```
 

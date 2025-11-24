@@ -1,3 +1,11 @@
+function orValue(left, right) {
+  if (['', null, undefined].includes(left)) {
+    return right;
+  }
+
+  return left;
+}
+
 /**
  * 考虑兼容性，使用 getBool 替代 ?? 语法
  */
@@ -85,4 +93,5 @@ module.exports = {
   purifyUndefined,
   getBool,
   chooseBool,
+  orValue,
 };
