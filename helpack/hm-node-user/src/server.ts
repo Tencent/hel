@@ -1,12 +1,20 @@
-import { mapAndPreload } from './libs/hmnLib';
+import { mapAndPreload, setGlobalConfig } from './libs/hmnLib';
 
 export async function startServer() {
+  setGlobalConfig({
+    // 允许虚拟的 node 模块存在
+    strict: false,
+  });
+
   try {
-    console.log('s 1111111111111111111111111');
     await mapAndPreload({
       '@hel-demo/mono-libs': true,
+      // 这是一个未安装到项目里的虚拟模块，可以被程序 import
+      'hel-hello-helpack': {
+        platform: 'hel',
+        modShape: { fnKeys: ['hello'] },
+      },
     });
-    console.log('s 2222222222222222222222222222222');
 
     // 返回启动整个应用的句柄
     const { start } = await import('./at/core/runApp');
