@@ -76,7 +76,7 @@
   },
   "volta": {
     "node": "20.19.5",
-    "pnpm": "7.9.5"
+    "pnpm": "8.3.1"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

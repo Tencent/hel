@@ -24,7 +24,7 @@ async function helloAsync() {
 
 // src/utils/index.ts
 function hello() {
-  return 'hel hello v1.0.2';
+  return 'hel hello from local disk';
 }
 
 // src/index.ts
