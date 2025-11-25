@@ -1,6 +1,6 @@
 import { importNodeMod, mapAndPreload, resolveNodeMod, setGlobalConfig } from '../src';
 import './mock/mock-with-real-axios';
-import { HEL_DEMO_LIB1, HEL_DEMO_LIB1_VER2, HEL_DEMO_LIB1_VER1, HEL_DEMO_LIB1_LATEST_VER, SDK_GLOBAL_CONFIG } from './util/consts';
+import { HEL_DEMO_LIB1, HEL_DEMO_LIB1_LATEST_VER, HEL_DEMO_LIB1_VER1, HEL_DEMO_LIB1_VER2, SDK_GLOBAL_CONFIG } from './util/consts';
 
 setGlobalConfig(SDK_GLOBAL_CONFIG);
 
