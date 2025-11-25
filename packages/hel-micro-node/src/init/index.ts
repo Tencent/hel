@@ -177,10 +177,6 @@ export async function mapAndPreload(modMapper: INodeModMapper) {
   const plat2helModNames = {};
   Object.keys(modMapper).forEach((nodeModName) => {
     const { helModName, platform, fallback } = mapNodeModsManager.getNodeModData(nodeModName);
-    if (fallback.force) {
-      return;
-    }
-
     const helModNames = safeGet<string[]>(plat2helModNames, platform, []);
     // 多个node模块可以映射到同一个hel模块（基于子路径），故这里要去重
     // 例如: mod1: hel-mod/sub-path1, mod2: hel-mod/sub-path2

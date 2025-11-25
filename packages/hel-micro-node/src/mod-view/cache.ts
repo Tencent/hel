@@ -175,15 +175,24 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
   const sdkCtx = getSdkCtx(platform);
   const tasks = sdkCtx.modNames.map(async (name) => {
     const fetchOptions = options || getMappedModFetchOptions(name, platform);
+    const { fallback, nodeModName } = mapNodeModsManager.getFallbackData(name, platform);
+    const { force, path } = fallback;
+    if (force) {
+      if (!path) {
+        throw new Error('Set fallback.force true but forget supply path');
+      }
+      importNodeModByPath(nodeModName, path, { platform });
+      return null;
+    }
+
     try {
       const modInfo = await fetchModInfo(name, fetchOptions);
       return modInfo;
     } catch (err: any) {
-      const { fallback, nodeModName } = mapNodeModsManager.getFallbackData(name, platform);
-      if (!fallback.path) {
+      if (!path) {
         throw err;
       }
-      importNodeModByPath(nodeModName, fallback.path, { platform });
+      importNodeModByPath(nodeModName, path, { platform });
     }
   });
   const list = await Promise.all(tasks);

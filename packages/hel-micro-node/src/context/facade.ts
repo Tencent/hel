@@ -8,9 +8,6 @@ import { getSdkCtx } from './index';
 export function getModConf(appName: string, platform?: string): IModConf | null {
   const sdkCtx = getSdkCtx(platform);
   const modConf = sdkCtx.mod2conf[appName];
-
-  console.log('sdkCtx.mod2conf', sdkCtx.mod2conf);
-
   return modConf || null;
 }
 

@@ -6972,11 +6972,9 @@ packages:
       hel-lib-proxy: ^4.12.1
       hel-micro-core: ^4.13.1
       hel-types: ^4.3.10
-    bundledDependencies: []
 
   hel-mono-runtime-helper@1.1.3:
     resolution: {integrity: sha512-k9K1SxP/LCClvKsMtVTbSSXH+OWtRs8WyeD0DhmfjVlwiJaHKFdc0JhJLEKSHMHBthq1wKZ3xn72Jjr8weLDeQ==}
-    bundledDependencies: []
 
   hel-mono-templates@1.0.2:
     resolution: {integrity: sha512-WfnH+WboZigbu2I2MO4OG8VfKwe18eyjYBXfQ4xVscvMknNFBJlEIT5x7xepNNK7bO6XbpGnSj+r05DBi8+QvQ==}

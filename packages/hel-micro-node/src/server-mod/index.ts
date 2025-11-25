@@ -60,7 +60,8 @@ export function importHelModByMetaSync(meta: IMeta, options: IImportModByMetaSyn
  */
 export function importHelModByPath(helModNameOrPath: string, modePath: string, options?: IImportModByNodePathOptions) {
   const importOptions = { ...(options || {}), standalone: true };
-  return modManager.importModByPath(helModNameOrPath, modePath, importOptions);
+  const result = modManager.importModByPath(helModNameOrPath, modePath, importOptions);
+  return result.mod;
 }
 
 /**

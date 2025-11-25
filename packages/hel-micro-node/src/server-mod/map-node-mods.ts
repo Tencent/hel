@@ -128,9 +128,6 @@ class MapNodeModsManager {
     data.rawPath = sourceFullPath;
     const { proxyFiles } = mapDetail;
     let proxyFile = proxyFiles[helModOrPath];
-
-    console.log(`helModOrPath ${helModOrPath} proxyFile ${proxyFile}`);
-
     // file not created
     if (!proxyFile) {
       proxyFile = this.genProxyModFile(pkgName, helModOrPath);

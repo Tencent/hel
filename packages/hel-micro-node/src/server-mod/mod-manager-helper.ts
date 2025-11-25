@@ -17,7 +17,7 @@ export function getEnsuredIMBMOptions(meta: IMeta, options: IInnerImportModByMet
 export function getModProxyHelpData(helModNameOrPath: string, platform: string) {
   const nodeModName = mapNodeModsManager.getNodeModName(helModNameOrPath, platform);
   const data = mapNodeModsManager.getNodeModData(nodeModName);
-  const { rawPath, fallback, isShapeReady } = data;
+  const { rawPath, isShapeReady } = data;
   let { fnProps, dictProps } = data;
   let rawMod = {};
   // 内部 preload 触发 importModByMeta 逻辑时，会在还未映射就调用 requireMod 函数，此时 rawPath 为空
@@ -28,7 +28,7 @@ export function getModProxyHelpData(helModNameOrPath: string, platform: string) 
     dictProps = result.fnProps;
   }
 
-  return { fnProps, dictProps, rawMod, fallback, rawPath };
+  return { fnProps, dictProps, rawMod, rawPath };
 }
 
 /**

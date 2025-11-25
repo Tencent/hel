@@ -192,10 +192,7 @@ class ModManager {
     }
 
     const { platform = PLATFORM } = options || {};
-    const { fnProps, dictProps, rawMod, fallback, rawPath } = getModProxyHelpData(helModNameOrPath, platform);
-    if (fallback.force) {
-      return mapNodeModsManager.getFallbackMod(helModNameOrPath, platform);
-    }
+    const { fnProps, dictProps, rawMod, rawPath } = getModProxyHelpData(helModNameOrPath, platform);
 
     const dictKey = this.getDictKey(platform, helModNameOrPath);
     const cachedProxy = this.modProxyCache[dictKey];
@@ -350,19 +347,19 @@ class ModManager {
     const modIns = getDiskModInsByInitPath(modInitPath, modVer);
     const { mod } = modIns;
     if (standalone) {
-      return mod;
+      return { mod, isUpdated: false };
     }
 
     const modItem = this.ensureModItem(platform, helModName);
-    if (modItem.storedVers.includes(modVer)) {
-      throw new Error(`Hel module ${helModName} ver ${modVer} duplicated, please check!`);
+    let isUpdated = false;
+    if (!modItem.storedVers.includes(modVer)) {
+      isUpdated = true;
+      log({ subType: 'importModByPath', data: { modPath: modIns.modPath, modVer: modIns.modVer } });
+      this.updateModManagerItem(modItem, modIns, { helModNameOrPath: helModName, platform });
+      maySetToJestMock(platform, helModName, mod);
     }
 
-    log({ subType: 'importModByPath', data: { modPath: modIns.modPath, modVer: modIns.modVer } });
-    this.updateModManagerItem(modItem, modIns, { helModNameOrPath: helModName, platform });
-    maySetToJestMock(platform, helModName, mod);
-
-    return mod;
+    return { mod, isUpdated };
   }
 
   /**

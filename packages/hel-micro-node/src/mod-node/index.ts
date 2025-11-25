@@ -137,7 +137,11 @@ export function importNodeModByMetaSync<T extends any = any>(
  * @example
  * importNodeModByPath('@hel-demo/mono-libs', '/user/proj/node_modules/my-mode/dist/index.js');
  */
-export function importNodeModByPath(nodeModName: string, nodeModPath: string, options?: IImportModByNodePathOptions) {
+export function importNodeModByPath<T extends any = any>(
+  nodeModName: string,
+  nodeModPath: string,
+  options?: IImportModByNodePathOptions
+): IImportNodeModResult<T> {
   const { helPath, platform } = getMappedData(nodeModName);
   const newOptions = { ...(options || {}), standalone: false, platform };
   return modManager.importModByPath(helPath, nodeModPath, newOptions);
