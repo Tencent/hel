@@ -4,7 +4,7 @@ import type {
   IFetchModMetaOptions,
   IImportModByMetaOptions,
   IImportModByMetaSyncOptions,
-  IImportModByNodePathOptions,
+  IImportModByPathOptions,
   IImportModOptions,
   IMeta,
 } from '../base/types';
@@ -58,7 +58,7 @@ export function importHelModByMetaSync(meta: IMeta, options: IImportModByMetaSyn
  * @example
  * importHelModByPath('@hel-demo/mono-libs', '/user/proj/node_modules/my-mode/dist/index.js');
  */
-export function importHelModByPath(helModNameOrPath: string, modePath: string, options?: IImportModByNodePathOptions) {
+export function importHelModByPath(helModNameOrPath: string, modePath: string, options?: IImportModByPathOptions) {
   const importOptions = { ...(options || {}), standalone: true };
   const result = modManager.importModByPath(helModNameOrPath, modePath, importOptions);
   return result.mod;

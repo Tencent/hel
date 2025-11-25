@@ -294,11 +294,14 @@ export type OnFilesReadySync = (params: IOnFilesReadyBaseParams) => void;
  */
 export type PrepareFilesSync = (params: IPrepareFilesParams) => void;
 
-export interface IImportModByMetaOptions {
+export interface IImportNodeModByMetaOptions {
   prepareFiles?: PrepareFiles;
   onFilesReady?: OnFilesReady;
   helModNameOrPath?: string;
   reuseLocalFiles?: boolean;
+}
+
+export interface IImportModByMetaOptions extends IImportNodeModByMetaOptions {
   platform?: string;
 }
 
@@ -321,18 +324,22 @@ export interface IDownloadServerModFilesOptions extends IFetchModMetaOptions {
 
 export type IDownloadNodeServerModFilesOptions = Omit<IDownloadServerModFilesOptions, 'platform'>;
 
-export interface IImportModByMetaSyncOptions {
+export interface IImportNodeModByMetaSyncOptions {
   prepareFiles: PrepareFilesSync;
   onFilesReady?: OnFilesReadySync;
   helModNameOrPath?: string;
+}
+
+export interface IImportModByMetaSyncOptions extends IImportNodeModByMetaSyncOptions {
   platform?: string;
 }
+
 
 export interface IInnerImportModByMetaSyncOptions extends IImportModByMetaSyncOptions {
   standalone: Standalone;
 }
 
-export interface IImportModByNodePathOptions {
+export interface IImportModByPathOptions {
   platform?: string;
   /**
    * 建议指定，未指定的话会把路径当做版本号
@@ -340,7 +347,14 @@ export interface IImportModByNodePathOptions {
   ver?: string;
 }
 
-export interface IInnerImportModByNodePathOptions extends IImportModByNodePathOptions {
+export interface IImportNodeModByPathOptions {
+  /**
+   * 建议指定，未指定的话会把路径当做版本号
+   */
+  ver?: string;
+}
+
+export interface IInnerImportModByPathOptions extends IImportModByPathOptions {
   standalone: Standalone;
 }
 
@@ -429,6 +443,8 @@ export interface IImportModOptions extends IFetchModMetaOptions {
    */
   reuseLocalFiles?: boolean;
 }
+
+export type IImportNodeModOptions = Omit<IImportModOptions, 'platform'>;
 
 export interface IInnerImportModOptions extends IImportModOptions {
   /**

@@ -181,7 +181,7 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
       if (!path) {
         throw new Error('Set fallback.force true but forget supply path');
       }
-      importNodeModByPath(nodeModName, path, { platform });
+      importNodeModByPath(nodeModName, path);
       return null;
     }
 
@@ -192,7 +192,7 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
       if (!path) {
         throw err;
       }
-      importNodeModByPath(nodeModName, path, { platform });
+      importNodeModByPath(nodeModName, path);
     }
   });
   const list = await Promise.all(tasks);

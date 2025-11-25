@@ -4,11 +4,10 @@ import type {
   DictData,
   IDownloadNodeServerModFilesOptions,
   IDownloadServerModFilesOptions,
-  IGetModDescOptions,
-  IImportModByMetaOptions,
-  IImportModByMetaSyncOptions,
-  IImportModByNodePathOptions,
-  IImportModOptions,
+  IImportNodeModByMetaOptions,
+  IImportNodeModByMetaSyncOptions,
+  IImportNodeModByPathOptions,
+  IImportNodeModOptions,
   IImportNodeModResult,
   IMeta,
   IModDesc,
@@ -53,7 +52,7 @@ export function resolveNodeMod(nodeModName: string): IResolveModResult {
  * requireNodeMod('@hel-demo/mono-libs');
  * ```
  */
-export function requireNodeMod<T extends any = any>(nodeModName: string) {
+export function requireNodeMod<T extends any = any>(nodeModName: string): T {
   if (nodeModName === KW_NODE_MOD_NAME) {
     // 来自初始模板的调用
     return {} as unknown as T;
@@ -71,13 +70,9 @@ export function requireNodeMod<T extends any = any>(nodeModName: string) {
  */
 export async function importNodeMod<T extends any = any>(
   nodeModName: string,
-  options?: IImportModOptions,
+  options?: IImportNodeModOptions,
 ): Promise<IImportNodeModResult<T>> {
   const { helPath, platform } = getMappedData(nodeModName);
-  const plat = options?.platform || platform;
-  if (plat !== platform) {
-    throw new Error(`Supplied platform ${plat} not equal mapped platform ${platform}`);
-  }
   const importOptions: IInnerImportModByMetaOptions = { ...(options || {}), standalone: false, platform };
   const meta = await getMetaByImportOptions(helPath, importOptions);
   const modInfo = makeModInfo(meta);
@@ -103,7 +98,7 @@ export async function importNodeMod<T extends any = any>(
 export async function importNodeModByMeta<T extends any = any>(
   nodeModName: string,
   meta: IMeta,
-  options: IImportModByMetaOptions,
+  options: IImportNodeModByMetaOptions,
 ): Promise<IImportNodeModResult<T>> {
   const { platform } = getMappedData(nodeModName);
   const importOptions = extractOptions(nodeModName, meta, options);
@@ -121,7 +116,7 @@ export async function importNodeModByMeta<T extends any = any>(
 export function importNodeModByMetaSync<T extends any = any>(
   nodeModName: string,
   meta: IMeta,
-  options: IImportModByMetaSyncOptions,
+  options: IImportNodeModByMetaSyncOptions,
 ): IImportNodeModResult<T> {
   const { platform } = getMappedData(nodeModName);
   const importOptions = extractOptions(nodeModName, meta, options);
@@ -140,7 +135,7 @@ export function importNodeModByMetaSync<T extends any = any>(
 export function importNodeModByPath<T extends any = any>(
   nodeModName: string,
   nodeModPath: string,
-  options?: IImportModByNodePathOptions,
+  options?: IImportNodeModByPathOptions,
 ): IImportNodeModResult<T> {
   const { helPath, platform } = getMappedData(nodeModName);
   const newOptions = { ...(options || {}), standalone: false, platform };
@@ -163,12 +158,12 @@ export function mapNodeMods(modMapper: INodeModMapper) {
 }
 
 /**
- * 获取映射了 hel 模块的 node 模块的简要描述信息
+ * 获取映射了 hel 模块的 node 模块的简要描述信息，
+ * 如果模块未加载，会报错 Mapped hel module xxx not preloaded
  */
-export function getNodeModDesc(nodeModName: string, options?: IGetModDescOptions): IModDesc {
+export function getNodeModDesc(nodeModName: string): IModDesc {
   const { helPath, platform } = getMappedData(nodeModName);
-  const newOptions = { ...(options || {}), standalone: false, platform };
-  return modManager.getModDesc(helPath, newOptions);
+  return modManager.getModDesc(helPath, { platform, allowNull: false });
 }
 
 /**
