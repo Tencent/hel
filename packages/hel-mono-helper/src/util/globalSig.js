@@ -26,8 +26,7 @@ function setIsDisplayConsoleLog(bool) {
   maySetSig(key, bool);
 }
 
-
 module.exports = {
   getIsDisplayConsoleLog,
-  setIsDisplayConsoleLog
+  setIsDisplayConsoleLog,
 };
