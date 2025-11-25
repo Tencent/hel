@@ -2,10 +2,13 @@
  * 集中式的把所有逻辑的路由定义在此文件里，在 at/core/app.ts 文件里会被载入
  */
 import { hello } from '@hel-demo/mono-libs';
-// @ts-ignore this is a non-exist node module
+import path from 'path';
+// @ts-ignore this is a non-exist node module, just map it to hel module
 import { hello as h2 } from 'hel-hello-helpack';
+// @ts-ignore this is a non-exist node module, just map it  to local file
+import { hello as h3 } from 'my-mod';
 import { getRouter, restful } from './at/core/routerFactory';
-import { getNodeModDesc, getNodeModVer, importNodeMod, resolveNodeMod } from './libs/hmnLib';
+import { getNodeModDesc, getNodeModVer, importNodeMod, importNodeModByPath, resolveNodeMod } from './libs/hmn';
 
 restful('/api/hello', () => {
   try {
@@ -45,13 +48,22 @@ restful('/api/resolveMod', () => {
 
 restful('/api/showVirtualNodeModule', async () => {
   const result = h2();
-  return { staticFnResult: result, desc: 'hel-hello-helpack is a non-exist node module' };
+  return { staticFnResult: result, desc: 'hel-hello-helpack is a virtual node module' };
 });
 
 restful('/api/changeVirtualVer/:ver', async (ctx) => {
   const { ver } = ctx.req.params;
   const { mod } = await importNodeMod('hel-hello-helpack', { ver });
   return { desc: 'update successfully', fnResult: mod.hello(), staticFnResult: h2() };
+});
+
+restful('/api/showMyMod', async (ctx) => {
+  return { desc: 'my-mod', staticFnResult: h3(), pathInfo: resolveNodeMod('my-mod') };
+});
+
+restful('/api/changeVirtualLocalModToV2', async (ctx) => {
+  importNodeModByPath('my-mod', path.join(__dirname, '../my-mod/lib-v2/srv/index.js'));
+  return { desc: 'my-mod', staticFnResult: h3(), pathInfo: resolveNodeMod('my-mod') };
 });
 
 /**

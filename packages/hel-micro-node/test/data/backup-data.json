@@ -1,0 +1,53 @@
+{
+  "qqnews-pc-components-lite": {
+    "app": {
+      "id": 1,
+      "name": "qqnews-pc-components-lite"
+    },
+    "version": {
+      "create_at": "2024-12-23T07:00:18.000Z",
+      "src_map": {
+        "headAssetList": [],
+        "bodyAssetList": [],
+        "chunkCssSrcList": []
+      }
+    }
+  },
+  "hel-hello-helpack": {
+    "app": {
+      "id": 2,
+      "name": "hel-hello-helpack"
+    },
+    "version": {
+      "create_at": "2024-12-23T07:00:18.000Z",
+      "sub_app_version": "hel-hello-helpack@20250808092441",
+      "version_tag": "20250808092441",
+      "src_map": {
+        "webDirPath": "https://tnfe.gtimg.com/hel/hel-hello-helpack@20250808092441",
+        "headAssetList": [],
+        "bodyAssetList": [],
+        "chunkCssSrcList": [],
+        "srvModSrcList": [
+          "https://mat1.gtimg.com/qqcdn/qqcomtest/common-static/hel/hel-hello-local_20250608111834/srv/asset-manifest.json",
+          "https://mat1.gtimg.com/qqcdn/qqcomtest/common-static/hel/hel-hello-local_20250608111834/srv/hel-hello/index.js",
+          "https://mat1.gtimg.com/qqcdn/qqcomtest/common-static/hel/hel-hello-local_20250608111834/srv/static/js/static.js"
+        ],
+        "srvModSrcIndex": "https://mat1.gtimg.com/qqcdn/qqcomtest/common-static/hel/hel-hello-local_20250608111834/srv/static/js/static.js"
+      }
+    }
+  },
+  "qqnews-pc-channel": {
+    "app": {
+      "id": 3,
+      "name": "qqnews-pc-channel"
+    },
+    "version": {
+      "create_at": "2024-12-23T07:00:18.000Z",
+      "src_map": {
+        "headAssetList": [],
+        "bodyAssetList": [],
+        "chunkCssSrcList": []
+      }
+    }
+  }
+}

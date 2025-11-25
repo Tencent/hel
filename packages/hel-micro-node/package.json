@@ -1,12 +1,13 @@
 {
   "name": "hel-micro-node",
-  "version": "0.0.1",
-  "description": "hel-micro node sdk.",
+  "version": "0.1.2",
+  "description": "hel-micro sdk for node, a better implement of module federation",
   "keywords": [
     "hel",
     "hel-micro",
     "hel-micro-node",
     "module federation",
+    "module federation for node",
     "module federation sdk"
   ],
   "bugs": "https://github.com/Tencent/hel/issues",
@@ -19,37 +20,61 @@
   "author": {
     "name": "fantasticsoul"
   },
-  "main": "lib/index.js",
-  "unpkg": "dist/hel-micro-node.min.js",
-  "module": "es/index.js",
+  "main": "dist/index.js",
+  "unpkg": "dist/index.min.js",
+  "module": "dist/index.mjs",
   "types": "src/index.ts",
   "files": [
     "dist",
-    "lib",
-    "es",
-    "src",
-    "README.md",
-    "tsconfig.json"
+    "tsconfig.json",
+    "README.md"
   ],
+  "publishConfig": {
+    "types": "dist/index.d.ts"
+  },
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint ./src --ext ts,tsx",
-    "lint_fix": "eslint ./src --ext ts,tsx --fix",
-    "lint_test": "eslint ./test --ext ts,tsx",
-    "lint_test_fix": "eslint ./test --ext ts,tsx --fix",
-    "test": "pnpm --filter=hel-micro-node run build:commonjs && jest"
+    "build:step1": "tsup",
+    "build:step2": "node ./scripts/handleCode",
+    "build:step2:h": "HMN_USER=1 node ./scripts/handleCode",
+    "test": "jest"
   },
   "dependencies": {
-    "hel-types": "^4.3.3"
+    "@helbase/uuid": "1.0.1",
+    "@tmicro/f-guard": "0.1.3",
+    "@tmicro/fetch-file": "0.0.1",
+    "axios": "^1.7.7",
+    "clear-module": "4.1.2",
+    "fs-extra": "^11.3.0",
+    "hel-types": "^4.3.9",
+    "lru-cache": ">=7.0.0",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.12.11",
-    "babel-cli": "^6.26.0",
-    "rollup": "^2.23.0"
+    "@types/estree": "^1.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^27.5.0",
+    "@types/node": "^18.19.111",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "@hel-demo/mono-libs": "1.0.3",
+    "axios-node": "^1.0.0",
+    "eslint": "^8.23.1",
+    "hel-demo-lib1": "1.0.0",
+    "hel-hello": "1.0.0",
+    "jest": "^28.1.3",
+    "terser": "^5.44.0",
+    "ts-jest": "28.0.1",
+    "typescript": "4.8.4"
   },
   "peerDependencies": {
-    "hel-types": "^4.3.3"
-  },
-  "bundleDependencies": [],
-  "deprecated": false
+    "@helbase/uuid": "1.0.1",
+    "@tmicro/f-guard": "0.1.3",
+    "@tmicro/fetch-file": "0.0.1",
+    "axios": "^1.7.7",
+    "clear-module": "4.1.2",
+    "fs-extra": "^11.3.0",
+    "hel-types": "^4.3.9",
+    "lru-cache": ">=7.0.0",
+    "ws": "^8.18.2"
+  }
 }

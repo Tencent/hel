@@ -57,7 +57,8 @@ export const getSubAppToken: TController<any> = async (ctx) => {
  */
 export const getSubAppAndItsVersion = async (ctx: ICuteExpressCtx) => {
   const app = await getSubApp(ctx);
-  if (!app) throw new Error('app not found');
+  const name = ctx.query.name || '';
+  if (!app) throw new Error(`app ${name} not found`);
   let targetVer = ctx.query.version || app.online_version;
   const gray_users = app.gray_users || [];
   // 当前应用正在灰度中 & 当前处于灰度名单中

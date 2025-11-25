@@ -4,4 +4,4 @@
 
 ## hel-micro-node
 
-基于 hel-dev-utils 打包后，使用 hel-micro-node 热更新服务端模块
+基于 hel-dev-utils 打包后，可使用 hel-micro-node 热更新服务端模块

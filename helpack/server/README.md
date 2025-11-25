@@ -1,14 +1,23 @@
 ## 本地命令行启动
+
 - npm 脚本启动
+
 ```bash
 // 编译
 npm run build
-// 启动编译后代码
+// 启动快速演示模式的管理台
 npm run start
+// 启动完整功能的管理台
+npm run start:full
+// 启动简单服务，只提供api
+npm run start:simple
 ```
 
 - 配置 launch.json去启动
-```
+
+这样可直接点击 vscode 的调试按钮，方便本地联调
+
+```json
 {
   // 使用 IntelliSense 了解相关属性。 
   // 悬停以查看现有属性的描述。
