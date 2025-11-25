@@ -1,5 +1,26 @@
 /* eslint-disable */
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { newObj[key] = obj[key]; } } } newObj.default = obj; return newObj; } } function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var __create = Object.create;
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};
+    if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          newObj[key] = obj[key];
+        }
+      }
+    }
+    newObj.default = obj;
+    return newObj;
+  }
+}
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -9,75 +30,79 @@ var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp = (obj, key, value) =>
+  key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : (obj[key] = value);
 var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp.call(b, prop)) __defNormalProp(a, prop, b[prop]);
   if (__getOwnPropSymbols)
     for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
+      if (__propIsEnum.call(b, prop)) __defNormalProp(a, prop, b[prop]);
     }
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x)(function(x) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
+var __require = /* @__PURE__ */ ((x) =>
+  typeof require !== 'undefined'
+    ? require
+    : typeof Proxy !== 'undefined'
+    ? new Proxy(x, {
+        get: (a, b) => (typeof require !== 'undefined' ? require : a)[b],
+      })
+    : x)(function (x) {
+  if (typeof require !== 'undefined') return require.apply(this, arguments);
   throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __objRest = (source, exclude) => {
   var target = {};
-  for (var prop in source)
-    if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
+  for (var prop in source) if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0) target[prop] = source[prop];
   if (source != null && __getOwnPropSymbols)
     for (var prop of __getOwnPropSymbols(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
-        target[prop] = source[prop];
+      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop)) target[prop] = source[prop];
     }
   return target;
 };
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
-var __commonJS = (cb, mod2) => function __require2() {
-  return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
-};
+var __esm = (fn, res) =>
+  function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])((fn = 0))), res;
+  };
+var __commonJS = (cb, mod2) =>
+  function __require2() {
+    return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
+  };
 var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
+  for (var name in all) __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
+  if ((from && typeof from === 'object') || typeof from === 'function') {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
         __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
   return to;
 };
-var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target, "default", { value: mod2, enumerable: true }) : target,
-  mod2
-));
+var __toESM = (mod2, isNodeMode, target) => (
+  (target = mod2 != null ? __create(__getProtoOf(mod2)) : {}),
+  __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target, 'default', { value: mod2, enumerable: true }) : target,
+    mod2,
+  )
+);
 
 // src/base/util.ts
 function strItems2Dict(strItems, val) {
   const dict = {};
-  strItems.forEach((item) => dict[item] = val);
+  strItems.forEach((item) => (dict[item] = val));
   return dict;
 }
 function isModuleLike(mayModule) {
   if (!mayModule) {
     return false;
   }
-  if (typeof mayModule.toString !== "function") {
+  if (typeof mayModule.toString !== 'function') {
     return false;
   }
   try {
@@ -87,7 +112,7 @@ function isModuleLike(mayModule) {
   }
 }
 function isFn(mayFn) {
-  return typeof mayFn === "function";
+  return typeof mayFn === 'function';
 }
 function isValidModule(mayModule) {
   if (!mayModule) {
@@ -104,13 +129,13 @@ function isValidModule(mayModule) {
   return true;
 }
 function xssFilter(input) {
-  return input.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+  return input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
 function purify(raw) {
   const pured = {};
   Object.keys(raw).forEach((key) => {
     const val = raw[key];
-    if (![void 0, null, ""].includes(val)) {
+    if (![void 0, null, ''].includes(val)) {
       pured[key] = val;
     }
   });
@@ -120,7 +145,7 @@ function purifyFn(raw) {
   const pured = {};
   Object.keys(raw).forEach((key) => {
     const val = raw[key];
-    if (typeof val === "function") {
+    if (typeof val === 'function') {
       pured[key] = val;
     }
   });
@@ -152,7 +177,7 @@ function maySet(dict, key, val) {
   return true;
 }
 function maySetFn(dict, key, val) {
-  if (typeof val === "function") {
+  if (typeof val === 'function') {
     dict[key] = val;
   }
 }
@@ -163,79 +188,128 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 var init_util = __esm({
-  "src/base/util.ts"() {
+  'src/base/util.ts'() {
     init_mod_consts();
-  }
+  },
 });
 
 // src/base/consts.ts
-var _path = require('path'); var path = _interopRequireWildcard(_path); var path2 = _interopRequireWildcard(_path); var path3 = _interopRequireWildcard(_path); var path4 = _interopRequireWildcard(_path); var path5 = _interopRequireWildcard(_path); var path6 = _interopRequireWildcard(_path); var path7 = _interopRequireWildcard(_path); var path8 = _interopRequireWildcard(_path); var path9 = _interopRequireWildcard(_path);
+var _path = require('path');
+var path = _interopRequireWildcard(_path);
+var path2 = _interopRequireWildcard(_path);
+var path3 = _interopRequireWildcard(_path);
+var path4 = _interopRequireWildcard(_path);
+var path5 = _interopRequireWildcard(_path);
+var path6 = _interopRequireWildcard(_path);
+var path7 = _interopRequireWildcard(_path);
+var path8 = _interopRequireWildcard(_path);
+var path9 = _interopRequireWildcard(_path);
 function setCtxEnv(options) {
   const pured = purify(options);
   Object.assign(CTX_ENV, pured);
 }
-var SUMERU_CONTAINER_NAME, WORKER_ID, SUMERU_ENV, NODE_APP_INSTANCE, PLATFORM, PLATFORM_HEL, HEL_API_URL, HELPACK_API_URL, SDK_NAME, CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED, SDK_PKG_ROOT, HEL_SDK_SRC, SERVER_INFO, CTX_ENV, AS_TRUE, AS_FALSE, HOOK_TYPE;
+var SUMERU_CONTAINER_NAME,
+  WORKER_ID,
+  SUMERU_ENV,
+  NODE_APP_INSTANCE,
+  PLATFORM,
+  PLATFORM_HEL,
+  HEL_API_URL,
+  HELPACK_API_URL,
+  SDK_NAME,
+  CHANNEL_APP_INFO_CHANGED,
+  CHANNEL_APP_VERSION_CHANGED,
+  SDK_PKG_ROOT,
+  HEL_SDK_SRC,
+  SERVER_INFO,
+  CTX_ENV,
+  AS_TRUE,
+  AS_FALSE,
+  HOOK_TYPE;
 var init_consts = __esm({
-  "src/base/consts.ts"() {
+  'src/base/consts.ts'() {
     init_util();
     ({ SUMERU_CONTAINER_NAME, WORKER_ID, SUMERU_ENV, NODE_APP_INSTANCE } = process.env);
-    PLATFORM = "unpkg";
-    PLATFORM_HEL = "hel";
-    HEL_API_URL = "https://unpkg.com";
-    HELPACK_API_URL = "https://helmicro.com/openapi/meta";
+    PLATFORM = 'unpkg';
+    PLATFORM_HEL = 'hel';
+    HEL_API_URL = 'https://unpkg.com';
+    HELPACK_API_URL = 'https://helmicro.com/openapi/meta';
     SDK_NAME = require('path').join(__dirname, './impl.js').replace(/\\/g, '/');
-    CHANNEL_APP_INFO_CHANGED = "appInfoChanged";
-    CHANNEL_APP_VERSION_CHANGED = "appVersionChanged";
-    SDK_PKG_ROOT = path.join(__dirname, "../../");
-    HEL_SDK_SRC = "https://tnfe.gtimg.com/hel-runtime/level1/hel-base-v28.js";
+    CHANNEL_APP_INFO_CHANGED = 'appInfoChanged';
+    CHANNEL_APP_VERSION_CHANGED = 'appVersionChanged';
+    SDK_PKG_ROOT = path.join(__dirname, '../../');
+    HEL_SDK_SRC = 'https://tnfe.gtimg.com/hel-runtime/level1/hel-base-v28.js';
     SERVER_INFO = {
-      containerName: SUMERU_CONTAINER_NAME || "",
+      containerName: SUMERU_CONTAINER_NAME || '',
       workerId: WORKER_ID || NODE_APP_INSTANCE || 0,
-      env: SUMERU_ENV || ""
+      env: SUMERU_ENV || '',
     };
     CTX_ENV = {
-      isProd: SERVER_INFO.env === "formal"
+      isProd: SERVER_INFO.env === 'formal',
     };
-    AS_TRUE = "1";
-    AS_FALSE = "0";
+    AS_TRUE = '1';
+    AS_FALSE = '0';
     HOOK_TYPE = {
-      onInitialHelMetaFetched: "onInitialHelMetaFetched",
-      onHelModLoaded: "onHelModLoaded",
-      onMessageReceived: "onMessageReceived"
+      onInitialHelMetaFetched: 'onInitialHelMetaFetched',
+      onHelModLoaded: 'onHelModLoaded',
+      onMessageReceived: 'onMessageReceived',
     };
-  }
+  },
 });
 
 // src/base/mod-consts.ts
 
-var HEL_META_JSON, SOCKET_MSG_TYPE, HEL_MDO_PROXY, IS_HEL_MOD_PROXY, NODE_MODULES, REAL_MOD_DIR_NAME, DOT_HEL_MODULES, MOD_FILES_DIR, LIMIT_VER_COUNT, HEL_DIST, MOD_INIT_VER, INDEX_JS, KEY_DEFAULT, MOD_TPL, FILE_SUBPATH_LIMIT, MOD_MGR_DIR_NAME, MAP_NODE_MOD_DIR_NAME, KW_NODE_MOD_NAME, DOWNLOAD_RETRY_LIMIT, OBJ_DESC, MODULE_DESC, WAIT_INTERVAL_MS, HEL_LOCK_FILE_VALID_TIME_MS, COMPILED_PROXY_FILE_TPL;
+var HEL_META_JSON,
+  SOCKET_MSG_TYPE,
+  HEL_MDO_PROXY,
+  IS_HEL_MOD_PROXY,
+  NODE_MODULES,
+  REAL_MOD_DIR_NAME,
+  DOT_HEL_MODULES,
+  MOD_FILES_DIR,
+  LIMIT_VER_COUNT,
+  HEL_DIST,
+  MOD_INIT_VER,
+  INDEX_JS,
+  KEY_DEFAULT,
+  MOD_TPL,
+  FILE_SUBPATH_LIMIT,
+  MOD_MGR_DIR_NAME,
+  MAP_NODE_MOD_DIR_NAME,
+  KW_NODE_MOD_NAME,
+  DOWNLOAD_RETRY_LIMIT,
+  OBJ_DESC,
+  MODULE_DESC,
+  WAIT_INTERVAL_MS,
+  HEL_LOCK_FILE_VALID_TIME_MS,
+  COMPILED_PROXY_FILE_TPL;
 var init_mod_consts = __esm({
-  "src/base/mod-consts.ts"() {
+  'src/base/mod-consts.ts'() {
     init_consts();
-    HEL_META_JSON = "hel-meta.json";
+    HEL_META_JSON = 'hel-meta.json';
     SOCKET_MSG_TYPE = {
-      initHelMods: "initHelMods",
-      addHelMods: "addHelMods"
+      initHelMods: 'initHelMods',
+      addHelMods: 'addHelMods',
     };
-    HEL_MDO_PROXY = Symbol("HelModProxy");
+    HEL_MDO_PROXY = Symbol('HelModProxy');
     IS_HEL_MOD_PROXY = 1;
-    NODE_MODULES = "node_modules";
-    REAL_MOD_DIR_NAME = "mod-files";
-    DOT_HEL_MODULES = ".hel_modules";
+    NODE_MODULES = 'node_modules';
+    REAL_MOD_DIR_NAME = 'mod-files';
+    DOT_HEL_MODULES = '.hel_modules';
     MOD_FILES_DIR = path2.join(__dirname, `../${REAL_MOD_DIR_NAME}`);
     LIMIT_VER_COUNT = 1e4;
-    HEL_DIST = "hel_dist";
-    MOD_INIT_VER = "MOD_INIT_VER";
-    INDEX_JS = "index.js";
-    KEY_DEFAULT = "default";
-    MOD_TPL = path2.join(__dirname, "./mod-tpl.js");
+    HEL_DIST = 'hel_dist';
+    MOD_INIT_VER = 'MOD_INIT_VER';
+    INDEX_JS = 'index.js';
+    KEY_DEFAULT = 'default';
+    MOD_TPL = path2.join(__dirname, './mod-tpl.js');
     FILE_SUBPATH_LIMIT = 20;
-    MOD_MGR_DIR_NAME = "mod-manager";
-    MAP_NODE_MOD_DIR_NAME = "map-node-mods";
-    KW_NODE_MOD_NAME = "{{NODE_MOD_NAME}}";
+    MOD_MGR_DIR_NAME = 'mod-manager';
+    MAP_NODE_MOD_DIR_NAME = 'map-node-mods';
+    KW_NODE_MOD_NAME = '{{NODE_MOD_NAME}}';
     DOWNLOAD_RETRY_LIMIT = 3;
-    OBJ_DESC = "[object Object]";
-    MODULE_DESC = "[object Module]";
+    OBJ_DESC = '[object Object]';
+    MODULE_DESC = '[object Module]';
     WAIT_INTERVAL_MS = 100;
     HEL_LOCK_FILE_VALID_TIME_MS = 60 * 1e3;
     COMPILED_PROXY_FILE_TPL = `
@@ -245,7 +319,7 @@ const hmn = require("${SDK_NAME}");
 const proxyMod = hmn.requireNodeMod('{{NODE_MOD_NAME}}');
 module.exports = proxyMod;
 `;
-  }
+  },
 });
 
 // src/test-util/jest-env.ts
@@ -253,8 +327,7 @@ function isRunInJest() {
   return !!process.env.JEST_WORKER_ID;
 }
 var init_jest_env = __esm({
-  "src/test-util/jest-env.ts"() {
-  }
+  'src/test-util/jest-env.ts'() {},
 });
 
 // src/context/global-config.ts
@@ -265,41 +338,51 @@ function mergeGlobalConfig(config) {
     sdkGlobalConfig.helProxyFilesDir = helProxyFilesDir;
   }
   Object.assign(sdkGlobalConfig.hooks, purifyFn(hooks));
-  maySet(sdkGlobalConfig, "helModulesDir", helModulesDir);
-  maySetFn(sdkGlobalConfig, "shouldAcceptVersion", shouldAcceptVersion2);
+  maySet(sdkGlobalConfig, 'helModulesDir', helModulesDir);
+  maySetFn(sdkGlobalConfig, 'shouldAcceptVersion', shouldAcceptVersion2);
 }
 function getGlobalConfig() {
   return sdkGlobalConfig;
 }
 var sdkGlobalConfig;
 var init_global_config = __esm({
-  "src/context/global-config.ts"() {
+  'src/context/global-config.ts'() {
     init_util();
     init_jest_env();
     sdkGlobalConfig = {
-      helModulesDir: "",
-      helProxyFilesDir: "",
-      helLogFilesDir: "",
+      helModulesDir: '',
+      helProxyFilesDir: '',
+      helLogFilesDir: '',
       strict: true,
       hooks: {
         onInitialHelMetaFetched: noop,
         onHelModLoaded: noop,
-        onMessageReceived: noop
+        onMessageReceived: noop,
       },
-      shouldAcceptVersion: () => true
+      shouldAcceptVersion: () => true,
     };
-  }
+  },
 });
 
 // src/base/path-helper.ts
-var _fs = require('fs'); var fs = _interopRequireWildcard(_fs); var fs2 = _interopRequireWildcard(_fs); var fs3 = _interopRequireWildcard(_fs); var fs4 = _interopRequireWildcard(_fs); var fs5 = _interopRequireWildcard(_fs); var fs6 = _interopRequireWildcard(_fs); var fs7 = _interopRequireWildcard(_fs); var fs8 = _interopRequireWildcard(_fs); var fs10 = _interopRequireWildcard(_fs); var fs9 = _interopRequireWildcard(_fs);
+var _fs = require('fs');
+var fs = _interopRequireWildcard(_fs);
+var fs2 = _interopRequireWildcard(_fs);
+var fs3 = _interopRequireWildcard(_fs);
+var fs4 = _interopRequireWildcard(_fs);
+var fs5 = _interopRequireWildcard(_fs);
+var fs6 = _interopRequireWildcard(_fs);
+var fs7 = _interopRequireWildcard(_fs);
+var fs8 = _interopRequireWildcard(_fs);
+var fs10 = _interopRequireWildcard(_fs);
+var fs9 = _interopRequireWildcard(_fs);
 
 function getDotHelModulesPath() {
   const list = SDK_PKG_ROOT.split(path3.sep);
   const lastIdx = list.length - 1;
   let nodeModulesIdx = -1;
-  let nodeModulesPath = "";
-  let firstSideNodeModulesPath = "";
+  let nodeModulesPath = '';
+  let firstSideNodeModulesPath = '';
   for (let idx = lastIdx; idx >= 0; idx--) {
     const name = list[idx];
     if (NODE_MODULES === name) {
@@ -320,7 +403,7 @@ function getDotHelModulesPath() {
   } else {
     nodeModulesPath = firstSideNodeModulesPath;
   }
-  const dotHelModulesPath = nodeModulesPath ? path3.join(nodeModulesPath, DOT_HEL_MODULES) : "";
+  const dotHelModulesPath = nodeModulesPath ? path3.join(nodeModulesPath, DOT_HEL_MODULES) : '';
   return dotHelModulesPath;
 }
 function resolveNodeModPath(nodeModNameOrPath, allowNull) {
@@ -328,7 +411,7 @@ function resolveNodeModPath(nodeModNameOrPath, allowNull) {
     return __require.resolve(nodeModNameOrPath);
   } catch (err) {
     if (allowNull) {
-      return "";
+      return '';
     }
     throw err;
   }
@@ -342,14 +425,14 @@ function getHelModulesPath() {
     }
     if (!fs.existsSync(lockedHelModulesDir)) {
       fs.mkdirSync(lockedHelModulesDir, { recursive: true });
-      const readmeFile = path3.join(lockedHelModulesDir, "./README.txt");
-      const starMe = "star it(https://github.com/Tencent/hel) if you like our open source works.";
+      const readmeFile = path3.join(lockedHelModulesDir, './README.txt');
+      const starMe = 'star it(https://github.com/Tencent/hel) if you like our open source works.';
       let hint = `Thank you for using hel-micro-node sdk ^_^, ${starMe}
 `;
-      hint += "Hel-micro-node will use below directory to store downloaded files!\n";
+      hint += 'Hel-micro-node will use below directory to store downloaded files!\n';
       hint += `${lockedHelModulesDir}
 `;
-      fs.writeFileSync(readmeFile, hint, { encoding: "utf8" });
+      fs.writeFileSync(readmeFile, hint, { encoding: 'utf8' });
     }
   }
   return lockedHelModulesDir;
@@ -377,7 +460,7 @@ function getHelProxyFilesDir() {
     return lockedHelProxyFilesDir;
   }
   const helModulesDir = getHelModulesPath();
-  const helProxyFilesDir = path3.join(helModulesDir, "./.proxy");
+  const helProxyFilesDir = path3.join(helModulesDir, './.proxy');
   lockedHelProxyFilesDir = helProxyFilesDir;
   if (!fs.existsSync(lockedHelProxyFilesDir)) {
     fs.mkdirSync(lockedHelProxyFilesDir, { recursive: true });
@@ -394,7 +477,7 @@ function getHelLogFilesDir() {
     return lockedHelLogFilesDir;
   }
   const helModulesDir = getHelModulesPath();
-  const helLogFilesDir = path3.join(helModulesDir, "./.log");
+  const helLogFilesDir = path3.join(helModulesDir, './.log');
   lockedHelLogFilesDir = helLogFilesDir;
   if (!fs.existsSync(lockedHelLogFilesDir)) {
     fs.mkdirSync(lockedHelLogFilesDir, { recursive: true });
@@ -402,9 +485,9 @@ function getHelLogFilesDir() {
   return lockedHelLogFilesDir;
 }
 function getModRootDirName(helModName, platform = PLATFORM) {
-  const prefix = platform !== PLATFORM ? `${platform}+` : "";
-  if (helModName.startsWith("@")) {
-    const [scope, name] = helModName.split("/");
+  const prefix = platform !== PLATFORM ? `${platform}+` : '';
+  if (helModName.startsWith('@')) {
+    const [scope, name] = helModName.split('/');
     return `${prefix}${scope}+${name}`;
   }
   return `${prefix}${helModName}`;
@@ -412,7 +495,7 @@ function getModRootDirName(helModName, platform = PLATFORM) {
 function getModRootDirData(params) {
   const {
     meta: { app, version },
-    webDirPath
+    webDirPath,
   } = params;
   const platform = params.platform || app.platform || PLATFORM;
   const { name } = app;
@@ -420,36 +503,36 @@ function getModRootDirData(params) {
   if (!webDirPath) {
     return { modRootDirName, modVer: version.sub_app_version };
   }
-  const strList = webDirPath.split("/");
+  const strList = webDirPath.split('/');
   let modNameAndVer = lastNItem(strList);
   if (HEL_DIST === modNameAndVer) {
     modNameAndVer = lastNItem(strList, 2);
   }
-  let modVer = "";
+  let modVer = '';
   if (!modNameAndVer.includes(name)) {
     modVer = modNameAndVer;
   } else {
     const [, ver] = modNameAndVer.split(name);
-    const hasDelimiter = ver.startsWith("_") || ver.startsWith("@");
+    const hasDelimiter = ver.startsWith('_') || ver.startsWith('@');
     modVer = hasDelimiter ? ver.substring(1) : ver;
   }
-  if (modVer.includes("@")) {
-    const [, ver] = modVer.split("@");
+  if (modVer.includes('@')) {
+    const [, ver] = modVer.split('@');
     modVer = ver;
   }
   return { modRootDirName, modVer };
 }
 function getFilePathData(webDirPath, url) {
-  let [, relativePathName = ""] = url.split(webDirPath);
+  let [, relativePathName = ''] = url.split(webDirPath);
   relativePathName = relativePathName.substring(1);
-  const list = relativePathName.split("/");
+  const list = relativePathName.split('/');
   const len = list.length;
   const fileName = list[len - 1];
   if (len === 1) {
-    return { relativeDir: "", fileName, fileRelPath: INDEX_JS };
+    return { relativeDir: '', fileName, fileRelPath: INDEX_JS };
   }
   const dirNames = list.slice(0, len - 1);
-  const relativeDir = dirNames.join("/");
+  const relativeDir = dirNames.join('/');
   return { relativeDir, fileName, fileRelPath: `${relativeDir}/${fileName}` };
 }
 function getModRootDirPath(modRootDirName) {
@@ -470,9 +553,9 @@ function getModPathData(webFile) {
   const fileDownloadInfos = [];
   const oneUrl = urls[0];
   const isMainMod = relPath === INDEX_JS;
-  let modPath = "";
-  let modRelPath = "";
-  let mainModPath = "";
+  let modPath = '';
+  let modRelPath = '';
+  let mainModPath = '';
   if (indexUrl && !urls.includes(indexUrl)) {
     throw new Error(`${indexUrl} is not in (${urls})`);
   }
@@ -490,7 +573,7 @@ function getModPathData(webFile) {
       const { relativeDir, fileName, fileRelPath } = getFilePathData(webDirPath, url);
       const tmpModPath = path3.join(modDirPath, fileRelPath);
       const isMainModUrl = indexUrl === url;
-      if (isMainMod && isMainModUrl || !isMainMod && fileRelPath === relPath) {
+      if ((isMainMod && isMainModUrl) || (!isMainMod && fileRelPath === relPath)) {
         modPath = tmpModPath;
         modRelPath = fileRelPath;
       }
@@ -507,39 +590,41 @@ function getModPathData(webFile) {
 }
 var lockedHelModulesDir, lockedHelProxyFilesDir, lockedHelLogFilesDir;
 var init_path_helper = __esm({
-  "src/base/path-helper.ts"() {
+  'src/base/path-helper.ts'() {
     init_global_config();
     init_consts();
     init_mod_consts();
     init_util();
-    lockedHelModulesDir = "";
-    lockedHelProxyFilesDir = "";
-    lockedHelLogFilesDir = "";
-  }
+    lockedHelModulesDir = '';
+    lockedHelProxyFilesDir = '';
+    lockedHelLogFilesDir = '';
+  },
 });
 
 // src/mod-view/consts.ts
 var UPDATE_INTERVAL, STATUS_OK, SET_BY, HEL_SOCKET_URL;
 var init_consts2 = __esm({
-  "src/mod-view/consts.ts"() {
+  'src/mod-view/consts.ts'() {
     UPDATE_INTERVAL = 3 * 60 * 1e3;
-    STATUS_OK = "0";
+    STATUS_OK = '0';
     SET_BY = {
-      init: "init",
-      timer: "timer",
-      watch: "watch"
+      init: 'init',
+      timer: 'timer',
+      watch: 'watch',
     };
-    HEL_SOCKET_URL = "";
-  }
+    HEL_SOCKET_URL = '';
+  },
 });
 
 // src/context/index.ts
 function getRestOptions(passOptions) {
-  const _a = passOptions, { mod2conf, modNames } = _a, rest = __objRest(_a, ["mod2conf", "modNames"]);
+  const _a = passOptions,
+    { mod2conf, modNames } = _a,
+    rest = __objRest(_a, ['mod2conf', 'modNames']);
   return rest;
 }
 function makeSdkCtx(platform, options) {
-  const { registrationSource = "", isActive = false } = options;
+  const { registrationSource = '', isActive = false } = options;
   const sdkCtx = {
     api: {},
     platform,
@@ -549,12 +634,12 @@ function makeSdkCtx(platform, options) {
     isApiUrlOverwrite: false,
     helpackSocketUrl: HEL_SOCKET_URL,
     helSdkSrc: HEL_SDK_SRC,
-    helEntrySrc: "",
+    helEntrySrc: '',
     mod2conf: {},
     modNames: [],
     reporter: {
-      reportError: () => "",
-      reportInfo: () => ""
+      reportError: () => '',
+      reportInfo: () => '',
     },
     view2assetName: {},
     assetNameInfos: [],
@@ -562,13 +647,13 @@ function makeSdkCtx(platform, options) {
     view2appName: {},
     careAllModsChange: false,
     isPreloadMode: false,
-    helMetaBackupFilePath: "",
+    helMetaBackupFilePath: '',
     getHelRenderParams: (cbParams) => Promise.resolve({ viewPath: cbParams.viewPath, pageData: cbParams.pageData }),
     regHooks: defaultHooks,
     bizHooks: defaultHooks,
     confHooks: defaultHooks,
     getEnvInfo: () => null,
-    shouldAcceptVersion: () => true
+    shouldAcceptVersion: () => true,
   };
   return sdkCtx;
 }
@@ -587,7 +672,7 @@ function mergeConfig(config) {
     helpackSocketUrl,
     helpackApiUrl,
     careAllModsChange,
-    helMetaBackupFilePath
+    helMetaBackupFilePath,
   };
   Object.assign(sdkCtx, purify(toMerge));
   Object.assign(sdkCtx.confHooks, purifyFn(hooks));
@@ -601,10 +686,10 @@ function mergeOptions(passOptions) {
   const { view2assetName = {}, deps = {} } = passOptions;
   Object.keys(view2assetName).forEach((view) => {
     const assetName = view2assetName[view];
-    if (!assetName.includes("/")) {
-      throw new Error("assetName must be prefixed with helModName, a valid example may be like this: xxxMod/xxxAssetName");
+    if (!assetName.includes('/')) {
+      throw new Error('assetName must be prefixed with helModName, a valid example may be like this: xxxMod/xxxAssetName');
     }
-    const [appName, entryName] = assetName.split("/");
+    const [appName, entryName] = assetName.split('/');
     assetNameInfos.push({ appName, entryName, name: assetName });
     assetName2view[assetName] = view;
     view2appName[view] = appName;
@@ -637,29 +722,28 @@ function addBizHooks(hooks, platform) {
 }
 var defaultHooks, isAddBizHooksCalled, defaultSdkCtx, sdkCtxDict;
 var init_context = __esm({
-  "src/context/index.ts"() {
+  'src/context/index.ts'() {
     init_consts();
     init_util();
     init_consts2();
     defaultHooks = {
       onInitialHelMetaFetched: noop,
       onHelModLoaded: noop,
-      onMessageReceived: noop
+      onMessageReceived: noop,
     };
     isAddBizHooksCalled = false;
     defaultSdkCtx = makeSdkCtx(PLATFORM, { registrationSource: SDK_NAME, isActive: true });
     sdkCtxDict = { [PLATFORM]: defaultSdkCtx };
-  }
+  },
 });
 
 // src/base/logger.ts
 
-
 function print(...args) {
-  if (String(args[0] || "").includes("Cannot set properties of")) {
+  if (String(args[0] || '').includes('Cannot set properties of')) {
     console.trace(...args);
   }
-  if (String(args[0] || "").includes("Cannot find module")) {
+  if (String(args[0] || '').includes('Cannot find module')) {
     console.trace(...args);
   }
   console.log(...args);
@@ -669,20 +753,23 @@ function printWarn(...args) {
 }
 function writeLog(msg) {
   const dir = getHelLogFilesDir();
-  const file = path4.join(dir, "./running.log");
-  const time = (/* @__PURE__ */ new Date()).toLocaleString();
-  fs2.appendFileSync(file, `[${time}]: ${msg}
-`);
+  const file = path4.join(dir, './running.log');
+  const time = /* @__PURE__ */ new Date().toLocaleString();
+  fs2.appendFileSync(
+    file,
+    `[${time}]: ${msg}
+`,
+  );
 }
 var init_logger = __esm({
-  "src/base/logger.ts"() {
+  'src/base/logger.ts'() {
     init_path_helper();
-  }
+  },
 });
 
 // src/base/mem-logger.ts
 function recordMemLog(options) {
-  const { type, subType = "", desc = "", data, f1 = "", f2 = "" } = options;
+  const { type, subType = '', desc = '', data, f1 = '', f2 = '' } = options;
   const item = {
     type,
     subType,
@@ -690,7 +777,7 @@ function recordMemLog(options) {
     data,
     f1,
     f2,
-    time: (/* @__PURE__ */ new Date()).toLocaleString()
+    time: /* @__PURE__ */ new Date().toLocaleString(),
   };
   logs.unshift(item);
   if (logs.length > recordLimit) {
@@ -710,19 +797,19 @@ function getMemLogs(options) {
 }
 var logs, recordLimit;
 var init_mem_logger = __esm({
-  "src/base/mem-logger.ts"() {
+  'src/base/mem-logger.ts'() {
     init_consts();
     init_logger();
     logs = [];
     recordLimit = 100;
-  }
+  },
 });
 
 // src/server-mod/util.ts
 
 function extractFnAndDictProps(source) {
   if (!isModuleLike(source)) {
-    throw new Error("Source module must be a plain json object!");
+    throw new Error('Source module must be a plain json object!');
   }
   const fnProps = {};
   const dictProps = {};
@@ -741,7 +828,7 @@ function wait(ms = 1e3) {
 }
 function loadJson(jsonFilePath, defaultVal) {
   try {
-    const data = fs3.readFileSync(jsonFilePath, "utf8");
+    const data = fs3.readFileSync(jsonFilePath, 'utf8');
     return JSON.parse(data);
   } catch (err) {
     return defaultVal;
@@ -751,38 +838,40 @@ function safeUnlinkFile(filePath) {
   try {
     fs3.unlinkSync(filePath);
   } catch (err) {
-    recordMemLog({ type: "ModIns", subType: "safeUnlinkFile", desc: err.message, data: filePath });
+    recordMemLog({ type: 'ModIns', subType: 'safeUnlinkFile', desc: err.message, data: filePath });
   }
 }
 function noSlash(str) {
-  if (str.endsWith("/")) {
+  if (str.endsWith('/')) {
     return str.substring(0, str.length - 1);
   }
   return str;
 }
 var init_util2 = __esm({
-  "src/server-mod/util.ts"() {
+  'src/server-mod/util.ts'() {
     init_mem_logger();
     init_util();
-  }
+  },
 });
 
 // src/server-mod/file-helper.ts
 
-var _fsextra = require('fs-extra'); var fsExtra = _interopRequireWildcard(_fsextra);
-var _helfetchfile = require('hel-fetch-file'); var _helfetchfile2 = _interopRequireDefault(_helfetchfile);
+var _fsextra = require('fs-extra');
+var fsExtra = _interopRequireWildcard(_fsextra);
+var _helfetchfile = require('hel-fetch-file');
+var _helfetchfile2 = _interopRequireDefault(_helfetchfile);
 
 async function downloadFile(fileWebPath, fileLocalPath) {
-  const list = fileLocalPath.split("/");
+  const list = fileLocalPath.split('/');
   const [filename] = list.splice(list.length - 1, 1);
-  const fileDir = list.join("/");
+  const fileDir = list.join('/');
   await _helfetchfile2.default.call(void 0, fileWebPath, fileDir, { filename });
 }
 function getPrepareFilesParams(name, modDirPath, fileInfos) {
   const filePaths = fileInfos.map((v) => ({ fileLocalPath: path5.join(v.fileDir, v.fileName), fileWebPath: v.url }));
   const writeIndexContent = (content) => {
-    const indexFile = path5.join(modDirPath, "./index.js");
-    fs4.writeFileSync(indexFile, content, { encoding: "utf8" });
+    const indexFile = path5.join(modDirPath, './index.js');
+    fs4.writeFileSync(indexFile, content, { encoding: 'utf8' });
   };
   const params = { modDirPath, filePaths, name, downloadFile, writeIndexContent };
   return params;
@@ -814,7 +903,7 @@ async function downloadModFiles(fileInfos, options, retryCount = 1) {
             hasMetaFile = true;
           }
           return _helfetchfile2.default.call(void 0, url, fileDir, { filename: fileName });
-        })
+        }),
       );
     }
     if (options.onFilesReady) {
@@ -860,15 +949,14 @@ function cpSync(fromDirPath, toDirPath) {
   fsExtra.copySync(fromDirPath, toDirPath);
 }
 var init_file_helper = __esm({
-  "src/server-mod/file-helper.ts"() {
+  'src/server-mod/file-helper.ts'() {
     init_logger();
     init_mod_consts();
     init_path_helper();
-  }
+  },
 });
 
 // src/server-mod/lock-file.ts
-
 
 async function waitLockFileDeleted(lockFile) {
   rawLog(`[gwmi]: found lock file exist ${lockFile}`);
@@ -879,14 +967,14 @@ async function waitLockFileDeleted(lockFile) {
     curWaitTotalMs += WAIT_INTERVAL_MS;
     if (!fs5.existsSync(lockFile)) {
       lockFileExist = false;
-      rawLog("[gwmi]: found lock file deleted");
+      rawLog('[gwmi]: found lock file deleted');
     } else {
       rawLog(`[gwmi]: found lock file still exist after ${curWaitTotalMs} ms`);
     }
   }
 }
 function getLockFilePath(modDir) {
-  const lockFilePath = path6.join(modDir, "./hel-download-lock.json");
+  const lockFilePath = path6.join(modDir, './hel-download-lock.json');
   return lockFilePath;
 }
 function createLockFile(lockFilePath) {
@@ -902,12 +990,12 @@ function isLockFileValid(lockFilePath) {
   return Date.now() - lockData.time < HEL_LOCK_FILE_VALID_TIME_MS;
 }
 var init_lock_file = __esm({
-  "src/server-mod/lock-file.ts"() {
+  'src/server-mod/lock-file.ts'() {
     init_consts();
     init_mem_logger();
     init_mod_consts();
     init_util2();
-  }
+  },
 });
 
 // src/server-mod/mod-ins.ts
@@ -931,14 +1019,14 @@ function getModByPath(modPath, options) {
 function getDiskModInsByInitPath(initPath, modVer = MOD_INIT_VER) {
   const mod2 = getModByPath(initPath);
   let modDirPath = initPath;
-  let modRootDirPath = "";
-  if (initPath.endsWith(".js")) {
-    const list = initPath.split("/");
+  let modRootDirPath = '';
+  if (initPath.endsWith('.js')) {
+    const list = initPath.split('/');
     const len = list.length;
-    modDirPath = list.slice(0, len - 1).join("/");
+    modDirPath = list.slice(0, len - 1).join('/');
     modRootDirPath = modDirPath;
     if (len > 2) {
-      modRootDirPath = list.slice(0, len - 1).join("/");
+      modRootDirPath = list.slice(0, len - 1).join('/');
     }
   }
   return {
@@ -950,7 +1038,7 @@ function getDiskModInsByInitPath(initPath, modVer = MOD_INIT_VER) {
     modDirPath,
     modRootDirPath,
     modVer,
-    isInit: true
+    isInit: true,
   };
 }
 function getDiskModIns(webFile) {
@@ -975,7 +1063,8 @@ async function prepareWebModFiles(webFile, options) {
     }
     if (
       // 非当前 worker 创建锁文件时，执行到这里表示锁文件已释放，检查一下文件是否可复用即可
-      !isCurrentWorkerCreateLockFile && !getIsFilesReusable(fileDownloadInfos) || isCurrentWorkerCreateLockFile
+      (!isCurrentWorkerCreateLockFile && !getIsFilesReusable(fileDownloadInfos))
+      || isCurrentWorkerCreateLockFile
     ) {
       const delLockFile = () => {
         if (isCurrentWorkerCreateLockFile) {
@@ -985,7 +1074,7 @@ async function prepareWebModFiles(webFile, options) {
       await downloadModFiles(
         fileDownloadInfos,
         // prettier-ignore
-        __spreadProps(__spreadValues({}, options), { onSuccess: delLockFile, onFailed: delLockFile, modDirPath, name, webFile })
+        __spreadProps(__spreadValues({}, options), { onSuccess: delLockFile, onFailed: delLockFile, modDirPath, name, webFile }),
       );
     }
   }
@@ -1009,13 +1098,13 @@ function getCustomModIns(webFile, prepareFilesSync, onFilesReady) {
   return { mod: mod2, modPath, modRelPath, isMainMod, mainModPath, modDirPath, modRootDirPath, modVer, isInit: false };
 }
 var init_mod_ins = __esm({
-  "src/server-mod/mod-ins.ts"() {
+  'src/server-mod/mod-ins.ts'() {
     init_mod_consts();
     init_file_helper();
     init_lock_file();
     init_path_helper();
     init_util2();
-  }
+  },
 });
 
 // src/server-mod/mod-name.ts
@@ -1024,36 +1113,36 @@ function extractNameData(helModNameOrPath, platform = PLATFORM) {
   const helModPath = helModNameOrPath;
   let relPath = INDEX_JS;
   let proxyFileName = `${helModNameOrPath}.js`;
-  const splittedList = helModNameOrPath.split("/");
+  const splittedList = helModNameOrPath.split('/');
   const includeSlash = splittedList.length > 1;
-  if (helModNameOrPath.startsWith("@")) {
+  if (helModNameOrPath.startsWith('@')) {
     if (!includeSlash) {
       throw new Error(`Found invalid scoped helModName ${helModNameOrPath}`);
     }
     const [scope, name, ...rest] = splittedList;
     helModName = `${scope}/${name}`;
-    relPath = rest.join("/");
+    relPath = rest.join('/');
     proxyFileName = `${scope}+${name}.js`;
   } else if (includeSlash) {
     const [name, ...rest] = splittedList;
     helModName = name;
-    relPath = rest.join("/");
+    relPath = rest.join('/');
     proxyFileName = `${name}.js`;
   }
   if (platform !== PLATFORM) {
     proxyFileName = `${platform}+${proxyFileName}`;
   }
-  const hasFileExt = relPath.endsWith(".js") || relPath.endsWith(".cjs") || relPath.endsWith(".mjs");
+  const hasFileExt = relPath.endsWith('.js') || relPath.endsWith('.cjs') || relPath.endsWith('.mjs');
   if (!hasFileExt) {
     relPath = relPath ? `${relPath}/${INDEX_JS}` : INDEX_JS;
   }
   return { helModName, relPath, helModPath, helModNameOrPath, proxyFileName };
 }
 var init_mod_name = __esm({
-  "src/server-mod/mod-name.ts"() {
+  'src/server-mod/mod-name.ts'() {
     init_consts();
     init_mod_consts();
-  }
+  },
 });
 
 // src/server-mod/map-node-helper.ts
@@ -1088,9 +1177,9 @@ function formatAndCheckModMapper(modMapper, checkData) {
     if (!val) {
       return;
     }
-    if (typeof val === "string") {
+    if (typeof val === 'string') {
       val = { helModName: val };
-    } else if (typeof val === "boolean") {
+    } else if (typeof val === 'boolean') {
       val = { helModName: nodeModName };
     }
     const { ver, helpackApiUrl } = val;
@@ -1114,14 +1203,14 @@ function formatAndCheckModMapper(modMapper, checkData) {
   return stdMapper;
 }
 var init_map_node_helper = __esm({
-  "src/server-mod/map-node-helper.ts"() {
+  'src/server-mod/map-node-helper.ts'() {
     init_path_helper();
     init_util();
     init_util2();
     init_jest_env();
     init_mod_ins();
     init_mod_name();
-  }
+  },
 });
 
 // src/server-mod/mod-tpl-helper.ts
@@ -1133,13 +1222,12 @@ function replaceTpl(content, nodeModName) {
   return newContent;
 }
 var init_mod_tpl_helper = __esm({
-  "src/server-mod/mod-tpl-helper.ts"() {
+  'src/server-mod/mod-tpl-helper.ts'() {
     init_mod_consts();
-  }
+  },
 });
 
 // src/server-mod/map-node-mods.ts
-
 
 function makeMapDetail() {
   return {
@@ -1150,12 +1238,12 @@ function makeMapDetail() {
     mod2helModPaths: {},
     prepareFilesFns: {},
     helModFileCount: {},
-    proxyFiles: {}
+    proxyFiles: {},
   };
 }
 var MapNodeModsManager, mapNodeModsManager;
 var init_map_node_mods = __esm({
-  "src/server-mod/map-node-mods.ts"() {
+  'src/server-mod/map-node-mods.ts'() {
     init_consts();
     init_mod_consts();
     init_path_helper();
@@ -1191,17 +1279,19 @@ var init_map_node_mods = __esm({
         if (!realData && !allowFake) {
           throw new Error(`Unmapped node module ${nodeModName}`);
         }
-        return realData || {
-          helModName: "",
-          helPath: "",
-          platform: PLATFORM,
-          fallback: { force: false, mod: null, path: "" },
-          rawPath: "",
-          proxyFilePath: "",
-          fnProps: {},
-          dictProps: {},
-          isShapeReady: false
-        };
+        return (
+          realData || {
+            helModName: '',
+            helPath: '',
+            platform: PLATFORM,
+            fallback: { force: false, mod: null, path: '' },
+            rawPath: '',
+            proxyFilePath: '',
+            fnProps: {},
+            dictProps: {},
+            isShapeReady: false,
+          }
+        );
       }
       getMappedPath(nodeModName) {
         return this.getNodeModData(nodeModName).helPath;
@@ -1232,7 +1322,7 @@ var init_map_node_mods = __esm({
         return fallback.mod || getModByPath(fallback.path, { allowNull: true }) || getModByPath(nodeModName, { allowNull: true });
       }
       getMappedApiUrl(helModName) {
-        return this.checkData.modApiUrlDict[helModName] || "";
+        return this.checkData.modApiUrlDict[helModName] || '';
       }
       /**
        * 获取预设的准备文件函数
@@ -1247,7 +1337,7 @@ var init_map_node_mods = __esm({
        */
       getNodeModName(helModNameOrPath, platform) {
         const { mod2nodeName } = this.getMapDetail(platform);
-        return mod2nodeName[helModNameOrPath] || "";
+        return mod2nodeName[helModNameOrPath] || '';
       }
       getHelModData(helModName, platform = PLATFORM) {
         const mapDetail = this.mapDetails[platform];
@@ -1255,7 +1345,7 @@ var init_map_node_mods = __esm({
           return null;
         }
         const { mod2nodeName, mod2helModPaths } = mapDetail;
-        const nodeModName = mod2nodeName[helModName] || "";
+        const nodeModName = mod2nodeName[helModName] || '';
         const helModPaths = mod2helModPaths[helModName] || [];
         if (!helModPaths.length) {
           return null;
@@ -1305,8 +1395,8 @@ var init_map_node_mods = __esm({
         const stdMapper = formatAndCheckModMapper(modMapper, this.checkData);
         Object.keys(stdMapper).forEach((nodeModName) => {
           const val = stdMapper[nodeModName];
-          const { prepareFiles, platform = PLATFORM, ver, projId, branch, gray, helpackApiUrl = "" } = val;
-          const fallback = Object.assign({ force: false, mod: null, path: "" }, val.fallback || {});
+          const { prepareFiles, platform = PLATFORM, ver, projId, branch, gray, helpackApiUrl = '' } = val;
+          const fallback = Object.assign({ force: false, mod: null, path: '' }, val.fallback || {});
           const fetchOptions = { platform, ver, projId, branch, gray, helpackApiUrl };
           const helModNameOrPath = val.helModName || nodeModName;
           const detail = this.getMapDetail(platform);
@@ -1334,11 +1424,11 @@ var init_map_node_mods = __esm({
             helPath: helModNameOrPath,
             platform,
             fallback,
-            rawPath: "",
-            proxyFilePath: "",
+            rawPath: '',
+            proxyFilePath: '',
             fnProps,
             dictProps,
-            isShapeReady
+            isShapeReady,
           };
         });
       }
@@ -1390,7 +1480,7 @@ var init_map_node_mods = __esm({
       }
     };
     mapNodeModsManager = new MapNodeModsManager();
-  }
+  },
 });
 
 // src/context/facade.ts
@@ -1433,23 +1523,23 @@ function shouldAcceptVersion(params) {
   return true;
 }
 var init_facade = __esm({
-  "src/context/facade.ts"() {
+  'src/context/facade.ts'() {
     init_context();
     init_global_config();
     init_map_node_mods();
     init_mod_name();
-  }
+  },
 });
 
 // src/base/clear-module.ts
-var _clearmodule = require('clear-module'); var mod = _interopRequireWildcard(_clearmodule);
+var _clearmodule = require('clear-module');
+var mod = _interopRequireWildcard(_clearmodule);
 function clearModule(path10) {
   const clearFn = mod.default || mod;
   clearFn(path10);
 }
 var init_clear_module = __esm({
-  "src/base/clear-module.ts"() {
-  }
+  'src/base/clear-module.ts'() {},
 });
 
 // src/context/hooks.ts
@@ -1464,10 +1554,10 @@ function isHookValid(hookType, platform) {
   return regHooks[hookType] !== noop || confHooks[hookType] !== noop || bizHooks[hookType] !== noop;
 }
 var init_hooks = __esm({
-  "src/context/hooks.ts"() {
+  'src/context/hooks.ts'() {
     init_util();
     init_context();
-  }
+  },
 });
 
 // src/server-mod/mod-meta-helper.ts
@@ -1489,7 +1579,7 @@ function cutHelMeta(fullMeta) {
       proj_ver,
       online_version,
       build_version,
-      update_at
+      update_at,
     },
     version: {
       sub_app_name,
@@ -1497,12 +1587,12 @@ function cutHelMeta(fullMeta) {
       src_map,
       update_at: verUpdateAt,
       create_at: createAt,
-      _worker_id: workerId
-    }
+      _worker_id: workerId,
+    },
   };
 }
 function toCssHtmlStr(cssList) {
-  let cssHtmlStr = "";
+  let cssHtmlStr = '';
   cssList.forEach((url) => {
     cssHtmlStr += `<link href="${xssFilter(url)}" rel="stylesheet">`;
   });
@@ -1512,17 +1602,17 @@ function getCssHtmlStr(version) {
   const { headAssetList, bodyAssetList, chunkCssSrcList } = version.src_map;
   const cssList = [];
   const pushUrl = (url) => {
-    if (url.endsWith(".css") && !cssList.includes(url)) {
+    if (url.endsWith('.css') && !cssList.includes(url)) {
       cssList.push(url);
     }
   };
   const handleAssetItem = (item) => {
     const { append, tag } = item;
-    if (!append || !["link", "staticLink"].includes(tag)) {
+    if (!append || !['link', 'staticLink'].includes(tag)) {
       return;
     }
     const url = item.attrs.href;
-    if (url.endsWith(".css") && !cssList.includes(url)) {
+    if (url.endsWith('.css') && !cssList.includes(url)) {
       cssList.push(url);
     }
   };
@@ -1539,16 +1629,16 @@ function makeModInfo(fullMeta) {
 }
 var workerId;
 var init_mod_meta_helper = __esm({
-  "src/server-mod/mod-meta-helper.ts"() {
+  'src/server-mod/mod-meta-helper.ts'() {
     init_consts();
     init_util();
     ({ workerId } = SERVER_INFO);
-  }
+  },
 });
 
 // src/server-mod/mod-meta-url.ts
 function normalizeVer(name, mayVersionIndex) {
-  const verStr = String(mayVersionIndex || "");
+  const verStr = String(mayVersionIndex || '');
   let ver = verStr;
   const prefix = `${name}@`;
   if (verStr.startsWith(prefix)) {
@@ -1558,29 +1648,29 @@ function normalizeVer(name, mayVersionIndex) {
 }
 function getRequestMetaBaseUrl(helpackApiUrl, name, ver) {
   const verTag = normalizeVer(name, ver);
-  const verSeg = verTag ? `@${verTag}` : "";
+  const verSeg = verTag ? `@${verTag}` : '';
   return `${helpackApiUrl}/${name}${verSeg}`;
 }
 function getHelpackMetaUrl(name, helpackApiUrl, options) {
-  const { branch = "", gray, ver = "", projId } = options || {};
+  const { branch = '', gray, ver = '', projId } = options || {};
   let url = getRequestMetaBaseUrl(helpackApiUrl, name, ver);
-  let andStr = "?";
+  let andStr = '?';
   const attachVal = (key, val, mayBool) => {
     const toJudge = mayBool === void 0 ? val : mayBool;
     if (toJudge) {
       url = `${url}${andStr}${key}=${val}`;
-      andStr = "&";
+      andStr = '&';
     }
   };
-  attachVal("projId", projId);
-  attachVal("branch", branch);
-  if (typeof gray === "boolean") {
-    attachVal("gray", gray ? AS_TRUE : AS_FALSE, true);
+  attachVal('projId', projId);
+  attachVal('branch', branch);
+  if (typeof gray === 'boolean') {
+    attachVal('gray', gray ? AS_TRUE : AS_FALSE, true);
   }
   return url;
 }
 function getRequestMetaUrl(name, options) {
-  const { platform = PLATFORM, ver = "", helpackApiUrl = "" } = options || {};
+  const { platform = PLATFORM, ver = '', helpackApiUrl = '' } = options || {};
   const sdkCtx = getSdkCtx(platform);
   let apiUrl = helpackApiUrl || sdkCtx.helpackApiUrl;
   if (PLATFORM === platform) {
@@ -1593,14 +1683,15 @@ function getRequestMetaUrl(name, options) {
   return getHelpackMetaUrl(name, apiUrl, options);
 }
 var init_mod_meta_url = __esm({
-  "src/server-mod/mod-meta-url.ts"() {
+  'src/server-mod/mod-meta-url.ts'() {
     init_consts();
     init_context();
-  }
+  },
 });
 
 // src/server-mod/mod-meta.ts
-var _axios = require('axios'); var _axios2 = _interopRequireDefault(_axios);
+var _axios = require('axios');
+var _axios2 = _interopRequireDefault(_axios);
 function has(obj, prop) {
   return hasProp.call(obj, prop);
 }
@@ -1614,12 +1705,12 @@ function extractMeta(metaWrap, helModName) {
     app = data.app;
     version = data.version;
   };
-  if (has(metaWrap, "data") && has(metaWrap, "status") && has(metaWrap, "statusText") && has(metaWrap, "config")) {
+  if (has(metaWrap, 'data') && has(metaWrap, 'status') && has(metaWrap, 'statusText') && has(metaWrap, 'config')) {
     if (metaWrap.status !== 200) {
       throw new Error(metaWrap.statusText);
     }
     const userData = metaWrap.data;
-    if (has(userData, "code")) {
+    if (has(userData, 'code')) {
       if (userData.code !== STATUS_OK) {
         throw new Error(userData.msg || `Fetch meta failed, code ${userData.code}`);
       }
@@ -1627,7 +1718,7 @@ function extractMeta(metaWrap, helModName) {
     } else {
       assignValue(userData);
     }
-  } else if (has(metaWrap, "app")) {
+  } else if (has(metaWrap, 'app')) {
     assignValue(metaWrap);
   }
   if (!app || !version) {
@@ -1639,7 +1730,9 @@ function extractMeta(metaWrap, helModName) {
   return { app, version };
 }
 async function fetchModMeta(helModName, options) {
-  const _a = options || {}, { platform = PLATFORM } = _a, rest = __objRest(_a, ["platform"]);
+  const _a = options || {},
+    { platform = PLATFORM } = _a,
+    rest = __objRest(_a, ['platform']);
   const sdkCtx = getSdkCtx(platform);
   let reply;
   if (sdkCtx.getMeta) {
@@ -1661,7 +1754,7 @@ async function fetchModInfo(helModName, options) {
 }
 var hasProp;
 var init_mod_meta = __esm({
-  "src/server-mod/mod-meta.ts"() {
+  'src/server-mod/mod-meta.ts'() {
     init_consts();
     init_logger();
     init_context();
@@ -1669,7 +1762,7 @@ var init_mod_meta = __esm({
     init_mod_meta_helper();
     init_mod_meta_url();
     hasProp = Object.prototype.hasOwnProperty;
-  }
+  },
 });
 
 // src/server-mod/fake-meta.ts
@@ -1679,21 +1772,21 @@ function makeMeta(platform, helModName, customVer) {
     app: {
       name: helModName,
       app_group_name: helModName,
-      online_version: "",
-      build_version: "",
-      git_repo_url: "",
-      create_at: "",
-      platform
+      online_version: '',
+      build_version: '',
+      git_repo_url: '',
+      create_at: '',
+      platform,
     },
     version: {
-      plugin_ver: "",
-      extract_mode: "build",
+      plugin_ver: '',
+      extract_mode: 'build',
       sub_app_name: helModName,
       sub_app_version: ver,
       version_tag: ver,
       src_map: {
-        htmlIndexSrc: "",
-        webDirPath: "",
+        htmlIndexSrc: '',
+        webDirPath: '',
         headAssetList: [],
         bodyAssetList: [],
         chunkJsSrcList: [],
@@ -1703,18 +1796,17 @@ function makeMeta(platform, helModName, customVer) {
         relativeJsSrcList: [],
         relativeCssSrcList: [],
         otherSrcList: [],
-        srvModSrcList: ["http://fake-meta/index.js"],
-        srvModSrcIndex: ""
+        srvModSrcList: ['http://fake-meta/index.js'],
+        srvModSrcIndex: '',
       },
-      html_content: "",
-      create_at: "",
-      desc: "this is a fake hel meta"
-    }
+      html_content: '',
+      create_at: '',
+      desc: 'this is a fake hel meta',
+    },
   };
 }
 var init_fake_meta = __esm({
-  "src/server-mod/fake-meta.ts"() {
-  }
+  'src/server-mod/fake-meta.ts'() {},
 });
 
 // src/test-util/jest-mock.ts
@@ -1722,7 +1814,7 @@ function doJestMock(nodeModName, mod2) {
   try {
     jest.doMock(nodeModName, () => mod2);
   } catch (err) {
-    if (!err.message.includes("Cannot find module")) {
+    if (!err.message.includes('Cannot find module')) {
       throw err;
     }
     jest.doMock(nodeModName, () => mod2, { virtual: true });
@@ -1751,22 +1843,22 @@ function maySetToJestMock(platform, helModNameOrPath, mod2) {
 }
 var modSetted;
 var init_jest_mock = __esm({
-  "src/test-util/jest-mock.ts"() {
+  'src/test-util/jest-mock.ts'() {
     init_logger();
     init_mem_logger();
     init_path_helper();
     init_map_node_mods();
     init_jest_env();
     modSetted = {};
-  }
+  },
 });
 
 // src/test-util/index.ts
 var init_test_util = __esm({
-  "src/test-util/index.ts"() {
+  'src/test-util/index.ts'() {
     init_jest_env();
     init_jest_mock();
-  }
+  },
 });
 
 // src/server-mod/mod-manager-helper.ts
@@ -1791,13 +1883,13 @@ function getModProxyHelpData(helModNameOrPath, platform) {
 function getHelModFilePath(helModOrPath, modItem) {
   const { modPath, exportedMods, modName, platform } = modItem;
   const isMainMod = helModOrPath === modName;
-  let helModFilePath = "";
+  let helModFilePath = '';
   if (isMainMod) {
     helModFilePath = modPath;
   } else {
     const { relPath } = extractNameData(helModOrPath, platform);
     const modInfo = exportedMods.get(relPath);
-    helModFilePath = modInfo ? modInfo.path : "";
+    helModFilePath = modInfo ? modInfo.path : '';
   }
   return helModFilePath;
 }
@@ -1825,7 +1917,7 @@ async function getMetaByImportOptions(helModNameOrPath, options) {
   return meta;
 }
 var init_mod_manager_helper = __esm({
-  "src/server-mod/mod-manager-helper.ts"() {
+  'src/server-mod/mod-manager-helper.ts'() {
     init_consts();
     init_mod_consts();
     init_fake_meta();
@@ -1834,18 +1926,18 @@ var init_mod_manager_helper = __esm({
     init_mod_meta();
     init_mod_name();
     init_util2();
-  }
+  },
 });
 
 // src/server-mod/mod-manager.ts
 var _fguard = require('@helux/f-guard');
 
 function log(options) {
-  recordMemLog(__spreadProps(__spreadValues({}, options), { type: "HelServerMod" }));
+  recordMemLog(__spreadProps(__spreadValues({}, options), { type: 'HelServerMod' }));
 }
 var ModManager, modManager;
 var init_mod_manager = __esm({
-  "src/server-mod/mod-manager.ts"() {
+  'src/server-mod/mod-manager.ts'() {
     init_consts();
     init_clear_module();
     init_util();
@@ -1882,16 +1974,16 @@ var init_mod_manager = __esm({
         const modItem = this.getServerModItem(helModName, options);
         if (!modItem) {
           return {
-            modName: "",
-            modVer: "",
-            modDirPath: "",
-            modRootDirPath: "",
-            modPath: "",
+            modName: '',
+            modVer: '',
+            modDirPath: '',
+            modRootDirPath: '',
+            modPath: '',
             downloadCount: 0,
             storedVers: [],
             exportedModPaths: {},
-            firstDownloadVer: "",
-            platform: plat
+            firstDownloadVer: '',
+            platform: plat,
           };
         }
         const {
@@ -1904,10 +1996,10 @@ var init_mod_manager = __esm({
           storedVers,
           exportedMods,
           firstDownloadVer,
-          platform
+          platform,
         } = modItem;
         const exportedModPaths = {};
-        exportedMods.forEach((modInfo, key) => exportedModPaths[key] = modInfo.path);
+        exportedMods.forEach((modInfo, key) => (exportedModPaths[key] = modInfo.path));
         return {
           modName,
           modVer,
@@ -1918,7 +2010,7 @@ var init_mod_manager = __esm({
           storedVers,
           exportedModPaths,
           firstDownloadVer,
-          platform
+          platform,
         };
       }
       /**
@@ -1943,15 +2035,15 @@ var init_mod_manager = __esm({
         const { modVer } = modItem;
         if (!helModInfo) {
           return {
-            nodeModName: "",
-            nodeModFilePath: "",
+            nodeModName: '',
+            nodeModFilePath: '',
             helModName,
             helModVer: modVer,
             helModPath,
-            helModFilePath: "",
-            helModFallbackPath: "",
+            helModFilePath: '',
+            helModFallbackPath: '',
             isMainMod,
-            proxyFilePath: ""
+            proxyFilePath: '',
           };
         }
         const { nodeModName } = helModInfo;
@@ -1966,7 +2058,7 @@ var init_mod_manager = __esm({
           helModFilePath,
           helModFallbackPath: fallback.path,
           isMainMod,
-          proxyFilePath
+          proxyFilePath,
         };
       }
       /**
@@ -2032,7 +2124,7 @@ var init_mod_manager = __esm({
             if (HEL_MDO_PROXY === prop) {
               return IS_HEL_MOD_PROXY;
             }
-            if (prop === "then") {
+            if (prop === 'then') {
               return target[prop];
             }
             if (fnProps[prop]) {
@@ -2049,13 +2141,13 @@ var init_mod_manager = __esm({
                   get: (t, dictKey2) => {
                     const modRef3 = this.getModRef(platform, nameData, rawMod);
                     return modRef3[prop][dictKey2];
-                  }
-                }
+                  },
+                },
               );
             }
             const modRef2 = this.getModRef(platform, nameData, rawMod);
             return modRef2[prop];
-          }
+          },
         });
         modProxy.default = modProxy;
         if (rawPath) {
@@ -2076,7 +2168,7 @@ var init_mod_manager = __esm({
           this.updateModManagerItem(modItem, modIns, { helModNameOrPath, platform });
           return modIns.mod;
         }
-        log({ subType: "importModByMeta", desc: "getWebModIns", data: webFile });
+        log({ subType: 'importModByMeta', desc: 'getWebModIns', data: webFile });
         const prepareFiles = ensuredOptions.prepareFiles || mapNodeModsManager.getPrepareFilesFn(helModNameOrPath, platform);
         const webModIns = await getWebModIns(webFile, { meta, prepareFiles, onFilesReady, reuseLocalFiles });
         if (standalone) {
@@ -2116,7 +2208,7 @@ var init_mod_manager = __esm({
         const result = this.tryGetLocalModIns(platform, meta, nameOrPath);
         let { modIns } = result;
         if (!modIns) {
-          log({ subType: "importModByMetaSync", desc: "getCustomModIns" });
+          log({ subType: 'importModByMetaSync', desc: 'getCustomModIns' });
           modIns = getCustomModIns(result.webFile, prepareFiles, onFilesReady);
         }
         const { mod: mod2 } = modIns;
@@ -2142,7 +2234,7 @@ var init_mod_manager = __esm({
         if (modItem.storedVers.includes(modVer)) {
           throw new Error(`Hel module ${helModName} ver ${modVer} duplicated, please check!`);
         }
-        log({ subType: "importModByPath", data: { modPath: modIns.modPath, modVer: modIns.modVer } });
+        log({ subType: 'importModByPath', data: { modPath: modIns.modPath, modVer: modIns.modVer } });
         this.updateModManagerItem(modItem, modIns, { helModNameOrPath: helModName, platform });
         maySetToJestMock(platform, helModName, mod2);
         return mod2;
@@ -2165,12 +2257,12 @@ var init_mod_manager = __esm({
        * 尝试从本地磁盘里获取模块实例
        */
       tryGetLocalModIns(platform, meta, helModNameOrPath) {
-        const logBase = { subType: "tryGetLocalModIns" };
+        const logBase = { subType: 'tryGetLocalModIns' };
         const { modItem, webFile } = this.prepareModParams(platform, meta, helModNameOrPath);
         log(__spreadProps(__spreadValues({}, logBase), { data: { webFile, storedVers: modItem.storedVers } }));
         let modIns = null;
         if (modItem.storedVers.includes(meta.version.sub_app_version)) {
-          log(__spreadProps(__spreadValues({}, logBase), { desc: "getLocalModIns", data: webFile }));
+          log(__spreadProps(__spreadValues({}, logBase), { desc: 'getLocalModIns', data: webFile }));
           modIns = getDiskModIns(webFile);
         }
         return { modItem, modIns, webFile };
@@ -2183,7 +2275,7 @@ var init_mod_manager = __esm({
         if (!validPaths.length) {
           return;
         }
-        log({ subType: "clearPrevModCache", desc: "start clear prev mod data", data: { prevModPaths } });
+        log({ subType: 'clearPrevModCache', desc: 'start clear prev mod data', data: { prevModPaths } });
         prevModPaths.forEach((path10) => clearModule(path10));
       }
       /**
@@ -2242,17 +2334,17 @@ var init_mod_manager = __esm({
           modItem = {
             mod: null,
             modName: helModName,
-            modVer: "",
-            modDirPath: "",
-            modRootDirPath: "",
-            modPath: "",
+            modVer: '',
+            modDirPath: '',
+            modRootDirPath: '',
+            modPath: '',
             exportedMods: /* @__PURE__ */ new Map(),
             modPaths: [],
             storedDirs: [],
             storedVers: [],
             downloadCount: 0,
-            firstDownloadVer: "",
-            platform
+            firstDownloadVer: '',
+            platform,
           };
           this.modItemMap[dictKey] = modItem;
         }
@@ -2264,7 +2356,7 @@ var init_mod_manager = __esm({
       prepareModParams(platform, meta, helModNameOrPath) {
         const {
           version: { src_map: srcMap },
-          app: { name }
+          app: { name },
         } = meta;
         const { srvModSrcList = [], srvModSrcIndex } = srcMap;
         const webDirPath = noSlash(srcMap.webDirPath);
@@ -2276,7 +2368,7 @@ var init_mod_manager = __esm({
           urls: srvModSrcList,
           indexUrl: srvModSrcIndex,
           modRootDirName,
-          modVer
+          modVer,
         };
         if (helModNameOrPath) {
           const nameData = extractNameData(helModNameOrPath, platform);
@@ -2303,18 +2395,18 @@ var init_mod_manager = __esm({
         const idx = storedVers.indexOf(toDelVer);
         const toDelVerDir = path8.join(modRootDirPath, toDelVer);
         const dirIndex = storedDirs.indexOf(toDelVerDir);
-        const subType = "mayClearModDiskFiles";
-        log({ subType, desc: "before del dir", data: { toDelVer, idx, dirIndex } });
+        const subType = 'mayClearModDiskFiles';
+        log({ subType, desc: 'before del dir', data: { toDelVer, idx, dirIndex } });
         const shouldDel = idx >= 0 && dirIndex >= 0;
         if (!shouldDel) {
-          log({ subType, desc: "del noop", data: { toDelVer, idx, dirIndex } });
+          log({ subType, desc: 'del noop', data: { toDelVer, idx, dirIndex } });
           return;
         }
         storedVers.splice(idx, 1);
         storedDirs.splice(dirIndex, 1);
         delFileOrDir(toDelVerDir, {
-          onSuccess: () => log({ subType, desc: "del dir done", data: { toDelVerDir } }),
-          onFail: (err) => log({ subType, desc: "del dir err", data: { toDelVerDir, err: err.message } })
+          onSuccess: () => log({ subType, desc: 'del dir done', data: { toDelVerDir } }),
+          onFail: (err) => log({ subType, desc: 'del dir err', data: { toDelVerDir, err: err.message } }),
         });
       }
       /**
@@ -2335,12 +2427,12 @@ var init_mod_manager = __esm({
       updateModManagerItem(modItem, modIns, options) {
         const { mod: mod2, modPath, modDirPath, modRootDirPath, modVer, modRelPath, isMainMod, mainModPath } = modIns;
         const { isDownload, platform = PLATFORM, helModNameOrPath } = options || {};
-        const subType = "updateModManagerItem";
+        const subType = 'updateModManagerItem';
         if (modVer === modItem.modVer) {
           log({
             subType,
-            desc: "update same ver",
-            data: { modVer, isMainMod, modPath }
+            desc: 'update same ver',
+            data: { modVer, isMainMod, modPath },
           });
           if (isMainMod) {
             Object.assign(modItem, { mod: mod2, modPath });
@@ -2352,8 +2444,8 @@ var init_mod_manager = __esm({
         }
         log({
           subType,
-          desc: "update different ver",
-          data: { newVer: modVer, prevVer: modItem.modVer, isDownload, isMainMod, modRelPath }
+          desc: 'update different ver',
+          data: { newVer: modVer, prevVer: modItem.modVer, isDownload, isMainMod, modRelPath },
         });
         const prevModPaths = modItem.modPaths.concat(modItem.modPath);
         modItem.exportedMods.clear();
@@ -2386,18 +2478,14 @@ var init_mod_manager = __esm({
         const isInitialVersion = !modItem.modPath;
         const { helModName, helModPath, helModVer } = this.resolveMod(helModNameOrPath, platform);
         const pkgName = mapNodeModsManager.getNodeModName(helModNameOrPath, platform);
-        triggerHook(
-          HOOK_TYPE.onHelModLoaded,
-          { helModName, helModPath, pkgName, version: helModVer, isInitialVersion },
-          platform
-        );
+        triggerHook(HOOK_TYPE.onHelModLoaded, { helModName, helModPath, pkgName, version: helModVer, isInitialVersion }, platform);
       }
       getDictKey(platform, helModNameOrPath) {
         return `${platform}/${helModNameOrPath}`;
       }
     };
     modManager = new ModManager();
-  }
+  },
 });
 
 // src/server-mod/mod-meta-backup.ts
@@ -2447,7 +2535,7 @@ function getBackupModInfo(platform, modName) {
 }
 var backupModInfos, backupModMetas, backupModIsInit, errDesc;
 var init_mod_meta_backup = __esm({
-  "src/server-mod/mod-meta-backup.ts"() {
+  'src/server-mod/mod-meta-backup.ts'() {
     init_logger();
     init_util();
     init_context();
@@ -2455,13 +2543,13 @@ var init_mod_meta_backup = __esm({
     backupModInfos = {};
     backupModMetas = {};
     backupModIsInit = {};
-    errDesc = "err-init-hed-mod-defaults";
-  }
+    errDesc = 'err-init-hed-mod-defaults';
+  },
 });
 
 // src/mod-view/preset-data-helper.ts
 function log2(options) {
-  recordMemLog(__spreadProps(__spreadValues({}, options), { type: "PresetData" }));
+  recordMemLog(__spreadProps(__spreadValues({}, options), { type: 'PresetData' }));
 }
 function hasServerModFile(modInfo) {
   const { srvModSrcList = [] } = modInfo.meta.version.src_map;
@@ -2470,7 +2558,7 @@ function hasServerModFile(modInfo) {
 function checkServerModFile(modInfo, options) {
   const { mustBeServerMod, label } = options;
   if (!hasServerModFile(modInfo)) {
-    log2({ subType: label, desc: "no srvModSrcList" });
+    log2({ subType: label, desc: 'no srvModSrcList' });
     if (mustBeServerMod) {
       throw new Error(`no server mod files for ${modInfo.name}`);
     }
@@ -2479,15 +2567,15 @@ function checkServerModFile(modInfo, options) {
   return true;
 }
 var init_preset_data_helper = __esm({
-  "src/mod-view/preset-data-helper.ts"() {
+  'src/mod-view/preset-data-helper.ts'() {
     init_mem_logger();
-  }
+  },
 });
 
 // src/mod-view/preset-data.ts
 var PresetData, presetDataMgr;
 var init_preset_data = __esm({
-  "src/mod-view/preset-data.ts"() {
+  'src/mod-view/preset-data.ts'() {
     init_consts();
     init_util();
     init_context();
@@ -2502,11 +2590,11 @@ var init_preset_data = __esm({
         /** 元数据缓存 */
         this.metaCache = {};
         /** 已生成的元数据字符串 */
-        this.metaStr = "";
+        this.metaStr = '';
         /** css 含link的字符串缓存 */
         this.cssCache = {};
         /** 已生成的样式字符串 */
-        this.cssLinkStr = "";
+        this.cssLinkStr = '';
         /** hel-entry js sdk 缓存 */
         this.helEntryCache = {};
         /** 模板名对应的产物数据, key: 模板名（ xxx.ejs ），value：产物对象 */
@@ -2516,7 +2604,7 @@ var init_preset_data = __esm({
         /** 需预拉取 js 的模块元数据缓存 */
         this.preloadMetaCache = {};
         /** 已生成的需预拉取的 js link 字符串 */
-        this.preloadJsStr = "";
+        this.preloadJsStr = '';
         /** 是否允许更新低于镜像里默认版本的旧版本数据 */
         this.allowOldVer = false;
         const defaultAllow = !CTX_ENV.isProd;
@@ -2542,7 +2630,7 @@ var init_preset_data = __esm({
        */
       async updateForServerFirst(platform, modInfo, options) {
         if (!this.canUpdate(platform, modInfo)) {
-          log2({ subType: "updateForServerFirst", desc: `${modInfo.name} canUpdate is false` });
+          log2({ subType: 'updateForServerFirst', desc: `${modInfo.name} canUpdate is false` });
           return false;
         }
         const isModUpdated = await this.updateServerMod(platform, modInfo, options);
@@ -2554,7 +2642,7 @@ var init_preset_data = __esm({
       }
       updateForServerFirstSync(platform, modInfo, options) {
         if (!this.canUpdate(platform, modInfo)) {
-          log2({ subType: "updateForServerFirstSync", desc: `${modInfo.name} canUpdate is false` });
+          log2({ subType: 'updateForServerFirstSync', desc: `${modInfo.name} canUpdate is false` });
           return false;
         }
         const isModUpdated = this.updateServerModSync(platform, modInfo, options);
@@ -2579,7 +2667,7 @@ var init_preset_data = __esm({
        */
       getPageAsset(viewName, helEntry) {
         const { entryAssetCache, viewAssetCache } = this;
-        const viewAsset = viewAssetCache[viewName] || viewAssetCache.index || { css: "", js: "" };
+        const viewAsset = viewAssetCache[viewName] || viewAssetCache.index || { css: '', js: '' };
         if (helEntry) {
           return entryAssetCache[helEntry] || viewAsset;
         }
@@ -2617,7 +2705,7 @@ var init_preset_data = __esm({
       /** 如存在 server 模块则更新对应模块实例 */
       async updateServerMod(platform, modInfo, options) {
         const { mustBeServerMod, importOptions } = options || {};
-        const shouldContinue = checkServerModFile(modInfo, { mustBeServerMod, label: "updateServerMod" });
+        const shouldContinue = checkServerModFile(modInfo, { mustBeServerMod, label: 'updateServerMod' });
         if (!shouldContinue) {
           return false;
         }
@@ -2631,17 +2719,17 @@ var init_preset_data = __esm({
               platform,
               prepareFiles: sdkCtx.prepareFiles,
               helModNameOrPath,
-              standalone: false
+              standalone: false,
             };
             await modManager.importModByMeta(fullMeta, options2);
-          })
+          }),
         );
         return true;
       }
       /** 如存在 server 模块则更新对应模块实例 */
       updateServerModSync(platform, modInfo, options) {
         const { mustBeServerMod, importOptions } = options || {};
-        const shouldContinue = checkServerModFile(modInfo, { mustBeServerMod, label: "updateServerModSync" });
+        const shouldContinue = checkServerModFile(modInfo, { mustBeServerMod, label: 'updateServerModSync' });
         if (!shouldContinue) {
           return false;
         }
@@ -2713,8 +2801,8 @@ var init_preset_data = __esm({
         assetNameInfos.forEach((nameInfo) => {
           const { appName, entryName, name } = nameInfo;
           if (curAppName === appName) {
-            const css = chunkCssSrcList.find((src) => src.includes(`/${entryName}.css`)) || "";
-            const js = chunkJsSrcList.find((src) => src.includes(`/${entryName}.js`)) || "";
+            const css = chunkCssSrcList.find((src) => src.includes(`/${entryName}.css`)) || '';
+            const js = chunkJsSrcList.find((src) => src.includes(`/${entryName}.js`)) || '';
             viewAssetCache[assetName2view[name]] = { js, css };
             entryAssetCache[name] = { js, css };
           }
@@ -2726,7 +2814,7 @@ var init_preset_data = __esm({
       updatePresetCssLinkStr(modInfo) {
         const { cssCache } = this;
         cssCache[modInfo.name] = modInfo.cssHtmlStr;
-        let cssLinkStr = "";
+        let cssLinkStr = '';
         Object.keys(cssCache).forEach((key) => {
           cssLinkStr += cssCache[key];
         });
@@ -2738,7 +2826,7 @@ var init_preset_data = __esm({
       updateHelEntryCache(modInfo, isDefaultHelEntry) {
         const { helEntryCache } = this;
         const { chunkJsSrcList } = modInfo.meta.version.src_map;
-        const entrySrc = chunkJsSrcList[0] || "";
+        const entrySrc = chunkJsSrcList[0] || '';
         if (!entrySrc) {
           return;
         }
@@ -2753,7 +2841,7 @@ var init_preset_data = __esm({
       updatePreloadJsStr(modInfo) {
         const { preloadMetaCache } = this;
         preloadMetaCache[modInfo.name] = modInfo.meta;
-        let str = "";
+        let str = '';
         Object.keys(preloadMetaCache).forEach((key) => {
           const meta = preloadMetaCache[key];
           const { chunkJsSrcList } = meta.version.src_map;
@@ -2765,7 +2853,7 @@ var init_preset_data = __esm({
       }
     };
     presetDataMgr = new PresetData();
-  }
+  },
 });
 
 // src/mod-node/index.ts
@@ -2846,7 +2934,7 @@ function getFallbackMod(nodeModName) {
   return mapNodeModsManager.getFallbackMod(helPath, platform);
 }
 var init_mod_node = __esm({
-  "src/mod-node/index.ts"() {
+  'src/mod-node/index.ts'() {
     init_mod_consts();
     init_path_helper();
     init_preset_data();
@@ -2855,16 +2943,16 @@ var init_mod_node = __esm({
     init_mod_manager_helper();
     init_mod_meta_helper();
     init_file_helper();
-  }
+  },
 });
 
 // src/server-mod/mod-tpl.ts
 var require_mod_tpl = __commonJS({
-  "src/server-mod/mod-tpl.ts"(exports, module) {
+  'src/server-mod/mod-tpl.ts'(exports, module) {
     init_mod_node();
-    var proxyMod = requireNodeMod("{{NODE_MOD_NAME}}");
+    var proxyMod = requireNodeMod('{{NODE_MOD_NAME}}');
     module.exports = proxyMod;
-  }
+  },
 });
 
 // src/export.ts
@@ -2901,7 +2989,7 @@ __export(export_exports, {
   requireNodeMod: () => requireNodeMod,
   resolveNodeMod: () => resolveNodeMod,
   setGlobalConfig: () => setGlobalConfig,
-  setPlatformConfig: () => setPlatformConfig
+  setPlatformConfig: () => setPlatformConfig,
 });
 
 // src/api/index.ts
@@ -2937,7 +3025,7 @@ __export(api_exports, {
   requireNodeMod: () => requireNodeMod,
   resolveNodeMod: () => resolveNodeMod,
   setGlobalConfig: () => setGlobalConfig,
-  setPlatformConfig: () => setPlatformConfig
+  setPlatformConfig: () => setPlatformConfig,
 });
 var import_mod_tpl = __toESM(require_mod_tpl());
 
@@ -2947,13 +3035,13 @@ init_map_node_mods();
 // replace module ori _resolveFilename
 var _module = require('module');
 var oriResolveFilename = _module._resolveFilename;
-_module._resolveFilename = function(pkgName, parentModule, isMain, options) {
+_module._resolveFilename = function (pkgName, parentModule, isMain, options) {
   const helModOrPath = mapNodeModsManager.getMappedPath(pkgName);
   const getOriFilename = () => {
     const result = oriResolveFilename.call(this, pkgName, parentModule, isMain, options);
     return result;
   };
-  let sourceFilename = "";
+  let sourceFilename = '';
   if (helModOrPath) {
     try {
       sourceFilename = getOriFilename();
@@ -2962,7 +3050,8 @@ _module._resolveFilename = function(pkgName, parentModule, isMain, options) {
       const willKnowModShape = mapNodeModsManager.isFallbackModExist(pkgName) || mapNodeModsManager.isModShapeExist(pkgName);
       if (
         // strict 模式下，node 模块必须存在
-        strict || !willKnowModShape
+        strict
+        || !willKnowModShape
       ) {
         throw err;
       }
@@ -2984,13 +3073,12 @@ init_consts();
 init_util();
 init_context();
 
-
 // src/context/meta-cache.ts
 init_consts();
 
-
 // src/base/lru-cache.ts
-var _lrucache = require('lru-cache'); var cache = _interopRequireWildcard(_lrucache);
+var _lrucache = require('lru-cache');
+var cache = _interopRequireWildcard(_lrucache);
 function newCache(options) {
   const CacheClass = cache.LRUCache;
   if (CacheClass) {
@@ -3060,12 +3148,12 @@ var _ws = require('ws');
 
 // src/socket/consts.ts
 var EWSEvent = {
-  open: "open",
-  message: "message",
-  close: "close",
-  error: "error"
+  open: 'open',
+  message: 'message',
+  close: 'close',
+  error: 'error',
 };
-var DEFAULT_URL = "ws://localhost:8086";
+var DEFAULT_URL = 'ws://localhost:8086';
 var HEART_BEAT_INTERVAL = 4e4;
 var RECONNECT_DELAY_MS = 1e4;
 var RECONNECT_DELAY_MAX_MS = 6e4 * 10;
@@ -3073,12 +3161,12 @@ var RECONNECT_BY_HTTP_PING_INTERVAL_MS = 2e3;
 var RECONNECT_BY_HTTP_PING_LIMIT_TIMES = 60;
 var RECONNECT_DELAY_DELTA_MS = 1e4;
 var RECONNECT_COUNT_DIVISOR = 5;
-var HEART_BEAT_PING = "ping";
-var HEART_BEAT_PONG = "pong";
+var HEART_BEAT_PING = 'ping';
+var HEART_BEAT_PONG = 'pong';
 
 // src/socket/util.ts
 function toDataStr(mayJson) {
-  if (typeof mayJson === "string") {
+  if (typeof mayJson === 'string') {
     return mayJson;
   }
   return JSON.stringify(mayJson);
@@ -3116,20 +3204,19 @@ var WSAutoReconnectClient = class {
     this.httpPingReconnectLogicId = 0;
     this.isReconnectInsInitCalled = false;
     this.options = {
-      id: _uuid.v7.call(void 0, ),
-      url: "",
-      onConnected: () => "",
-      onMessage: () => {
-      },
-      getUrlWhenReconnect: () => Promise.resolve("")
+      id: _uuid.v7.call(void 0),
+      url: '',
+      onConnected: () => '',
+      onMessage: () => {},
+      getUrlWhenReconnect: () => Promise.resolve(''),
     };
     this.hasGetUrl = false;
     if (!inputOptions.url) {
-      throw new Error("missing url param");
+      throw new Error('missing url param');
     }
-    const id = inputOptions.id || _uuid.v7.call(void 0, );
+    const id = inputOptions.id || _uuid.v7.call(void 0);
     const options = purify(__spreadProps(__spreadValues({}, inputOptions), { id }));
-    if (typeof options.getUrlWhenReconnect === "function") {
+    if (typeof options.getUrlWhenReconnect === 'function') {
       this.hasGetUrl = true;
     }
     Object.assign(this.options, options);
@@ -3161,7 +3248,7 @@ var WSAutoReconnectClient = class {
           this.handleMessage(data.toString());
         });
         client.on(EWSEvent.close, () => {
-          this.handleConnectionFail(new Error("Server closed"));
+          this.handleConnectionFail(new Error('Server closed'));
         });
         client.on(EWSEvent.error, (err) => {
           this.handleConnectionFail(err);
@@ -3179,9 +3266,12 @@ var WSAutoReconnectClient = class {
           initInsAndListenEvent(url2);
         };
         if (this.hasGetUrl) {
-          this.options.getUrlWhenReconnect().then((newUrl) => connectByUrl(newUrl)).catch((err) => {
-            this.handleConnectionFail(err);
-          });
+          this.options
+            .getUrlWhenReconnect()
+            .then((newUrl) => connectByUrl(newUrl))
+            .catch((err) => {
+              this.handleConnectionFail(err);
+            });
         } else {
           connectByUrl(url);
         }
@@ -3264,12 +3354,14 @@ var WSAutoReconnectClient = class {
         return clearup();
       }
       this.httpPingReconnectCount += 1;
-      httpPingWhenTryReconnect().then((isPingSuccess) => {
-        if (isPingSuccess) {
-          clearup();
-          this.newClientIns(true);
-        }
-      }).catch(console.error);
+      httpPingWhenTryReconnect()
+        .then((isPingSuccess) => {
+          if (isPingSuccess) {
+            clearup();
+            this.newClientIns(true);
+          }
+        })
+        .catch(console.error);
     }, RECONNECT_BY_HTTP_PING_INTERVAL_MS);
     this.httpPingTimer = timer;
   }
@@ -3330,10 +3422,10 @@ async function subHelpackModChange(platform, changeCb) {
         if ([CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED].includes(channel)) {
           changeCb({ modName, type: CHANNEL_APP_INFO_CHANGED });
         }
-      }
+      },
     });
   } catch (err) {
-    const desc = "err-sub-helpack-mod-change";
+    const desc = 'err-sub-helpack-mod-change';
     const msg = `[${desc}] ${err.message}`;
     sdkCtx.reporter.reportError(msg, desc);
   }
@@ -3342,7 +3434,7 @@ async function subHelpackModChange(platform, changeCb) {
 // src/mod-view/cache.ts
 var { containerName, workerId: workerId2 } = SERVER_INFO;
 function log3(options) {
-  recordMemLog(__spreadProps(__spreadValues({}, options), { type: "HelModCache" }));
+  recordMemLog(__spreadProps(__spreadValues({}, options), { type: 'HelModCache' }));
 }
 function loadBackupHelMod(platform) {
   const sdkCtx = getSdkCtx(platform);
@@ -3359,7 +3451,7 @@ function loadBackupHelMod(platform) {
       throw err;
     }
     mayUpdateModPresetData(sdkCtx.platform, SET_BY.init).catch((err2) => {
-      sdkCtx.reporter.reportError(err2.stack, "err-loadBackupHelMod");
+      sdkCtx.reporter.reportError(err2.stack, 'err-loadBackupHelMod');
     });
   }
   return modInfoList;
@@ -3373,7 +3465,7 @@ function enableIntervalUpdate(platform) {
   const sdkCtx = getSdkCtx(platform);
   setInterval(() => {
     mayUpdateModPresetData(platform, SET_BY.timer).catch((err) => {
-      sdkCtx.reporter.reportError(err.stack, "err-intervalUpdate");
+      sdkCtx.reporter.reportError(err.stack, 'err-intervalUpdate');
     });
   }, UPDATE_INTERVAL);
 }
@@ -3411,14 +3503,14 @@ async function handleHelModChanged(platform, modName) {
     }
     mayUpdateModPresetData(platform, SET_BY.watch, modName, modInfo);
   } catch (err) {
-    sdkCtx.reporter.reportError(err.stack, "err-handle-hel-mod-changed");
+    sdkCtx.reporter.reportError(err.stack, 'err-handle-hel-mod-changed');
     const errMsg = err.message;
-    log3({ subType: "handleHelModChanged", desc: "err occurred", data: { modName, errMsg, platform } });
+    log3({ subType: 'handleHelModChanged', desc: 'err occurred', data: { modName, errMsg, platform } });
   }
 }
 function listenHelModChange(platform) {
   subHelpackModChange(platform, (params) => {
-    log3({ subType: "listenHelModChange", desc: "trigger updateModInfo", data: { params, platform } });
+    log3({ subType: 'listenHelModChange', desc: 'trigger updateModInfo', data: { params, platform } });
     handleHelModChanged(platform, params.modName);
   });
 }
@@ -3428,7 +3520,7 @@ async function updateRegisteredModsPresetData(platform, setBy) {
   return modInfoList;
 }
 async function mayUpdateModPresetData(platform, setBy, modName, modInfo) {
-  const subType = "mayUpdateModPresetData";
+  const subType = 'mayUpdateModPresetData';
   const sdkCtx = getSdkCtx(platform);
   try {
     if (!modName) {
@@ -3448,9 +3540,9 @@ async function mayUpdateModPresetData(platform, setBy, modName, modInfo) {
     }
     await updateModPresetData(sdkCtx.platform, setBy, targetModInfo);
   } catch (err) {
-    sdkCtx.reporter.reportError(err.stack, "err-update-mod-info");
+    sdkCtx.reporter.reportError(err.stack, 'err-update-mod-info');
     const errMsg = err.message;
-    log3({ subType, desc: "err occurred", data: { setBy, modName, errMsg, platform } });
+    log3({ subType, desc: 'err occurred', data: { setBy, modName, errMsg, platform } });
   }
 }
 async function fetchRegisteredModInfoList(platform, options) {
@@ -3481,7 +3573,7 @@ async function updateModPresetData(platform, setBy, modInfo) {
   const sdkCtx = getSdkCtx(platform);
   markAppDesc(setBy, modInfo);
   if (sdkCtx.isPreloadMode) {
-    log3({ subType: "updateModPresetData", desc: `updateForServerFirst for ${modInfo.name}` });
+    log3({ subType: 'updateModPresetData', desc: `updateForServerFirst for ${modInfo.name}` });
     await presetDataMgr.updateForServerFirst(platform, modInfo);
     return;
   }
@@ -3506,8 +3598,8 @@ init_context();
 init_consts();
 var { env, containerName: containerName2, workerId: workerId3 } = SERVER_INFO;
 function markHelEnv(ctx, isGrayVer) {
-  const mark = `${env}-${containerName2}-${workerId3}-${isGrayVer ? "1" : "0"}`;
-  ctx.response.set("Hel-Env", mark);
+  const mark = `${env}-${containerName2}-${workerId3}-${isGrayVer ? '1' : '0'}`;
+  ctx.response.set('Hel-Env', mark);
 }
 var seg = 0;
 var num = 0;
@@ -3518,17 +3610,17 @@ function markHelHit(ctx) {
     num = 0;
   }
   const mark = `${seg}_${num}`;
-  ctx.response.set("Hel-Hit", mark);
+  ctx.response.set('Hel-Hit', mark);
 }
 
 // src/init/inject.ts
 var HelModViewMiddleware = class {
   constructor() {
-    this.name = "mod-view-middleware";
+    this.name = 'mod-view-middleware';
     // TODO 实现生成中间件逻辑
     this.run = async (ctx, next) => {
       const render = ctx.render.bind(ctx);
-      ctx.render = async function(viewPath, pageData) {
+      ctx.render = async function (viewPath, pageData) {
         markHelEnv(ctx);
         const result = await getSdkCtx().getHelRenderParams({ ctx, viewPath, pageData });
         markHelHit(ctx);
@@ -3543,9 +3635,9 @@ var HelModViewMiddleware = class {
 var isInitCommonCalled = false;
 var middleware;
 var callLabels = {
-  initMiddleware: "initMiddleware",
-  preloadMiddleware: "preloadMiddleware",
-  preloadHelMods: "preloadHelMods"
+  initMiddleware: 'initMiddleware',
+  preloadMiddleware: 'preloadMiddleware',
+  preloadHelMods: 'preloadHelMods',
 };
 var guard2 = new (0, _fguard.ConcurrencyGuard)();
 function initCommon(options, label) {
@@ -3566,7 +3658,7 @@ var isSetPlatformConfigCalledDict = {};
 function setPlatformConfig(config) {
   const { platform = PLATFORM } = config;
   if (isSetPlatformConfigCalledDict[platform]) {
-    throw new Error("setPlatformConfig can be called only one time");
+    throw new Error('setPlatformConfig can be called only one time');
   }
   isSetPlatformConfigCalledDict[platform] = true;
   mergeConfig(config);
@@ -3574,7 +3666,7 @@ function setPlatformConfig(config) {
 var isSetGlobalConfigCalled = false;
 function setGlobalConfig(config) {
   if (isSetGlobalConfigCalled) {
-    throw new Error("setGlobalConfig can be called only one time");
+    throw new Error('setGlobalConfig can be called only one time');
   }
   isSetGlobalConfigCalled = true;
   mergeGlobalConfig(config);
@@ -3699,7 +3791,6 @@ init_map_node_mods();
 init_mod_manager();
 init_mod_meta();
 
-
 // src/test-util/mock-util.ts
 var mock_util_exports = {};
 __export(mock_util_exports, {
@@ -3719,19 +3810,18 @@ __export(mock_util_exports, {
   setCacheMeta: () => setCacheMeta,
   setFirstVerModDirPath: () => setFirstVerModDirPath,
   setIsHandled: () => setIsHandled,
-  setVerSeedExpire: () => setVerSeedExpire
+  setVerSeedExpire: () => setVerSeedExpire,
 });
 init_consts();
 init_path_helper();
 init_file_helper();
 
-
 // src/test-util/mock-util-inner.ts
 
-var fsOptions = { encoding: "utf8" };
+var fsOptions = { encoding: 'utf8' };
 function ensureDict(filePath) {
   if (!fs9.existsSync(filePath)) {
-    fs9.writeFileSync(filePath, "{}", fsOptions);
+    fs9.writeFileSync(filePath, '{}', fsOptions);
   }
   const dictStr = readFileContent(filePath);
   const dict = JSON.parse(dictStr);
@@ -3751,12 +3841,12 @@ function readFileContent(filePath) {
 }
 
 // src/test-util/mock-util.ts
-var verSeedFile = path9.join(__dirname, "./verSeedDict.json");
-var verSeedExpireDictFile = path9.join(__dirname, "./verSeedExpireDict.json");
-var verSeedHandledDictFile = path9.join(__dirname, "./verSeedHandledDict.json");
-var metaDictFile = path9.join(__dirname, "./metaDict.json");
-var modDirPathDictFile = path9.join(__dirname, "./modDirPathDict.json");
-var mockUtilMetaFile = path9.join(__dirname, "./mockUtilMeta.json");
+var verSeedFile = path9.join(__dirname, './verSeedDict.json');
+var verSeedExpireDictFile = path9.join(__dirname, './verSeedExpireDict.json');
+var verSeedHandledDictFile = path9.join(__dirname, './verSeedHandledDict.json');
+var metaDictFile = path9.join(__dirname, './metaDict.json');
+var modDirPathDictFile = path9.join(__dirname, './modDirPathDict.json');
+var mockUtilMetaFile = path9.join(__dirname, './mockUtilMeta.json');
 var clearCDMs = 5e3;
 var verSeedExpireMs = 3e4;
 function getVerSeedExpire(helModName) {
@@ -3808,7 +3898,7 @@ function setCacheMeta(helModName, meta) {
 }
 function getFirstVerModDirPath(helModName) {
   const dict = ensureDict(modDirPathDictFile);
-  return dict[helModName] || "";
+  return dict[helModName] || '';
 }
 function setFirstVerModDirPath(helModName, path10) {
   const dict = ensureDict(modDirPathDictFile);
@@ -3857,7 +3947,7 @@ function clearData(helModName, mockInterval2, platform = PLATFORM) {
   delFileOrDir(modRootDirPath);
   setVerSeedExpire(helModName, mockInterval2);
   clearVerSeed(helModName);
-  setFirstVerModDirPath(helModName, "");
+  setFirstVerModDirPath(helModName, '');
   setCacheMeta(helModName, null);
   clearSubDict(verSeedHandledDictFile, helModName);
 }
@@ -3871,9 +3961,9 @@ function replaceMetaVer(verSeed, meta) {
   const { srvModSrcList = [] } = srcMap;
   const ver = `${curVer}_${verSeed}`;
   version.sub_app_version = ver;
-  srvModSrcList.forEach((v, idx) => srvModSrcList[idx] = v.replace(curVer, ver));
+  srvModSrcList.forEach((v, idx) => (srvModSrcList[idx] = v.replace(curVer, ver)));
   srcMap.webDirPath = srcMap.webDirPath.replace(curVer, ver);
-  srcMap.srvModSrcIndex = (srcMap.srvModSrcIndex || "").replace(curVer, ver);
+  srcMap.srvModSrcIndex = (srcMap.srvModSrcIndex || '').replace(curVer, ver);
   return newMeta;
 }
 function recordFirstVerModDirPath(helModName, modDirPath) {
@@ -3895,16 +3985,18 @@ async function copyFilesToNewVerModDir(nodeModName, options) {
   if (verSeed === 1) {
     recordFirstVerModDirPath(helModName, modDesc.modDirPath);
   }
-  const prepareFiles = (options == null ? void 0 : options.prepareFiles) || ((params) => {
-    if (!fs10.existsSync(params.modDirPath)) {
-      fs10.mkdirSync(params.modDirPath);
-    }
-    const files = getDirFileList(params.modDirPath);
-    if (files.length < 2) {
-      const modDirPath = getFirstVerModDirPath(helModName);
-      cpSync(modDirPath, params.modDirPath);
-    }
-  });
+  const prepareFiles =
+    (options == null ? void 0 : options.prepareFiles)
+    || ((params) => {
+      if (!fs10.existsSync(params.modDirPath)) {
+        fs10.mkdirSync(params.modDirPath);
+      }
+      const files = getDirFileList(params.modDirPath);
+      if (files.length < 2) {
+        const modDirPath = getFirstVerModDirPath(helModName);
+        cpSync(modDirPath, params.modDirPath);
+      }
+    });
   try {
     let meta = getCacheMeta(helModName);
     if (!meta) {
@@ -3925,7 +4017,7 @@ async function copyFilesToNewVerModDir(nodeModName, options) {
         (_a = options == null ? void 0 : options.onFilesReady) == null ? void 0 : _a.call(options, params);
       },
       reuseLocalFiles: false,
-      standalone: false
+      standalone: false,
     });
     return null;
   } catch (err) {
@@ -3948,17 +4040,17 @@ init_logger();
 init_util();
 init_context();
 var platAt2ndObj = [
-  "importHelMod",
-  "importHelModByMeta",
-  "importHelModByMetaSync",
-  "getHelModMeta",
-  "mockAutoDownload",
-  "downloadHelModFiles"
+  'importHelMod',
+  'importHelModByMeta',
+  'importHelModByMetaSync',
+  'getHelModMeta',
+  'mockAutoDownload',
+  'downloadHelModFiles',
 ];
-var platAt1stObj = ["initMiddleware", "preloadMiddleware", "setPlatformConfig"];
-var platAt1stStr = ["preloadMappedData"];
-var platAt3rdObj = ["importNodeModByPath", "importHelModByPath"];
-var mapNodeModsLike = ["mapNodeMods", "mapAndPreload"];
+var platAt1stObj = ['initMiddleware', 'preloadMiddleware', 'setPlatformConfig'];
+var platAt1stStr = ['preloadMappedData'];
+var platAt3rdObj = ['importNodeModByPath', 'importHelModByPath'];
+var mapNodeModsLike = ['mapNodeMods', 'mapAndPreload'];
 function ensureObjPlat(platform, arg) {
   const newArg = __spreadValues({ platform }, arg || {});
   return newArg;
@@ -3971,17 +4063,17 @@ function handleMapNodes(platform, modMapper, apiName) {
       return;
     }
     const valType = typeof val;
-    if (!["string", "boolean", "object"].includes(valType)) {
+    if (!['string', 'boolean', 'object'].includes(valType)) {
       return;
     }
-    if (valType === "string") {
+    if (valType === 'string') {
       val = { helModName: val };
-    } else if (valType === "boolean") {
+    } else if (valType === 'boolean') {
       val = { helModName: nodeModName };
     }
     newMapper[nodeModName] = __spreadValues({ platform }, purify(val));
   });
-  if (apiName === "mapAndPreload") {
+  if (apiName === 'mapAndPreload') {
     return mapAndPreload(newMapper);
   }
   return mapNodeMods(newMapper);
@@ -3996,10 +4088,10 @@ function registerPlatform(config) {
     helpackApiUrl,
     hooks = {},
     getSocketUrlWhenReconnect,
-    socketHttpPingWhenTryReconnect
+    socketHttpPingWhenTryReconnect,
   } = config;
   if (!injectPlat) {
-    throw new Error("platform must be supplied");
+    throw new Error('platform must be supplied');
   }
   const sdkCtx = getSdkCtx(injectPlat);
   if (sdkCtx.isActive) {
@@ -4007,16 +4099,16 @@ function registerPlatform(config) {
     return sdkCtx.api;
   }
   sdkCtx.isActive = true;
-  const isApiUrlSet = maySet(sdkCtx, "helpackApiUrl", helpackApiUrl);
+  const isApiUrlSet = maySet(sdkCtx, 'helpackApiUrl', helpackApiUrl);
   if (isApiUrlSet) {
     sdkCtx.isApiUrlOverwrite = true;
   }
-  maySetFn(sdkCtx, "getMeta", getMeta);
-  maySetFn(sdkCtx, "getEnvInfo", getEnvInfo);
-  maySet(sdkCtx, "registrationSource", registrationSource);
-  maySetFn(sdkCtx, "beforePreloadOnce", beforePreloadOnce);
-  maySetFn(sdkCtx, "getSocketUrlWhenReconnect", getSocketUrlWhenReconnect);
-  maySetFn(sdkCtx, "socketHttpPingWhenTryReconnect", socketHttpPingWhenTryReconnect);
+  maySetFn(sdkCtx, 'getMeta', getMeta);
+  maySetFn(sdkCtx, 'getEnvInfo', getEnvInfo);
+  maySet(sdkCtx, 'registrationSource', registrationSource);
+  maySetFn(sdkCtx, 'beforePreloadOnce', beforePreloadOnce);
+  maySetFn(sdkCtx, 'getSocketUrlWhenReconnect', getSocketUrlWhenReconnect);
+  maySetFn(sdkCtx, 'socketHttpPingWhenTryReconnect', socketHttpPingWhenTryReconnect);
   Object.assign(sdkCtx.regHooks, purifyFn(hooks));
   const wrappedApi = __spreadValues({}, api_exports);
   Object.keys(wrappedApi).forEach((key) => {
@@ -4049,38 +4141,37 @@ function registerPlatform(config) {
 // src/index.ts
 var index_default = export_exports;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-exports.addBizHooks = addBizHooks; exports.default = index_default; exports.downloadFile = downloadFile; exports.downloadHelModFiles = downloadHelModFiles; exports.downloadNodeModFiles = downloadNodeModFiles; exports.getFallbackMod = getFallbackMod; exports.getHelModMeta = getHelModMeta; exports.getHelModulesPath = getHelModulesPath; exports.getMemLogs = getMemLogs; exports.getNodeModDesc = getNodeModDesc; exports.getNodeModVer = getNodeModVer; exports.importHelMod = importHelMod; exports.importHelModByMeta = importHelModByMeta; exports.importHelModByMetaSync = importHelModByMetaSync; exports.importHelModByPath = importHelModByPath; exports.importNodeMod = importNodeMod; exports.importNodeModByMeta = importNodeModByMeta; exports.importNodeModByMetaSync = importNodeModByMetaSync; exports.importNodeModByPath = importNodeModByPath; exports.initMiddleware = initMiddleware; exports.isHelModProxy = isHelModProxy; exports.mapAndPreload = mapAndPreload; exports.mapNodeMods = mapNodeMods; exports.mockAutoDownload = mockAutoDownload; exports.mockUtil = mock_util_exports; exports.preloadMappedData = preloadMappedData; exports.preloadMiddleware = preloadMiddleware; exports.recordMemLog = recordMemLog; exports.registerPlatform = registerPlatform; exports.requireNodeMod = requireNodeMod; exports.resolveNodeMod = resolveNodeMod; exports.setGlobalConfig = setGlobalConfig; exports.setPlatformConfig = setPlatformConfig;
+exports.addBizHooks = addBizHooks;
+exports.default = index_default;
+exports.downloadFile = downloadFile;
+exports.downloadHelModFiles = downloadHelModFiles;
+exports.downloadNodeModFiles = downloadNodeModFiles;
+exports.getFallbackMod = getFallbackMod;
+exports.getHelModMeta = getHelModMeta;
+exports.getHelModulesPath = getHelModulesPath;
+exports.getMemLogs = getMemLogs;
+exports.getNodeModDesc = getNodeModDesc;
+exports.getNodeModVer = getNodeModVer;
+exports.importHelMod = importHelMod;
+exports.importHelModByMeta = importHelModByMeta;
+exports.importHelModByMetaSync = importHelModByMetaSync;
+exports.importHelModByPath = importHelModByPath;
+exports.importNodeMod = importNodeMod;
+exports.importNodeModByMeta = importNodeModByMeta;
+exports.importNodeModByMetaSync = importNodeModByMetaSync;
+exports.importNodeModByPath = importNodeModByPath;
+exports.initMiddleware = initMiddleware;
+exports.isHelModProxy = isHelModProxy;
+exports.mapAndPreload = mapAndPreload;
+exports.mapNodeMods = mapNodeMods;
+exports.mockAutoDownload = mockAutoDownload;
+exports.mockUtil = mock_util_exports;
+exports.preloadMappedData = preloadMappedData;
+exports.preloadMiddleware = preloadMiddleware;
+exports.recordMemLog = recordMemLog;
+exports.registerPlatform = registerPlatform;
+exports.requireNodeMod = requireNodeMod;
+exports.resolveNodeMod = resolveNodeMod;
+exports.setGlobalConfig = setGlobalConfig;
+exports.setPlatformConfig = setPlatformConfig;
 //# sourceMappingURL=index.js.map
