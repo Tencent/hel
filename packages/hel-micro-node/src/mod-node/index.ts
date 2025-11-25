@@ -140,7 +140,7 @@ export function importNodeModByMetaSync<T extends any = any>(
 export function importNodeModByPath<T extends any = any>(
   nodeModName: string,
   nodeModPath: string,
-  options?: IImportModByNodePathOptions
+  options?: IImportModByNodePathOptions,
 ): IImportNodeModResult<T> {
   const { helPath, platform } = getMappedData(nodeModName);
   const newOptions = { ...(options || {}), standalone: false, platform };
