@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { print } from '../base/logger';
+// import { print } from '../base/logger';
 import type { IMeta, IModInfo } from '../base/types';
 import { safeGet } from '../base/util';
 import { getSdkCtx } from '../context/index';
@@ -23,7 +23,7 @@ function mayInitModBackupData(platform: string) {
     //   throw err;
     // }
     // TODO setGlobalConfig 新增 mustHaveBackup 选项，为 true 时这里才报错
-    print(err);
+    // print(err);
   };
 
   backupModIsInit[platform] = true;

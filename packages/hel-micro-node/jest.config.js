@@ -38,6 +38,7 @@ module.exports = {
   resetMocks: true,
   testMatch: [
     '<rootDir>/test/**/*.test.ts',
+    // '<rootDir>/test/import-sub-path.test.ts',
     // '<rootDir>/test/import-mod-one-level-dir.test.ts',
     // '<rootDir>/test/t-404-files/*.test.ts',
     // '<rootDir>/test/t-no-srv-files/*.test.ts',
@@ -53,6 +54,5 @@ module.exports = {
     // '<rootDir>/test/require-mod.test.ts',
     // '<rootDir>/test/import-from-helpack.test.ts',
     // '<rootDir>/test/import-mod.test.ts',
-    // '<rootDir>/test/native-import.test.ts',
   ],
 };

@@ -128,6 +128,9 @@ class MapNodeModsManager {
     data.rawPath = sourceFullPath;
     const { proxyFiles } = mapDetail;
     let proxyFile = proxyFiles[helModOrPath];
+
+    console.log(`helModOrPath ${helModOrPath} proxyFile ${proxyFile}`);
+
     // file not created
     if (!proxyFile) {
       proxyFile = this.genProxyModFile(pkgName, helModOrPath);
@@ -287,6 +290,7 @@ class MapNodeModsManager {
     // 生成代理文件名称，并将代理模块内容写入到对应文件里
     const proxyFilePath = path.join(getHelProxyFilesDir(), proxyFileName);
     fs.writeFileSync(proxyFilePath, content);
+
     // 记录 hel 模块名和代理模块路径的映射关系
     detail.proxyFiles[helModOrPath] = proxyFilePath;
     this.getNodeModData(nodeModName).proxyFilePath = proxyFilePath;

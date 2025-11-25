@@ -18,7 +18,7 @@ export const HEL_DEMO_LIB1_VER1 = '1.0.1';
 
 export const HEL_DEMO_LIB1_VER2 = '1.0.2';
 
-export const HEL_DEMO_LIB1_LATEST_VER = '1.0.2';
+export const HEL_DEMO_LIB1_LATEST_VER = '1.0.3';
 
 export const HEL_HELLO_VER2 = '20250809053212';
 

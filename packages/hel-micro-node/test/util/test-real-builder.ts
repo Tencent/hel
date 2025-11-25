@@ -38,15 +38,13 @@ export function buildImportHelpackModTest(config?: IPlatformConfig) {
         helpackApiUrl: HEL_API_URL,
         ...(config || {}),
       });
-      // 本地单测时获取真实的hel元数据需要走https
-      // setConfig({ helpackApiUrl: HEL_API_URL, ...(config || {}), platform });
 
       try {
         mapNodeMods({
-          [HEL_HELLO_HELPACK]: true,
+          [HEL_HELLO_HELPACK]: { platform },
         });
         // 这一个版本不包含任何服务端模块产物
-        await importNodeMod(HEL_HELLO_HELPACK, { ver: HEL_HELLO_NO_SERVER_FILES_VER, platform });
+        await importNodeMod(HEL_HELLO_HELPACK, { ver: HEL_HELLO_NO_SERVER_FILES_VER });
 
         // await api.mapAndPreload({
         //   [HEL_HELLO_HELPACK]: { ver: HEL_HELLO_SUB_PATH, platform },

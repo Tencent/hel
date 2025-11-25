@@ -74,6 +74,10 @@ export async function importNodeMod<T extends any = any>(
   options?: IImportModOptions,
 ): Promise<IImportNodeModResult<T>> {
   const { helPath, platform } = getMappedData(nodeModName);
+  const plat = options?.platform || platform;
+  if (plat !== platform) {
+    throw new Error(`Supplied platform ${plat} not equal mapped platform ${platform}`);
+  }
   const importOptions: IInnerImportModByMetaOptions = { ...(options || {}), standalone: false, platform };
   const meta = await getMetaByImportOptions(helPath, importOptions);
   const modInfo = makeModInfo(meta);

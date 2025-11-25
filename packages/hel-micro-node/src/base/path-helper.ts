@@ -52,6 +52,12 @@ function getDotHelModulesPath() {
   return dotHelModulesPath;
 }
 
+function ensureDirExist(dirPath: string) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+}
+
 export function resolveNodeModPath(nodeModNameOrPath: string, allowNull?: boolean): string {
   try {
     return require.resolve(nodeModNameOrPath);
@@ -118,15 +124,12 @@ export function getHelProxyFilesDir() {
   const targetDir = getGlobalConfig().helProxyFilesDir;
   if (targetDir) {
     lockedHelProxyFilesDir = targetDir;
-    return lockedHelProxyFilesDir;
+  } else {
+    const helModulesDir = getHelModulesPath();
+    const helProxyFilesDir = path.join(helModulesDir, './.proxy');
+    lockedHelProxyFilesDir = helProxyFilesDir;
   }
-
-  const helModulesDir = getHelModulesPath();
-  const helProxyFilesDir = path.join(helModulesDir, './.proxy');
-  lockedHelProxyFilesDir = helProxyFilesDir;
-  if (!fs.existsSync(lockedHelProxyFilesDir)) {
-    fs.mkdirSync(lockedHelProxyFilesDir, { recursive: true });
-  }
+  ensureDirExist(lockedHelProxyFilesDir);
 
   return lockedHelProxyFilesDir;
 }

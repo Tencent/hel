@@ -1,10 +1,11 @@
 import { importNodeMod, mapNodeMods, setGlobalConfig } from '../../src';
 import '../mock/mock-with-real-axios';
-import { HEL_API_URL, HEL_DEMO_LIB1, HEL_HELLO_HELPACK, HEL_HELLO_VER, SDK_GLOBAL_CONFIG } from './../util/consts';
+import { HEL_DEMO_LIB1, HEL_HELLO_HELPACK, HEL_HELLO_VER, SDK_GLOBAL_CONFIG } from './../util/consts';
 
+const platform = 'hel';
 setGlobalConfig(SDK_GLOBAL_CONFIG);
 mapNodeMods({
-  [HEL_DEMO_LIB1]: `${HEL_HELLO_HELPACK}/srv/hel-hello`,
+  [HEL_DEMO_LIB1]: { helModName: `${HEL_HELLO_HELPACK}/srv/hel-hello`, platform },
 });
 
 describe('test download 404 files', () => {
@@ -14,8 +15,6 @@ describe('test download 404 files', () => {
     try {
       await importNodeMod(HEL_DEMO_LIB1, {
         ver: HEL_HELLO_VER,
-        helpackApiUrl: HEL_API_URL,
-        platform: 'hel',
         reuseLocalFiles: false,
         prepareFiles: async (params) => {
           retryCount += 1;
@@ -33,6 +32,6 @@ describe('test download 404 files', () => {
     // importNodeMod 失败，调用的应是 node_modules 目录下的包的方法
     const { hello } = await import(HEL_DEMO_LIB1);
     console.log(require.resolve(HEL_DEMO_LIB1));
-    expect(hello()).toBe('hel hello v2.2 ....');
+    expect(hello()).toBe('hel hello v1.0.3');
   });
 });
