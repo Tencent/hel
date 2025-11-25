@@ -10,7 +10,7 @@ describe('test no srv mod files', () => {
       mapNodeMods({
         [HEL_HELLO_HELPACK]: { platform },
       });
-      await importNodeMod(HEL_HELLO_HELPACK, { ver: HEL_HELLO_NO_SERVER_FILES_VER, platform, helpackApiUrl: HEL_API_URL });
+      await importNodeMod(HEL_HELLO_HELPACK, { ver: HEL_HELLO_NO_SERVER_FILES_VER, helpackApiUrl: HEL_API_URL });
     } catch (err: any) {
       expect(err.message.includes('no server mod files')).toBeTruthy();
     }

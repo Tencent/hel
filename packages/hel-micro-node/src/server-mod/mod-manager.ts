@@ -28,7 +28,7 @@ import type {
 import type {
   IInnerImportModByMetaOptions,
   IInnerImportModByMetaSyncOptions,
-  IInnerImportModByNodePathOptions,
+  IInnerImportModByPathOptions,
   IInnerImportModOptions,
 } from '../base/types-srv-mod';
 import { isValidModule, uniqueStrPush } from '../base/util';
@@ -341,7 +341,7 @@ class ModManager {
   /**
    * 根据用户透传的模块初始路径，同步准备 server 模块
    */
-  public importModByPath(helModName: string, modInitPath: string, options?: IInnerImportModByNodePathOptions) {
+  public importModByPath(helModName: string, modInitPath: string, options?: IInnerImportModByPathOptions) {
     const { platform = PLATFORM, ver, standalone } = options;
     const modVer = ver || modInitPath;
     const modIns = getDiskModInsByInitPath(modInitPath, modVer);
