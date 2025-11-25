@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "lib",
+    "lib": ["ES2017"],
     "target": "ES2017",
-    "lib": ["ES2016", "DOM"],
-    "baseUrl": "./src",
-    "moduleResolution": "node",
-    "esModuleInterop": true
+    "declaration": true,
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "types": ["node", "jest"],
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
   },
   "include": ["src/**/*"]
 }

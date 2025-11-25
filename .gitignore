@@ -20,3 +20,5 @@ yarn-debug.log*
 turbo-build.log*
 
 helpack/hm-node-user/src/libs
+packages/hel-micro-node/src/mod-files/*
+packages/hel-micro-node/src/server-mod/proxy-mod/*.js
