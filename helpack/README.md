@@ -34,24 +34,21 @@ $ npm run start        // 再启动编译好的工程(默认启动快速模式�
 {
   "configurations": [
     {
+      "name": "debug-helpack",
       "type": "node",
       "request": "launch",
-      "name": "debug-js",
       "program": "${workspaceFolder}/server/build/index.js",
       "env": {
-        "NODE_PATH": "${workspaceFolder}/server/build/",
         "IS_LOCAL_MODE": "true"
       }
     },
     {
-      "name": "debug",
+      "name": "debug-hm-node-user",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/server/src/index.ts",
-      "outFiles": ["${workspaceFolder}/server/build/**/*.js"],
+      "program": "${workspaceFolder}/hm-node-user/build/index.ts",
       "env": {
-        "NODE_PATH": "${workspaceFolder}/server/build",
-        "IS_LOCAL_MODE": "true"
+        "CONNECT_LOCAL_HELPACK": "1"
       }
     }
   ]
