@@ -165,12 +165,14 @@ export async function preloadMappedData() {
   const plats = mapNodeModsManager.getMappedPlatforms();
   let list: IModInfo[] = [];
 
-  await Promise.all(plats.map(async (platform) => {
-    const untriggeredHelModNames = mapNodeModsManager.getHelModNames(platform, true);
-    untriggeredHelModNames.forEach((v) => mapNodeModsManager.setIsPreloadTriggered(v, platform));
-    const modInfoList = await preloadHelMods(untriggeredHelModNames, platform);
-    list = list.concat(modInfoList);
-  }));
+  await Promise.all(
+    plats.map(async (platform) => {
+      const untriggeredHelModNames = mapNodeModsManager.getHelModNames(platform, true);
+      untriggeredHelModNames.forEach((v) => mapNodeModsManager.setIsPreloadTriggered(v, platform));
+      const modInfoList = await preloadHelMods(untriggeredHelModNames, platform);
+      list = list.concat(modInfoList);
+    }),
+  );
 
   return list;
 }
