@@ -6,10 +6,10 @@ import path from 'path';
 // @ts-ignore this is a non-exist node module, just map it to hel module
 import { hello as h2 } from 'hel-hello-helpack';
 // @ts-ignore this is a non-exist node module, just map it  to local file
+import * as virtualMod from 'controllers/virtualMod';
 import { hello as h3 } from 'my-mod';
 import { getRouter, restful } from './at/core/routerFactory';
 import { getNodeModDesc, getNodeModVer, importNodeMod, importNodeModByPath, resolveNodeMod } from './libs/hmn';
-import * as virtualMod from 'controllers/virtualMod';
 
 restful('/api/hello', () => {
   try {

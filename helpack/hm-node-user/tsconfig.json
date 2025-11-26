@@ -25,5 +25,5 @@
     "skipLibCheck": true,
     "outDir": "./build"
   },
-  "include": ["src/**/*", "src/at/types/global.d.ts"],
+  "include": ["src/**/*", "src/at/types/global.d.ts"]
 }
