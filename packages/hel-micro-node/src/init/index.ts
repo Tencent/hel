@@ -161,11 +161,20 @@ export async function preloadHelMods(helModNames: string[], inputPlat?: string) 
  * 用于修改渲染层返回结果之用；
  * ```
  */
-export async function preloadMappedData(platform = PLATFORM) {
-  const untriggeredHelModNames = mapNodeModsManager.getHelModNames(platform, true);
-  untriggeredHelModNames.forEach((v) => mapNodeModsManager.setIsPreloadTriggered(v, platform));
-  const modInfoList = await preloadHelMods(untriggeredHelModNames, platform);
-  return modInfoList;
+export async function preloadMappedData() {
+  const plats = mapNodeModsManager.getMappedPlatforms();
+  let list: IModInfo[] = [];
+
+  await Promise.all(
+    plats.map(async (platform) => {
+      const untriggeredHelModNames = mapNodeModsManager.getHelModNames(platform, true);
+      untriggeredHelModNames.forEach((v) => mapNodeModsManager.setIsPreloadTriggered(v, platform));
+      const modInfoList = await preloadHelMods(untriggeredHelModNames, platform);
+      list = list.concat(modInfoList);
+    }),
+  );
+
+  return list;
 }
 
 /**

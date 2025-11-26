@@ -8,7 +8,7 @@ sidebar_position: 0
 
 ## 映射node模块
 
-默认情况下 node 模块和 hel 微模块同名，此时两者是捆绑到一起发布的。
+默认情况下 node 模块和 hel 微模块同名，表示两者是捆绑到一起发布的。
 
 ```ts
 await mapAndPreload({

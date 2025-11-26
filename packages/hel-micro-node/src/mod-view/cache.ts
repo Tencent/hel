@@ -146,7 +146,7 @@ export async function mayUpdateModPresetData(platform: string, setBy: string, mo
       return;
     }
 
-    // 刷某个具体的模块，但未在用户的模块声明表里，则忽略掉
+    // 未在用户的模块声明表里时忽略掉
     if (!isModMapped(platform, modName)) {
       log({ subType, desc: `ignore not configured mod ${modName}` });
       return;

@@ -233,6 +233,11 @@ class MapNodeModsManager {
     return untriggeredNames;
   }
 
+  public getMappedPlatforms() {
+    const platforms = Object.keys(this.mapDetails);
+    return platforms;
+  }
+
   public setIsPreloadTriggered(helModName: HelModName, platform: string) {
     const { mod2isPreloadTriggered } = this.getMapDetail(platform);
     mod2isPreloadTriggered[helModName] = true;

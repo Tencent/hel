@@ -31,26 +31,28 @@ export async function getHelModMeta(helModNameOrPath: string, options?: IFetchMo
  */
 export async function importHelMod<T extends any = any>(helModNameOrPath: string, options?: IImportHelModOptions) {
   const importOptions = { ...(options || {}), standalone: true };
-  const mod = await modManager.importMod<T>(helModNameOrPath, importOptions);
-  return mod;
+  const modIns = await modManager.importMod<T>(helModNameOrPath, importOptions);
+  return modIns;
 }
 
 /**
  * 人工透传 hel 模块元数据来导出 hel 模块，
  * 在一些测试场景时，可以自定义准备文件函数做二次修改后再导出 hel 模块
  */
-export function importHelModByMeta(meta: IMeta, options: IImportHelModByMetaOptions) {
+export function importHelModByMeta<T extends any = any>(meta: IMeta, options: IImportHelModByMetaOptions) {
   const importOptions = { ...(options || {}), standalone: true };
-  return modManager.importModByMeta(meta, importOptions);
+  const modIns = modManager.importModByMeta<T>(meta, importOptions);
+  return modIns;
 }
 
 /**
  * 人工透传 hel 模块元数据，并传入同步的 prepareFiles onFilesReady 函数来进一步处理模块文件如何复制，
  * 进而导出 hel 模块
  */
-export function importHelModByMetaSync(meta: IMeta, options: IImportHelModByMetaSyncOptions) {
+export function importHelModByMetaSync<T extends any = any>(meta: IMeta, options: IImportHelModByMetaSyncOptions) {
   const importOptions = { ...options, standalone: true };
-  return modManager.importModByMetaSync(meta, importOptions);
+  const modIns = modManager.importModByMetaSync<T>(meta, importOptions);
+  return modIns;
 }
 
 /**

@@ -266,7 +266,7 @@ class ModManager {
   /**
    * 通过 hel 模块信息参数异步导入 server 模块
    */
-  public async importModByMeta<T extends any = any>(meta: IMeta, options: IInnerImportModByMetaOptions) {
+  public async importModByMeta<T extends any = any>(meta: IMeta, options: IInnerImportModByMetaOptions): Promise<IModIns<T>> {
     const ensuredOptions = getEnsuredIMBMOptions(meta, options);
     const { onFilesReady, reuseLocalFiles, platform, standalone } = ensuredOptions;
     const helModNameOrPath = ensuredOptions.helModNameOrPath || meta.app.name;
@@ -275,21 +275,21 @@ class ModManager {
     const { modItem, webFile, modIns } = result;
     if (modIns) {
       this.updateModManagerItem(modItem, modIns, { helModNameOrPath, platform });
-      return modIns.mod;
+      return modIns;
     }
     // 本地磁盘不存在模块文件，走一次网络下载，然后再导出
     log({ subType: 'importModByMeta', desc: 'getWebModIns', data: webFile });
     const prepareFiles = ensuredOptions.prepareFiles || mapNodeModsManager.getPrepareFilesFn(helModNameOrPath, platform);
     const webModIns = await getWebModIns(webFile, { meta, prepareFiles, onFilesReady, reuseLocalFiles });
     if (standalone) {
-      return webModIns.mod;
+      return webModIns;
     }
 
     this.updateModManagerItem(modItem, webModIns, { helModNameOrPath, platform, isDownload: true });
     const mod = this.requireMod<T>(ensuredOptions.helModNameOrPath || meta.app.name, ensuredOptions);
     maySetToJestMock(platform, helModNameOrPath, mod);
 
-    return mod;
+    return webModIns;
   }
 
   /**
@@ -309,33 +309,32 @@ class ModManager {
         return meta;
       });
     }
-    const mod = await this.importModByMeta<T>(meta, { ...options, helModNameOrPath });
+    const modIns = await this.importModByMeta<T>(meta, { ...options, helModNameOrPath });
 
-    return mod;
+    return modIns;
   }
 
   /**
    * 通过自定义的同步的准备文件函数准备 server 模块
    */
-  public importModByMetaSync(meta: IMeta, options: IInnerImportModByMetaSyncOptions) {
+  public importModByMetaSync<T extends any = any>(meta: IMeta, options: IInnerImportModByMetaSyncOptions) {
     const { helModNameOrPath, prepareFiles, onFilesReady, standalone } = options;
     const platform = options.platform || meta.app.platform || PLATFORM;
     const nameOrPath = helModNameOrPath || meta.app.name;
-    const result = this.tryGetLocalModIns(platform, meta, nameOrPath);
+    const result = this.tryGetLocalModIns<T>(platform, meta, nameOrPath);
     let { modIns } = result;
     if (!modIns) {
       log({ subType: 'importModByMetaSync', desc: 'getCustomModIns' });
       modIns = getCustomModIns(result.webFile, prepareFiles, onFilesReady);
     }
-    const { mod } = modIns;
     if (standalone) {
-      return mod;
+      return modIns;
     }
 
     this.updateModManagerItem(result.modItem, modIns, { helModNameOrPath: nameOrPath, platform });
-    maySetToJestMock(platform, nameOrPath, mod);
+    maySetToJestMock(platform, nameOrPath, modIns.mod);
 
-    return mod;
+    return modIns;
   }
 
   /**
@@ -381,11 +380,11 @@ class ModManager {
   /**
    * 尝试从本地磁盘里获取模块实例
    */
-  private tryGetLocalModIns(platform: string, meta: IMeta, helModNameOrPath?: string) {
+  private tryGetLocalModIns<T extends any = any>(platform: string, meta: IMeta, helModNameOrPath?: string) {
     const logBase = { subType: 'tryGetLocalModIns' };
     const { modItem, webFile } = this.prepareModParams(platform, meta, helModNameOrPath);
     log({ ...logBase, data: { webFile, storedVers: modItem.storedVers } });
-    let modIns: IModIns | null = null;
+    let modIns: IModIns<T> | null = null;
     if (modItem.storedVers.includes(meta.version.sub_app_version)) {
       // 本地磁盘存在模块文件，直接导出即可，如传递了 helModNameOrPath 需保证子路径正确
       // 否则会报错 xxx module not found

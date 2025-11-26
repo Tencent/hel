@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { getCWD, helMonoLog } = require('../util');
 const { chooseBool } = require('../util/dict');
+const { getFileInfoList } = require('../util/file');
 const { getRawMonoJson } = require('../util/monoJson');
 
 /**
@@ -37,9 +38,15 @@ exports.buildSrvModToHelDist = function (isServerModOneBundle) {
   shell.exec('start to copy hel srv mode build assets...');
 
   if (isOneBundle) {
-    const srvModFileCopyFrom = path.join(projectDir, './dist/index.js');
-    const srvModFileCopyTo = path.join(srvModCopyTo, './index.js');
-    fs.copyFileSync(srvModFileCopyFrom, srvModFileCopyTo);
+    // 基于 tsup 构建时，除了 index.js，还可能存在一些 chunk.js，所以这里遍历处理，而不能单纯的取 index.js
+    const distDir = path.join(projectDir, './dist');
+    const fileInfoList = getFileInfoList(distDir);
+    fileInfoList.forEach(({ isDirectory, path: filePath, name }) => {
+      if (!isDirectory && name.endsWith('.js')) {
+        const srvModFileCopyTo = path.join(srvModCopyTo, name);
+        fs.copyFileSync(filePath, srvModFileCopyTo);
+      }
+    });
   } else {
     const srvModCopyFrom = path.join(projectDir, './hel_srv');
     // or use fs-extra copySync
