@@ -1,8 +1,8 @@
-import { core, preFetchLib } from 'hel-micro';
-import { useEffect, useState, useRef } from 'react';
 import { hello } from '@hel-demo/mono-libs';
-import './App.css';
+import { core, preFetchLib } from 'hel-micro';
+import { useEffect, useRef, useState } from 'react';
 import { fetchMultipleLibVersions } from './api/versionApi';
+import './App.css';
 
 const REMOTE_LIB_NAME = process.env.REACT_APP_HEL_LIB_NAME || '@hel-demo/mono-libs';
 const HEL_PLATFORM_API_PREFIX = process.env.REACT_APP_HEL_API_PREFIX || '';
@@ -44,13 +44,13 @@ function App() {
   const fetchAllVersions = async () => {
     try {
       const versions = await fetchMultipleLibVersions(MONITORED_LIBS);
-      
+
       // Detect version changes
       const changes = {};
-      versions.forEach(lib => {
+      versions.forEach((lib) => {
         const prevVersion = previousVersionsRef.current[lib.name];
         const currentVersion = lib.version;
-        
+
         if (prevVersion && prevVersion !== currentVersion && currentVersion !== 'error') {
           changes[lib.name] = {
             from: prevVersion,
@@ -58,12 +58,12 @@ function App() {
             timestamp: new Date().toLocaleTimeString(),
           };
         }
-        
+
         previousVersionsRef.current[lib.name] = currentVersion;
       });
 
       if (Object.keys(changes).length > 0) {
-        setVersionChanges(prev => ({ ...prev, ...changes }));
+        setVersionChanges((prev) => ({ ...prev, ...changes }));
         console.log('[VERSION MONITOR] Version changes detected:', changes);
       }
 
@@ -126,8 +126,7 @@ function App() {
           const helloMsg = typeof lib.hello === 'function' ? lib.hello() : 'remote lib loaded';
           setRemoteMsg(helloMsg);
           const versionInfo = core.getVersion(REMOTE_LIB_NAME, { platform: HEL_PLATFORM_NAME });
-          const versionLabel =
-            versionInfo?.version_tag || versionInfo?.sub_app_version || versionInfo?.build_version || '';
+          const versionLabel = versionInfo?.version_tag || versionInfo?.sub_app_version || versionInfo?.build_version || '';
           setLibVersion(versionLabel);
           console.log('[HEL DEMO] remote lib loaded, version:', versionLabel || 'unknown');
         }
@@ -153,11 +152,9 @@ function App() {
       <header className="App-header">
         <p>HEL remote module demo</p>
         <p className="App-status">{remoteMsg}</p>
-        <p className="App-version">
-          Remote lib version: {libVersion || 'not available (yet)'}
-        </p>
+        <p className="App-version">Remote lib version: {libVersion || 'not available (yet)'}</p>
         {error ? <p className="App-error">{error}</p> : null}
-        
+
         {/* Version Monitor Section */}
         <div className="version-monitor">
           <h2>Lib Version Monitor</h2>
@@ -166,7 +163,7 @@ function App() {
             {' | '}
             Polling every {POLL_INTERVAL / 1000}s
           </p>
-          
+
           <div className="version-list">
             {allLibVersions.length === 0 ? (
               <p className="loading">Loading versions...</p>
@@ -215,18 +212,22 @@ function App() {
             <div className="version-changes-log">
               <h3>Recent Changes</h3>
               <ul>
-                {Object.entries(versionChanges).slice(-5).reverse().map(([libName, change]) => (
-                  <li key={`${libName}-${change.timestamp}`}>
-                    <strong>{libName}</strong>: {change.from} → {change.to} ({change.timestamp})
-                  </li>
-                ))}
+                {Object.entries(versionChanges)
+                  .slice(-5)
+                  .reverse()
+                  .map(([libName, change]) => (
+                    <li key={`${libName}-${change.timestamp}`}>
+                      <strong>{libName}</strong>: {change.from} → {change.to} ({change.timestamp})
+                    </li>
+                  ))}
               </ul>
             </div>
           )}
         </div>
 
         <p className="App-hint">
-          Update the module in Hel Pack (platform: hel, meta host: {HEL_PLATFORM_API_PREFIX}, custom host: {HEL_CUSTOM_HOST}) and see the change reflected here in real-time.
+          Update the module in Hel Pack (platform: hel, meta host: {HEL_PLATFORM_API_PREFIX}, custom host: {HEL_CUSTOM_HOST}) and see the
+          change reflected here in real-time.
         </p>
       </header>
     </div>

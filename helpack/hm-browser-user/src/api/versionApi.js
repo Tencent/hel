@@ -24,21 +24,23 @@ export async function fetchAllLibVersions() {
     }
 
     const data = await response.json();
-    
+
     // If we get a single app, return it as an array
     if (data && data.name) {
-      return [{
-        name: data.name,
-        version: data.version?.version_tag || data.version?.sub_app_version || data.online_version || 'unknown',
-        onlineVersion: data.online_version || 'unknown',
-        buildVersion: data.build_version || 'unknown',
-        versionData: data.version,
-      }];
+      return [
+        {
+          name: data.name,
+          version: data.version?.version_tag || data.version?.sub_app_version || data.online_version || 'unknown',
+          onlineVersion: data.online_version || 'unknown',
+          buildVersion: data.build_version || 'unknown',
+          versionData: data.version,
+        },
+      ];
     }
 
     // If we get an array, process it
     if (Array.isArray(data)) {
-      return data.map(app => ({
+      return data.map((app) => ({
         name: app.name,
         version: app.version?.version_tag || app.version?.sub_app_version || app.online_version || 'unknown',
         onlineVersion: app.online_version || 'unknown',
@@ -61,20 +63,23 @@ export async function fetchAllLibVersions() {
  */
 export async function fetchLibVersion(libName) {
   try {
-    const response = await fetch(`${HEL_PLATFORM_API_PREFIX}/openapi/v1/app/info/getSubAppAndItsVersion?name=${encodeURIComponent(libName)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${HEL_PLATFORM_API_PREFIX}/openapi/v1/app/info/getSubAppAndItsVersion?name=${encodeURIComponent(libName)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch lib version: ${response.statusText}`);
     }
 
     const data = await response.json();
-     console.log(`[DEBUG] Raw data for ${libName}:`, data);
-    
+    console.log(`[DEBUG] Raw data for ${libName}:`, data);
+
     return {
       name: data.name || libName,
       version: data.version?.version_tag || data.version?.sub_app_version || data.online_version || 'unknown',
@@ -115,13 +120,13 @@ export async function fetchMultipleLibVersions(libNames) {
             headers: {
               'Content-Type': 'application/json',
             },
-          }
+          },
         );
 
         if (response.ok) {
           const batchData = await response.json();
           if (Array.isArray(batchData)) {
-            const processed = batchData.map(app => ({
+            const processed = batchData.map((app) => ({
               name: app.name || 'unknown',
               version: app.version?.version_tag || app.version?.sub_app_version || app.online_version || 'unknown',
               onlineVersion: app.online_version || 'unknown',
@@ -137,16 +142,18 @@ export async function fetchMultipleLibVersions(libNames) {
       }
 
       // Fallback to individual requests if batch fails
-      const promises = chunk.map(name => fetchLibVersion(name).catch(err => {
-        console.error(`[VERSION API] Failed to fetch ${name}:`, err);
-        return {
-          name,
-          version: 'error',
-          onlineVersion: 'error',
-          buildVersion: 'error',
-          error: err.message,
-        };
-      }));
+      const promises = chunk.map((name) =>
+        fetchLibVersion(name).catch((err) => {
+          console.error(`[VERSION API] Failed to fetch ${name}:`, err);
+          return {
+            name,
+            version: 'error',
+            onlineVersion: 'error',
+            buildVersion: 'error',
+            error: err.message,
+          };
+        }),
+      );
 
       const chunkResults = await Promise.all(promises);
       allResults.push(...chunkResults);
@@ -158,4 +165,3 @@ export async function fetchMultipleLibVersions(libNames) {
     throw error;
   }
 }
-

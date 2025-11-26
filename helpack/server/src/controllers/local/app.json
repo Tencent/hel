@@ -118,9 +118,7 @@
       "render_mode": "",
       "extract_mode": "all",
       "proj_ver": {
-        "map": {
-
-        },
+        "map": {},
         "utime": 0
       },
       "ui_framework": "lib",
