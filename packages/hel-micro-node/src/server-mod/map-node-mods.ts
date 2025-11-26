@@ -8,7 +8,6 @@ import type {
   HelModOrPath,
   HelModPath,
   IFetchModMetaOptions,
-  INodeModFallbackConf,
   INodeModMapper,
   PkgName,
   Platform,
@@ -16,7 +15,7 @@ import type {
 } from '../base/types';
 import { noop, safeGet, uniqueStrPush } from '../base/util';
 import { getSdkCtx } from '../context';
-import { formatAndCheckModMapper, getModShape, type ICheckData } from './map-node-helper';
+import { formatAndCheckModMapper, getModShape, ICheckData, INodeModData, makeNodeModData } from './map-node-helper';
 import { getModByPath } from './mod-ins';
 import { extractNameData } from './mod-name';
 import { replaceTpl } from './mod-tpl-helper';
@@ -43,18 +42,6 @@ function makeMapDetail(): IMapDetail {
     helModFileCount: {},
     proxyFiles: {},
   };
-}
-
-interface INodeModData {
-  platform: string;
-  helModName: HelModName;
-  helPath: HelModPath;
-  rawPath: string;
-  proxyFilePath: string;
-  fallback: INodeModFallbackConf;
-  fnProps: Record<string, boolean>;
-  dictProps: Record<string, boolean>;
-  isShapeReady: boolean;
 }
 
 class MapNodeModsManager {
@@ -104,17 +91,15 @@ class MapNodeModsManager {
       }
 
       const { fnProps, dictProps, isShapeReady } = getModShape(nodeModName, val);
-      this.nodeName2data[nodeModName] = {
+      this.nodeName2data[nodeModName] = makeNodeModData({
         helModName,
         helPath: helModNameOrPath,
         platform,
         fallback,
-        rawPath: '',
-        proxyFilePath: '',
         fnProps,
         dictProps,
         isShapeReady,
-      };
+      });
     });
   }
 
@@ -142,19 +127,7 @@ class MapNodeModsManager {
       throw new Error(`Unmapped node module ${nodeModName}`);
     }
 
-    return (
-      realData || {
-        helModName: '',
-        helPath: '',
-        platform: PLATFORM,
-        fallback: { force: false, mod: null, path: '' },
-        rawPath: '',
-        proxyFilePath: '',
-        fnProps: {},
-        dictProps: {},
-        isShapeReady: false,
-      }
-    );
+    return realData || makeNodeModData();
   }
 
   public getMappedPath(nodeModName: PkgName) {
@@ -163,15 +136,10 @@ class MapNodeModsManager {
 
   public isFallbackModExist(nodeModName: PkgName) {
     const { fallback } = this.getNodeModData(nodeModName);
-    if (fallback.mod) {
+    if (fallback.mod || getModByPath(fallback.path, { allowNull: true }) || resolveNodeModPath(nodeModName, true)) {
       return true;
     }
-    if (getModByPath(fallback.path, { allowNull: true })) {
-      return true;
-    }
-    if (resolveNodeModPath(nodeModName, true)) {
-      return true;
-    }
+
     return false;
   }
 

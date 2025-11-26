@@ -2,6 +2,7 @@ import '../server-mod/mod-tpl'; // keep mod-tpl file exist after compiled
 import '../server-mod/proxy-mod'; // keep proxy-mod dir exist after compiled
 import '../server-mod/resolve-filename'; // handle module resolveFileName
 
+export { VER } from '../base/consts';
 export { getMemLogs, recordMemLog } from '../base/mem-logger';
 export { getHelModulesPath } from '../base/path-helper';
 export { addBizHooks } from '../context';

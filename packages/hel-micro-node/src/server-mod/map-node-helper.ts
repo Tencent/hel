@@ -1,5 +1,6 @@
+import { PLATFORM } from '../base/consts';
 import { resolveNodeModPath } from '../base/path-helper';
-import type { HelModName, IMapModOptions, INodeModMapper, IStdNodeModMapper } from '../base/types';
+import type { HelModName, HelModPath, IMapModOptions, INodeModFallbackConf, INodeModMapper, IStdNodeModMapper } from '../base/types';
 import { strItems2Dict } from '../base/util';
 import { extractFnAndDictProps } from '../server-mod/util';
 import { isRunInJest } from '../test-util/jest-env';
@@ -9,6 +10,33 @@ import { extractNameData } from './mod-name';
 export interface ICheckData {
   modVerDict: Record<HelModName, string>;
   modApiUrlDict: Record<HelModName, string>;
+}
+
+export interface INodeModData {
+  platform: string;
+  helModName: HelModName;
+  helPath: HelModPath;
+  rawPath: string;
+  proxyFilePath: string;
+  fallback: INodeModFallbackConf;
+  fnProps: Record<string, boolean>;
+  dictProps: Record<string, boolean>;
+  isShapeReady: boolean;
+}
+
+export function makeNodeModData(options?: Partial<INodeModData>) {
+  const initial: INodeModData = {
+    helModName: '',
+    helPath: '',
+    platform: PLATFORM,
+    fallback: { force: false, mod: null, path: '' },
+    rawPath: '',
+    proxyFilePath: '',
+    fnProps: {},
+    dictProps: {},
+    isShapeReady: false,
+  };
+  return Object.assign(initial, options);
 }
 
 export function getModShape(nodeModName: string, options: IMapModOptions) {

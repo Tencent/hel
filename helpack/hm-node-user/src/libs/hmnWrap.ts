@@ -1,6 +1,20 @@
 import axios from 'axios';
 import hmn from 'hel-micro-node';
 
+const isConnectLocalHelpack = process.env.CONNECT_LOCAL_HELPACK === '1';
+
+function getHost() {
+  return isConnectLocalHelpack
+    ? {
+        apiHost: 'http://localhost:7777',
+        wsHost: 'ws://localhost:7777',
+      }
+    : {
+        apiHost: 'https://helmicro.com',
+        wsHost: '',
+      };
+}
+
 // 以下所有代码仅是一个实例，可按需改写
 const {
   DEPLOY_CONTAINER_NAME, // 容器名
@@ -12,8 +26,10 @@ const {
   DEPLOY_CITY, // 容器主机所在城市
   NODE_APP_INSTANCE,
 } = process.env;
-const HELPACK_PROTOCOLED_HOST = 'http://localhost:7777';
-const HELPACK_WS_HOST = 'ws://localhost:7777';
+
+const hostData = getHost();
+const HELPACK_PROTOCOLED_HOST = hostData.apiHost;
+const HELPACK_WS_HOST = hostData.wsHost;
 const REPORT_API_URL = `${HELPACK_PROTOCOLED_HOST}/openapi/v1/hmn/reportHelModStat`;
 
 function getEnvInfo() {
@@ -60,7 +76,11 @@ const wrappedApi = hmn.registerPlatform({
   getEnvInfo,
   hooks: {
     onHelModLoaded(params) {
+      if (!isConnectLocalHelpack) {
+        return;
+      }
       const { helModName, version } = params;
+      // 上报 hel 模块的运行环境
       reportHelModStat(helModName, version);
     },
   },

@@ -60,9 +60,9 @@ export interface IFetchModMetaOptions extends IFetchModMetaBaseOptions {
    * ```text
    * 未配置的话，针对 unpkg 会发起 '${unpkgHost}/hel_dist/hel-meta.json' 类似请求，
    * 例如：https://unpkg.com/hel-demo-lib1/hel_dist/hel-meta.json
-   * 如配置了具体的 helpackApiUrl，则发起 '${helpackApiUrl}/${modName}[/{modVersion}]' 类似请求，
-   * 例如：https://helmicro.com/openapi/meta/hel-hello-helpack@20250808092441
-   * 或 https://helmicro.com/openapi/meta/hel-hello-helpack
+   * 未配置的话，针对 hel 会发起 '${helpackApiUrl}/${modName}[/{modVersion}]' 类似请求，
+   * 例如：https://helmicro.com/openapi/meta/hel-hello-helpack
+   * 如配置了具体的 helpackApiUrl，则发起和 hel 平台一样格式的请求
    * ```
    */
   helpackApiUrl?: string;
@@ -297,15 +297,15 @@ export type PrepareFilesSync = (params: IPrepareFilesParams) => void;
 export interface IImportNodeModByMetaOptions {
   prepareFiles?: PrepareFiles;
   onFilesReady?: OnFilesReady;
-  helModNameOrPath?: string;
   reuseLocalFiles?: boolean;
 }
 
-export interface IImportModByMetaOptions extends IImportNodeModByMetaOptions {
+export interface IImportHelModByMetaOptions extends IImportNodeModByMetaOptions {
+  helModNameOrPath?: string;
   platform?: string;
 }
 
-export interface IInnerImportModByMetaOptions extends IImportModByMetaOptions {
+export interface IInnerImportModByMetaOptions extends IImportHelModByMetaOptions {
   standalone: Standalone;
 }
 
@@ -330,31 +330,26 @@ export interface IImportNodeModByMetaSyncOptions {
   helModNameOrPath?: string;
 }
 
-export interface IImportModByMetaSyncOptions extends IImportNodeModByMetaSyncOptions {
+export interface IImportHelModByMetaSyncOptions extends IImportNodeModByMetaSyncOptions {
   platform?: string;
 }
 
-
-export interface IInnerImportModByMetaSyncOptions extends IImportModByMetaSyncOptions {
+export interface IInnerImportModByMetaSyncOptions extends IImportHelModByMetaSyncOptions {
   standalone: Standalone;
-}
-
-export interface IImportModByPathOptions {
-  platform?: string;
-  /**
-   * 建议指定，未指定的话会把路径当做版本号
-   */
-  ver?: string;
 }
 
 export interface IImportNodeModByPathOptions {
   /**
-   * 建议指定，未指定的话会把路径当做版本号
+   * 未指定时，内部把模块路径当做版本号
    */
   ver?: string;
 }
 
-export interface IInnerImportModByPathOptions extends IImportModByPathOptions {
+export interface IImportHelModByPathOptions extends IImportNodeModByPathOptions {
+  platform?: string;
+}
+
+export interface IInnerImportModByPathOptions extends IImportHelModByPathOptions {
   standalone: Standalone;
 }
 
@@ -418,7 +413,7 @@ export interface IModManagerItem<T extends any = any> extends IModManagerItemBas
   storedDirs: string[];
 }
 
-export interface IImportModOptions extends IFetchModMetaOptions {
+export interface IImportHelModOptions extends IFetchModMetaOptions {
   /**
    * default: false，
    * 设置为 true 表示跳过 meta 获取过程，完全靠 prepareFiles 函数来提供模块可执行文件
@@ -444,9 +439,9 @@ export interface IImportModOptions extends IFetchModMetaOptions {
   reuseLocalFiles?: boolean;
 }
 
-export type IImportNodeModOptions = Omit<IImportModOptions, 'platform'>;
+export type IImportNodeModOptions = Omit<IImportHelModOptions, 'platform'>;
 
-export interface IInnerImportModOptions extends IImportModOptions {
+export interface IInnerImportModOptions extends IImportHelModOptions {
   /**
    * @see Standalone
    */
