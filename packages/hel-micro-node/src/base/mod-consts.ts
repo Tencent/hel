@@ -22,9 +22,8 @@ export const IS_HEL_MOD_PROXY = 1;
 export const NODE_MODULES = 'node_modules';
 
 /**
- * 在内部放置hel真实模块的目录名，这个是兜底或辅助jest测试用的，实际存储位置是：
- * 编译前查的是 sdk 自身路径往上查找的过程中遇到的第一个 nodule_modules下的 .hel_modules
- * 编译前后的是 sdk 所属的 node_modules 下的 .hel_modules 目录名，如没有才存到 sdk 内部的 mod-files
+ * 本地开发时，内部放置hel真实模块的目录名，服务于jest测试，
+ * 真实的实际存储位置是 sdk 自身路径往上查找的过程中遇到的第一个 nodule_modules下的 .hel_modules
  */
 export const REAL_MOD_DIR_NAME = 'mod-files';
 
@@ -34,7 +33,7 @@ export const REAL_MOD_DIR_NAME = 'mod-files';
 export const DOT_HEL_MODULES = '.hel_modules';
 
 /**
- * 放置hel代理模块的目录名
+ * 本地开发时，内部放置hel代理模块的目录名，服务于jest测试，
  */
 export const PROXY_MOD_DIR_NAME = 'proxy-mod';
 

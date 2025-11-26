@@ -13,7 +13,6 @@ const platAt2ndObj = [
   'downloadHelModFiles',
 ];
 const platAt1stObj = ['initMiddleware', 'preloadMiddleware', 'setPlatformConfig'];
-const platAt1stStr = ['preloadMappedData'];
 const platAt3rdObj = ['importNodeModByPath', 'importHelModByPath'];
 const mapNodeModsLike = ['mapNodeMods', 'mapAndPreload'];
 
@@ -93,11 +92,6 @@ export function registerPlatform(config: IRegisterPlatformConfig) {
   Object.keys(wrappedApi).forEach((key) => {
     if (mapNodeModsLike.includes(key)) {
       wrappedApi[key] = (modMapper) => handleMapNodes(injectPlat, modMapper, key);
-      return;
-    }
-
-    if (platAt1stStr.includes(key)) {
-      wrappedApi[key] = (arg1: any) => api[key](arg1 || injectPlat);
       return;
     }
 
