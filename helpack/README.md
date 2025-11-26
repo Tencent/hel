@@ -15,6 +15,8 @@
 ```text
 |____client             # 前端工程
 |____server             # 后端工程
+|____hm-browser-user    # 演示连接 helpack 的前端工程
+|____hm-node-user       # 演示连接 helpack 的后端工程
 ```
 
 ### 开发、调试、部署
@@ -23,10 +25,11 @@
 $ cd server
 $ npm i
 $ npm run build        // 先编译ts文件
-$ npm run start        // 再启动编译好的工程
+$ npm run start        // 再启动编译好的工程(默认启动快速模式的管理台)
+# npm run start:full 启动完整模式的管理台，npm run start:simple 以 api 模式启动，不提供管理台功能
 ```
 
-> 推荐配置vscode的launch.json文件，方便快速启动，配置如下
+> 推荐配置vscode的launch.json文件，方便快速启动并调试，配置如下
 ```js
 {
   "configurations": [
@@ -61,6 +64,14 @@ cd client
 npm i
 npm start
 ```
+
+- 启动演示连接 helpack 的后端工程
+```bash
+cd hm-node-user
+npm i
+npm start:h
+```
+
 
 - 前端部署
 **部署到本地server**
