@@ -1,0 +1,210 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Version Monitor Styles */
+.version-monitor {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.version-monitor h2 {
+  margin-top: 0;
+  color: #61dafb;
+  text-align: center;
+}
+
+.monitor-status {
+  text-align: center;
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.version-list {
+  overflow-x: auto;
+}
+
+.version-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.version-table thead {
+  background-color: rgba(97, 218, 251, 0.1);
+}
+
+.version-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  color: #61dafb;
+  border-bottom: 2px solid rgba(97, 218, 251, 0.3);
+}
+
+.version-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.version-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.version-table tbody tr.version-changed {
+  background-color: rgba(255, 193, 7, 0.2);
+  animation: highlightChange 2s ease-out;
+}
+
+@keyframes highlightChange {
+  0% {
+    background-color: rgba(255, 193, 7, 0.5);
+  }
+  100% {
+    background-color: rgba(255, 193, 7, 0.2);
+  }
+}
+
+.lib-name {
+  font-weight: 500;
+  color: #fff;
+}
+
+.version-value {
+  font-family: 'Courier New', monospace;
+  color: #61dafb;
+}
+
+.version-status {
+  text-align: center;
+}
+
+.status-ok {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.status-changed {
+  color: #ffc107;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.status-error {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.loading {
+  text-align: center;
+  color: #aaa;
+  padding: 20px;
+}
+
+.version-changes-log {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(255, 193, 7, 0.1);
+  border-radius: 4px;
+  border-left: 4px solid #ffc107;
+}
+
+.version-changes-log h3 {
+  margin-top: 0;
+  color: #ffc107;
+}
+
+.version-changes-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.version-changes-log li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.version-changes-log li:last-child {
+  border-bottom: none;
+}
+
+.version-changes-log strong {
+  color: #61dafb;
+}
+
+.App-status {
+  margin: 10px 0;
+}
+
+.App-version {
+  margin: 10px 0;
+  color: #61dafb;
+  font-weight: 500;
+}
+
+.App-error {
+  color: #f44336;
+  margin: 10px 0;
+}
+
+.App-hint {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+  max-width: 800px;
+}

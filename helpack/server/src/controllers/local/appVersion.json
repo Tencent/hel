@@ -747,6 +747,79 @@
       "desc": "this version meta is created by hel-dev-utils@5.2.7"
     },
     {
+      "id": 38566,
+      "sub_app_id": "1475",
+      "sub_app_name": "hel-hello-helpack",
+      "sub_app_version": "hel-hello-helpack@20251124053957",
+      "version_tag": "20251124053957",
+      "src_map": {
+        "webDirPath": "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957",
+        "htmlIndexSrc": "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/index.html",
+        "extractMode": "all",
+        "iframeSrc": "",
+        "chunkCssSrcList": [],
+        "chunkJsSrcList": [
+          "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/static/js/main.20f4a645.js",
+          "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/static/js/241.912145f0.chunk.js",
+          "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/static/js/244.ebc5a423.chunk.js"
+        ],
+        "staticCssSrcList": [],
+        "staticJsSrcList": [
+          "https://tnfe.gtimg.com/hel-runtime/level1/v31-16.13.1-react.js",
+          "https://tnfe.gtimg.com/hel-runtime/level1/hel-base-v25.js"
+        ],
+        "relativeCssSrcList": [],
+        "relativeJsSrcList": [],
+        "privCssSrcList": [],
+        "srvModSrcList": [
+          "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/srv/hel-hello/index.js",
+          "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/srv/index.js"
+        ],
+        "srvModSrcIndex": "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/srv/index.js",
+        "headAssetList": [
+          {
+            "tag": "staticScript",
+            "append": false,
+            "attrs": {
+              "src": "https://tnfe.gtimg.com/hel-runtime/level1/v31-16.13.1-react.js"
+            }
+          },
+          {
+            "tag": "staticScript",
+            "append": true,
+            "attrs": {
+              "src": "https://tnfe.gtimg.com/hel-runtime/level1/hel-base-v25.js",
+              "data-helex": "TencentHelMicro"
+            }
+          },
+          {
+            "tag": "script",
+            "append": true,
+            "attrs": {
+              "src": "https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/static/js/main.20f4a645.js",
+              "defer": "defer"
+            }
+          }
+        ],
+        "bodyAssetList": []
+      },
+      "html_content": "\u003C!doctype html\u003E\u003Chtml lang=\"en\"\u003E\u003Chead\u003E\u003Cmeta charset=\"utf-8\"/\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/\u003E\u003Cmeta name=\"theme-color\" content=\"#000000\"/\u003E\u003Cmeta name=\"description\" content=\"Web site created using @tencent/create-hel\"/\u003E\u003Cscript src=\"https://tnfe.gtimg.com/hel-runtime/level1/v31-16.13.1-react.js\"\u003E\u003C/script\u003E\u003Cscript data-helex=\"TencentHelMicro\" src=\"https://tnfe.gtimg.com/hel-runtime/level1/hel-base-v25.js\"\u003E\u003C/script\u003E\u003Ctitle\u003ECreate Hel App\u003C/title\u003E\u003Cscript defer=\"defer\" src=\"https://tnfe.gtimg.com/hel/hel-hello-helpack@20251124053957/static/js/main.20f4a645.js\"\u003E\u003C/script\u003E\u003C/head\u003E\u003Cbody\u003E\u003Cnoscript\u003EYou need to enable JavaScript to run this app.\u003C/noscript\u003E\u003Cdiv id=\"root\"\u003E\u003C/div\u003E\u003C/body\u003E\u003C/html\u003E",
+      "create_by": "",
+      "desc": "feat: bump hel-hello",
+      "api_host": "",
+      "project_name": "tnews-vistor",
+      "pipeline_id": "",
+      "build_id": "",
+      "git_branch": "",
+      "git_hashes": "",
+      "git_repo_url": "",
+      "ext": "",
+      "plugin_ver": "4.1.4",
+      "npm_version": "",
+      "create_at": "2025-11-24T09:40:12.000Z",
+      "update_at": "2025-11-24T09:40:12.000Z"
+    },
+    {
       "plugin_ver": "5.2.7",
       "extract_mode": "build",
       "sub_app_name": "hel-demo-mono-libs-2",
