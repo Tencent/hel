@@ -1,6 +1,6 @@
 import { PLATFORM } from '../base/consts';
 import { HEL_MDO_PROXY, IS_HEL_MOD_PROXY } from '../base/mod-consts';
-import type { IFetchModMetaOptions, IImportModOptions, IMeta, IModManagerItem } from '../base/types';
+import type { IFetchModMetaOptions, IImportHelModOptions, IMeta, IModManagerItem } from '../base/types';
 import { IInnerImportModByMetaOptions } from '../base/types-srv-mod';
 import { makeMeta } from './fake-meta';
 import { mapNodeModsManager } from './map-node-mods';
@@ -67,7 +67,7 @@ export function mayInjectApiUrl(helModName: string, options?: IFetchModMetaOptio
   return newOptions;
 }
 
-export async function getMetaByImportOptions(helModNameOrPath: string, options?: IImportModOptions) {
+export async function getMetaByImportOptions(helModNameOrPath: string, options?: IImportHelModOptions) {
   const optionsVar = options || {};
   const { platform = PLATFORM, skipMeta, customVer } = optionsVar;
   const { helModName } = extractNameData(helModNameOrPath, platform);

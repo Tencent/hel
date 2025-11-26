@@ -16,6 +16,7 @@ function getArgObject(args) {
     isViewTplStoreVerByPkgManager: false,
     isTplRemote: false,
     isSeeHelp: false,
+    isInstall: false,
     isDebug: false,
     customTplUrl: '',
     isSeeVersion: false,
@@ -72,6 +73,9 @@ function getArgObject(args) {
     }
     if (CMD_TYPE.help === targetCmdType) {
       argObj.isSeeHelp = true;
+    }
+    if (CMD_TYPE.install === targetCmdType) {
+      argObj.isInstall = true;
     }
 
     argObj.cmdValue = cmdValue;

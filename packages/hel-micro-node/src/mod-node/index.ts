@@ -20,6 +20,7 @@ import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { modManager } from '../server-mod/mod-manager';
 import { getMetaByImportOptions } from '../server-mod/mod-manager-helper';
 import { makeModInfo } from '../server-mod/mod-meta-helper';
+import { extractImportNodeModByMetaOptions, extractImportNodeModByMetaSyncOptions } from './helper';
 
 export { downloadFile } from '../server-mod/file-helper';
 
@@ -27,13 +28,19 @@ function getMappedData(nodeModName: string) {
   return mapNodeModsManager.getNodeModData(nodeModName, false);
 }
 
-function extractOptions(nodeModName: string, meta: IMeta, options?: any) {
-  const { helModName, platform } = getMappedData(nodeModName);
-  if (helModName !== meta.app.name) {
-    throw new Error(`Meta name ${meta.app.name} not equal to helModName ${helModName}`);
-  }
-  const newOptions = { ...(options || {}), standalone: false, platform };
-  return newOptions;
+/**
+ * 设定 node 模块和 hel 模块映射关系
+ * @example
+ * ```ts
+ * // node 模块映射为 hel 模块
+ * mapNodeMods({'qn-utils': 'hel-qn-utils'});
+ *
+ * // 既是node模块也是hel模块时，可自己映射自己
+ * mapNodeMods({'hel-demo-lib1': true});
+ * ```
+ */
+export function mapNodeMods(modMapper: INodeModMapper) {
+  return mapNodeModsManager.setModMapper(modMapper);
 }
 
 /**
@@ -101,7 +108,7 @@ export async function importNodeModByMeta<T extends any = any>(
   options: IImportNodeModByMetaOptions,
 ): Promise<IImportNodeModResult<T>> {
   const { platform } = getMappedData(nodeModName);
-  const importOptions = extractOptions(nodeModName, meta, options);
+  const importOptions = extractImportNodeModByMetaOptions(nodeModName, meta, options);
   const modInfo = makeModInfo(meta);
   const isUpdated = await presetDataMgr.updateForServerFirst(platform, modInfo, { mustBeServerMod: true, importOptions });
   const mod = requireNodeMod(nodeModName);
@@ -119,7 +126,7 @@ export function importNodeModByMetaSync<T extends any = any>(
   options: IImportNodeModByMetaSyncOptions,
 ): IImportNodeModResult<T> {
   const { platform } = getMappedData(nodeModName);
-  const importOptions = extractOptions(nodeModName, meta, options);
+  const importOptions = extractImportNodeModByMetaSyncOptions(nodeModName, meta, options);
   const modInfo = makeModInfo(meta);
   const isUpdated = presetDataMgr.updateForServerFirstSync(platform, modInfo, { mustBeServerMod: true, importOptions });
   const mod = requireNodeMod(nodeModName);
@@ -140,21 +147,6 @@ export function importNodeModByPath<T extends any = any>(
   const { helPath, platform } = getMappedData(nodeModName);
   const newOptions = { ...(options || {}), standalone: false, platform };
   return modManager.importModByPath(helPath, nodeModPath, newOptions);
-}
-
-/**
- * 设定 node 模块和 hel 模块映射关系
- * @example
- * ```ts
- * // node 模块映射为 hel 模块
- * mapNodeMods({'qn-utils': 'hel-qn-utils'});
- *
- * // 既是node模块也是hel模块时，可自己映射自己
- * mapNodeMods({'hel-demo-lib1': true});
- * ```
- */
-export function mapNodeMods(modMapper: INodeModMapper) {
-  return mapNodeModsManager.setModMapper(modMapper);
 }
 
 /**

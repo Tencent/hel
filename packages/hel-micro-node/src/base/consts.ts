@@ -3,6 +3,8 @@ import { purify } from './util';
 
 const { SUMERU_CONTAINER_NAME, WORKER_ID, SUMERU_ENV, NODE_APP_INSTANCE } = process.env;
 
+export const VER = '0.2.0';
+
 export const PLATFORM = 'unpkg';
 
 export const PLATFORM_HEL = 'hel';

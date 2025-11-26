@@ -1,5 +1,6 @@
 const CMD_TYPE = {
   init: 'init',
+  install: 'install',
   start: 'start',
   build: 'build',
   deps: 'deps',
@@ -12,7 +13,8 @@ const CMD_TYPE = {
 };
 
 const CMD_SHORT_TYPE = {
-  i: 'init',
+  it: 'init',
+  i: 'install',
   s: 'start',
   b: 'build',
   d: 'deps',

@@ -3,11 +3,13 @@ import type { IAssetNameInfo, IHMNHooks, IPlatformConfig, IPreloadMiddlewareOpti
 import { noop, purify, purifyFn, uniqueStrPush } from '../base/util';
 import { HEL_SOCKET_URL } from '../mod-view/consts';
 
-const defaultHooks = {
-  onInitialHelMetaFetched: noop,
-  onHelModLoaded: noop,
-  onMessageReceived: noop,
-};
+function getDefaultHooks() {
+  return {
+    onInitialHelMetaFetched: noop,
+    onHelModLoaded: noop,
+    onMessageReceived: noop,
+  };
+}
 
 let isAddBizHooksCalled = false;
 
@@ -43,9 +45,9 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     isPreloadMode: false,
     helMetaBackupFilePath: '',
     getHelRenderParams: (cbParams) => Promise.resolve({ viewPath: cbParams.viewPath, pageData: cbParams.pageData }),
-    regHooks: defaultHooks,
-    bizHooks: defaultHooks,
-    confHooks: defaultHooks,
+    regHooks: getDefaultHooks(),
+    bizHooks: getDefaultHooks(),
+    confHooks: getDefaultHooks(),
     getEnvInfo: () => null,
     shouldAcceptVersion: () => true,
   };

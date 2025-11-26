@@ -9,8 +9,6 @@ const list = content.split(os.EOL);
 const newContent = [];
 
 let keyIndex = 0;
-const sdkName = pkg.name;
-
 const willReplace = {
   1: "var _module = require('module');",
   2: 'var oriResolveFilename = _module._resolveFilename;',
@@ -24,12 +22,16 @@ list.forEach((line, idx) => {
   if (line.includes("var _module = require('module')")) {
     newLine = '// replace module ori _resolveFilename';
     keyIndex = idx;
+  } else if (line.includes('VER = exports.VER =')) {
+    newLine = `    VER = exports.VER = "${pkg.version}";`;
   } else if (keyIndex && idx - keyIndex <= 3) {
     const diff = idx - keyIndex;
     newLine = willReplace[diff];
   }
   newContent.push(newLine);
 });
+
+newContent.unshift(`/** Code compiled at ${new Date().toLocaleString()} */\n`);
 
 const newCode = newContent.join(os.EOL);
 fs.writeFileSync(indexFile, newCode);

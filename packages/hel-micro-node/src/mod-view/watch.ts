@@ -15,7 +15,7 @@ interface IMsg {
 const isSocketSubCalledMap: Record<string, boolean> = {};
 
 /**
- * 订阅来着 helpack 平台的变化消息
+ * 订阅来自 helpack 平台的变化消息
  */
 export async function subHelpackModChange(platform: string, changeCb: (params: { modName: string; type: string }) => void) {
   const isSocketSubCalled = isSocketSubCalledMap[platform];

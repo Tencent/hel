@@ -6,7 +6,7 @@
     "build": "tsc",
     "postinstall": "npm run build",
     "start": "node ./build/index.js",
-    "start:h": "cross-env FOR_HELPACK=1 node ./build/index.js",
+    "start:h": "cross-env CONNECT_LOCAL_HELPACK=1 node ./build/index.js",
     "start:cluster": "node ./build/indexCluster.js"
   },
   "dependencies": {
@@ -22,7 +22,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "hel-demo-mono-libs": "^0.0.3",
-    "hel-micro-node": "^0.1.3",
+    "hel-micro-node": "^0.2.0",
     "morgan": "^1.10.0",
     "xss-filters": "^1.2.7"
   },

@@ -8,6 +8,7 @@ const { modifyPkgInfo } = require('./pkg');
 const { logError, logPurple, logDebug, logTip } = require('./log');
 const { logCliInfo, logCreateSuccess, logHelpInfo, logDepPath, logKeyParams, logCliVersion, logFinalError } = require('./log-info');
 const { bumpTplStore } = require('./bump');
+const { execInstall } = require('./exec');
 
 module.exports = {
   getIsDebug,
@@ -33,4 +34,5 @@ module.exports = {
   logFinalError,
   bumpTplStore,
   viewTplStoreVerByPkgManager,
+  execInstall,
 };

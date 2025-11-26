@@ -52,23 +52,24 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
   try {
     const argObj = util.getArgObject(args);
     util.logKeyParams(args, argObj);
-    const { isSeeVersion, isSeeHelp, helMonoStartCmd, isBumpTplStore, isViewTplStoreVerByPkgManager } = argObj;
 
-    if (isSeeVersion) {
+    if (argObj.isSeeVersion) {
       return util.logCliVersion();
     }
-
-    if (isSeeHelp) {
+    if (argObj.isSeeHelp) {
       return util.logHelpInfo();
+    }
+    if (argObj.isInstall) {
+      return util.execInstall(argObj);
     }
 
     util.logCliInfo();
 
-    if (isViewTplStoreVerByPkgManager) {
+    if (argObj.isViewTplStoreVerByPkgManager) {
       return util.viewTplStoreVerByPkgManager();
     }
 
-    if (isBumpTplStore) {
+    if (argObj.isBumpTplStore) {
       return util.bumpTplStore();
     }
 
@@ -79,6 +80,7 @@ exports.analyzeArgs = async function analyzeArgs(forHels) {
       return execHelMonoCmd(pureArgs.join(' ') || 'start');
     }
 
+    const { helMonoStartCmd } = argObj;
     if (helMonoStartCmd) {
       return execHelMonoCmd(helMonoStartCmd);
     }
