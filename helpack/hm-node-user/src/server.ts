@@ -9,9 +9,13 @@ export async function startServer() {
 
   try {
     await mapAndPreload({
+      // 未指定模块时，模块来自于那个平台取决于 mapAndPreload 是原始库导出的还是封装后导出的
+      // 原始库导出的则模块默认来自于 unpkg 平台
+      // 封装后导出的则模块默认来自于 hel 平台
       '@hel-demo/mono-libs': true,
       // 这是一个未安装到项目里的虚拟模块，映射为hel模块，可以被程序 import
       'hel-hello-helpack': {
+        // 强制指定此模块来自于 hel 平台
         platform: 'hel',
         modShape: { fnKeys: ['hello'] },
       },
