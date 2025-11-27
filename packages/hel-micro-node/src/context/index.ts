@@ -33,10 +33,6 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     helEntrySrc: '',
     mod2conf: {},
     modNames: [],
-    reporter: {
-      reportError: () => '',
-      reportInfo: () => '',
-    },
     view2assetName: {},
     assetNameInfos: [],
     assetName2view: {},
@@ -97,7 +93,7 @@ export function mergeOptions(passOptions: IPreloadMiddlewareOptions) {
   const assetNameInfos: IAssetNameInfo[] = [];
   const assetName2view: Record<string, string> = {};
   const view2appName: Record<string, string> = {};
-  const { view2assetName = {}, deps = {} } = passOptions;
+  const { view2assetName = {} } = passOptions;
 
   Object.keys(view2assetName).forEach((view) => {
     const assetName = view2assetName[view];
@@ -125,10 +121,6 @@ export function mergeOptions(passOptions: IPreloadMiddlewareOptions) {
 
   const rest = getRestOptions(passOptions);
   Object.assign(sdkCtx, rest, { assetNameInfos, assetName2view, view2appName });
-
-  if (deps.reporter) {
-    sdkCtx.reporter = deps.reporter;
-  }
 }
 
 export function addBizHooks(hooks: IHMNHooks, platform?: string) {

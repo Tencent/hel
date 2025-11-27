@@ -2,6 +2,7 @@ import { CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED, HOOK_TYPE } from
 import { SOCKET_MSG_TYPE } from '../base/mod-consts';
 import { getSdkCtx } from '../context';
 import { getCaredModNames } from '../context/facade';
+import { getGlobalConfig } from '../context/global-config';
 import { triggerHook } from '../context/hooks';
 import { WSAutoReconnectClient } from '../socket/client';
 import { isRunInJest } from '../test-util/jest-env';
@@ -38,7 +39,7 @@ export async function subHelpackModChange(platform: string, changeCb: (params: {
       },
       onMessage: (msg: IMsg) => {
         const { modName, channel } = msg.data;
-        triggerHook(HOOK_TYPE.onMessageReceived, { helModName: modName, msgType: channel }, platform);
+        triggerHook(HOOK_TYPE.onMessageReceived, { platform, helModName: modName, msgType: channel }, platform);
         if ([CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED].includes(channel)) {
           changeCb({ modName, type: CHANNEL_APP_INFO_CHANGED });
         }
@@ -49,6 +50,6 @@ export async function subHelpackModChange(platform: string, changeCb: (params: {
     // 上面逻辑里的 WSAutoReconnectClient 内部做了 catch 并会按照一定的延迟时间策略去重试，理论上不会抛出错误到这里
     const desc = 'err-sub-helpack-mod-change';
     const msg = `[${desc}] ${err.message}`;
-    sdkCtx.reporter.reportError(msg, desc);
+    getGlobalConfig().reporter.reportError({ message: msg, desc, platform });
   }
 }

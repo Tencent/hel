@@ -2,6 +2,7 @@ import { CTX_ENV, HOOK_TYPE, PLATFORM, SERVER_INFO } from '../base/consts';
 import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import type { IFetchModMetaOptions, IModInfo } from '../base/types';
 import { getMappedModFetchOptions, isModMapped } from '../context/facade';
+import { getGlobalConfig } from '../context/global-config';
 import { triggerHook } from '../context/hooks';
 import { getSdkCtx } from '../context/index';
 import { setMetaCache } from '../context/meta-cache';
@@ -10,7 +11,7 @@ import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { fetchModInfo } from '../server-mod/mod-meta';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
 import { isRunInJest } from '../test-util/jest-env';
-import { SET_BY, UPDATE_INTERVAL } from './consts';
+import { SET_BY } from './consts';
 import { PresetData, presetDataMgr } from './preset-data';
 import { subHelpackModChange } from './watch';
 
@@ -38,7 +39,8 @@ export function loadBackupHelMod(platform?: string) {
       throw err;
     }
     mayUpdateModPresetData(sdkCtx.platform, SET_BY.init).catch((err) => {
-      sdkCtx.reporter.reportError(err.stack, 'err-loadBackupHelMod');
+      const { reporter } = getGlobalConfig();
+      reporter.reportError({ message: err.stack, desc: 'err-loadBackupHelMod', platform });
     });
   }
   return modInfoList;
@@ -47,20 +49,21 @@ export function loadBackupHelMod(platform?: string) {
 let isIntervalUpdateCalled = false;
 
 /** 开启定时器更新模块缓存，兜底 redis 订阅出问题 */
-export function enableIntervalUpdate(platform: string) {
-  // jest 单测时为避免如下警告，也会不启动 定时器
+export function mayStartupIntervalModUpdate(platform: string) {
+  const { intervalUpdateMs, enableIntervalUpdate } = getGlobalConfig();
+  // jest 单测时为避免如下警告，也会不启动定时器
   // Async callback was not invoked within the 5000 ms timeout specified by jest.setTimeout.Timeout
-  if (isIntervalUpdateCalled || isRunInJest()) {
+  if (!enableIntervalUpdate || isIntervalUpdateCalled || isRunInJest()) {
     return;
   }
 
   isIntervalUpdateCalled = true;
-  const sdkCtx = getSdkCtx(platform);
   setInterval(() => {
     mayUpdateModPresetData(platform, SET_BY.timer).catch((err) => {
-      sdkCtx.reporter.reportError(err.stack, 'err-intervalUpdate');
+      const { reporter } = getGlobalConfig();
+      reporter.reportError({ message: err.stack, desc: 'err-intervalUpdate', platform });
     });
-  }, UPDATE_INTERVAL);
+  }, intervalUpdateMs);
 }
 
 function getCanFetchNewVersionData(platform: string, modName: string) {
@@ -108,7 +111,8 @@ async function handleHelModChanged(platform: string, modName: string) {
     }
     mayUpdateModPresetData(platform, SET_BY.watch, modName, modInfo);
   } catch (err: any) {
-    sdkCtx.reporter.reportError(err.stack, 'err-handle-hel-mod-changed');
+    const { reporter } = getGlobalConfig();
+    reporter.reportError({ message: err.stack, desc: 'err-handle-hel-mod-changed', platform });
     const errMsg = err.message;
     log({ subType: 'handleHelModChanged', desc: 'err occurred', data: { modName, errMsg, platform } });
   }
@@ -162,7 +166,8 @@ export async function mayUpdateModPresetData(platform: string, setBy: string, mo
     }
     await updateModPresetData(sdkCtx.platform, setBy, targetModInfo);
   } catch (err: any) {
-    sdkCtx.reporter.reportError(err.stack, 'err-update-mod-info');
+    const { reporter } = getGlobalConfig();
+    reporter.reportError({ message: err.stack, desc: 'err-update-mod-info', platform });
     const errMsg = err.message;
     log({ subType, desc: 'err occurred', data: { setBy, modName, errMsg, platform } });
   }
@@ -243,7 +248,7 @@ async function updateModPresetData(platform: string, setBy: string, modInfo: IMo
 export async function getModeInfoListForPreloadMode(platform: string, mustBeServerMod?: boolean) {
   const modInfoList = await fetchRegisteredModInfoList(platform);
   modInfoList.forEach((info) => {
-    triggerHook(HOOK_TYPE.onInitialHelMetaFetched, { helModName: info.name, version: info.meta.version.version_tag }, platform);
+    triggerHook(HOOK_TYPE.onInitialHelMetaFetched, { platform, helModName: info.name, version: info.meta.version.version_tag }, platform);
   });
   await Promise.all(modInfoList.map((modInfo) => presetDataMgr.updateForServerFirst(platform, modInfo, { mustBeServerMod })));
   return modInfoList;

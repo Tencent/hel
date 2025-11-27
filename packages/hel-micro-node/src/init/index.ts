@@ -9,11 +9,11 @@ import type {
   IPreloadMiddlewareOptions,
   ISDKGlobalConfig,
 } from '../base/types';
-import { safeGet } from '../base/util';
+import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
 import { mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import { enableIntervalUpdate, getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod } from '../mod-view/cache';
+import { getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod, mayStartupIntervalModUpdate } from '../mod-view/cache';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { HelModViewMiddleware } from './inject';
 
@@ -49,7 +49,16 @@ function initCommon(options: IPreloadMiddlewareOptions, label: string) {
   // 开始监听hel模块变化
   listenHelModChange(platform);
   // 开启定时更新做补偿，内部会自动比较版本避免冗余更新
-  enableIntervalUpdate(platform);
+  mayStartupIntervalModUpdate(platform);
+}
+
+function checkGlobalConfig(config: ISDKGlobalConfig) {
+  if (isSetGlobalConfigCalled) {
+    throw new Error('setGlobalConfig can be called only one time');
+  }
+  if (hasAnyProps(config, ['helModulesDir', 'helProxyFilesDir', 'helLogFilesDir']) && !config.dangerouslySetDirPath) {
+    throw new Error('Cannot change any of these params(helModulesDir helProxyFilesDir helLogFilesDir) without dangerouslySetDirPath=true');
+  }
 }
 
 /** 控制各平台的 setConfig 只能调用一次 */
@@ -74,9 +83,7 @@ let isSetGlobalConfigCalled = false;
  * 针对 sdk 设置一些基础配置项
  */
 export function setGlobalConfig(config: ISDKGlobalConfig) {
-  if (isSetGlobalConfigCalled) {
-    throw new Error('setGlobalConfig can be called only one time');
-  }
+  checkGlobalConfig(config);
   isSetGlobalConfigCalled = true;
   mergeGlobalConfig(config);
 }

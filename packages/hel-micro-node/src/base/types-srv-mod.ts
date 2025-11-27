@@ -462,6 +462,7 @@ export interface INameData {
 }
 
 export interface IOnHelModLoadedParams {
+  platform: string;
   helModName: string;
   helModPath: string;
   /**
@@ -473,11 +474,13 @@ export interface IOnHelModLoadedParams {
 }
 
 export interface IOnInitialVersionFetchedParams {
+  platform: string;
   helModName: string;
   version: string;
 }
 
 export interface IOnMessageReceivedParams {
+  platform: string;
   helModName: string;
   msgType: string;
 }
@@ -508,6 +511,12 @@ export interface IHMNHooks {
   onMessageReceived: (params: IOnMessageReceivedParams) => void;
 }
 
+/** 内部运行的错误报告函数 */
+export interface IReporter {
+  reportError(params: { message: string; desc: string; platform: string }): any;
+  reportInfo(params: { message: string; desc: string; platform: string }): any;
+}
+
 export interface ISDKGlobalBaseConfig {
   /**
    * default: <proj>/node_modules/.hel_modules
@@ -534,7 +543,19 @@ export interface ISDKGlobalBaseConfig {
    * setBaseConfig 调用配置的 hooks
    */
   hooks: IHMNHooks;
+  /**
+   * default: false
+   * true：开启定时器，主动拉取最新版本元数据做更新（如版本一致则不更新）
+   * 对于私有部署 helpack 的场景，不需要开启此功能，helpack 会主动通知各个服务器做微模块版本更新
+   */
+  enableIntervalUpdate: boolean;
+  /**
+   * default: 3 * 60 * 1000
+   * 单位毫秒，默认3分钟的定时间隔
+   */
+  intervalUpdateMs: number;
   shouldAcceptVersion: (params: IShouldAcceptVersionParams) => boolean;
+  reporter: IReporter;
 }
 
 export interface ISDKGlobalConfig extends Partial<Omit<ISDKGlobalBaseConfig, 'hooks' | 'shouldAcceptVersion'>> {
@@ -543,6 +564,13 @@ export interface ISDKGlobalConfig extends Partial<Omit<ISDKGlobalBaseConfig, 'ho
    * 收到新版本变更通知，是否接受该版本
    */
   shouldAcceptVersion?: (params: IShouldAcceptVersionParams) => boolean;
+  /**
+   * default: false
+   * 默认情况下，不接受设置 helModulesDir helProxyFilesDir helLogFilesDir 这些参数，如有特殊场景需要设置，
+   * 需同时设置 dangerouslySetDirPath 为 true，才能使这些目录位置变更生效
+   */
+  dangerouslySetDirPath?: boolean;
+  reporter?: IReporter;
 }
 
 /**

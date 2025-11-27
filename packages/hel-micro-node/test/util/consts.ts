@@ -38,4 +38,5 @@ export const MOD_NPM_NAME = 'hel-hello';
 export const SDK_GLOBAL_CONFIG: IBaseConfig = {
   helModulesDir: HEL_MODULES_DIR,
   helProxyFilesDir: HEL_PROXY_MODULES_DIR,
+  dangerouslySetDirPath: true,
 };

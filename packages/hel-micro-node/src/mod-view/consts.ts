@@ -1,6 +1,3 @@
-/** 3 min */
-export const UPDATE_INTERVAL = 3 * 60 * 1000;
-
 export const STATUS_OK = '0';
 
 /** hel 模块更新来源 */

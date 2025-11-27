@@ -20,6 +20,7 @@ import {
 const baseConfig: IBaseConfig = {
   helModulesDir: HEL_MODULES_DIR,
   helProxyFilesDir: HEL_PROXY_MODULES_DIR,
+  dangerouslySetDirPath: true,
 };
 
 /**

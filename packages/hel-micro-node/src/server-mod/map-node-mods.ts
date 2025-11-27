@@ -44,6 +44,9 @@ function makeMapDetail(): IMapDetail {
   };
 }
 
+/**
+ * 管理 node 模块和 hel 模块的映射关系数据
+ */
 class MapNodeModsManager {
   public nodeName2data: Record<PkgName, INodeModData> = {};
   public mapDetails: Record<Platform, IMapDetail> = { [PLATFORM]: makeMapDetail() };

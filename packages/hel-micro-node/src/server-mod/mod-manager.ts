@@ -663,7 +663,7 @@ class ModManager {
     const isInitialVersion = !modItem.modPath;
     const { helModName, helModPath, helModVer } = this.resolveMod(helModNameOrPath, platform);
     const pkgName = mapNodeModsManager.getNodeModName(helModNameOrPath, platform);
-    triggerHook(HOOK_TYPE.onHelModLoaded, { helModName, helModPath, pkgName, version: helModVer, isInitialVersion }, platform);
+    triggerHook(HOOK_TYPE.onHelModLoaded, { platform, helModName, helModPath, pkgName, version: helModVer, isInitialVersion }, platform);
   }
 
   private getDictKey(platform: string, helModNameOrPath: string) {
