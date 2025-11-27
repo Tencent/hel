@@ -229,10 +229,6 @@ export interface ISDKPlatContext {
   mod2conf: Record<string, IModConf>;
   /** 已注册的所有远程模块名，内部自动通过 mod2conf 计算出来 */
   modNames: string[];
-  reporter: {
-    reportError(message: string, desc: string, operator?: string): string | undefined;
-    reportInfo(message: string, desc: string, operator?: string): string | undefined;
-  };
   getHelRenderParams: (cbParams: { ctx: any; viewPath: string; pageData?: any }) => Promise<{ viewPath: string; pageData?: object }>;
   /**
    * 视图名称和资源名称的映射管理
@@ -285,7 +281,6 @@ export interface ISDKPlatContext {
 
 /** 这些属性在内置对象里是必存在的，但对应用户透传的参数的来说是可选或不用透传的 */
 type ExcludeProps =
-  | 'reporter'
   | 'view2assetName'
   | 'assetNameInfos'
   | 'assetName2view'
@@ -317,10 +312,6 @@ export interface IInitMiddlewareOptions extends Omit<ISDKPlatContext, ExcludePro
   helpackApiUrl?: string;
   /** 用户生产环境值，不透传的话默认采用 process.env.SUMERU_ENV === 'formal' 结果 */
   isProd?: boolean;
-  deps?: {
-    /** 日志上报模块，不透传的话无此功能 */
-    reporter?: ISDKPlatContext['reporter'];
-  };
   mod2conf?: ISDKPlatContext['mod2conf'];
   /**
    * 视图名称和资源名称的映射管理

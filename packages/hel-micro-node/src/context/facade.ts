@@ -39,7 +39,7 @@ export function getCaredModNames(platform: string) {
 /** 获取用户通过 mapNodeMods 记录的模块获取选项配置 */
 export function getMappedModFetchOptions(helModName: string, platform?: string): IFetchModMetaOptions | null {
   const sdkCtx = getSdkCtx(platform);
-  // fetchOptions 在 preloadHelMods 时会从 mapNodeModsManager 里同步到 mod2conf 里，故此处这样获取无问题
+  // fetchOptions 在 preloadHelMods 时会从 mapNodeModsManager 里同步到 mod2conf 里，故此处可获得到
   const { fetchOptions } = sdkCtx.mod2conf[helModName] || {};
 
   return fetchOptions || null;
@@ -54,14 +54,17 @@ export function isModMapped(platform: string, helModOrPath: string) {
   return helModNames.includes(helModName);
 }
 
+/**
+ * 是否接受新版本
+ */
 export function shouldAcceptVersion(params: IShouldAcceptVersionParams) {
   const sdkCtx = getSdkCtx(params.platform);
   if (sdkCtx.shouldAcceptVersion) {
     return sdkCtx.shouldAcceptVersion(params);
   }
-  const sdkConf = getGlobalConfig();
-  if (sdkConf.shouldAcceptVersion) {
-    return sdkConf.shouldAcceptVersion(params);
+  const globalConf = getGlobalConfig();
+  if (globalConf.shouldAcceptVersion) {
+    return globalConf.shouldAcceptVersion(params);
   }
   return true;
 }

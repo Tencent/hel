@@ -15,6 +15,9 @@ export const HELPACK_API_URL = 'https://helmicro.com/openapi/meta';
 
 export const SDK_NAME = 'hel-micro-node';
 
+/** 定时更新的时间间隔，3 min */
+export const UPDATE_INTERVAL = 3 * 60 * 1000;
+
 /** 应用自身数据变化 */
 export const CHANNEL_APP_INFO_CHANGED = 'appInfoChanged';
 

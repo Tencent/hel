@@ -2,16 +2,11 @@ import axios from 'axios';
 import { PLATFORM } from '../base/consts';
 import { writeLog } from '../base/logger';
 import type { IFetchModMetaOptions, IMeta, IModInfo } from '../base/types';
+import { hasProp, hasAllProps } from '../base/util';
 import { getSdkCtx } from '../context';
 import { STATUS_OK } from '../mod-view/consts';
 import { makeModInfo } from './mod-meta-helper';
 import { getRequestMetaUrl } from './mod-meta-url';
-
-const hasProp = Object.prototype.hasOwnProperty;
-
-function has(obj: any, prop: string) {
-  return hasProp.call(obj, prop);
-}
 
 /**
  * 提取 meta 对象，应对多种输入情况并做一定的兼容处理
@@ -29,12 +24,12 @@ function extractMeta(metaWrap: any, helModName: string): IMeta {
   };
 
   // axios response
-  if (has(metaWrap, 'data') && has(metaWrap, 'status') && has(metaWrap, 'statusText') && has(metaWrap, 'config')) {
+  if (hasAllProps(metaWrap, ['data', 'status', 'statusText', 'config'])) {
     if (metaWrap.status !== 200) {
       throw new Error(metaWrap.statusText);
     }
     const userData = metaWrap.data;
-    if (has(userData, 'code')) {
+    if (hasProp(userData, 'code')) {
       // userData 是 helpack 返回数据，结果形如:
       // https://helmicro.com/openapi/meta/remote-react-comps-tpl
       // https://helmicro.com/openapi/meta/hel-demo-lib1-test
@@ -47,7 +42,7 @@ function extractMeta(metaWrap: any, helModName: string): IMeta {
       // 例如来自 unpkg 的返回结果 https://unpkg.com/hel-demo-lib1@0.2.6/hel_dist/hel-meta.json
       assignValue(userData);
     }
-  } else if (has(metaWrap, 'app')) {
+  } else if (hasProp(metaWrap, 'app')) {
     // user specified getMeta return meta directly
     assignValue(metaWrap);
   }

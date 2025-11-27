@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import type { IMeta, IModInfo } from '../base/types';
 import { safeGet } from '../base/util';
 import { getSdkCtx } from '../context/index';
+import { getGlobalConfig } from '../context/global-config';
 import { makeModInfo } from './mod-meta-helper';
 
 const backupModInfos: Record<string, Record<string, IModInfo>> = {};
@@ -17,6 +18,7 @@ function mayInitModBackupData(platform: string) {
   }
 
   const sdkCtx = getSdkCtx(platform);
+  const { reporter } = getGlobalConfig();
   const mayThrowErr = (err: any) => {
     // // 非 preload 模式才需要抛出兜底文件不存在的异常，preload 模式是允许本地无兜底模块配置的
     // if (!sdkCtx.isPreloadMode) {
@@ -41,7 +43,7 @@ function mayInitModBackupData(platform: string) {
       platModInfos[name] = modInfo;
     });
   } catch (err: any) {
-    sdkCtx.reporter.reportError(err.stack, errDesc);
+    reporter.reportError({ message: err.stack, desc: errDesc, platform });
     mayThrowErr(err);
   }
 
@@ -55,7 +57,7 @@ function mayInitModBackupData(platform: string) {
 
   if (noDefaultNames.length) {
     const msg = `these mods(${noDefaultNames}) has no backup hel meta`;
-    sdkCtx.reporter.reportError(msg, errDesc);
+    reporter.reportError({ message: msg, desc: errDesc, platform });
     mayThrowErr(new Error(msg));
   }
 }
