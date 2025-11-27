@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PLATFORM } from '../base/consts';
 import { writeLog } from '../base/logger';
 import type { IFetchModMetaOptions, IMeta, IModInfo } from '../base/types';
-import { hasProp, hasAllProps } from '../base/util';
+import { hasAllProps, hasProp } from '../base/util';
 import { getSdkCtx } from '../context';
 import { STATUS_OK } from '../mod-view/consts';
 import { makeModInfo } from './mod-meta-helper';

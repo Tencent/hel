@@ -22,10 +22,7 @@ const sdkGlobalConfig: ISDKGlobalBaseConfig = {
 };
 
 export function mergeGlobalConfig(config: ISDKGlobalConfig) {
-  const {
-    helModulesDir, helProxyFilesDir, helLogFilesDir, strict = true,
-    hooks = {}, reporter = {}, shouldAcceptVersion,
-  } = config;
+  const { helModulesDir, helProxyFilesDir, helLogFilesDir, strict = true, hooks = {}, reporter = {}, shouldAcceptVersion } = config;
   sdkGlobalConfig.strict = strict;
   maySet(sdkGlobalConfig, 'helProxyFilesDir', helProxyFilesDir);
   maySet(sdkGlobalConfig, 'helLogFilesDir', helLogFilesDir);

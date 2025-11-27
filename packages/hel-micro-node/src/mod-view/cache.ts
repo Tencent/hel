@@ -53,7 +53,7 @@ export function mayStartupIntervalModUpdate(platform: string) {
   const { intervalUpdateMs, enableIntervalUpdate } = getGlobalConfig();
   // jest 单测时为避免如下警告，也会不启动定时器
   // Async callback was not invoked within the 5000 ms timeout specified by jest.setTimeout.Timeout
-  if (!enableIntervalUpdate && isIntervalUpdateCalled || isRunInJest()) {
+  if (!enableIntervalUpdate || isIntervalUpdateCalled || isRunInJest()) {
     return;
   }
 

@@ -513,8 +513,8 @@ export interface IHMNHooks {
 
 /** 内部运行的错误报告函数 */
 export interface IReporter {
-  reportError(params: { message: string, desc: string, platform: string }): any;
-  reportInfo(params: { message: string, desc: string, platform: string }): any;
+  reportError(params: { message: string; desc: string; platform: string }): any;
+  reportInfo(params: { message: string; desc: string; platform: string }): any;
 }
 
 export interface ISDKGlobalBaseConfig {

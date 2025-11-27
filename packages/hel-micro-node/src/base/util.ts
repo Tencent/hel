@@ -7,11 +7,11 @@ export function hasProp(obj: any, prop: string) {
 }
 
 export function hasAnyProps(obj: any, props: string[]) {
-  return props.some(prop => protoHas.call(obj, prop));
+  return props.some((prop) => protoHas.call(obj, prop));
 }
 
 export function hasAllProps(obj: any, props: string[]) {
-  return props.every(prop => protoHas.call(obj, prop));
+  return props.every((prop) => protoHas.call(obj, prop));
 }
 
 export function strItems2Dict<T = any>(strItems: string[], val: T): Record<string, T> {

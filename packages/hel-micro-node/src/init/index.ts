@@ -9,11 +9,11 @@ import type {
   IPreloadMiddlewareOptions,
   ISDKGlobalConfig,
 } from '../base/types';
-import { safeGet, hasAnyProps } from '../base/util';
+import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
 import { mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import { mayStartupIntervalModUpdate, getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod } from '../mod-view/cache';
+import { getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod, mayStartupIntervalModUpdate } from '../mod-view/cache';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { HelModViewMiddleware } from './inject';
 
@@ -56,10 +56,7 @@ function checkGlobalConfig(config: ISDKGlobalConfig) {
   if (isSetGlobalConfigCalled) {
     throw new Error('setGlobalConfig can be called only one time');
   }
-  if (
-    hasAnyProps(config, ['helModulesDir', 'helProxyFilesDir', 'helLogFilesDir'])
-    && !config.dangerouslySetDirPath
-  ) {
+  if (hasAnyProps(config, ['helModulesDir', 'helProxyFilesDir', 'helLogFilesDir']) && !config.dangerouslySetDirPath) {
     throw new Error('Cannot change any of these params(helModulesDir helProxyFilesDir helLogFilesDir) without dangerouslySetDirPath=true');
   }
 }

@@ -2,8 +2,8 @@ import * as fs from 'fs';
 // import { print } from '../base/logger';
 import type { IMeta, IModInfo } from '../base/types';
 import { safeGet } from '../base/util';
-import { getSdkCtx } from '../context/index';
 import { getGlobalConfig } from '../context/global-config';
+import { getSdkCtx } from '../context/index';
 import { makeModInfo } from './mod-meta-helper';
 
 const backupModInfos: Record<string, Record<string, IModInfo>> = {};

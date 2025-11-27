@@ -2,8 +2,8 @@ import { CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED, HOOK_TYPE } from
 import { SOCKET_MSG_TYPE } from '../base/mod-consts';
 import { getSdkCtx } from '../context';
 import { getCaredModNames } from '../context/facade';
-import { triggerHook } from '../context/hooks';
 import { getGlobalConfig } from '../context/global-config';
+import { triggerHook } from '../context/hooks';
 import { WSAutoReconnectClient } from '../socket/client';
 import { isRunInJest } from '../test-util/jest-env';
 
