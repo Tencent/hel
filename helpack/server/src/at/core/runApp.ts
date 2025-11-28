@@ -4,6 +4,8 @@ import debugMod from 'debug';
 import http from 'http';
 import { initSocketServer } from 'services/hel-micro-socket';
 import { HMNStatSrv } from 'services/hmn-stat';
+import { isLocal, isSimpleServer } from 'at/utils/deploy';
+import * as localCtrl from 'controllers/local';
 
 const debug = debugMod('manager:server');
 /** Get port from environment and store in Express. */
@@ -17,7 +19,7 @@ const server = http.createServer(app);
 // 启动 ws 服务，记录和 hel-micro-node 客户端的长连接关系
 initSocketServer({
   server,
-  onClientClose: HMNStatSrv.handleClientClose,
+  onClientClose: isLocal() ? localCtrl.hmnService.handleClientClose : HMNStatSrv.handleClientClose,
   onHelModsInit: HMNStatSrv.handleHelModsInit,
 });
 

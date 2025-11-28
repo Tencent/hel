@@ -108,10 +108,10 @@ if (isSimpleServer()) {
   // hel-micro-node sdk相关接口
   get('/openapi/v1/hmn/ping', hmn.ping);
   get('/openapi/v1/hmn/getHmnApiParams', hmn.getHmnApiParams);
-  post('/openapi/v1/hmn/reportHelModStat', isLocal() ? localCtrl.app.reportHelModStat : hmn.reportHelModStat);
+  post('/openapi/v1/hmn/reportHelModStat', isLocal() ? localCtrl.hmnService.reportHelModStat : hmn.reportHelModStat);
   // 获取 hmn 相关统计的接口
-  post('/api/v1/hmn/statList', isLocal() ? localCtrl.app.getStatList : hmn.getStatList);
-  post('/api/v1/hmn/statLogList', isLocal() ? localCtrl.app.getStatLogList : hmn.getStatLogList);
+  post('/api/v1/hmn/statList', isLocal() ? localCtrl.hmnService.getStatList : hmn.getStatList);
+  post('/api/v1/hmn/statLogList', isLocal() ? localCtrl.hmnService.getStatLogList : hmn.getStatLogList);
 
   get('/api/v1/app/info/combine3api', appCtrl.combine3api);
   get('/api/v1/app/info/querySubApps', appCtrl.querySubApps);

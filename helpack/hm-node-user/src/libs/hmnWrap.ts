@@ -15,15 +15,60 @@ function getHost() {
       };
 }
 
+/**
+ * 随机生成符合逻辑的容器环境信息
+ */
+ const generateRandomEnvInfo = () => {
+  // 常见的环境名称
+  const envNames = ['prod', 'dev', 'test', 'staging', 'pre'];
+  
+  // 常见的城市列表
+  const cities = ['beijing', 'shanghai', 'guangzhou', 'shenzhen', 'hangzhou', 'tianjing', 'chengdu', 'wuhan'];
+  
+  // 常见的镜像版本号模式
+  const imgVersions = ['1.0.0', '1.2.3', '2.0.1', '2.1.0', '3.0.0', '1.5.2'];
+  
+  // 随机选择环境名称
+  const envName = envNames[Math.floor(Math.random() * envNames.length)];
+  
+  // 随机选择城市
+  const city = cities[Math.floor(Math.random() * cities.length)];
+  
+  // 随机生成IP地址(10.x.x.x私有地址段)
+  const ipPart2 = Math.floor(Math.random() * 255);
+  const ipPart3 = Math.floor(Math.random() * 255);
+  const ipPart4 = Math.floor(Math.random() * 255);
+  const containerIp = `10.${ipPart2}.${ipPart3}.${ipPart4}`;
+  
+  // 随机生成容器名称和Pod名称(模拟真实命名规则)
+  const randomHash1 = Math.random().toString(36).substring(2, 10);
+  const randomHash2 = Math.random().toString(36).substring(2, 10);
+  
+  const containerName = `${randomHash1}.xc.schvsule.xc.schsfdule.ti${Math.floor(Math.random() * 100000000)}`;
+  const podName = `${randomHash2}.xc.schsdfdse.xc.schedsfle.ti${Math.floor(Math.random() * 100000000)}`;
+  
+  // 随机选择镜像版本
+  const imgVersion = imgVersions[Math.floor(Math.random() * imgVersions.length)];
+  
+  return {
+    containerName: containerName,
+    container_ip: containerIp,
+    pod_name: podName,
+    img_version: imgVersion,
+    env_name: envName,
+    city: city
+  };
+};
+
 // 以下所有代码仅是一个实例，可按需改写
 const {
-  DEPLOY_CONTAINER_NAME, // 容器名
-  DEPLOY_ENV, // 环境值，线上为 formal
-  DEPLOY_IMAGE_VERSION, // 镜像版本
-  DEPLOY_COA_POD, // 节点名
+  DEPLOY_CONTAINER_NAME = generateRandomEnvInfo().containerName, // 容器名
+  DEPLOY_ENV = generateRandomEnvInfo().env_name , // 环境值，线上为 formal
+  DEPLOY_IMAGE_VERSION = generateRandomEnvInfo().img_version, // 镜像版本
+  DEPLOY_COA_POD = generateRandomEnvInfo().pod_name, // 节点名
   WORKER_ID,
-  HOST_IP, // 容器IP
-  DEPLOY_CITY, // 容器主机所在城市
+  HOST_IP = generateRandomEnvInfo().container_ip, // 容器IP
+  DEPLOY_CITY = generateRandomEnvInfo().city, // 容器主机所在城市
   NODE_APP_INSTANCE,
 } = process.env;
 
@@ -40,7 +85,7 @@ function getEnvInfo() {
     containerIP: HOST_IP || '',
     podName: DEPLOY_COA_POD || '',
     imgVersion: DEPLOY_IMAGE_VERSION || '',
-    envName: DEPLOY_ENV || '',
+    envName: DEPLOY_ENV ||'',
   };
 }
 

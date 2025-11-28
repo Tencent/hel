@@ -8,13 +8,12 @@ import { assignNameAndVerToQuery, toVersionIndex } from 'controllers/share/versi
 import { notifySDKMetaChanged } from 'services/hel-micro-socket';
 import appJson from './app.json';
 import appVersion from './appVersion.json';
+import type { IEnvInfo, IOnClientCloseParams, IOnHelModsInitParams } from 'services/hel-micro-socket/types';
+import { lockLogicBool } from 'controllers/share/lock';
+import { initModels } from 'at/models';
 
 // 本地环境的内存缓存：存储更新后的应用信息
 const localAppCache = new Map<string, SubAppInfo>();
-
-// 本地环境的HMN统计数据模拟缓存
-const localHMNStatData = new Map<string, any[]>();
-const localHMNStatLogData = new Map<string, any[]>();
 
 /**
  * 获取子应用列表(get, post都支持)
@@ -318,121 +317,4 @@ export const getMeta: TController = async (ctx) => {
   assignNameAndVerToQuery(ctx);
   const meta = await getSubAppAndItsVersion(ctx);
   return meta;
-};
-// ==================== 本地环境下的HMN功能模拟 ====================
-/**
- * 本地环境下模拟获取统计列表
- */
-export const getStatList: TController = async (ctx) => {
-  console.log('[Local Mode] getStatList called with body:', ctx.body);
-
-  const { name, page = 0, size = 10 } = ctx.body;
-
-  // 如果还没有该应用的数据，则初始化
-  if (!localHMNStatData.has(name)) {
-    localHMNStatData.set(name, []);
-  }
-
-  const statData = localHMNStatData.get(name) || [];
-
-  // 分页处理
-  const startIndex = page * size;
-  const endIndex = startIndex + size;
-  const rows = statData.slice(startIndex, endIndex);
-  const count = statData.length;
-
-  console.log(`[Local Mode] Returning ${rows.length} stats for ${name}, total: ${count}`);
-  return { list: rows, count };
-};
-/**
- * 本地环境下模拟获取统计日志列表
- */
-export const getStatLogList: TController = async (ctx) => {
-  console.log('[Local Mode] getStatLogList called with body:', ctx.body);
-
-  const { name, page = 0, size = 10 } = ctx.body;
-
-  // 如果还没有该应用的日志数据，则初始化
-  if (!localHMNStatLogData.has(name)) {
-    localHMNStatLogData.set(name, []);
-  }
-
-  const logData = localHMNStatLogData.get(name) || [];
-
-  // 分页处理
-  const startIndex = page * size;
-  const endIndex = startIndex + size;
-  const rows = logData.slice(startIndex, endIndex);
-  const count = logData.length;
-
-  console.log(`[Local Mode] Returning ${rows.length} logs for ${name}, total: ${count}`);
-  return { list: rows, count };
-};
-/**
- * 本地环境下模拟上报统计信息
- */
-export const reportHelModStat: TController<any, any, any> = async (ctx) => {
-  console.log('[Local Mode] reportHelModStat called with body:', ctx.body);
-
-  const { body } = ctx;
-  // 兼容实际传输的数据格式
-  const mod_name = body.modName || body.mod_name;
-  const modVersion = body.modVersion || body.mod_version;
-  const loadAt = body.loadAt || body.load_at;
-  const envInfo = body.envInfo || body.env_info || {};
-
-  try {
-    // 验证必要字段
-    if (!mod_name) {
-      console.error('[Local Mode] Missing modName in report data');
-      return false;
-    }
-
-    // 获取现有统计数据
-    if (!localHMNStatData.has(mod_name)) {
-      localHMNStatData.set(mod_name, []);
-    }
-
-    const statData = localHMNStatData.get(mod_name) || [];
-
-    // 添加新的统计数据
-    const newStat = {
-      id: statData.length + 1,
-      mod_name,
-      mod_version: modVersion,
-      load_at: loadAt,
-      env_info: envInfo,
-      user_id: envInfo.workerId || 'unknown',
-      created_at: new Date(),
-    };
-
-    statData.push(newStat);
-    localHMNStatData.set(mod_name, statData);
-
-    // 同时记录日志
-    if (!localHMNStatLogData.has(mod_name)) {
-      localHMNStatLogData.set(mod_name, []);
-    }
-
-    const logData = localHMNStatLogData.get(mod_name) || [];
-    const newLog = {
-      id: logData.length + 1,
-      mod_name,
-      mod_version: modVersion,
-      user_id: envInfo.workerId || 'unknown',
-      action: 'report',
-      load_at: loadAt,
-      env_info: envInfo,
-      created_at: new Date(),
-    };
-
-    logData.push(newLog);
-    localHMNStatLogData.set(mod_name, logData);
-
-    console.log('[Local Mode] Report saved:', newStat);
-    return true;
-  } catch (err) {
-    console.error('[Local Mode] Error in reportHelModStat:', err);
-    return false;
-  }
 };
