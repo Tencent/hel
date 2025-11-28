@@ -1,14 +1,51 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
-const path = require('path');
 const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
 const { noDupPushWithCb, noDupPush } = require('./arr');
 const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
-// const { helMonoLog } = require('./log');
 const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getMonoRootInfo } = require('./rootInfo');
+
+function getNmPkgJsonByErr(err, allowInvalidName = true) {
+  const mayThrowErr = () => {
+    if (!allowInvalidName) {
+      throw err;
+    }
+    return { pkgJson: {}, isValid: false };
+  };
+
+  const msg = err.message;
+  // Package subpath './package.json' is not defined by "exports" in {this_is_pkg_path}
+  if (msg.includes('./package.json') && msg.includes('exports')) {
+    try {
+      const [, pkgJsonPath] = msg.split(' in ');
+      const pkgJson = require(pkgJsonPath);
+      return { pkgJson, isValid: true };
+    } catch (err) {
+      return mayThrowErr(err);
+    }
+  }
+
+  return mayThrowErr(err);
+}
+
+function getNmPkgJson(nmPkgName, allowInvalidName = true) {
+  try {
+    const pkgJson = require(`${nmPkgName}/package.json`);
+    return { pkgJson, isValid: true };
+  } catch (err) {
+    return getNmPkgJsonByErr(err, allowInvalidName);
+  }
+}
+
+function getPkgData(nmPkgName, allowInvalidName = true) {
+  const { pkgJson, isValid } = getNmPkgJson(nmPkgName, allowInvalidName);
+  const pkgExports = pkgJson.exports || {};
+  const pkgHelEntry = pkgExports['./hel'];
+  return { hasHelExports: !!pkgHelEntry, pkgHel: pkgJson.hel || {}, pkgJson, isValid };
+}
 
 function logMonoDep(isForRootHelDir, options) {
   const { isAllDep, monoDep } = options;
@@ -59,21 +96,14 @@ function getMonoAppDepDataImpl(options) {
   const nmL1ExternalDeps = {}; // 当前大仓所有项目可提取为 external 资源的 node_modules 包名和版本字典
   const nmPkgNames = [];
   const nmLoopDeps = [];
-  const nmPkg2PkgJsonPath = {};
-  const nmPkg2DirPath = {};
-  const nmPkg2NmDirPath = {};
   const nmPkg2HelConf = {};
   // 这些包是非大仓的 hel 包
   const nmHelPkgNames = [];
 
-  const handleNmLoopAssocData = (pkgName, appDirPath) => {
+  const handleNmLoopAssocData = (pkgName) => {
     if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !excludeHelMods.includes(pkgName)) {
       noDupPushWithCb(nmPkgNames, pkgName, () => {
         nmLoopDeps.push(pkgName);
-        // console.log(`appDirPath ${pkgName} ${appDirPath}`);
-        nmPkg2PkgJsonPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/package.json`);
-        nmPkg2DirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}`);
-        nmPkg2NmDirPath[pkgName] = path.join(appDirPath, `./node_modules/${pkgName}/node_modules`);
       });
     }
   };
@@ -100,37 +130,33 @@ function getMonoAppDepDataImpl(options) {
         return;
       }
 
-      handleL1PkgName(pkgName, val);
-      handleNmLoopAssocData(pkgName, appDirPath);
+      const pkgData = getPkgData(pkgName, false);
+      if (pkgData.hasHelExports) {
+        noDupPush(nmHelPkgNames, pkgName);
+        handleNmLoopAssocData(pkgName, appDirPath);
+      } else {
+        handleL1PkgName(pkgName, val);
+      }
     });
   };
 
   const nmPushToDeps = (nmPkgName) => {
-    const pkgJsonPath = nmPkg2PkgJsonPath[nmPkgName];
+    const { isValid, hasHelExports, pkgJson, pkgHel } = getPkgData(nmPkgName, true);
     let depObj = null;
-    try {
-      // TODO 后续优化这里的 npm hel entry 查找过程，
-      // 可在 hel-mono.json 加入白名单什么的，提高查找速度
-      const pkgJson = require(pkgJsonPath);
-      const pkgExports = pkgJson.exports || {};
-      const pkgHelEntry = pkgExports['./hel'];
-      // 包含有 hel 导出
-      if (pkgHelEntry) {
+    if (isValid) {
+      if (hasHelExports) {
         noDupPush(nmHelPkgNames, nmPkgName);
       }
       depObj = pkgJson.dependencies || {};
-      nmPkg2HelConf[nmPkgName] = pkgJson.hel || {};
-    } catch (err) {
-      // helMonoLog(`find npm hel entry fail: ${nmPkgName} `, pkgJsonPath);
+      nmPkg2HelConf[nmPkgName] = pkgHel;
     }
 
     if (!depObj) {
       return;
     }
 
-    const pkgDirPath = nmPkg2DirPath[nmPkgName];
     Object.keys(depObj).forEach((pkgName) => {
-      handleNmLoopAssocData(pkgName, pkgDirPath);
+      handleNmLoopAssocData(pkgName);
     });
   };
 
@@ -160,7 +186,6 @@ function getMonoAppDepDataImpl(options) {
     pkgNames,
     depInfos,
     nmHelPkgNames,
-    nmPkg2PkgJsonPath,
     nmPkg2HelConf,
     nmL1ExternalPkgNames,
     nmL1ExternalDeps,
