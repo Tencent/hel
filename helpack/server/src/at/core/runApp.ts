@@ -1,5 +1,6 @@
 import app from 'at/core/app';
-import { changeIsStartedTrue } from 'at/utils/deploy';
+import { changeIsStartedTrue, isLocal } from 'at/utils/deploy';
+import * as localCtrl from 'controllers/local';
 import debugMod from 'debug';
 import http from 'http';
 import { initSocketServer } from 'services/hel-micro-socket';
@@ -17,7 +18,7 @@ const server = http.createServer(app);
 // 启动 ws 服务，记录和 hel-micro-node 客户端的长连接关系
 initSocketServer({
   server,
-  onClientClose: HMNStatSrv.handleClientClose,
+  onClientClose: isLocal() ? localCtrl.hmnService.handleClientClose : HMNStatSrv.handleClientClose,
   onHelModsInit: HMNStatSrv.handleHelModsInit,
 });
 
