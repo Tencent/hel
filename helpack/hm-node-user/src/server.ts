@@ -17,7 +17,7 @@ export async function startServer() {
       'hel-hello-helpack': {
         // 强制指定此模块来自于 hel 平台
         platform: 'hel',
-        // 指定其元数据请求路径前缀，如不指定具体路径，具体请求路径取决于 mapAndPreload 是由原始库导出的还是封装库导出的
+        // 指定其元数据请求路径前缀，如不指定具体路径，具体请求路径取决于由 mapAndPreload 原始库导出的还是封装库导出的
         helpackApiUrl: 'https://helmicro.com/openapi/meta',
         modShape: { fnKeys: ['hello'] },
       },
