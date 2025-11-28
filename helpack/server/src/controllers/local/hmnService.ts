@@ -1,16 +1,5 @@
-import biz from 'at/configs/biz';
-import { ICuteExpressCtx, TController, TControllerRet } from 'at/types';
-import { appCtrl } from 'at/types/ctrl';
-import { SubAppInfo, SubAppVersion } from 'at/types/domain';
-import { isLocal } from 'at/utils/deploy';
-import { asType } from 'at/utils/type';
-import { assignNameAndVerToQuery, toVersionIndex } from 'controllers/share/version';
-import { notifySDKMetaChanged } from 'services/hel-micro-socket';
-import appJson from './app.json';
-import appVersion from './appVersion.json';
-import type { IEnvInfo, IOnClientCloseParams, IOnHelModsInitParams } from 'services/hel-micro-socket/types';
-import { lockLogicBool } from 'controllers/share/lock';
-import { initModels } from 'at/models';
+import { TController } from 'at/types';
+import type { IOnClientCloseParams } from 'services/hel-micro-socket/types';
 
 // 本地环境的HMN统计数据模拟缓存
 const localHMNStatData = new Map<string, any[]>();
@@ -43,7 +32,6 @@ export const getStatList: TController = async (ctx) => {
  * 本地环境下模拟获取统计日志列表
  */
 export const getStatLogList: TController = async (ctx) => {
-
   console.log('[Local Mode] getStatLogList called with body:', ctx.body);
 
   const { name, page = 0, size = 10 } = ctx.body;
@@ -70,8 +58,6 @@ export const handleClientClose = async (params: IOnClientCloseParams) => {
   localHMNStatLogData.clear();
 };
 
-
-
 /**
  * 本地环境下模拟上报统计信息
  */
@@ -97,7 +83,7 @@ export const reportHelModStat: TController<any, any, any> = async (ctx) => {
     }
 
     const statData = localHMNStatData.get(mod_name) || [];
-    
+
     // 构造新的统计数据
     const newStat = {
       id: statData.length + 1,
@@ -116,9 +102,7 @@ export const reportHelModStat: TController<any, any, any> = async (ctx) => {
     };
 
     // 查找是否有相同的 container_name 记录
-    const existingIndex = statData.findIndex(
-      (stat: any) => stat.container_name === envInfo.containerName
-    );
+    const existingIndex = statData.findIndex((stat: any) => stat.container_name === envInfo.containerName);
 
     if (existingIndex !== -1) {
       // 如果找到相同 container_name 的记录，则替换它
@@ -130,7 +114,7 @@ export const reportHelModStat: TController<any, any, any> = async (ctx) => {
       statData.push(newStat);
       console.log('[Local Mode] Added new stat record for container:', envInfo.containerName);
     }
-    
+
     localHMNStatData.set(mod_name, statData);
 
     // 同时记录日志

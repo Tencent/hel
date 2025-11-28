@@ -8,9 +8,6 @@ import { assignNameAndVerToQuery, toVersionIndex } from 'controllers/share/versi
 import { notifySDKMetaChanged } from 'services/hel-micro-socket';
 import appJson from './app.json';
 import appVersion from './appVersion.json';
-import type { IEnvInfo, IOnClientCloseParams, IOnHelModsInitParams } from 'services/hel-micro-socket/types';
-import { lockLogicBool } from 'controllers/share/lock';
-import { initModels } from 'at/models';
 
 // 本地环境的内存缓存：存储更新后的应用信息
 const localAppCache = new Map<string, SubAppInfo>();
