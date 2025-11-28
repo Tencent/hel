@@ -326,7 +326,7 @@ export const getMeta: TController = async (ctx) => {
 export const getStatList: TController = async (ctx) => {
   console.log('[Local Mode] getStatList called with body:', ctx.body);
 
-  const { name, page = 1, size = 10 } = ctx.body;
+  const { name, page = 0, size = 10 } = ctx.body;
 
   // 如果还没有该应用的数据，则初始化
   if (!localHMNStatData.has(name)) {
@@ -336,7 +336,7 @@ export const getStatList: TController = async (ctx) => {
   const statData = localHMNStatData.get(name) || [];
 
   // 分页处理
-  const startIndex = (page - 1) * size;
+  const startIndex = page * size;
   const endIndex = startIndex + size;
   const rows = statData.slice(startIndex, endIndex);
   const count = statData.length;
@@ -350,7 +350,7 @@ export const getStatList: TController = async (ctx) => {
 export const getStatLogList: TController = async (ctx) => {
   console.log('[Local Mode] getStatLogList called with body:', ctx.body);
 
-  const { name, page = 1, size = 10 } = ctx.body;
+  const { name, page = 0, size = 10 } = ctx.body;
 
   // 如果还没有该应用的日志数据，则初始化
   if (!localHMNStatLogData.has(name)) {
@@ -360,7 +360,7 @@ export const getStatLogList: TController = async (ctx) => {
   const logData = localHMNStatLogData.get(name) || [];
 
   // 分页处理
-  const startIndex = (page - 1) * size;
+  const startIndex = page * size;
   const endIndex = startIndex + size;
   const rows = logData.slice(startIndex, endIndex);
   const count = logData.length;
