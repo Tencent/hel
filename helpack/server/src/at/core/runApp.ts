@@ -1,11 +1,10 @@
 import app from 'at/core/app';
-import { changeIsStartedTrue } from 'at/utils/deploy';
+import { changeIsStartedTrue, isLocal } from 'at/utils/deploy';
+import * as localCtrl from 'controllers/local';
 import debugMod from 'debug';
 import http from 'http';
 import { initSocketServer } from 'services/hel-micro-socket';
 import { HMNStatSrv } from 'services/hmn-stat';
-import { isLocal, isSimpleServer } from 'at/utils/deploy';
-import * as localCtrl from 'controllers/local';
 
 const debug = debugMod('manager:server');
 /** Get port from environment and store in Express. */
