@@ -99,6 +99,11 @@ export interface IHelMonoJsonBase {
    */
   defaultSubModPortStart?: number;
   /**
+   * default: undefined
+   * 执行 pnpm start 时，默认执行的目录，未指定时，尝试查找第一个
+   */
+  defaultAppDir: string;
+  /**
    * default: 'https://unpkg.com'
    * 部署路径，可设置为其他带子路径的域名，例如 https://cdn.jsdelivr.net/npm'、'https://mycdn.com/hel' 等，
    * 最终生成的产物路径形如：'https://mycdn.com/hel/some-lib@some-ver/hel_dist'，
@@ -246,26 +251,40 @@ export interface IHelMonoMod extends IHelMonoModBase {
 
 
 /**
- * 非本大仓的 hel 模块配置
+ * 模块线上运行时的参数配置
  */
-export interface INonRepoHelModConf {
+export interface IHelModRuntimeConf {
   /**
-   * 线上运行时元数据请求前缀，未指定时走 hel-json 顶层 nonRepoHelModBaseConf 预设值
+   * 线上运行时元数据请求前缀，未指定时尝试读 hel-json 顶层 helModRuntimeBaseConf 预设值，再读 sdk 自身的预设值
+   * 仅需定制时才需要配置此项，否则使用默认值就可以了
+   * ```txt
+   * 注意：总是优先考虑使用 helModRuntimeConfs，只会对某个模块有效，此参数会对所有模块有效
+   * ```
    */
   metaApiPrefix?: string;
 }
 
 /**
- * 非大仓的 hel 相关配置参数
+ * 模块线上运行时的一些参数配置集合，支持对当前大仓的或非当前本仓的 hel 模块做配置
  */
-export interface IHelMonoJsonNonRepoParams {
-  nonRepoHelModBaseConf: INonRepoHelModConf;
-  nonRepoHelMods: Record<PkgName, INonRepoHelModConf>;
+export interface IHelMonoJsonRuntimeConf {
+  /**
+   * 对非本大仓的所有 hel 模块有效
+   */
+  helModRuntimeBaseConf: IHelModRuntimeConf;
+  /**
+   * 对本大仓的所有模块 hel 有效
+   */
+  curRepoHelModRuntimeBaseConf: IHelModRuntimeConf;
+  /**
+   * 对具体的 hel 模块有效（不区分是否是本大仓的 hel 模块）
+   */
+  helModRuntimeConfs: Record<PkgName, IHelModRuntimeConf>;
 }
 
 /**
  * 用户可配置的  hel-mono.json 数据，通常是在 pnpm start .init-mono 生成的文件里做修改
  */
-export interface IHelMonoJson extends IHelMonoJsonBase, IHelMonoJsonNonRepoParams {
+export interface IHelMonoJson extends IHelMonoJsonBase, IHelMonoJsonRuntimeConf {
   mods: Record<PkgName, IHelMonoMod>;
 }

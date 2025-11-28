@@ -129,14 +129,17 @@ function inferDevInfo(allowMonoJsonNull) {
     exclude = [],
     platform = devUtils.cst.DEFAULT_PLAT,
     extra = {},
-    nonRepoHelModBaseConf = {},
-    nonRepoHelMods = {},
+    helModRuntimeBaseConf = {},
+    curRepoHelModRuntimeBaseConf = {},
+    helModRuntimeConfs = {},
+    defaultAppDir,
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
   let devInfo = {
-    nonRepoHelModBaseConf,
-    nonRepoHelMods,
+    helModRuntimeBaseConf,
+    curRepoHelModRuntimeBaseConf,
+    helModRuntimeConfs,
     deployPath,
     doc,
     handleDeployPath,
@@ -153,6 +156,7 @@ function inferDevInfo(allowMonoJsonNull) {
     helMicroName,
     helLibProxyName,
     extra,
+    defaultAppDir,
   };
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;

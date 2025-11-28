@@ -127,6 +127,10 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
         if (isNm) {
           monoLog(`found node module ${groupName} compiled with hel mode to run`);
         }
+        // 显示指定了 customMetaUrl 值，才需要显式的把 semverApi 置为 false
+        if (params.customMetaUrl) {
+          params.semverApi = false;
+        }
         return { enable: false, host: '', ...params };
       }
 

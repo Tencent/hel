@@ -5,6 +5,10 @@ const { getMonoRootInfo } = require('./rootInfo');
 const { pickOneDir } = require('./monoPath');
 
 function inferDirFromDevInfo(devInfo, allowEmptyDir) {
+  if (devInfo.defaultAppDir) {
+    return devInfo.defaultAppDir;
+  }
+
   //  执行 pnpm start 时，从目录结构里挑出一个并返回
   const { appsDirs, subModDirs } = getDevInfoDirs(devInfo);
   const { monoRoot } = getMonoRootInfo();

@@ -17,10 +17,15 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { realAppPkgName, isSubMod, appSrcDirPath: appSrc, isForRootHelDir, appPkgName } = appData;
   helMonoLog(`trigger getInjectedDevInfo for ${appPkgName}`);
   const start = Date.now();
-  const { appConfs, devHostname, nonRepoHelModBaseConf, nonRepoHelMods } = devInfo;
+  const { appConfs, devHostname, curRepoHelModRuntimeBaseConf, helModRuntimeBaseConf, helModRuntimeConfs } = devInfo;
   const injectedDevInfo = {
     mods: {},
     devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
+  };
+  const getMetaApiPrefix = (pkgName, isFromNpm) => {
+    const baseConf = isFromNpm ? helModRuntimeBaseConf : curRepoHelModRuntimeBaseConf;
+    const conf = helModRuntimeConfs[pkgName] || {};
+    return conf.metaApiPrefix || baseConf.metaApiPrefix;
   };
 
   const assignMod = (pkgName, isSubMod) => {
@@ -38,6 +43,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
       groupName: hel.appGroupName,
       names: hel.appNames,
       platform: hel.platform,
+      metaApiPrefix: getMetaApiPrefix(pkgName, false),
     });
   };
 
@@ -54,14 +60,13 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {
     const { groupName = nmPkgName, platform } = nmPkg2HelConf[nmPkgName] || {};
-    const nonRepoHelModConf = nonRepoHelMods[nmPkgName] || {};
-    const metaApiPrefix = nonRepoHelModBaseConf.metaApiPrefix || nonRepoHelModConf.metaApiPrefix || '';
     injectedDevInfo.mods[nmPkgName] = purifyUndefined({
       groupName: groupName,
       platform,
       isNm: true,
+      metaApiPrefix: getMetaApiPrefix(nmPkgName, true),
       names: {}, // 避免 devInfo.ts 文件里类型检查报错
-      metaApiPrefix,
+      port: 0, // 避免 devInfo.ts 文件里类型检查报错
     });
   });
 

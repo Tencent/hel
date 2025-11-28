@@ -1,5 +1,5 @@
 import type { ISubAppBuildDesc } from 'hel-dev-utils';
-import type { IHelMonoJsonBase, IHelMonoJsonNonRepoParams, IPkgHelConf, MonoAppConfs } from 'hel-mono-types';
+import type { IHelMonoJsonBase, IHelMonoJsonRuntimeConf, IPkgHelConf, MonoAppConfs } from 'hel-mono-types';
 
 type Dict<T = any> = Record<string, T>;
 
@@ -283,7 +283,7 @@ export interface IMonoDevData {
 /**
  * hel-mono-helper 内部使用的大仓开发信息数据
  */
-export interface IMonoDevInfo extends IHelMonoJsonBase, IHelMonoJsonNonRepoParams, IGetModMonoDataDictResult {
+export interface IMonoDevInfo extends IHelMonoJsonBase, IHelMonoJsonRuntimeConf, IGetModMonoDataDictResult {
   /**
    * 各应用（或子模块）的大仓开发配置
    */
