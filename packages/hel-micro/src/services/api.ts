@@ -215,36 +215,36 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   const isJsonpGet = apiMode !== API_NORMAL_GET;
   let url = '';
   let interfaceName = '';
-  let hasV2Get = false;
+  let isV2Get = false;
   if (!isBatch) {
     const customMetaUrl = getVal('customMetaUrl', '');
     const customMetaJsonpUrl = getVal('customMetaJsonpUrl', '');
     if (customMetaUrl) {
-      url = `${customMetaUrl}/${appName}?`;
+      url = urlVersion ? `${customMetaUrl}/${appName}@${urlVersion}?` : `${customMetaUrl}/${appName}?`;
     } else if (isJsonpGet && customMetaJsonpUrl) {
-      url = `${customMetaJsonpUrl}/${appName}?`;
+      url = urlVersion ? `${customMetaJsonpUrl}/${appName}@${urlVersion}?` : `${customMetaJsonpUrl}/${appName}?`;
     }
 
     if (!url) {
       interfaceName = !isFullVersion ? apiSrvConst.GET_APP_AND_VER : apiSrvConst.GET_APP_AND_FULL_VER;
     } else {
-      hasV2Get = true;
+      isV2Get = true;
     }
   } else {
     interfaceName = !isFullVersion ? apiSrvConst.BATCH_GET_APP_AND_VER : apiSrvConst.BATCH_GET_APP_AND_FULL_VER;
   }
 
-  if (!hasV2Get) {
+  if (!isV2Get) {
     const apiPathOfApp = getVal('apiPathOfApp', helConsts.DEFAULT_API_URL);
     const apiHost = alt.genApiPrefix(platform, loadOptions);
     // 为自定义模块管理台拼接请求链接
     const jsonpMark = isJsonpGet ? JSONP_MARK : '';
     const finalInterfaceName = `${interfaceName}${jsonpMark}`;
     url = `${apiHost}${apiPathOfApp}/${finalInterfaceName}?name=${urlAppName}`;
+    url = inner.appendSearchKV(url, 'version', urlVersion);
   }
 
   url = inner.appendSearchKV(url, 'userName', userName);
-  url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
   url = inner.appendSearchKV(url, 'branch', urlBranchId);
   url = inner.appendSearchKV(url, 'gray', grayVar);
@@ -342,7 +342,7 @@ function extractMetaFromReply(appName: string, inputReply: any) {
  * 获取子应用和它的最新在线版本
  */
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
-  const { versionId, platform, apiMode, loadOptions = {} } = getOptions;
+  const { versionId, branchId, projectId, platform, apiMode, loadOptions = {} } = getOptions;
   const oldFnName = 'getSubAppAndItsVersionFn';
   // core v4.13.0 新增的函数
   const newFnName = 'getMeta';
@@ -366,7 +366,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   // 走用户定义的 getMeta 函数获取数据，用户可在函数里自己预埋的元数据
   if (getMetaFn) {
     const needGrayVer = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions.shouldUseGray);
-    const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
+    const fnParams = { platform, appName, userName, versionId, branchId, projectId, url, needGrayVer, innerRequest };
     log(`[[ ${fnName} ]] fnParams:`, fnParams);
     const data = (await Promise.resolve(getMetaFn(fnParams))) as IHelMeta;
     const meta = extractMetaFromReply(appName, data);

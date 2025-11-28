@@ -106,7 +106,7 @@ export interface IHelMonoJsonBase {
    * ```
    * HEL_APP_HOME_PAGE 优先级高于 HEL_APP_CDN_PATH，2者区别在于：
    * 内部对 HEL_APP_HOME_PAGE 不做任何处理，直接当做 publicUrl 交给构建脚本
-   * 内对会 HEL_APP_CDN_PATH 做包名、版本号拼接操作后作为 publicUrl 交给构建脚本
+   * 内对会把 HEL_APP_CDN_PATH 和包名、版本号做拼接操作后再当作 publicUrl 交给构建脚本
    * ```
    */
   deployPath?: string;
@@ -193,6 +193,10 @@ export interface IMonoInjectedMod {
    * 是来自 node_modules 的 hel 模块
    */
   isNm?: boolean;
+  /**
+   * 线上运行时元数据请求前缀
+   */
+  metaApiPrefix?: string;
 }
 
 
@@ -240,9 +244,28 @@ export interface IHelMonoMod extends IHelMonoModBase {
   port: number;
 }
 
+
+/**
+ * 非本大仓的 hel 模块配置
+ */
+export interface INonRepoHelModConf {
+  /**
+   * 线上运行时元数据请求前缀，未指定时走 hel-json 顶层 nonRepoHelModBaseConf 预设值
+   */
+  metaApiPrefix?: string;
+}
+
+/**
+ * 非大仓的 hel 相关配置参数
+ */
+export interface IHelMonoJsonNonRepoParams {
+  nonRepoHelModBaseConf: INonRepoHelModConf;
+  nonRepoHelMods: Record<PkgName, INonRepoHelModConf>;
+}
+
 /**
  * 用户可配置的  hel-mono.json 数据，通常是在 pnpm start .init-mono 生成的文件里做修改
  */
-export interface IHelMonoJson extends IHelMonoJsonBase {
+export interface IHelMonoJson extends IHelMonoJsonBase, IHelMonoJsonNonRepoParams {
   mods: Record<PkgName, IHelMonoMod>;
 }

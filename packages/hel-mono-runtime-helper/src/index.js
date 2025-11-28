@@ -106,13 +106,14 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
       return { helModNames, helDeps };
     },
     getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
-      const { port = 3000, devHostname = defaultDH, groupName, isNm, platform } = mod;
+      const { port = 3000, devHostname = defaultDH, groupName, isNm, metaApiPrefix, platform } = mod;
       const confKeys = getHelConfKeys(groupName);
       const devUrl = getStorageValue(confKeys.devUrl);
       const params = {
         versionId: getStorageValue(confKeys.versionId) || getSpecifiedVer(helModName, platform),
         branchId: getStorageValue(confKeys.branchId),
         projectId: getStorageValue(confKeys.projectId),
+        customMetaUrl: metaApiPrefix,
       };
 
       if (devUrl) {

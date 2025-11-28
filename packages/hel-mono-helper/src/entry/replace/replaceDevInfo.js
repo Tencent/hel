@@ -17,7 +17,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { realAppPkgName, isSubMod, appSrcDirPath: appSrc, isForRootHelDir, appPkgName } = appData;
   helMonoLog(`trigger getInjectedDevInfo for ${appPkgName}`);
   const start = Date.now();
-  const { appConfs, devHostname } = devInfo;
+  const { appConfs, devHostname, nonRepoHelModBaseConf, nonRepoHelMods } = devInfo;
   const injectedDevInfo = {
     mods: {},
     devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
@@ -54,10 +54,15 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {
     const { groupName = nmPkgName, platform } = nmPkg2HelConf[nmPkgName] || {};
+    const nonRepoHelModConf = nonRepoHelMods[nmPkgName] || {};
+    const metaApiPrefix = nonRepoHelModBaseConf.metaApiPrefix || nonRepoHelModConf.metaApiPrefix || '';
+    (nonRepoHelMods[nmPkgName] || {})
     injectedDevInfo.mods[nmPkgName] = purifyUndefined({
       groupName: groupName,
       platform,
       isNm: true,
+      names: {}, // 避免 devInfo.ts 文件里类型检查报错
+      metaApiPrefix,
     });
   });
 
