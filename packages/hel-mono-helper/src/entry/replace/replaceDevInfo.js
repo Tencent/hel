@@ -56,7 +56,6 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
     const { groupName = nmPkgName, platform } = nmPkg2HelConf[nmPkgName] || {};
     const nonRepoHelModConf = nonRepoHelMods[nmPkgName] || {};
     const metaApiPrefix = nonRepoHelModBaseConf.metaApiPrefix || nonRepoHelModConf.metaApiPrefix || '';
-    (nonRepoHelMods[nmPkgName] || {})
     injectedDevInfo.mods[nmPkgName] = purifyUndefined({
       groupName: groupName,
       platform,
