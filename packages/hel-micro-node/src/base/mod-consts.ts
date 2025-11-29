@@ -22,15 +22,25 @@ export const IS_HEL_MOD_PROXY = 1;
 export const NODE_MODULES = 'node_modules';
 
 /**
- * 本地开发时，内部放置hel真实模块的目录名，服务于jest测试，
+ * 本地开发时，内部放置hel真实模块的目录名，次目录仅服务于jest测试（此时还处于源码运行状态），
  * 真实的实际存储位置是 sdk 自身路径往上查找的过程中遇到的第一个 nodule_modules下的 .hel_modules
  */
-export const REAL_MOD_DIR_NAME = 'mod-files';
+export const MOD_FILES_DIR_NAME = 'mod-files';
 
 /**
  * 在 nodule_modules下放置hel真实模块的目录名称
  */
 export const DOT_HEL_MODULES = '.hel_modules';
+
+/**
+ * 在 hel 模块目录下的代理文件目录名
+ */
+export const DOT_PROXY_DIR = '.proxy';
+
+/**
+ * 在 hel 模块目录下的运行日志文件目录名
+ */
+export const DOT_HEL_LOG_DIR = '.log';
 
 /**
  * 本地开发时，内部放置hel代理模块的目录名，服务于jest测试，
@@ -40,7 +50,7 @@ export const PROXY_MOD_DIR_NAME = 'proxy-mod';
 /**
  * server 模块根目录位置
  */
-export const MOD_FILES_DIR = path.join(__dirname, `../${REAL_MOD_DIR_NAME}`);
+export const MOD_FILES_PATH = path.join(__dirname, `../${MOD_FILES_DIR_NAME}`);
 
 /**
  * 模块对应的本地存储的最大版本数量

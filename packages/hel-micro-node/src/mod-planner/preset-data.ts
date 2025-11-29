@@ -1,13 +1,13 @@
-import { CTX_ENV } from '../base/consts';
 import type { IMeta, IModInfo } from '../base/types';
 import type { IInnerImportModByMetaOptions, IInnerImportModByMetaSyncOptions } from '../base/types-srv-mod';
 import { uniqueStrPush, xssFilter } from '../base/util';
 import { getSdkCtx } from '../context';
-import { getEnsuredModConf, getModDerivedConf, isModMapped, shouldAcceptVersion } from '../context/facade';
+import { getEnsuredModConf, isModMapped, shouldAcceptVersion } from '../context/facade';
+import { getGlobalConfig } from '../context/global-config';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { modManager } from '../server-mod/mod-manager';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
-import { checkServerModFile, log } from './preset-data-helper';
+import { checkServerModFile, log, updatePageAssetCache } from './preset-data-helper';
 
 type AssetMap = Record<string, { css: string; js: string } | null>;
 
@@ -29,7 +29,7 @@ interface IUpdateServerModSyncOptions {
 export class PresetData {
   public modInfoCache: Record<string, IModInfo> = {};
 
-  /** 元数据缓存 */
+  /** 可下发到首页的 hel 元数据缓存 */
   public metaCache: Record<string, IMeta> = {};
 
   /** 已生成的元数据字符串 */
@@ -60,7 +60,7 @@ export class PresetData {
   public allowOldVer = false;
 
   constructor(allowOldVer?: boolean) {
-    const defaultAllow = !CTX_ENV.isProd;
+    const defaultAllow = !getGlobalConfig().isProd;
     this.allowOldVer = allowOldVer ?? defaultAllow;
   }
 
@@ -79,7 +79,7 @@ export class PresetData {
   }
 
   /**
-   * 优先更新服务端模块数据，服务于 preloadMiddleware 异步流程，此模式下优先更新服务端模块（如存在），
+   * 优先更新服务端模块数据，服务于 mapAndPreload、 preloadMiddleware 异步流程，此模式下优先更新服务端模块（如存在），
    * 更新成功后再更新客户端模块数据（预埋在首页里下发给前端hel-micro sdk使用的相关hel数据），
    * 适用于需要前后端模块版本强一致的场景
    */
@@ -154,9 +154,6 @@ export class PresetData {
     if (updatePresetMeta) {
       this.updatePresetHelMetaStr(modInfo);
     }
-    if (updatePageAsset) {
-      this.updatePageAssetCache(modInfo);
-    }
     if (extractCssStr) {
       this.updatePresetCssLinkStr(modInfo);
     }
@@ -165,6 +162,9 @@ export class PresetData {
     }
     if (isPreloadJs) {
       this.updatePreloadJsStr(modInfo);
+    }
+    if (updatePageAsset) {
+      updatePageAssetCache(modInfo);
     }
   }
 
@@ -228,10 +228,10 @@ export class PresetData {
   private canUseNewVersion(platform: string, modInfo: IModInfo, prevModInfo: IModInfo | null) {
     const newMeta = modInfo.fullMeta;
     const data = mapNodeModsManager.getHelModData(modInfo.name, platform);
-    const { nodeModName } = data || {};
-    if (!nodeModName) {
-      return true;
-    }
+    // 取不到 nodeModName 表示这是一个未映射为  node 模块的 hel 模块
+    // 调用 preloadMiddleware 或 initMiddleware 配置 hel 模块时会出现此情况
+    // 表示这种类型的 hel 模块仅用于预埋到首页下发给前端之用，不参与后台运行
+    const { nodeModName = '' } = data || {};
 
     const helModName = modInfo.name;
     const currentMeta = prevModInfo?.fullMeta || null;
@@ -277,26 +277,6 @@ export class PresetData {
     const { metaCache } = this;
     metaCache[modInfo.name] = modInfo.meta;
     this.metaStr = `<script>window.__HEL_PRESET_META__=${JSON.stringify(metaCache)}</script>`;
-  }
-
-  /**
-   * 更新访问页面的资源描述对象
-   */
-  private updatePageAssetCache(modInfo: IModInfo) {
-    const { src_map: srcMap, sub_app_name: curAppName } = modInfo.meta.version;
-    const { chunkCssSrcList, chunkJsSrcList } = srcMap;
-    const { viewAssetCache, entryAssetCache } = this;
-    const { assetNameInfos, assetName2view } = getModDerivedConf();
-
-    assetNameInfos.forEach((nameInfo) => {
-      const { appName, entryName, name } = nameInfo;
-      if (curAppName === appName) {
-        const css = chunkCssSrcList.find((src) => src.includes(`/${entryName}.css`)) || '';
-        const js = chunkJsSrcList.find((src) => src.includes(`/${entryName}.js`)) || '';
-        viewAssetCache[assetName2view[name]] = { js, css };
-        entryAssetCache[name] = { js, css };
-      }
-    });
   }
 
   /**

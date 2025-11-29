@@ -1,7 +1,6 @@
 import { HEL_API_URL, HEL_SDK_SRC, PLATFORM, SDK_NAME } from '../base/consts';
 import type { IAssetNameInfo, IHMNHooks, IPlatformConfig, IPreloadMiddlewareOptions, ISDKPlatContext } from '../base/types';
 import { noop, purify, purifyFn, uniqueStrPush } from '../base/util';
-import { HEL_SOCKET_URL } from '../mod-view/consts';
 
 function getDefaultHooks() {
   return {
@@ -28,7 +27,7 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     isActive,
     helpackApiUrl: HEL_API_URL,
     isApiUrlOverwrite: false,
-    helpackSocketUrl: HEL_SOCKET_URL,
+    helpackSocketUrl: '',
     helSdkSrc: HEL_SDK_SRC,
     helEntrySrc: '',
     mod2conf: {},
@@ -39,7 +38,6 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     view2appName: {},
     careAllModsChange: false,
     isPreloadMode: false,
-    helMetaBackupFilePath: '',
     getHelRenderParams: (cbParams) => Promise.resolve({ viewPath: cbParams.viewPath, pageData: cbParams.pageData }),
     regHooks: getDefaultHooks(),
     bizHooks: getDefaultHooks(),
@@ -73,12 +71,11 @@ export function getSdkCtx(platform = PLATFORM) {
 export function mergeConfig(config: IPlatformConfig) {
   const sdkCtx = getSdkCtx(config.platform);
   // 只提取规定的有效参数
-  const { helpackApiUrl, helpackSocketUrl, careAllModsChange, hooks = {}, helMetaBackupFilePath } = config;
+  const { helpackApiUrl, helpackSocketUrl, careAllModsChange, hooks = {} } = config;
   const toMerge: IPlatformConfig = {
     helpackSocketUrl,
     helpackApiUrl,
     careAllModsChange,
-    helMetaBackupFilePath,
   };
   Object.assign(sdkCtx, purify(toMerge));
   Object.assign(sdkCtx.confHooks, purifyFn(hooks));

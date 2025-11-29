@@ -106,13 +106,14 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
       return { helModNames, helDeps };
     },
     getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
-      const { port = 3000, devHostname = defaultDH, groupName, isNm, platform } = mod;
+      const { port = 3000, devHostname = defaultDH, groupName, isNm, metaApiPrefix, platform } = mod;
       const confKeys = getHelConfKeys(groupName);
       const devUrl = getStorageValue(confKeys.devUrl);
       const params = {
         versionId: getStorageValue(confKeys.versionId) || getSpecifiedVer(helModName, platform),
         branchId: getStorageValue(confKeys.branchId),
         projectId: getStorageValue(confKeys.projectId),
+        customMetaUrl: metaApiPrefix,
       };
 
       if (devUrl) {
@@ -125,6 +126,10 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
       if (!isDev || isStartWithRemoteDeps || isNm) {
         if (isNm) {
           monoLog(`found node module ${groupName} compiled with hel mode to run`);
+        }
+        // 显示指定了 customMetaUrl 值，才需要显式的把 semverApi 置为 false
+        if (params.customMetaUrl) {
+          params.semverApi = false;
         }
         return { enable: false, host: '', ...params };
       }

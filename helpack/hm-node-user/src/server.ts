@@ -5,6 +5,9 @@ export async function startServer() {
   setGlobalConfig({
     // 允许虚拟的 node 模块存在
     strict: false,
+    shouldAcceptVersion(params) {
+      return true;
+    },
   });
 
   try {

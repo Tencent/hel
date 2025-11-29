@@ -1,6 +1,7 @@
 /* @typescript-eslint/no-require-imports */
 /**
- * 此文件仅为了辅助 jest 而存在，被编译为 js 文件后，在运行时被内部的 map-node-mods 模块用作代理文件模板内容输入源，
+ * 此目录仅服务于 jest 测试，
+ * 一旦 src 源码被编译为 js 文件后，用的是模块内容常量作代理文件模板内容输入源，
  * 并根据实际配置情况做相关关键字替换
  */
 import { requireNodeMod } from '../mod-node';

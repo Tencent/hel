@@ -75,11 +75,15 @@ export function xssFilter(input: string) {
   return input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
 
+export function isNullVal(val: any) {
+  return [undefined, null, ''].includes(val);
+}
+
 export function purify<T = any>(raw: object): T {
   const pured = {};
   Object.keys(raw).forEach((key) => {
     const val = raw[key];
-    if (![undefined, null, ''].includes(val)) {
+    if (!isNullVal(val)) {
       pured[key] = val;
     }
   });
@@ -125,7 +129,7 @@ export function safeGet<T = any>(dict: object, key: string, defaultVal: T): T {
 }
 
 export function maySet(dict: object, key: string, val: any) {
-  if (!val) {
+  if (isNullVal(val)) {
     return false;
   }
   dict[key] = val;

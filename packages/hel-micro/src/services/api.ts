@@ -82,6 +82,14 @@ const inner = {
     }
     return newStr;
   },
+  getSemverApiVal(loadOptions: IInnerPreFetchOptions) {
+    let semverApi = loadOptions.semverApi;
+    if (semverApi === undefined) {
+      semverApi = loadOptions.customMetaUrl || loadOptions.customMetaJsonpUrl ? false : true;
+    }
+
+    return semverApi;
+  },
 };
 
 async function executeGet<T extends any = any>(
@@ -215,36 +223,36 @@ export function prepareCustomPlatRequestInfo(appNameOrNames: string | string[], 
   const isJsonpGet = apiMode !== API_NORMAL_GET;
   let url = '';
   let interfaceName = '';
-  let hasV2Get = false;
+  let isV2Get = false;
   if (!isBatch) {
     const customMetaUrl = getVal('customMetaUrl', '');
     const customMetaJsonpUrl = getVal('customMetaJsonpUrl', '');
     if (customMetaUrl) {
-      url = `${customMetaUrl}/${appName}?`;
+      url = urlVersion ? `${customMetaUrl}/${appName}@${urlVersion}?` : `${customMetaUrl}/${appName}?`;
     } else if (isJsonpGet && customMetaJsonpUrl) {
-      url = `${customMetaJsonpUrl}/${appName}?`;
+      url = urlVersion ? `${customMetaJsonpUrl}/${appName}@${urlVersion}?` : `${customMetaJsonpUrl}/${appName}?`;
     }
 
     if (!url) {
       interfaceName = !isFullVersion ? apiSrvConst.GET_APP_AND_VER : apiSrvConst.GET_APP_AND_FULL_VER;
     } else {
-      hasV2Get = true;
+      isV2Get = true;
     }
   } else {
     interfaceName = !isFullVersion ? apiSrvConst.BATCH_GET_APP_AND_VER : apiSrvConst.BATCH_GET_APP_AND_FULL_VER;
   }
 
-  if (!hasV2Get) {
+  if (!isV2Get) {
     const apiPathOfApp = getVal('apiPathOfApp', helConsts.DEFAULT_API_URL);
     const apiHost = alt.genApiPrefix(platform, loadOptions);
     // 为自定义模块管理台拼接请求链接
     const jsonpMark = isJsonpGet ? JSONP_MARK : '';
     const finalInterfaceName = `${interfaceName}${jsonpMark}`;
     url = `${apiHost}${apiPathOfApp}/${finalInterfaceName}?name=${urlAppName}`;
+    url = inner.appendSearchKV(url, 'version', urlVersion);
   }
 
   url = inner.appendSearchKV(url, 'userName', userName);
-  url = inner.appendSearchKV(url, 'version', urlVersion);
   url = inner.appendSearchKV(url, 'projId', urlProjId);
   url = inner.appendSearchKV(url, 'branch', urlBranchId);
   url = inner.appendSearchKV(url, 'gray', grayVar);
@@ -271,11 +279,10 @@ export async function prepareSemverRequestInfo(appName: string, getOptions: IHel
  * 生成请求请求信息
  */
 export async function prepareRequestInfo(appName: string, getOptions: IHelGetOptions) {
-  const { loadOptions } = getOptions;
+  const { loadOptions = {} } = getOptions;
   let userName = '';
   let url = '';
-
-  const semverApi = loadOptions?.semverApi ?? true;
+  const semverApi = inner.getSemverApiVal(loadOptions);
   if (semverApi) {
     url = await prepareSemverRequestInfo(appName, getOptions);
   } else {
@@ -291,7 +298,7 @@ export async function prepareRequestInfo(appName: string, getOptions: IHelGetOpt
  * 准备请求版本数据的 url 链接
  */
 async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOptions) {
-  const { apiMode, appName, isFullVersion = false, semverApi = true, apiPrefix = '', getUrl } = getOptions;
+  const { apiMode, appName, isFullVersion = false, semverApi, customMetaUrl, apiPrefix = '', getUrl } = getOptions;
   const platform = getPlatform(getOptions.platform);
   const apiHost = apiPrefix || alt.getVal(platform, 'apiPrefix');
   const apiSuffix = alt.getVal(platform, 'apiSuffix');
@@ -299,18 +306,23 @@ async function prepareRequestVersionUrl(versionId: string, getOptions: IGetVerOp
   const apiPathOfAppVersion = alt.getVal(platform, 'apiPathOfAppVersion');
 
   let url = '';
-  if (semverApi) {
-    url = await getSemverUrl(apiHost, appName, versionId);
+  const isV2Get = !!customMetaUrl;
+  if (isV2Get) {
+    url = `${customMetaUrl}/${appName}${versionId ? `@${versionId}` : ''}`;
   } else {
-    // 为 hel pack 模块管理台拼接请求链接
-    const jsonpMark = apiMode === API_NORMAL_GET ? '' : JSONP_MARK;
-    const interfaceName = !isFullVersion ? apiSrvConst.GET_APP_VER : apiSrvConst.GET_APP_FULL_VER;
-    const finalInterfaceName = `${interfaceName}${jsonpMark}`;
+    if (semverApi) {
+      url = await getSemverUrl(apiHost, appName, versionId);
+    } else {
+      // 为 hel pack 模块管理台拼接请求链接
+      const jsonpMark = apiMode === API_NORMAL_GET ? '' : JSONP_MARK;
+      const interfaceName = !isFullVersion ? apiSrvConst.GET_APP_VER : apiSrvConst.GET_APP_FULL_VER;
+      const finalInterfaceName = `${interfaceName}${jsonpMark}`;
 
-    const finalApiPath = apiPathOfAppVersion || apiPathOfApp || helConsts.DEFAULT_API_URL;
-    url = `${apiHost}${finalApiPath}/${finalInterfaceName}?ver=${versionId}`;
-    url = inner.appendSearchKV(url, 'name', appName);
-    url = inner.appendSuffix(url, apiSuffix);
+      const finalApiPath = apiPathOfAppVersion || apiPathOfApp || helConsts.DEFAULT_API_URL;
+      url = `${apiHost}${finalApiPath}/${finalInterfaceName}?ver=${versionId}`;
+      url = inner.appendSearchKV(url, 'name', appName);
+      url = inner.appendSuffix(url, apiSuffix);
+    }
   }
 
   url = getUrl?.(url) || url;
@@ -342,7 +354,7 @@ function extractMetaFromReply(appName: string, inputReply: any) {
  * 获取子应用和它的最新在线版本
  */
 export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGetOptions) {
-  const { versionId, platform, apiMode, loadOptions = {} } = getOptions;
+  const { versionId, branchId, projectId, platform, apiMode, loadOptions = {} } = getOptions;
   const oldFnName = 'getSubAppAndItsVersionFn';
   // core v4.13.0 新增的函数
   const newFnName = 'getMeta';
@@ -358,7 +370,8 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   // 内部的请求句柄
   const innerRequest = async (custUrl?: string, custApiMode?: ApiMode) => {
     const metaUrl = custUrl || url;
-    const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi: loadOptions.semverApi });
+    const semverApi = inner.getSemverApiVal(loadOptions);
+    const reply = await executeGet(metaUrl, { apiMode: custApiMode || apiMode, semverApi });
     const meta = extractMetaFromReply(appName, reply);
     return meta;
   };
@@ -366,7 +379,7 @@ export async function getSubAppAndItsVersion(appName: string, getOptions: IHelGe
   // 走用户定义的 getMeta 函数获取数据，用户可在函数里自己预埋的元数据
   if (getMetaFn) {
     const needGrayVer = alt.callFn(platform, 'shouldUseGray', { appName }, loadOptions.shouldUseGray);
-    const fnParams = { platform, appName, userName, versionId, url, needGrayVer, innerRequest };
+    const fnParams = { platform, appName, userName, versionId, branchId, projectId, url, needGrayVer, innerRequest };
     log(`[[ ${fnName} ]] fnParams:`, fnParams);
     const data = (await Promise.resolve(getMetaFn(fnParams))) as IHelMeta;
     const meta = extractMetaFromReply(appName, data);
@@ -391,16 +404,22 @@ export interface IGetVerOptions {
    * 此函数不返回任何值的话会继续使用 innerUrl 来发起请求
    */
   getUrl?: (innerUrl: string) => string | void;
+  /**
+   * 4.14.7 新增，定义 customMetaUrl 后，走新版语义化版本请求链接，例如：定义 https://xx/api/meta
+   * 请求为：https://xx/api/meta/some-app or https://xx/api/meta/some-app@some-ver
+   */
+  customMetaUrl?: string;
 }
 
 /**
  * 获取子应用版本详情
  */
 export async function getSubAppVersion(versionId: string, options: IGetVerOptions) {
-  const { apiMode, isFullVersion = false, semverApi } = options;
+  const { apiMode, isFullVersion = false, semverApi, customMetaUrl } = options;
   const url = await prepareRequestVersionUrl(versionId, options);
+  const semverApiVar = customMetaUrl ? false : semverApi;
 
-  const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, semverApi, onlyVersion: true });
+  const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, semverApi: semverApiVar, onlyVersion: true });
   if (0 !== parseInt(code, 10) || !data) {
     throw new Error(msg || 'ver not found');
   }

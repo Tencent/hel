@@ -198,7 +198,7 @@ export interface IModIns<T extends any = any> {
    */
   mod: T;
   /**
-   * 导出模块完整路径，形如：/path/to/mod-files/v1/xxx.js
+   * 导出模块完整路径，形如：/path/to/node_modules/.hel_modules/some-mod/v1/index.js
    */
   modPath: string;
   /**
@@ -216,9 +216,8 @@ export interface IModIns<T extends any = any> {
   isMainMod: boolean;
   /**
    * 当前版本模块目录根路径，形如：
-   * /path/to/mod-files/v1、
    * /path/to/.hel_modules/hel+xxx/13455443214、
-   * /path/to/.hel_modules/npm+@tencent+some-lib/1.1.0、
+   * /path/to/.hel_modules/@tencent+some-lib/1.1.0、
    */
   modDirPath: string;
   /**
@@ -362,20 +361,19 @@ export interface IModManagerItemBase {
   modVer: string;
   /**
    * 当前模块的在本机磁盘上的根目录路径（含版本号modVer），形如：
-   * /path/xx/mod-files/mod/ver-1
+   * /path/xx/node_modules/.hel_modules/mod/ver-1
    */
   modDirPath: string;
   /**
    * 当前模块的在本机磁盘上的根目录路径（不含版本号），形如：
-   * /path/xx/mod-files/mod
+   * /path/xx/node_modules/.hel_modules/mod
    */
   modRootDirPath: string;
   /**
    * 当前版本的默认导出模块入口文件的完整路径，形如：
-   * /path/xx/mod-files/ver-1/index.js
-   * /path/xx/mod-files/ver-1/a:b:c.js
+   * /path/xx/node_modules/.hel_modules/ver-1/index.js
    * 存在子路径时，且该子路径对应模块就是默认导出模块时，激活的模块路径可能是：
-   * /path/xx/mod-files/ver-1/srv/some-dir/index.js
+   * /path/xx/node_modules/.hel_modules/ver-1/srv/some-dir/index.js
    */
   modPath: string;
   /** 下载次数 */
@@ -486,6 +484,11 @@ export interface IOnMessageReceivedParams {
 }
 
 export interface IShouldAcceptVersionParams {
+  /**
+   * nodeModName 可能为空字符串，
+   * 调用 preloadMiddleware 或 initMiddleware 配置 hel 模块时会出现此情况
+   * 表示这种类型的 hel 模块仅用于预埋到首页下发给前端之用，不参与后台运行
+   */
   nodeModName: string;
   helModName: string;
   platform: string;
@@ -513,9 +516,21 @@ export interface IHMNHooks {
 
 /** 内部运行的错误报告函数 */
 export interface IReporter {
-  reportError(params: { message: string; desc: string; platform: string }): any;
-  reportInfo(params: { message: string; desc: string; platform: string }): any;
+  reportError(params: { message: string; desc: string; data: any }): any;
+  reportInfo(params: { message: string; desc: string; data: any }): any;
 }
+
+export interface IEnvInfo {
+  workerId: string;
+  city: string;
+  containerName: string;
+  containerIP: string;
+  podName: string;
+  imgVersion: string;
+  envName: string;
+}
+
+export type GetEnvInfo = () => IEnvInfo;
 
 export interface ISDKGlobalBaseConfig {
   /**
@@ -556,6 +571,22 @@ export interface ISDKGlobalBaseConfig {
   intervalUpdateMs: number;
   shouldAcceptVersion: (params: IShouldAcceptVersionParams) => boolean;
   reporter: IReporter;
+  /**
+   * 当前运行机器的环境信息，如对应信息无值，返回空字符串即可
+   */
+  getEnvInfo: GetEnvInfo;
+  /**
+   * default: process.env.SUMERU_ENV === 'formal'
+   * 是否是生产环境，建议 setGlobalConfig 时按自己的服务器判断逻辑来写入
+   */
+  isProd: boolean;
+  /**
+   * default: false
+   * 强制使用兜底的 meta json 文件
+   */
+  forceUseMetaBackupFile;
+  /** meta json 文件路径 */
+  metaBackupFilePath: string;
 }
 
 export interface ISDKGlobalConfig extends Partial<Omit<ISDKGlobalBaseConfig, 'hooks' | 'shouldAcceptVersion'>> {
@@ -601,12 +632,10 @@ export interface IPlatformConfig {
   /**
    * default: ''，
    * web-socket 长连接 url，sdk 接收版本变化的消息后，会主动调用 helpackApiUrl 获取到最新版本的 hel 模块元数据
-   * 支持 setConfig 重写，也支持在 beforePreloadOnce （通常服务于给予 hel-micro-node 做二次封装的场景）重写，
+   * 支持通过 setPlatformConfig 重写，也支持在 beforePreloadOnce 重写（基于 hel-micro-node 做二次封装 sdk 的场景），
    * 格式形如： 'ws://localhost:8080', 'ws://123.1.2.101:8080''
    */
   helpackSocketUrl?: string;
-  /** 从 helpack 服务拉取组数据失败时，本地存在的 hel-meta 兜底文件路径 */
-  helMetaBackupFilePath?: string;
   /**
    * 长连接断开后触发此函数重新获取长连接地址，适用于后台集群部署机器扩容或消容时，地址发生变化的情况
    */

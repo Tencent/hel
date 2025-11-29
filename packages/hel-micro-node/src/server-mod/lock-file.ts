@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { SERVER_INFO } from '../base/consts';
-import { rawLog } from '../base/mem-logger';
+import { print } from '../base/logger';
 import { HEL_LOCK_FILE_VALID_TIME_MS, WAIT_INTERVAL_MS } from '../base/mod-consts';
 import { loadJson, wait } from './util';
 
@@ -9,7 +9,7 @@ import { loadJson, wait } from './util';
  * 等待锁文件被创建它的 worker 删除掉
  */
 export async function waitLockFileDeleted(lockFile: string) {
-  rawLog(`[gwmi]: found lock file exist ${lockFile}`);
+  print(`[gwmi]: found lock file exist ${lockFile}`);
   let curWaitTotalMs = 0;
   let lockFileExist = true;
   while (lockFileExist && curWaitTotalMs <= HEL_LOCK_FILE_VALID_TIME_MS) {
@@ -17,9 +17,9 @@ export async function waitLockFileDeleted(lockFile: string) {
     curWaitTotalMs += WAIT_INTERVAL_MS;
     if (!fs.existsSync(lockFile)) {
       lockFileExist = false;
-      rawLog('[gwmi]: found lock file deleted');
+      print('[gwmi]: found lock file deleted');
     } else {
-      rawLog(`[gwmi]: found lock file still exist after ${curWaitTotalMs} ms`);
+      print(`[gwmi]: found lock file still exist after ${curWaitTotalMs} ms`);
     }
   }
 }

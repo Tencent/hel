@@ -32,7 +32,8 @@ function getAppConfsAndMonoDataDict(/** @type {IHelMonoJson} */ monoJson) {
   // const monoJsonPkgNames = Object.keys(mods);
   const repoPkgNames = Object.keys(monoDict);
 
-  // 暂不做动态修复，避免 startEX buildEX 生成的 hel-mono.json 被干扰为错误内容
+  // TODO: 暂不做动态修复，避免 startEX buildEX 生成的 hel-mono.json 被干扰为错误内容
+  // 后续考虑是否真的需要自动修复功能
   // const invalidPkgNames = monoJsonPkgNames.filter((v) => !repoPkgNames.includes(v));
   // if (invalidPkgNames.length) {
   //   console.log(`Found invalid package names(${invalidPkgNames}) in hel-mono.json, mono-helper start to delete them ...`);
@@ -128,10 +129,17 @@ function inferDevInfo(allowMonoJsonNull) {
     exclude = [],
     platform = devUtils.cst.DEFAULT_PLAT,
     extra = {},
+    helModRuntimeBaseConf = {},
+    curRepoHelModRuntimeBaseConf = {},
+    helModRuntimeConfs = {},
+    defaultAppDir,
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
   let devInfo = {
+    helModRuntimeBaseConf,
+    curRepoHelModRuntimeBaseConf,
+    helModRuntimeConfs,
     deployPath,
     doc,
     handleDeployPath,
@@ -148,6 +156,7 @@ function inferDevInfo(allowMonoJsonNull) {
     helMicroName,
     helLibProxyName,
     extra,
+    defaultAppDir,
   };
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;

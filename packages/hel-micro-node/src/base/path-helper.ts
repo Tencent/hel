@@ -2,13 +2,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getGlobalConfig } from '../context/global-config';
 import { PLATFORM, SDK_PKG_ROOT } from './consts';
-import { DOT_HEL_MODULES, HEL_DIST, INDEX_JS, MOD_FILES_DIR, NODE_MODULES } from './mod-consts';
+import { DOT_HEL_LOG_DIR, DOT_HEL_MODULES, DOT_PROXY_DIR, HEL_DIST, INDEX_JS, MOD_FILES_PATH, NODE_MODULES } from './mod-consts';
 import type { IFileDownloadInfo, IGetModRootDirDataOptions, IWebFileInfo } from './types';
 import { lastNItem } from './util';
 
-let lockedHelModulesDir = '';
-let lockedHelProxyFilesDir = '';
-let lockedHelLogFilesDir = '';
+const lockedDirPath = {
+  helModules: '',
+  proxyFiles: '',
+  helLogFiles: '',
+};
 
 /**
  * 获取 sdk 所属的 node_modules 下的 .hel_modules 目录名
@@ -17,8 +19,6 @@ function getDotHelModulesPath() {
   const list = SDK_PKG_ROOT.split(path.sep);
   const lastIdx = list.length - 1;
   let nodeModulesIdx = -1;
-  // node_modules 目录路径
-  let nodeModulesPath = '';
   // 往上查找的过程中发现的第一个在旁边存在的 node_modules 目录
   // 例如 /path/to/test/hel-micro-node 可能有一个 /path/to/node_modules 存在
   let firstSideNodeModulesPath = '';
@@ -40,6 +40,8 @@ function getDotHelModulesPath() {
     }
   }
 
+  // node_modules 目录路径
+  let nodeModulesPath = '';
   // 优先采用向上查找过程中自己所属的 node_modules 目录
   if (nodeModulesIdx >= 0) {
     // 注意此处需要刻意 +1，才能让 slice 的末尾包含 node_names
@@ -52,10 +54,21 @@ function getDotHelModulesPath() {
   return dotHelModulesPath;
 }
 
-function ensureDirExist(dirPath: string) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
+function writeHelModulesReadmeContent(helModulesDirPath: string) {
+  const readmeFile = path.join(helModulesDirPath, './README.txt');
+  const starMe = 'star it(https://github.com/Tencent/hel) if you like our open source works.';
+  let hint = `Thank you for using hel-micro-node sdk ^_^, ${starMe}\n`;
+  hint += 'Hel-micro-node will use below directory to store downloaded files!\n';
+  hint += `${helModulesDirPath}\n`;
+  fs.writeFileSync(readmeFile, hint, { encoding: 'utf8' });
+}
+
+function ensureDirExist(dirPath: string, afterDirMake?: () => void) {
+  if (fs.existsSync(dirPath)) {
+    return;
   }
+  fs.mkdirSync(dirPath, { recursive: true });
+  afterDirMake?.();
 }
 
 export function resolveNodeModPath(nodeModNameOrPath: string, allowNull?: boolean): string {
@@ -73,26 +86,18 @@ export function resolveNodeModPath(nodeModNameOrPath: string, allowNull?: boolea
  * 获取 sdk 当前运行时去读取 hel 模块的目录路径
  */
 export function getHelModulesPath() {
-  if (!lockedHelModulesDir) {
-    lockedHelModulesDir = getGlobalConfig().helModulesDir;
-    // 一旦有文件在 mod-files 下载完毕，就会忽略用户的 helModulesDir 设定值
-    // 故该参数需要尽可能的早（ 通常可在应用程序的入口处设置 ）的通过 setConfig 设置
-    if (!lockedHelModulesDir) {
-      const dotHelModulesPath = getDotHelModulesPath();
-      lockedHelModulesDir = dotHelModulesPath || MOD_FILES_DIR;
-    }
-    if (!fs.existsSync(lockedHelModulesDir)) {
-      fs.mkdirSync(lockedHelModulesDir, { recursive: true });
-      const readmeFile = path.join(lockedHelModulesDir, './README.txt');
-      const starMe = 'star it(https://github.com/Tencent/hel) if you like our open source works.';
-      let hint = `Thank you for using hel-micro-node sdk ^_^, ${starMe}\n`;
-      hint += 'Hel-micro-node will use below directory to store downloaded files!\n';
-      hint += `${lockedHelModulesDir}\n`;
-      fs.writeFileSync(readmeFile, hint, { encoding: 'utf8' });
-    }
+  let dirPath = lockedDirPath.helModules;
+  if (dirPath) {
+    return dirPath;
   }
 
-  return lockedHelModulesDir;
+  // 一旦有文件在hel模块目录下载，就会忽略用户的 helModulesDir 设定值
+  // 故该参数需要尽可能的早（ 通常可在应用程序的入口处设置 ）的通过 setGlobalConfig 设置
+  dirPath = getGlobalConfig().helModulesDir || getDotHelModulesPath() || MOD_FILES_PATH;
+  lockedDirPath.helModules = dirPath;
+  ensureDirExist(dirPath, () => writeHelModulesReadmeContent(dirPath));
+
+  return dirPath;
 }
 
 /**
@@ -117,45 +122,30 @@ export function getDirFileList(dirPath, filePathList: string[] = []) {
  * 获取 hel 代理文件存放目录，如需修改，需尽早应用程序的入口处设置才能生效
  */
 export function getHelProxyFilesDir() {
-  if (lockedHelProxyFilesDir) {
-    return lockedHelProxyFilesDir;
+  let dirPath = lockedDirPath.proxyFiles;
+  if (dirPath) {
+    return dirPath;
   }
+  dirPath = getGlobalConfig().helProxyFilesDir || path.join(getHelModulesPath(), `./${DOT_PROXY_DIR}`);
+  lockedDirPath.proxyFiles = dirPath;
+  ensureDirExist(dirPath);
 
-  const targetDir = getGlobalConfig().helProxyFilesDir;
-  if (targetDir) {
-    lockedHelProxyFilesDir = targetDir;
-  } else {
-    const helModulesDir = getHelModulesPath();
-    const helProxyFilesDir = path.join(helModulesDir, './.proxy');
-    lockedHelProxyFilesDir = helProxyFilesDir;
-  }
-  ensureDirExist(lockedHelProxyFilesDir);
-
-  return lockedHelProxyFilesDir;
+  return dirPath;
 }
 
 /**
  * 获取 hel 运行日志存放目录，如需修改，需尽早应用程序的入口处设置才能生效
  */
 export function getHelLogFilesDir() {
-  if (lockedHelLogFilesDir) {
-    return lockedHelLogFilesDir;
+  let dirPath = lockedDirPath.helLogFiles;
+  if (dirPath) {
+    return dirPath;
   }
+  dirPath = getGlobalConfig().helLogFilesDir || path.join(getHelModulesPath(), `./${DOT_HEL_LOG_DIR}`);
+  lockedDirPath.helLogFiles = dirPath;
+  ensureDirExist(dirPath);
 
-  const targetDir = getGlobalConfig().helLogFilesDir;
-  if (targetDir) {
-    lockedHelLogFilesDir = targetDir;
-    return lockedHelLogFilesDir;
-  }
-
-  const helModulesDir = getHelModulesPath();
-  const helLogFilesDir = path.join(helModulesDir, './.log');
-  lockedHelLogFilesDir = helLogFilesDir;
-  if (!fs.existsSync(lockedHelLogFilesDir)) {
-    fs.mkdirSync(lockedHelLogFilesDir, { recursive: true });
-  }
-
-  return lockedHelLogFilesDir;
+  return dirPath;
 }
 
 /**
@@ -241,13 +231,13 @@ export function getModRootDirData(params: IGetModRootDirDataOptions) {
  *   'https://mat1.gtimg.com/x/y/z/qqnews-pc-dc-test_20250418080738'
  *   'https://mat1.gtimg.com/x/y/z/qqnews-pc-dc-test_20250418080738/srv/static/js/static.js'
  * output:
- *   {relativeDir: 'srv/static/js', fileName: 'static.js'}
+ *   {relativeDir: 'srv/static/js', fileName: 'static.js', ...}
  *
  * input:
  *   'https://mat1.gtimg.com/x/y/z/qqnews-pc-dc-test_20250418080738'
  *   'https://mat1.gtimg.com/x/y/z/qqnews-pc-dc-test_20250418080738/xx/yy-js/static.js'
  * output:
- *   {relativeDir: 'xx/yy-js', fileName: 'static.js'}
+ *   {relativeDir: 'xx/yy-js', fileName: 'static.js', ...}
  */
 export function getFilePathData(webDirPath: string, url: string) {
   let [, relativePathName = ''] = url.split(webDirPath);
@@ -286,7 +276,7 @@ export function getModPathData(webFile: IWebFileInfo) {
   }
 
   if (!urls.length) {
-    throw new Error(`no files for ${name}`);
+    throw new Error(`No files for ${name}`);
   }
 
   const fileDownloadInfos: IFileDownloadInfo[] = [];
@@ -312,7 +302,7 @@ export function getModPathData(webFile: IWebFileInfo) {
       // 用户指定了具体的路径，例如 some-mod/some-path
       // 转为 relPath 是 some-mod/some-path/index.js
       // 运行到这里 relPath 和 fileRelPath 匹配不上
-      throw new Error(`no server mod entry file for ${relPath}`);
+      throw new Error(`No server mod entry file for ${relPath}`);
     }
     // 未指定路径，或指定的路径能匹配上，在这里都当做是默认导出
     modPath = path.join(modDirPath, fileRelPath);
@@ -335,7 +325,7 @@ export function getModPathData(webFile: IWebFileInfo) {
       fileDownloadInfos.push({ url, fileDir: path.join(modDirPath, relativeDir), fileName });
     }
     if (!modRelPath) {
-      throw new Error(`no server mod entry file for ${name}/${relPath}`);
+      throw new Error(`No server mod entry file for ${name}/${relPath}`);
     }
   }
 
