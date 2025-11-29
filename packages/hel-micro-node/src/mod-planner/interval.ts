@@ -1,4 +1,3 @@
-
 import { SET_BY } from '../base/consts';
 import { getGlobalConfig } from '../context/global-config';
 import { isRunInJest } from '../test-util/jest-env';

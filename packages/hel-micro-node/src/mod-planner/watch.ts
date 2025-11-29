@@ -1,16 +1,16 @@
 import { CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED, HOOK_TYPE, SET_BY } from '../base/consts';
-import { SOCKET_MSG_TYPE } from '../base/mod-consts';
 import { recordMemLog, type ILogOptions } from '../base/mem-logger';
+import { SOCKET_MSG_TYPE } from '../base/mod-consts';
 import { getSdkCtx } from '../context';
 import { getCaredModNames, getMappedModFetchOptions } from '../context/facade';
-import { setMetaCache } from '../context/meta-cache';
 import { getGlobalConfig } from '../context/global-config';
 import { triggerHook } from '../context/hooks';
+import { setMetaCache } from '../context/meta-cache';
 import { fetchModInfo } from '../server-mod/mod-meta';
 import { WSAutoReconnectClient } from '../socket/client';
 import { isRunInJest } from '../test-util/jest-env';
-import { getCanFetchNewVersionData } from './facade-helper';
 import { mayUpdateModPresetData } from './facade';
+import { getCanFetchNewVersionData } from './facade-helper';
 
 interface IMsg {
   id: string;
@@ -62,7 +62,6 @@ export async function subHelpackModChange(platform: string, changeCb: (params: {
     getGlobalConfig().reporter.reportError({ message: msg, desc, data: platform });
   }
 }
-
 
 /**
  * 接收到了hel模块元数据变化的消息

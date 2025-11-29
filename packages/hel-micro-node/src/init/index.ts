@@ -16,10 +16,10 @@ import { setMetaCache } from '../context/meta-cache';
 import { getModeInfoListForPreloadMode } from '../mod-planner/facade';
 import { mayStartupIntervalModUpdate } from '../mod-planner/interval';
 import { listenHelModChange } from '../mod-planner/watch';
-import { mayInitModBackupData } from '../server-mod/mod-meta-backup';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
-import { HelModViewMiddleware } from './view-middleware';
+import { mayInitModBackupData } from '../server-mod/mod-meta-backup';
 import { loadInitMiddlewareHelMods } from './util';
+import { HelModViewMiddleware } from './view-middleware';
 
 /** 在中间件生成流程里，此变量用于控制 initCommon 只能调用一次 */
 let isInitCommonCalled = false;

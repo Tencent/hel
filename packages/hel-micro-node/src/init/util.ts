@@ -2,8 +2,8 @@ import { SET_BY } from '../base/consts';
 import type { IModInfo } from '../base/types';
 import { getGlobalConfig } from '../context/global-config';
 import { getSdkCtx } from '../context/index';
-import { markAppDesc } from '../mod-planner/facade-helper';
 import { mayUpdateModPresetData } from '../mod-planner/facade';
+import { markAppDesc } from '../mod-planner/facade-helper';
 import { presetDataMgr } from '../mod-planner/preset-data';
 import { getBackupModInfo, loadMetasFromFile } from '../server-mod/mod-meta-backup';
 
@@ -17,7 +17,6 @@ function updateModPresetDataSync(platform: string, setBy: string, modInfo: IModI
   markAppDesc(setBy, modInfo);
   presetDataMgr.updateForClient(platform, modInfo);
 }
-
 
 /** 标记hel中间件环境变量，方便在下发给前端首页的响应里查看 */
 export function markHelEnv(ctx: any, isGrayVer?: boolean) {

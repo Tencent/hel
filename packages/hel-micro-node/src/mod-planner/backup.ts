@@ -1,12 +1,11 @@
-import * as fs from 'fs';
 import { SET_BY } from '../base/consts';
 import type { IModInfo } from '../base/types';
 import { getGlobalConfig } from '../context/global-config';
 import { getSdkCtx } from '../context/index';
-import { markAppDesc } from './facade-helper';
-import { mayUpdateModPresetData } from './facade';
-import { presetDataMgr } from './preset-data';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
+import { mayUpdateModPresetData } from './facade';
+import { markAppDesc } from './facade-helper';
+import { presetDataMgr } from './preset-data';
 
 /**
  * 同步缓存模块相关预置数据，由 loadBackupHelMod 调用，此场景本地磁盘有备份文件，故可用同步模式来缓存
