@@ -1,5 +1,5 @@
 import { ConcurrencyGuard } from '@tmicro/f-guard';
-import { PLATFORM, setCtxEnv } from '../base/consts';
+import { PLATFORM, HEL_DIR_KEYS } from '../base/consts';
 import type {
   IInitMiddlewareOptions,
   IModConf,
@@ -13,7 +13,12 @@ import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
 import { mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import { getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod, mayStartupIntervalModUpdate } from '../mod-view/cache';
+import {
+  getModeInfoListForPreloadMode,
+  listenHelModChange,
+  loadBackupHelMod,
+  mayStartupIntervalModUpdate,
+} from '../mod-planner/facade';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { HelModViewMiddleware } from './inject';
 
@@ -38,10 +43,7 @@ function initCommon(options: IPreloadMiddlewareOptions, label: string) {
     throw new Error(`initCommon can only been called one time, the second call comes from ${label}!`);
   }
   // 记录是否生产环境值，或将来要扩展记录的其他环境变量
-  const { isProd, platform = PLATFORM } = options;
-  if (!isInitCommonCalled) {
-    setCtxEnv({ isProd });
-  }
+  const { platform = PLATFORM } = options;
   isInitCommonCalled = true;
 
   // 合并用户透传的参数到 sdkCtx 全局对象里
@@ -56,12 +58,12 @@ function checkGlobalConfig(config: ISDKGlobalConfig) {
   if (isSetGlobalConfigCalled) {
     throw new Error('setGlobalConfig can be called only one time');
   }
-  if (hasAnyProps(config, ['helModulesDir', 'helProxyFilesDir', 'helLogFilesDir']) && !config.dangerouslySetDirPath) {
-    throw new Error('Cannot change any of these params(helModulesDir helProxyFilesDir helLogFilesDir) without dangerouslySetDirPath=true');
+  if (hasAnyProps(config, HEL_DIR_KEYS) && !config.dangerouslySetDirPath) {
+    throw new Error(`Cannot change any of these params(${HEL_DIR_KEYS}) without dangerouslySetDirPath=true`);
   }
 }
 
-/** 控制各平台的 setConfig 只能调用一次 */
+/** 控制各平台的 setPlatformConfig 只能调用一次 */
 const isSetPlatformConfigCalledDict: Record<string, boolean> = {};
 
 /**

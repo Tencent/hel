@@ -19,7 +19,7 @@ export interface IInnerOptionsBase {
 
 /**
  * 'ws://localhost:8086'
- * 'ws://hel.testsite.woa.com'
+ * 'ws://your-helpack-ip-or-host'
  */
 export type Url = string;
 

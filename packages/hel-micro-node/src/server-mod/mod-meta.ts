@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { PLATFORM } from '../base/consts';
+import { PLATFORM, STATUS_OK } from '../base/consts';
 import { writeLog } from '../base/logger';
 import type { IFetchModMetaOptions, IMeta, IModInfo } from '../base/types';
 import { hasAllProps, hasProp } from '../base/util';
 import { getSdkCtx } from '../context';
-import { STATUS_OK } from '../mod-view/consts';
 import { makeModInfo } from './mod-meta-helper';
 import { getRequestMetaUrl } from './mod-meta-url';
 

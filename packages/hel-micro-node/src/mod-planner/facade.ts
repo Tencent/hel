@@ -1,4 +1,4 @@
-import { CTX_ENV, HOOK_TYPE, PLATFORM, SERVER_INFO } from '../base/consts';
+import { HOOK_TYPE, PLATFORM, SET_BY } from '../base/consts';
 import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import type { IFetchModMetaOptions, IModInfo } from '../base/types';
 import { getMappedModFetchOptions, isModMapped } from '../context/facade';
@@ -11,14 +11,12 @@ import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { fetchModInfo } from '../server-mod/mod-meta';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
 import { isRunInJest } from '../test-util/jest-env';
-import { SET_BY } from './consts';
+import { getCanFetchNewVersionData, markAppDesc } from './facade-helper';
 import { PresetData, presetDataMgr } from './preset-data';
 import { subHelpackModChange } from './watch';
 
-const { containerName, workerId } = SERVER_INFO;
-
 function log(options: Omit<ILogOptions, 'type'>) {
-  recordMemLog({ ...options, type: 'HelModCache' });
+  recordMemLog({ ...options, type: 'HelModPlanner' });
 }
 
 /** 使用 server 镜像里的数据（来自 server 构建产物里的 hel-meta.json 文件）来生成预置数据，以此作为兜底数据 */
@@ -35,7 +33,7 @@ export function loadBackupHelMod(platform?: string) {
   } catch (err: any) {
     // 允许测试环境运行或本地运行无备份 meta，当没有时会自动拉取最新的 meta 数据，这样可支持用测试环境来运行正式环境构建的镜像
     // 注：正式环境无备份 meta 会报错，这样才能保证线上环境镜像回滚时有稳定的版本最低要求关系存在
-    if (CTX_ENV.isProd) {
+    if (getGlobalConfig().isProd) {
       throw err;
     }
     mayUpdateModPresetData(sdkCtx.platform, SET_BY.init).catch((err) => {
@@ -48,7 +46,7 @@ export function loadBackupHelMod(platform?: string) {
 
 let isIntervalUpdateCalled = false;
 
-/** 开启定时器更新模块缓存，兜底 redis 订阅出问题 */
+/** 在一些环境在长连接不可用时，允许用户开启定时器更新模块缓存 */
 export function mayStartupIntervalModUpdate(platform: string) {
   const { intervalUpdateMs, enableIntervalUpdate } = getGlobalConfig();
   // jest 单测时为避免如下警告，也会不启动定时器
@@ -64,28 +62,6 @@ export function mayStartupIntervalModUpdate(platform: string) {
       reporter.reportError({ message: err.stack, desc: 'err-intervalUpdate', platform });
     });
   }, intervalUpdateMs);
-}
-
-function getCanFetchNewVersionData(platform: string, modName: string) {
-  const fetchOptions = getMappedModFetchOptions(modName, platform);
-  const { ver: userSpecifiedVer } = fetchOptions || {};
-  if (!userSpecifiedVer) {
-    return true;
-  }
-
-  // 指定了版本号，还未拉取数据
-  const cachedModInfo = presetDataMgr.getCachedModInfo(modName);
-  if (!cachedModInfo) {
-    return true;
-  }
-
-  // 如指定了版本号，和已拉取数据的版本号相等，则不用再拉取新版本数据
-  const cachedVer = cachedModInfo.meta.version?.sub_app_version;
-  if (userSpecifiedVer === cachedVer) {
-    return false;
-  }
-
-  return true;
 }
 
 /**
@@ -138,7 +114,7 @@ export async function updateRegisteredModsPresetData(platform: string, setBy: st
 
 /**
  * 更新模块信息对应的预置数据，注：模块必须在映射表里才会去更新
- * 不传递具体名称则更新注册的所有模块
+ * 不传递具体名称则表示更新注册的所有模块
  */
 export async function mayUpdateModPresetData(platform: string, setBy: string, modName?: string, modInfo?: IModInfo) {
   const subType = 'mayUpdateModPresetData';
@@ -184,7 +160,7 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
     const { force, path } = fallback;
     if (force) {
       if (!path) {
-        throw new Error('Set fallback.force true but forget supply path');
+        throw new Error('Set fallback.force as true but forget to supply path');
       }
       importNodeModByPath(nodeModName, path);
       return null;
@@ -206,11 +182,7 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
   return modInfoList;
 }
 
-function markAppDesc(setBy: string, modInfo: IModInfo) {
-  const modInfoVar = modInfo;
-  /** 借用暂无意义的 desc 记录一些信息，setBy 目前有 init timer watch */
-  modInfoVar.meta.app.desc = `set by [${setBy}], from container [${containerName}] worker [${workerId}]`;
-}
+
 
 /**
  * 同步缓存模块相关预置数据，由 loadBackupHelMod 调用，此场景本地磁盘有备份文件，故可用同步模式来缓存

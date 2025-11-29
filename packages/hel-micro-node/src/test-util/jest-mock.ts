@@ -1,11 +1,13 @@
 import { print } from '../base/logger';
-import { rawLog } from '../base/mem-logger';
 import { resolveNodeModPath } from '../base/path-helper';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { isRunInJest } from './jest-env';
 
 const modSetted: Record<string, boolean> = {};
 
+/**
+ * 在 jest 单测里使用了 hel-micro-node 时，先尝试映射为实际模块，失败再映射为虚拟模块
+ */
 function doJestMock(nodeModName: string, mod: any) {
   try {
     // when using jest.doMock(), the module you are trying to mock must actually exist in your project.
@@ -48,6 +50,5 @@ export function maySetToJestMock(platform: string, helModNameOrPath: string, mod
     modSetted[key] = true;
   } catch (err: any) {
     print(err.message);
-    rawLog(err.message);
   }
 }

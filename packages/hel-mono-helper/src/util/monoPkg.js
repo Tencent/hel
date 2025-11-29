@@ -28,9 +28,6 @@ function getMonoAppPkgJsonByCwd(cwd) {
 
 function isEXProject(cwdOrAppSrc) {
   let cwd = cwdOrAppSrc;
-
-  console.log('+++++++ cwdOrAppSrc', cwdOrAppSrc);
-
   if (cwdOrAppSrc.endsWith('/src')) {
     cwd = cwdOrAppSrc.substring(0, cwdOrAppSrc.length - 4);
   }

@@ -1,11 +1,10 @@
-import { SERVER_INFO } from '../base/consts';
+import { getGlobalConfig } from '../context/global-config';
 
-const { env, containerName, workerId } = SERVER_INFO;
-
-/** 标记hel中间件环境变量 */
+/** 标记hel中间件环境变量，方便在下发给前端首页的响应里查看 */
 export function markHelEnv(ctx: any, isGrayVer?: boolean) {
-  // 123env-nodeWorkerId-isGrayUser
-  const mark = `${env}-${containerName}-${workerId}-${isGrayVer ? '1' : '0'}`;
+  const { envName, containerName, workerId } = getGlobalConfig().getEnvInfo();
+  // someEnv-someWorkerId-isGrayUser
+  const mark = `${envName}-${containerName}-${workerId}-${isGrayVer ? '1' : '0'}`;
   ctx.response.set('Hel-Env', mark);
 }
 

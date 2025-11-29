@@ -1,6 +1,3 @@
-import { CTX_ENV } from './consts';
-import { print } from './logger';
-
 interface ILog {
   /** 日志类型 */
   type: string;
@@ -41,13 +38,6 @@ export function recordMemLog(options: ILogOptions) {
   logs.unshift(item);
   if (logs.length > recordLimit) {
     logs.splice(logs.length - 1);
-  }
-}
-
-export function rawLog(...args: any) {
-  if (!CTX_ENV.isProd) {
-    // 处于测试服时，向控制台输出一些原始日志，方便在服务里查看
-    print(...args);
   }
 }
 

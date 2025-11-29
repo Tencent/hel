@@ -15,7 +15,7 @@ import type {
   IResolveModResult,
 } from '../base/types';
 import { IInnerImportModByMetaOptions } from '../base/types-srv-mod';
-import { presetDataMgr } from '../mod-view/preset-data';
+import { presetDataMgr } from '../mod-planner/preset-data';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { modManager } from '../server-mod/mod-manager';
 import { getMetaByImportOptions } from '../server-mod/mod-manager-helper';

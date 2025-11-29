@@ -1,7 +1,6 @@
 import { HEL_API_URL, HEL_SDK_SRC, PLATFORM, SDK_NAME } from '../base/consts';
 import type { IAssetNameInfo, IHMNHooks, IPlatformConfig, IPreloadMiddlewareOptions, ISDKPlatContext } from '../base/types';
 import { noop, purify, purifyFn, uniqueStrPush } from '../base/util';
-import { HEL_SOCKET_URL } from '../mod-view/consts';
 
 function getDefaultHooks() {
   return {
@@ -28,7 +27,7 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     isActive,
     helpackApiUrl: HEL_API_URL,
     isApiUrlOverwrite: false,
-    helpackSocketUrl: HEL_SOCKET_URL,
+    helpackSocketUrl: '',
     helSdkSrc: HEL_SDK_SRC,
     helEntrySrc: '',
     mod2conf: {},

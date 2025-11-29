@@ -185,6 +185,9 @@ export interface IAssetNameInfo {
   name: string;
 }
 
+export type GetHelRenderParams = (cbParams: { ctx: any; viewPath: string; pageData?: any })
+  => Promise<{ viewPath: string; pageData?: object }>;
+
 /**
  * 平台对应的 sdk 上下文，主要包含各种配置项
  */
@@ -229,7 +232,10 @@ export interface ISDKPlatContext {
   mod2conf: Record<string, IModConf>;
   /** 已注册的所有远程模块名，内部自动通过 mod2conf 计算出来 */
   modNames: string[];
-  getHelRenderParams: (cbParams: { ctx: any; viewPath: string; pageData?: any }) => Promise<{ viewPath: string; pageData?: object }>;
+  /**
+   * 用户可自己实现此函数，重写 pageData 生成逻辑
+   */
+  getHelRenderParams: GetHelRenderParams;
   /**
    * 视图名称和资源名称的映射管理
    */
@@ -252,8 +258,8 @@ export interface ISDKPlatContext {
   careAllModsChange: boolean;
   /**
    * default: false，
-   * 是否由 preloadMiddleware 启动 sdk 来生成中间件 ，为 true 的时候 updateModPresetData 会调用 updateForServerFirst，
-   * 表示优先更新可能存在的 server 模块
+   * true: 由 mapAndPreload 来映射模块或由 preloadMiddleware 启动 sdk 来生成中间件，
+   * 此时内部的 updateModPresetData 会调用 updateForServerFirst，表示优先更新可能存在的 server 模块
    */
   isPreloadMode: boolean;
   /**
@@ -310,8 +316,6 @@ export interface IInitMiddlewareOptions extends Omit<ISDKPlatContext, ExcludePro
   helSdkSrc?: string;
   helEntrySrc?: string;
   helpackApiUrl?: string;
-  /** 用户生产环境值，不透传的话默认采用 process.env.SUMERU_ENV === 'formal' 结果 */
-  isProd?: boolean;
   mod2conf?: ISDKPlatContext['mod2conf'];
   /**
    * 视图名称和资源名称的映射管理

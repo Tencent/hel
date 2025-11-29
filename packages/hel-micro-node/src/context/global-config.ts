@@ -1,4 +1,4 @@
-import { UPDATE_INTERVAL } from '../base/consts';
+import { UPDATE_INTERVAL, SERVER_INFO } from '../base/consts';
 import type { ISDKGlobalBaseConfig, ISDKGlobalConfig } from '../base/types';
 import { maySet, maySetFn, noop, purifyFn } from '../base/util';
 
@@ -19,17 +19,24 @@ const sdkGlobalConfig: ISDKGlobalBaseConfig = {
   shouldAcceptVersion: () => true,
   enableIntervalUpdate: false,
   intervalUpdateMs: UPDATE_INTERVAL,
+  getEnvInfo: () => SERVER_INFO,
+  isProd: process.env.SUMERU_ENV === 'formal',
 };
 
 export function mergeGlobalConfig(config: ISDKGlobalConfig) {
-  const { helModulesDir, helProxyFilesDir, helLogFilesDir, strict = true, hooks = {}, reporter = {}, shouldAcceptVersion } = config;
+  const {
+    helModulesDir, helProxyFilesDir, helLogFilesDir, strict = true, hooks = {},
+    reporter = {}, shouldAcceptVersion, getEnvInfo, isProd,
+  } = config;
   sdkGlobalConfig.strict = strict;
-  maySet(sdkGlobalConfig, 'helProxyFilesDir', helProxyFilesDir);
+  maySet(sdkGlobalConfig, 'isProd', isProd);
   maySet(sdkGlobalConfig, 'helLogFilesDir', helLogFilesDir);
+  maySet(sdkGlobalConfig, 'helProxyFilesDir', helProxyFilesDir);
   maySet(sdkGlobalConfig, 'helModulesDir', helModulesDir);
   Object.assign(sdkGlobalConfig.hooks, purifyFn(hooks));
   Object.assign(sdkGlobalConfig.reporter, purifyFn(reporter));
   maySetFn(sdkGlobalConfig, 'shouldAcceptVersion', shouldAcceptVersion);
+  maySetFn(sdkGlobalConfig, 'getEnvInfo', getEnvInfo);
 }
 
 export function getGlobalConfig() {
