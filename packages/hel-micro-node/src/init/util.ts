@@ -40,7 +40,7 @@ export function markHelHit(ctx: any) {
 }
 
 /**
- * 服务于与 initMiddleware 流程，
+ * 服务于 initMiddleware 流程，
  * 使用 server 镜像里的数据（来自 server 构建产物里的 hel-meta.json 文件）来生成 initMiddleware 需要的预置数据
  */
 export function loadInitMiddlewareHelMods(platform?: string) {

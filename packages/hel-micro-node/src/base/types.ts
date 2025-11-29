@@ -192,7 +192,10 @@ export type GetHelRenderParams = (cbParams: {
 }) => Promise<{ viewPath: string; pageData?: object }>;
 
 /**
- * 平台对应的 sdk 上下文，主要包含各种配置项
+ * 平台对应的 sdk 上下文，主要包含各种配置项，里面部分属性专服务于 initMiddleware，
+ * 后续会放出 initMiddleware 的使用场景，如无需要可能会移除这部分属性会移除，
+ * 目前 hmn 大部分使用场景应该只需要服务于mapNodeMods 函数，
+ * 服务于 mapNodeMods 函数的属性已处于问稳定状态，
  */
 export interface ISDKPlatContext {
   platform: string;
@@ -295,7 +298,6 @@ type ExcludeProps =
   | 'mod2conf'
   | 'modNames'
   | 'helpackApiUrl'
-  | 'receiveAllMod'
   | 'platform'
   | 'isActive'
   | 'registrationSource'
