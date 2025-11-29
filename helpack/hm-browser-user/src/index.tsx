@@ -1,15 +1,13 @@
 import { preFetchLib } from 'hel-micro';
 
 async function start() {
-  console.log('REACT_APP_HEL', process.env.REACT_APP_HEL);
-
-  await preFetchLib('@hel-demo/mono-libs', {
-    getMeta: async (params) => {
-      const meta = await params.innerRequest();
-      console.log('meta', meta);
-      return meta;
-    },
-  });
+  if (process.env.REACT_APP_HEL === 'local') {
+    await preFetchLib('@hel-demo/mono-libs', { customMetaUrl: '/openapi/meta' });
+    await import('./loadApp');
+  } else if (process.env.REACT_APP_HEL === 'unpkg') {
+    await preFetchLib('@hel-demo/mono-libs');
+    await import('./loadApp');
+  }
   await import('./loadApp');
 }
 

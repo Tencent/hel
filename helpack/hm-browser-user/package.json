@@ -1,7 +1,7 @@
 {
   "name": "hm-browser-user",
-  "proxy": "http://localhost:7777",
   "version": "0.1.0",
+  "proxy": "http://localhost:7777",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
@@ -66,7 +66,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "start:hel": "cross-env REACT_APP_HEL=1 CONNECT_LOCAL_HELPACK=1 node scripts/start.js",
+    "start:h": "cross-env REACT_APP_HEL=local node scripts/start.js",
+    "start:u": "cross-env REACT_APP_HEL=unpkg node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
@@ -147,6 +148,6 @@
   "devDependencies": {
     "@hel-demo/mono-libs": "^1.0.7",
     "cross-env": "^10.1.0",
-    "hel-micro": "^4.14.2"
+    "hel-micro": "^4.14.7"
   }
 }
