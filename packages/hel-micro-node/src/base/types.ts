@@ -185,8 +185,11 @@ export interface IAssetNameInfo {
   name: string;
 }
 
-export type GetHelRenderParams = (cbParams: { ctx: any; viewPath: string; pageData?: any })
-  => Promise<{ viewPath: string; pageData?: object }>;
+export type GetHelRenderParams = (cbParams: {
+  ctx: any;
+  viewPath: string;
+  pageData?: any;
+}) => Promise<{ viewPath: string; pageData?: object }>;
 
 /**
  * 平台对应的 sdk 上下文，主要包含各种配置项

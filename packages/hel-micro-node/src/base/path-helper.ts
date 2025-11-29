@@ -2,15 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getGlobalConfig } from '../context/global-config';
 import { PLATFORM, SDK_PKG_ROOT } from './consts';
-import {
-  DOT_HEL_MODULES,
-  DOT_PROXY_DIR,
-  DOT_HEL_LOG_DIR,
-  HEL_DIST,
-  INDEX_JS,
-  MOD_FILES_PATH,
-  NODE_MODULES,
-} from './mod-consts';
+import { DOT_HEL_LOG_DIR, DOT_HEL_MODULES, DOT_PROXY_DIR, HEL_DIST, INDEX_JS, MOD_FILES_PATH, NODE_MODULES } from './mod-consts';
 import type { IFileDownloadInfo, IGetModRootDirDataOptions, IWebFileInfo } from './types';
 import { lastNItem } from './util';
 

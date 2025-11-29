@@ -1,4 +1,4 @@
-import { UPDATE_INTERVAL, SERVER_INFO } from '../base/consts';
+import { SERVER_INFO, UPDATE_INTERVAL } from '../base/consts';
 import type { ISDKGlobalBaseConfig, ISDKGlobalConfig } from '../base/types';
 import { maySet, maySetFn, noop, purifyFn } from '../base/util';
 
@@ -25,8 +25,15 @@ const sdkGlobalConfig: ISDKGlobalBaseConfig = {
 
 export function mergeGlobalConfig(config: ISDKGlobalConfig) {
   const {
-    helModulesDir, helProxyFilesDir, helLogFilesDir, strict = true, hooks = {},
-    reporter = {}, shouldAcceptVersion, getEnvInfo, isProd,
+    helModulesDir,
+    helProxyFilesDir,
+    helLogFilesDir,
+    strict = true,
+    hooks = {},
+    reporter = {},
+    shouldAcceptVersion,
+    getEnvInfo,
+    isProd,
   } = config;
   sdkGlobalConfig.strict = strict;
   maySet(sdkGlobalConfig, 'isProd', isProd);

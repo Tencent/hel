@@ -85,11 +85,11 @@ const inner = {
   getSemverApiVal(loadOptions: IInnerPreFetchOptions) {
     let semverApi = loadOptions.semverApi;
     if (semverApi === undefined) {
-      semverApi = (loadOptions.customMetaUrl || loadOptions.customMetaJsonpUrl) ? false : true;
+      semverApi = loadOptions.customMetaUrl || loadOptions.customMetaJsonpUrl ? false : true;
     }
 
     return semverApi;
-  }
+  },
 };
 
 async function executeGet<T extends any = any>(

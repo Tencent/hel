@@ -1,5 +1,5 @@
 import { ConcurrencyGuard } from '@tmicro/f-guard';
-import { PLATFORM, HEL_DIR_KEYS } from '../base/consts';
+import { HEL_DIR_KEYS, PLATFORM } from '../base/consts';
 import type {
   IInitMiddlewareOptions,
   IModConf,
@@ -13,12 +13,7 @@ import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
 import { mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import {
-  getModeInfoListForPreloadMode,
-  listenHelModChange,
-  loadBackupHelMod,
-  mayStartupIntervalModUpdate,
-} from '../mod-planner/facade';
+import { getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod, mayStartupIntervalModUpdate } from '../mod-planner/facade';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { HelModViewMiddleware } from './inject';
 

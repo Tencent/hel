@@ -27,7 +27,6 @@ export function checkServerModFile(modInfo: IModInfo, options: { mustBeServerMod
   return true;
 }
 
-
 /**
  * 更新访问页面的资源描述对象，此更新规则仅适用于前端多页打包且产物入口文件名称和业务模块名称一致的情况，
  * 中间件里可获取到此数据供参考

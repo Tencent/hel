@@ -75,7 +75,6 @@ export function xssFilter(input: string) {
   return input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
 
-
 export function isNullVal(val: any) {
   return [undefined, null, ''].includes(val);
 }

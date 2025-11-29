@@ -182,8 +182,6 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
   return modInfoList;
 }
 
-
-
 /**
  * 同步缓存模块相关预置数据，由 loadBackupHelMod 调用，此场景本地磁盘有备份文件，故可用同步模式来缓存
  */
