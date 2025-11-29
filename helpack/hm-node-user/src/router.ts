@@ -8,6 +8,7 @@ import { hello as h2 } from 'hel-hello-helpack';
 // @ts-ignore this is a non-exist node module, just map it  to local file
 import { hello as h3 } from 'my-mod';
 import { getRouter, restful } from './at/core/routerFactory';
+import * as virtualMod from './controllers/virtualMod';
 import { getNodeModDesc, getNodeModVer, importNodeMod, importNodeModByPath, resolveNodeMod } from './libs/hmn';
 
 restful('/api/hello', () => {
@@ -35,11 +36,7 @@ restful('/api/getModVer', () => {
   return ver;
 });
 
-restful('/api/changeVer/:ver', async (ctx) => {
-  const ver = ctx.req.params.ver || '1.0.0';
-  const { mod } = await importNodeMod('@hel-demo/mono-libs', { ver });
-  return { desc: 'update successfully', fnResult: mod.hello(), staticFnResult: hello() };
-});
+restful('/api/changeVer/:ver', virtualMod.changeVirtualVer);
 
 restful('/api/resolveMod', () => {
   const pathInfo = resolveNodeMod('@hel-demo/mono-libs');
