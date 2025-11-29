@@ -38,7 +38,6 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     view2appName: {},
     careAllModsChange: false,
     isPreloadMode: false,
-    helMetaBackupFilePath: '',
     getHelRenderParams: (cbParams) => Promise.resolve({ viewPath: cbParams.viewPath, pageData: cbParams.pageData }),
     regHooks: getDefaultHooks(),
     bizHooks: getDefaultHooks(),
@@ -72,12 +71,11 @@ export function getSdkCtx(platform = PLATFORM) {
 export function mergeConfig(config: IPlatformConfig) {
   const sdkCtx = getSdkCtx(config.platform);
   // 只提取规定的有效参数
-  const { helpackApiUrl, helpackSocketUrl, careAllModsChange, hooks = {}, helMetaBackupFilePath } = config;
+  const { helpackApiUrl, helpackSocketUrl, careAllModsChange, hooks = {} } = config;
   const toMerge: IPlatformConfig = {
     helpackSocketUrl,
     helpackApiUrl,
     careAllModsChange,
-    helMetaBackupFilePath,
   };
   Object.assign(sdkCtx, purify(toMerge));
   Object.assign(sdkCtx.confHooks, purifyFn(hooks));

@@ -21,6 +21,8 @@ const sdkGlobalConfig: ISDKGlobalBaseConfig = {
   intervalUpdateMs: UPDATE_INTERVAL,
   getEnvInfo: () => SERVER_INFO,
   isProd: process.env.SUMERU_ENV === 'formal',
+  forceUseMetaBackupFile: false,
+  metaBackupFilePath: '',
 };
 
 export function mergeGlobalConfig(config: ISDKGlobalConfig) {

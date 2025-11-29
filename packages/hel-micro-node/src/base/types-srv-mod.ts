@@ -516,8 +516,8 @@ export interface IHMNHooks {
 
 /** 内部运行的错误报告函数 */
 export interface IReporter {
-  reportError(params: { message: string; desc: string; platform: string }): any;
-  reportInfo(params: { message: string; desc: string; platform: string }): any;
+  reportError(params: { message: string; desc: string; data: any }): any;
+  reportInfo(params: { message: string; desc: string; data: any }): any;
 }
 
 export interface IEnvInfo {
@@ -580,6 +580,13 @@ export interface ISDKGlobalBaseConfig {
    * 是否是生产环境，建议 setGlobalConfig 时按自己的服务器判断逻辑来写入
    */
   isProd: boolean;
+  /**
+   * default: false
+   * 强制使用兜底的 meta json 文件
+   */
+  forceUseMetaBackupFile;
+  /** meta json 文件路径 */
+  metaBackupFilePath: string;
 }
 
 export interface ISDKGlobalConfig extends Partial<Omit<ISDKGlobalBaseConfig, 'hooks' | 'shouldAcceptVersion'>> {
@@ -629,8 +636,6 @@ export interface IPlatformConfig {
    * 格式形如： 'ws://localhost:8080', 'ws://123.1.2.101:8080''
    */
   helpackSocketUrl?: string;
-  /** 从 helpack 服务拉取组数据失败时，本地存在的 hel-meta 兜底文件路径 */
-  helMetaBackupFilePath?: string;
   /**
    * 长连接断开后触发此函数重新获取长连接地址，适用于后台集群部署机器扩容或消容时，地址发生变化的情况
    */

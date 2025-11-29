@@ -252,8 +252,6 @@ export interface ISDKPlatContext {
   assetName2view: Record<string, string>;
   /** 视图名称与应用名称映射管理，内部通过 view2assetName 计算出来 */
   view2appName: Record<string, string>;
-  /** 从 helpack 服务拉取组数据失败时，本地存在的 hel-meta 兜底文件路径 */
-  helMetaBackupFilePath: string;
   /**
    * default: false，
    * 为 true 则监听到模块变化时就会向 meta-cache 模块写入数据
@@ -334,7 +332,6 @@ export interface IInitMiddlewareOptions extends Omit<ISDKPlatContext, ExcludePro
 
 type ExcludePreloadProps =
   | 'isApiUrlOverwrite'
-  | 'helMetaBackupFilePath'
   | 'helpackSocketUrl'
   | 'beforePreloadOnce'
   | 'careAllModsChange'
@@ -346,11 +343,6 @@ type ExcludePreloadProps =
   | 'bizHooks'
   | 'confHooks';
 
-/**
- * 对于 preload 流程来说，helMetaBackupFilePath 是非必须的
- */
-export interface IPreloadMiddlewareOptions extends Omit<IInitMiddlewareOptions, ExcludePreloadProps> {
-  helMetaBackupFilePath?: string;
-}
+export type IPreloadMiddlewareOptions = Omit<IInitMiddlewareOptions, ExcludePreloadProps>;
 
 export type THookType = 'onInitialHelMetaFetched' | 'onHelModLoaded' | 'onMessageReceived';

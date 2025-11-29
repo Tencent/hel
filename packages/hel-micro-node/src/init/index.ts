@@ -13,9 +13,13 @@ import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
 import { mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import { getModeInfoListForPreloadMode, listenHelModChange, loadBackupHelMod, mayStartupIntervalModUpdate } from '../mod-planner/facade';
+import { getModeInfoListForPreloadMode } from '../mod-planner/facade';
+import { mayStartupIntervalModUpdate } from '../mod-planner/interval';
+import { listenHelModChange } from '../mod-planner/watch';
+import { mayInitModBackupData } from '../server-mod/mod-meta-backup';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
-import { HelModViewMiddleware } from './inject';
+import { HelModViewMiddleware } from './view-middleware';
+import { loadInitMiddlewareHelMods } from './util';
 
 /** 在中间件生成流程里，此变量用于控制 initCommon 只能调用一次 */
 let isInitCommonCalled = false;
@@ -90,8 +94,8 @@ export function setGlobalConfig(config: ISDKGlobalConfig) {
  * 调用后可通过同步方法 getMiddleware 获取到中间件实例，
  * 注（initMiddleware 和 preloadMiddleware 只能调用其中一个）
  * 推荐该方法调用时机在 server 服务启动之前，这样可保证：
- * 1 项目代码里可安全使用 requireMod 同步方法来获取远程模块；
- * 2 server模块和客户端模块版本是一致的；
+ * 1 项目代码里可安全使用 requireNodeMod 同步方法来获取远程模块；
+ * 2 server模块和浏览器端的模块版本在下发给浏览器端那一刻是一致的；
  */
 export async function preloadMiddleware(options: IPreloadMiddlewareOptions) {
   const sdkCtx = getSdkCtx(options.platform);
@@ -116,7 +120,7 @@ export function getMiddleware() {
 export function initMiddleware(options: IInitMiddlewareOptions) {
   initCommon(options, callLabels.initMiddleware);
   // 载入hel模块兜底配置
-  const modInfoList = loadBackupHelMod(options.platform);
+  const modInfoList = loadInitMiddlewareHelMods(options.platform);
   const helModViewMiddleware = new HelModViewMiddleware();
   return { helModViewMiddleware, modInfoList };
 }
@@ -166,6 +170,7 @@ export async function preloadHelMods(helModNames: string[], inputPlat?: string) 
  * ```
  */
 export async function preloadMappedData() {
+  mayInitModBackupData();
   const plats = mapNodeModsManager.getMappedPlatforms();
   let list: IModInfo[] = [];
 
@@ -185,11 +190,12 @@ export async function preloadMappedData() {
  * 映射并预加载 hel 模块数据， mapAndPreload 合并了 mapNodeMods 和 preloadMappedData 调用
  */
 export async function mapAndPreload(modMapper: INodeModMapper) {
+  mayInitModBackupData();
   mapNodeModsManager.setModMapper(modMapper);
   const helModNameInfos: { helModName: string; platform: string }[] = [];
   const plat2helModNames = {};
   Object.keys(modMapper).forEach((nodeModName) => {
-    const { helModName, platform, fallback } = mapNodeModsManager.getNodeModData(nodeModName);
+    const { helModName, platform } = mapNodeModsManager.getNodeModData(nodeModName);
     const helModNames = safeGet<string[]>(plat2helModNames, platform, []);
     // 多个node模块可以映射到同一个hel模块（基于子路径），故这里要去重
     // 例如: mod1: hel-mod/sub-path1, mod2: hel-mod/sub-path2
