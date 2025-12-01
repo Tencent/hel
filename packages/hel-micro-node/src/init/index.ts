@@ -2,8 +2,8 @@ import { ConcurrencyGuard } from '@tmicro/f-guard';
 import { HEL_DIR_KEYS, PLATFORM } from '../base/consts';
 import type {
   IInitMiddlewareOptions,
-  IModViewConf,
   IModInfo,
+  IModViewConf,
   INodeModMapper,
   IPlatformConfig,
   IPreloadMiddlewareOptions,
@@ -11,7 +11,7 @@ import type {
 } from '../base/types';
 import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
-import { mergeGlobalConfig, markPreloadModeAsTrue } from '../context/global-config';
+import { markPreloadModeAsTrue, mergeGlobalConfig } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
 import { getModeInfoListForPreloadMode } from '../mod-planner/execute';
 import { mayStartupIntervalModUpdate } from '../mod-planner/interval';

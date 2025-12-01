@@ -15,7 +15,7 @@ interface IMsgData {
   /** hel 模块名称 */
   modName: string;
   /** 订阅的消息频道 */
-  channel: string
+  channel: string;
 }
 
 interface IMsg {

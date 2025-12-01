@@ -83,7 +83,7 @@ export class WSAutoReconnectClient {
     id: v7(),
     url: '',
     onConnected: () => '',
-    onMessage: () => { },
+    onMessage: () => {},
     getUrlWhenReconnect: () => Promise.resolve(''),
   };
 
@@ -176,7 +176,7 @@ export class WSAutoReconnectClient {
     client.on(EWSEvent.error, (err: any) => {
       this.handleConnectionFail(err);
     });
-  };
+  }
 
   /**
    * 处理连接已打开事件

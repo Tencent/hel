@@ -6,7 +6,7 @@ import { getEnsuredModConf, isModMapped, shouldAcceptVersion } from '../context/
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { modManager } from '../server-mod/mod-manager';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
-import { checkServerModFile, log, updatePageAssetCache, checkPresetDataInit } from './preset-data-helper';
+import { checkPresetDataInit, checkServerModFile, log, updatePageAssetCache } from './preset-data-helper';
 
 type AssetMap = Record<string, { css: string; js: string } | null>;
 

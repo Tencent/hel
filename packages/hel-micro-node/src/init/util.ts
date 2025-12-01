@@ -3,8 +3,8 @@ import type { IModInfo } from '../base/types';
 import { getGlobalConfig } from '../context/global-config';
 import { getSdkCtx } from '../context/index';
 import { mayUpdateModPresetData } from '../mod-planner/execute';
-import { markAppDesc } from '../mod-planner/util';
 import { presetDataMgr } from '../mod-planner/preset-data';
+import { markAppDesc } from '../mod-planner/util';
 import { getBackupModInfo, loadMetasFromFile } from '../server-mod/mod-meta-backup';
 
 /**

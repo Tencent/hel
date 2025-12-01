@@ -7,9 +7,8 @@ import { getSdkCtx } from '../context/index';
 import { importNodeModByPath } from '../mod-node';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { fetchModInfo } from '../server-mod/mod-meta';
-import { markAppDesc } from './util';
 import { PresetData, presetDataMgr } from './preset-data';
-import { log } from './util';
+import { log, markAppDesc } from './util';
 
 /**
  * 更新平台对应的所有已注册模块对应的预设数据

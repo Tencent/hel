@@ -584,13 +584,12 @@ export interface ISDKBaseGlobalConfig {
   metaBackupFilePath: string;
 }
 
-
 export interface ISDKInnerGlobalConfig extends ISDKBaseGlobalConfig {
   /**
- * default: false，
- * true: 由 mapAndPreload 来映射模块或由 preloadMiddleware 启动 sdk 来生成中间件，
- * 此时内部的 updateModPresetData 会调用 updateForServerFirst，表示优先更新可能存在的 server 模块
- */
+   * default: false，
+   * true: 由 mapAndPreload 来映射模块或由 preloadMiddleware 启动 sdk 来生成中间件，
+   * 此时内部的 updateModPresetData 会调用 updateForServerFirst，表示优先更新可能存在的 server 模块
+   */
   isPreloadMode: boolean;
 }
 

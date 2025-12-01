@@ -1,5 +1,5 @@
 import { SERVER_INFO, UPDATE_INTERVAL } from '../base/consts';
-import type { ISDKInnerGlobalConfig, ISDKGlobalConfig } from '../base/types';
+import type { ISDKGlobalConfig, ISDKInnerGlobalConfig } from '../base/types';
 import { maySet, maySetFn, noop, purifyFn } from '../base/util';
 
 const sdkGlobalConfig: ISDKInnerGlobalConfig = {
