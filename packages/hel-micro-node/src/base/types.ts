@@ -36,8 +36,8 @@ import type {
   IPrepareFilesParams,
   IRegisterPlatformConfig,
   IResolveModResult,
-  ISDKGlobalBaseConfig,
   ISDKGlobalConfig,
+  ISDKInnerGlobalConfig,
   IShouldAcceptVersionParams,
   IStdNodeModMapper,
   IWebFileInfo,
@@ -80,7 +80,7 @@ export type {
   IImportNodeModByPathOptions,
   IImportNodeModByMetaOptions,
   IImportNodeModByMetaSyncOptions,
-  ISDKGlobalBaseConfig,
+  ISDKInnerGlobalConfig,
   IModManagerItemBase,
   IModDesc,
   IModManagerItem,
@@ -122,10 +122,10 @@ export interface IModInfo {
 }
 
 /**
- * 各个模块该如何处理预设元数据（会随首页一起下发到web前端的hel数据）的相关配置，
+ * 如何处理 hel 模块前端视图预设元数据（会随首页一起下发到web前端的hel数据）的相关配置，
  * 服务于 preloadMiddleware 或 initMiddleware 函数的配置项
  */
-export interface IModConf {
+export interface IModViewConf {
   /**
    * default: false
    * 获取到最新的模块元数据时，是否更新 hel 预设元数据，适用于模块粒度的包体
@@ -158,25 +158,12 @@ export interface IModConf {
    */
   isDefaultHelEntry?: boolean;
   /**
-   * 初始模块名称或路径，用于 initMiddleware 流程里的 server 模块兜底，
-   * 执行 preloadMiddleware 时，为保证客户端和服务端版本一致行，此参数不再有效
-   */
-  serverModInitPath?: string;
-  /**
    * 拉取模块参数
    */
   fetchOptions?: IFetchModMetaOptions;
 }
 
-export type ModConfDict = Record<string, IModConf>;
-
-/** 组相关配置 */
-export interface IGroupConfOptions {
-  /** 七彩石组名 */
-  group: string;
-  /** 从七彩石服务拉取组数据失败时，本地存在的组数据兜底文件路径，文件内部为整个 group 数据（包含版本信息等） */
-  backupConfFilePath?: string;
-}
+export type ModViewConfDict = Record<string, IModViewConf>;
 
 export interface IAssetNameInfo {
   appName: string;
@@ -235,7 +222,7 @@ export interface ISDKPlatContext {
   /**
    * hel 模块名和模块配置映射关系
    */
-  mod2conf: Record<string, IModConf>;
+  mod2conf: Record<string, IModViewConf>;
   /** 已注册的所有远程模块名，内部自动通过 mod2conf 计算出来 */
   modNames: string[];
   /**
@@ -260,12 +247,6 @@ export interface ISDKPlatContext {
    * 为 true 则监听到模块变化时就会向 meta-cache 模块写入数据
    */
   careAllModsChange: boolean;
-  /**
-   * default: false，
-   * true: 由 mapAndPreload 来映射模块或由 preloadMiddleware 启动 sdk 来生成中间件，
-   * 此时内部的 updateModPresetData 会调用 updateForServerFirst，表示优先更新可能存在的 server 模块
-   */
-  isPreloadMode: boolean;
   /**
    * 获取hel模块元数据，如没有特殊的请求路径，不用配置此项，内部会走自己预设的地址去请求
    */
@@ -303,7 +284,6 @@ type ExcludeProps =
   | 'registrationSource'
   | 'helSdkSrc'
   | 'helEntrySrc'
-  | 'isPreloadMode'
   | 'helpackSocketUrl'
   | 'beforePreloadOnce'
   | 'careAllModsChange';

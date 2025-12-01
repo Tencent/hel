@@ -37,7 +37,6 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     assetName2view: {},
     view2appName: {},
     careAllModsChange: false,
-    isPreloadMode: false,
     getHelRenderParams: (cbParams) => Promise.resolve({ viewPath: cbParams.viewPath, pageData: cbParams.pageData }),
     regHooks: getDefaultHooks(),
     bizHooks: getDefaultHooks(),

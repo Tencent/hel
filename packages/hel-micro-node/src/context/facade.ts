@@ -1,18 +1,18 @@
-import type { IFetchModMetaOptions, IModConf, IShouldAcceptVersionParams } from '../base/types';
+import type { IFetchModMetaOptions, IModViewConf, IShouldAcceptVersionParams } from '../base/types';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { extractNameData } from '../server-mod/mod-name';
 import { getGlobalConfig } from './global-config';
 import { getSdkCtx } from './index';
 
 /** 获取用户的模块配置 */
-export function getModConf(appName: string, platform?: string): IModConf | null {
+export function getModConf(appName: string, platform?: string): IModViewConf | null {
   const sdkCtx = getSdkCtx(platform);
   const modConf = sdkCtx.mod2conf[appName];
   return modConf || null;
 }
 
 /** 逻辑已保证 modConf 不为空时，可调用此函数获取用户的模块配置 */
-export function getEnsuredModConf(appName: string, platform?: string): IModConf {
+export function getEnsuredModConf(appName: string, platform?: string): IModViewConf {
   const sdkCtx = getSdkCtx(platform);
   const modConf = sdkCtx.mod2conf[appName];
   return modConf;

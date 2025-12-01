@@ -25,12 +25,8 @@ TSUPC.Module._resolveFilename = function (pkgName: string, parentModule: any, is
       const { strict } = getGlobalConfig();
       const willKnowModShape = mapNodeModsManager.isFallbackModExist(pkgName) || mapNodeModsManager.isModShapeExist(pkgName);
 
-      if (
-        // strict 模式下，node 模块必须存在
-        strict
-        // 非 strict 模式下，如果内部无法感知模块形状，则 node 模块必须存在
-        || !willKnowModShape
-      ) {
+      // strict 模式下，node 模块必须存在，非 strict 模式下，如果内部无法感知模块形状，则 node 模块必须存在
+      if (strict || !willKnowModShape) {
         throw err;
       }
     }

@@ -2,10 +2,10 @@ import type { IMeta } from 'hel-types';
 
 /**
  * 'all', 允许所有更新模式
- * 'server' 允许服务端控制更新（ 来自 helpack ）
- * 'client' 允许客户端控制更新（ 来自 importMod ）
+ * 'notify' 允许服务端通知更新（ 来自 helpack ）
+ * 'manual' 允许sdk人工更新（ 来自 importMod ）
  */
-export type ModAllowUpdateMode = 'all' | 'server' | 'client';
+export type ModAllowUpdateMode = 'all' | 'notify' | 'manual';
 
 /**
  * 当出现重连时，尝试获取新的连接 ws url，如未设置此函数，会复用 options.url，
@@ -101,7 +101,8 @@ export interface INodeModFallbackConf {
    */
   force?: boolean;
   /**
-   * 备用模块路径或名称，未配置时，优先采用 mod, mod 没有配置再使用 nodeName 对应的模块
+   * 备用模块路径或名称，未配置时，优先采用 mod, mod 没有配置再使用 nodeName 对应的模块，
+   * 即: path > mod > nodeName
    */
   path?: string;
   /**
@@ -116,19 +117,13 @@ export interface IMapModOptions extends IFetchModMetaOptions {
    */
   helModName?: string;
   /**
-   * default: true，
-   * 是否要解析本地的原始模块，配置为 false 时，建议同步配置 fnKeys，dictKeys，
-   * 方便创建假模块时，可让内部感知到哪些属性是方法，哪些属性是普通对象，
-   * 以便支持用在文件头部提前解构出这些属性对应的包裹方法或代理对象时，动态更新也能正常生效
-   */
-  resolveRawMod?: boolean;
-  /**
    * 替换掉内部默认的准备文件过程，服务于一些需自定义下载逻辑或测试函数复制本地文件的场景
    */
   prepareFiles?: PrepareFiles;
   /**
    * default: ['all']
    * 获取初始版本模块后，允许的模块更新模式，如设置为 [] 表示不再接受任何更新
+   * TODO 待实现
    */
   allowUpdateMode?: ModAllowUpdateMode[];
   /**
@@ -140,7 +135,7 @@ export interface IMapModOptions extends IFetchModMetaOptions {
    * default: false,
    * 设置了 globalConfig.strict 为 false 时，虚拟 node 模块无备份模块或模块形状数据时，载入将报错，
    * 如用户不想添加备份模块，也不想设置形状数据，当希望程序能正常启动，
-   * 则可设置 dangerouslyNoShape 为 true，但结果是提前解构的属性（函数、对象）不再支持热更新
+   * 则可设置 dangerouslyNoShape 为 true，但导致的结果是：提前解构的属性（函数、对象）不再支持热更新
    * @example
    * ```
    * // bad
@@ -532,7 +527,7 @@ export interface IEnvInfo {
 
 export type GetEnvInfo = () => IEnvInfo;
 
-export interface ISDKGlobalBaseConfig {
+export interface ISDKBaseGlobalConfig {
   /**
    * default: <proj>/node_modules/.hel_modules
    * hel 服务端模块存储路径，如需修改，在应用程序的入口处尽早通过 setConfig 设置才能生效
@@ -589,7 +584,16 @@ export interface ISDKGlobalBaseConfig {
   metaBackupFilePath: string;
 }
 
-export interface ISDKGlobalConfig extends Partial<Omit<ISDKGlobalBaseConfig, 'hooks' | 'shouldAcceptVersion'>> {
+export interface ISDKInnerGlobalConfig extends ISDKBaseGlobalConfig {
+  /**
+   * default: false，
+   * true: 由 mapAndPreload 来映射模块或由 preloadMiddleware 启动 sdk 来生成中间件，
+   * 此时内部的 updateModPresetData 会调用 updateForServerFirst，表示优先更新可能存在的 server 模块
+   */
+  isPreloadMode: boolean;
+}
+
+export interface ISDKGlobalConfig extends Partial<Omit<ISDKBaseGlobalConfig, 'hooks' | 'shouldAcceptVersion'>> {
   hooks?: Partial<IHMNHooks>;
   /**
    * 收到新版本变更通知，是否接受该版本

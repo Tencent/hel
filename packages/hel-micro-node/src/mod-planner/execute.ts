@@ -1,5 +1,4 @@
 import { HOOK_TYPE, PLATFORM } from '../base/consts';
-import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import type { IFetchModMetaOptions, IModInfo } from '../base/types';
 import { getMappedModFetchOptions, isModMapped } from '../context/facade';
 import { getGlobalConfig } from '../context/global-config';
@@ -8,12 +7,8 @@ import { getSdkCtx } from '../context/index';
 import { importNodeModByPath } from '../mod-node';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { fetchModInfo } from '../server-mod/mod-meta';
-import { markAppDesc } from './facade-helper';
 import { PresetData, presetDataMgr } from './preset-data';
-
-function log(options: Omit<ILogOptions, 'type'>) {
-  recordMemLog({ ...options, type: 'HelModPlanner' });
-}
+import { log, markAppDesc } from './util';
 
 /**
  * 更新平台对应的所有已注册模块对应的预设数据
@@ -29,36 +24,36 @@ export async function updateRegisteredModsPresetData(platform: string, setBy: st
  * 更新模块信息对应的预置数据，注：模块必须在映射表里才会去更新
  * 不传递具体名称则表示更新注册的所有模块
  */
-export async function mayUpdateModPresetData(platform: string, setBy: string, modName?: string, modInfo?: IModInfo) {
+export async function mayUpdateModPresetData(platform: string, setBy: string, helModName?: string, modInfo?: IModInfo) {
   const subType = 'mayUpdateModPresetData';
   const sdkCtx = getSdkCtx(platform);
   try {
-    if (!modName) {
+    if (!helModName) {
       // 表示刷已映射的全部模块
       await updateRegisteredModsPresetData(platform, setBy);
       return;
     }
 
     // 未在用户的模块声明表里时忽略掉
-    if (!isModMapped(platform, modName)) {
-      log({ subType, desc: `ignore not configured mod ${modName}` });
+    if (!isModMapped(platform, helModName)) {
+      log({ subType, desc: `ignore not configured hel mod ${helModName}` });
       return;
     }
 
     // 复用外部透传的 modInfo，此处写 null 是为了将 targetModInfo 转为正确的类型 IModInfo | null
     let targetModInfo = modInfo || null;
     if (!modInfo) {
-      targetModInfo = await fetchModInfo(modName, { platform });
+      targetModInfo = await fetchModInfo(helModName, { platform });
     }
     if (!targetModInfo) {
-      log({ subType, desc: `no modInfo for ${modName}` });
+      log({ subType, desc: `no modInfo for hel mod ${helModName}` });
     }
     await updateModPresetData(sdkCtx.platform, setBy, targetModInfo);
   } catch (err: any) {
     const { reporter } = getGlobalConfig();
     reporter.reportError({ message: err.stack, desc: 'err-update-mod-info', data: platform });
     const errMsg = err.message;
-    log({ subType, desc: 'err occurred', data: { setBy, modName, errMsg, platform } });
+    log({ subType, desc: 'err occurred', data: { setBy, helModName, errMsg, platform } });
   }
 }
 
@@ -102,10 +97,9 @@ async function updateModPresetData(platform: string, setBy: string, modInfo: IMo
   if (!modInfo) {
     return;
   }
-  const sdkCtx = getSdkCtx(platform);
   markAppDesc(setBy, modInfo);
   // 以 preload 模式启动，需优先更新可能存在的 server 模块
-  if (sdkCtx.isPreloadMode) {
+  if (getGlobalConfig().isPreloadMode) {
     log({ subType: 'updateModPresetData', desc: `updateForServerFirst for ${modInfo.name}` });
     await presetDataMgr.updateForServerFirst(platform, modInfo);
     return;
@@ -127,27 +121,19 @@ export async function getModeInfoListForPreloadMode(platform: string, mustBeServ
 }
 
 /**
- * 获取本地缓存的模块信息
- */
-export function getModInfo(modName: string) {
-  return presetDataMgr.getCachedModInfo(modName);
-}
-
-/**
  * 依据分支或灰度标记获取预埋数据
  */
 export async function getPresetDataByHelOptions(options: IFetchModMetaOptions) {
   const { platform = PLATFORM } = options;
-  // 实例化 PresetData 时设置 allowOldVer=true，表示灰度用户读取的预置数据可以跳过版本比较规则
-  // 方便开发可以测试任意版本的前端代码
-  const presetData = new PresetData(true);
+  // 方便开发可测试下发到首页里的任意版本前端产物，此实例不会更新任何 server 模块数据，仅服务于下发给前端的首页
+  const presetData = new PresetData();
   const modInfoList = await fetchRegisteredModInfoList(platform, options);
   modInfoList.forEach((modInfo) => presetData.updateForClient(platform, modInfo));
   return presetData;
 }
 
 /**
- * 获取默认的预置数据
+ * 获取默认的全局预置数据管理器实例
  */
 export function getPresetData() {
   return presetDataMgr;

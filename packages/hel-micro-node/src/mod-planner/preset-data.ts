@@ -3,11 +3,10 @@ import type { IInnerImportModByMetaOptions, IInnerImportModByMetaSyncOptions } f
 import { uniqueStrPush, xssFilter } from '../base/util';
 import { getSdkCtx } from '../context';
 import { getEnsuredModConf, isModMapped, shouldAcceptVersion } from '../context/facade';
-import { getGlobalConfig } from '../context/global-config';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { modManager } from '../server-mod/mod-manager';
 import { getBackupModInfo } from '../server-mod/mod-meta-backup';
-import { checkServerModFile, log, updatePageAssetCache } from './preset-data-helper';
+import { checkPresetDataInit, checkServerModFile, log, updatePageAssetCache } from './preset-data-helper';
 
 type AssetMap = Record<string, { css: string; js: string } | null>;
 
@@ -27,6 +26,9 @@ interface IUpdateServerModSyncOptions {
  * 2 监听到版本变化时，由此类来响应变化的信号，执行 client 和 server 端模块相关更新动作
  */
 export class PresetData {
+  /** 服务于 planner */
+  public isForPlanner = false;
+
   public modInfoCache: Record<string, IModInfo> = {};
 
   /** 可下发到首页的 hel 元数据缓存 */
@@ -56,12 +58,10 @@ export class PresetData {
   /** 已生成的需预拉取的 js link 字符串 */
   public preloadJsStr = '';
 
-  /** 是否允许更新低于镜像里默认版本的旧版本数据 */
-  public allowOldVer = false;
-
-  constructor(allowOldVer?: boolean) {
-    const defaultAllow = !getGlobalConfig().isProd;
-    this.allowOldVer = allowOldVer ?? defaultAllow;
+  constructor(options?: { isForPlanner?: boolean }) {
+    const { isForPlanner = false } = options || {};
+    this.isForPlanner = isForPlanner;
+    checkPresetDataInit(isForPlanner);
   }
 
   /**
@@ -74,8 +74,10 @@ export class PresetData {
     }
     this.setModInfo(modInfo);
     this.updateClientMod(platform, modInfo);
-    this.updateServerInitMod(platform, modInfo);
-    this.updateServerModSync(platform, modInfo);
+    // 来着 planner 调用才允许更新 server 模块
+    if (this.isForPlanner) {
+      this.updateServerModSync(platform, modInfo);
+    }
   }
 
   /**
@@ -88,13 +90,18 @@ export class PresetData {
       log({ subType: 'updateForServerFirst', desc: `${modInfo.name} canUpdate is false` });
       return false;
     }
-    // server 优先时，考虑强一致性，不再调用 updateServerInitMod
-    const isModUpdated = await this.updateServerMod(platform, modInfo, options);
-    if (isModUpdated) {
-      this.setModInfo(modInfo);
+
+    let isServerNodUpdated = false;
+    // 来着 planner 调用才允许更新 server 模块
+    if (this.isForPlanner) {
+      isServerNodUpdated = await this.updateServerMod(platform, modInfo, options);
+      if (isServerNodUpdated) {
+        this.setModInfo(modInfo);
+      }
     }
     this.updateClientMod(platform, modInfo);
-    return isModUpdated;
+
+    return isServerNodUpdated;
   }
 
   public updateForServerFirstSync(platform: string, modInfo: IModInfo, options?: IUpdateServerModSyncOptions) {
@@ -102,7 +109,6 @@ export class PresetData {
       log({ subType: 'updateForServerFirstSync', desc: `${modInfo.name} canUpdate is false` });
       return false;
     }
-    // server 优先时，考虑强一致性，不再调用 updateServerInitMod
     const isModUpdated = this.updateServerModSync(platform, modInfo, options);
     if (isModUpdated) {
       this.setModInfo(modInfo);
@@ -112,7 +118,7 @@ export class PresetData {
   }
 
   /**
-   * 获取 hel 主项目胶水层代码 js
+   * 获取前端下发页面里的 hel 主项目胶水层代码 js
    */
   public getHelPageEntrySrc(modName?: string) {
     const defaultVal = this.helEntryCache.default;
@@ -124,7 +130,7 @@ export class PresetData {
   }
 
   /**
-   * 获取页面对应的 js css 资源路径
+   * 获取前端下发页面对应的 js css 资源路径
    */
   public getPageAsset(viewName: string, helEntry?: string) {
     const { entryAssetCache, viewAssetCache } = this;
@@ -143,7 +149,7 @@ export class PresetData {
     return this.modInfoCache[modName] || null;
   }
 
-  /** 尝试更新前端模块相关预设数据 */
+  /** 尝试更新 hel 模块前端产物预设数据 */
   private updateClientMod(platform: string, modInfo: IModInfo) {
     const modConf = getEnsuredModConf(modInfo.name, platform);
     if (!modConf) {
@@ -213,15 +219,6 @@ export class PresetData {
     modManager.importModByMetaSync(modInfo.fullMeta, importOptionsVar);
   }
 
-  /** 更新用户可能设定的 server 端本地初始兜底模块 */
-  private updateServerInitMod(platform: string, modInfo: IModInfo) {
-    const { name } = modInfo;
-    const { serverModInitPath } = getEnsuredModConf(name, platform);
-    if (serverModInitPath) {
-      modManager.importModByPath(name, serverModInitPath);
-    }
-  }
-
   /**
    * 能否使用新版本
    */
@@ -248,6 +245,10 @@ export class PresetData {
     if (!isMapped) {
       return false;
     }
+    // 非 planner 调用时允许更新，不走其他检查逻辑
+    if (!this.isForPlanner) {
+      return true;
+    }
 
     const prevModInfo = this.modInfoCache[modInfo.name];
     if (!prevModInfo) {
@@ -260,7 +261,7 @@ export class PresetData {
     }
 
     const defaultModInfo = getBackupModInfo(platform, modInfo.name);
-    if (!defaultModInfo || this.allowOldVer) {
+    if (!defaultModInfo) {
       return this.canUseNewVersion(platform, modInfo, prevModInfo);
     }
 
@@ -329,5 +330,5 @@ export class PresetData {
   }
 }
 
-/** 内部全局使用的预置数据管理对象 */
-export const presetDataMgr = new PresetData();
+/** 服务于 panner 的全局预置数据管理对象 */
+export const presetDataMgr = new PresetData({ isForPlanner: true });

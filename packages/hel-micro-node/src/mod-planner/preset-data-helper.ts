@@ -2,6 +2,20 @@ import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import type { IModInfo } from '../base/types';
 import { getModDerivedConf } from '../context/facade';
 
+// 控制 PresetData 服务于 planner 时只能初始化一次
+let isPlannerPresetDataInit = false;
+
+export function checkPresetDataInit(isForPlanner: boolean) {
+  if (!isForPlanner) {
+    return;
+  }
+  if (isPlannerPresetDataInit) {
+    throw new Error('PresetData can only be init one time for planner');
+  }
+
+  isPlannerPresetDataInit = true;
+}
+
 export function log(options: Omit<ILogOptions, 'type'>) {
   recordMemLog({ ...options, type: 'PresetData' });
 }
