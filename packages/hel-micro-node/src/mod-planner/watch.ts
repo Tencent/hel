@@ -1,5 +1,4 @@
 import { CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED, HOOK_TYPE, SET_BY } from '../base/consts';
-import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import { SOCKET_MSG_TYPE } from '../base/mod-consts';
 import { getSdkCtx } from '../context';
 import { getCaredModNames, getMappedModFetchOptions } from '../context/facade';
@@ -9,25 +8,28 @@ import { setMetaCache } from '../context/meta-cache';
 import { fetchModInfo } from '../server-mod/mod-meta';
 import { WSAutoReconnectClient } from '../socket/client';
 import { isRunInJest } from '../test-util/jest-env';
-import { mayUpdateModPresetData } from './facade';
-import { getCanFetchNewVersionData } from './facade-helper';
+import { mayUpdateModPresetData } from './execute';
+import { getCanFetchNewMeta, log } from './util';
+
+interface IMsgData {
+  /** hel 模块名称 */
+  modName: string;
+  /** 订阅的消息频道 */
+  channel: string
+}
 
 interface IMsg {
   id: string;
-  data: { modName: string; channel: string };
+  data: IMsgData;
 }
 
 /** 长连接订阅变化逻辑是否已执行 */
 const isSocketSubCalledMap: Record<string, boolean> = {};
 
-function log(options: Omit<ILogOptions, 'type'>) {
-  recordMemLog({ ...options, type: 'HelModWatch' });
-}
-
 /**
  * 订阅来自 helpack 平台的变化消息
  */
-export async function subHelpackModChange(platform: string, changeCb: (params: { modName: string; type: string }) => void) {
+export async function subHelpackModChange(platform: string, changeCb: (params: IMsgData) => void) {
   const isSocketSubCalled = isSocketSubCalledMap[platform];
   const sdkCtx = getSdkCtx(platform);
   try {
@@ -50,7 +52,7 @@ export async function subHelpackModChange(platform: string, changeCb: (params: {
         const { modName, channel } = msg.data;
         triggerHook(HOOK_TYPE.onMessageReceived, { platform, helModName: modName, msgType: channel }, platform);
         if ([CHANNEL_APP_INFO_CHANGED, CHANNEL_APP_VERSION_CHANGED].includes(channel)) {
-          changeCb({ modName, type: CHANNEL_APP_INFO_CHANGED });
+          changeCb(msg.data);
         }
       },
     });
@@ -66,17 +68,17 @@ export async function subHelpackModChange(platform: string, changeCb: (params: {
 /**
  * 接收到了hel模块元数据变化的消息
  */
-async function handleHelModChanged(platform: string, modName: string) {
+async function handleHelModChanged(platform: string, helModName: string) {
   const sdkCtx = getSdkCtx(platform);
   try {
-    const canFetchNew = getCanFetchNewVersionData(platform, modName);
+    const canFetchNew = getCanFetchNewMeta(platform, helModName);
     // 如用户在 mapNodeMods 时写死了版本号，则此处不再响应变化
     if (!canFetchNew) {
       return;
     }
 
-    const fetchOptions = getMappedModFetchOptions(modName, platform);
-    const modInfo = await fetchModInfo(modName, fetchOptions);
+    const fetchOptions = getMappedModFetchOptions(helModName, platform);
+    const modInfo = await fetchModInfo(helModName, fetchOptions);
     if (!modInfo) {
       return;
     }
@@ -84,12 +86,12 @@ async function handleHelModChanged(platform: string, modName: string) {
     if (sdkCtx.careAllModsChange) {
       setMetaCache(modInfo.fullMeta);
     }
-    mayUpdateModPresetData(platform, SET_BY.watch, modName, modInfo);
+    mayUpdateModPresetData(platform, SET_BY.watch, helModName, modInfo);
   } catch (err: any) {
     const { reporter } = getGlobalConfig();
     reporter.reportError({ message: err.stack, desc: 'err-handle-hel-mod-changed', data: platform });
     const errMsg = err.message;
-    log({ subType: 'handleHelModChanged', desc: 'err occurred', data: { modName, errMsg, platform } });
+    log({ subType: 'handleHelModChanged', desc: 'err occurred', data: { helModName, errMsg, platform } });
   }
 }
 

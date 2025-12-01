@@ -2,7 +2,7 @@ import { ConcurrencyGuard } from '@tmicro/f-guard';
 import { HEL_DIR_KEYS, PLATFORM } from '../base/consts';
 import type {
   IInitMiddlewareOptions,
-  IModConf,
+  IModViewConf,
   IModInfo,
   INodeModMapper,
   IPlatformConfig,
@@ -11,9 +11,9 @@ import type {
 } from '../base/types';
 import { hasAnyProps, safeGet } from '../base/util';
 import { getSdkCtx, mergeConfig, mergeOptions } from '../context';
-import { mergeGlobalConfig } from '../context/global-config';
+import { mergeGlobalConfig, markPreloadModeAsTrue } from '../context/global-config';
 import { setMetaCache } from '../context/meta-cache';
-import { getModeInfoListForPreloadMode } from '../mod-planner/facade';
+import { getModeInfoListForPreloadMode } from '../mod-planner/execute';
 import { mayStartupIntervalModUpdate } from '../mod-planner/interval';
 import { listenHelModChange } from '../mod-planner/watch';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
@@ -98,8 +98,8 @@ export function setGlobalConfig(config: ISDKGlobalConfig) {
  * 2 server模块和浏览器端的模块版本在下发给浏览器端那一刻是一致的；
  */
 export async function preloadMiddleware(options: IPreloadMiddlewareOptions) {
+  markPreloadModeAsTrue();
   const sdkCtx = getSdkCtx(options.platform);
-  sdkCtx.isPreloadMode = true;
   initCommon(options, callLabels.preloadMiddleware);
   const modInfoList = await getModeInfoListForPreloadMode(sdkCtx.platform);
   const helModViewMiddleware = new HelModViewMiddleware();
@@ -139,7 +139,7 @@ export async function preloadHelMods(helModNames: string[], inputPlat?: string) 
     }
   }
 
-  const mod2conf: Record<string, IModConf> = {};
+  const mod2conf: Record<string, IModViewConf> = {};
   helModNames.forEach((name) => {
     const fetchOptions = mapNodeModsManager.getFetchOptions(name, platform);
     // 同步 fetchOptions 到 sdkCtx 中
@@ -151,7 +151,6 @@ export async function preloadHelMods(helModNames: string[], inputPlat?: string) 
   });
 
   initCommon({ mod2conf, platform }, callLabels.preloadHelMods);
-  sdkCtx.isPreloadMode = true;
   // 预加载用户配置的hel模块
   const modInfoList = await getModeInfoListForPreloadMode(platform, true);
   // 缓存起来，提速 fetchModMeta
@@ -171,6 +170,7 @@ export async function preloadHelMods(helModNames: string[], inputPlat?: string) 
  */
 export async function preloadMappedData() {
   mayInitModBackupData();
+  markPreloadModeAsTrue();
   const plats = mapNodeModsManager.getMappedPlatforms();
   let list: IModInfo[] = [];
 
@@ -191,6 +191,7 @@ export async function preloadMappedData() {
  */
 export async function mapAndPreload(modMapper: INodeModMapper) {
   mayInitModBackupData();
+  markPreloadModeAsTrue();
   mapNodeModsManager.setModMapper(modMapper);
   const helModNameInfos: { helModName: string; platform: string }[] = [];
   const plat2helModNames = {};

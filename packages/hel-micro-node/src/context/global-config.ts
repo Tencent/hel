@@ -1,8 +1,8 @@
 import { SERVER_INFO, UPDATE_INTERVAL } from '../base/consts';
-import type { ISDKGlobalBaseConfig, ISDKGlobalConfig } from '../base/types';
+import type { ISDKInnerGlobalConfig, ISDKGlobalConfig } from '../base/types';
 import { maySet, maySetFn, noop, purifyFn } from '../base/util';
 
-const sdkGlobalConfig: ISDKGlobalBaseConfig = {
+const sdkGlobalConfig: ISDKInnerGlobalConfig = {
   helModulesDir: '',
   helProxyFilesDir: '',
   helLogFilesDir: '',
@@ -23,6 +23,7 @@ const sdkGlobalConfig: ISDKGlobalBaseConfig = {
   isProd: process.env.SUMERU_ENV === 'formal',
   forceUseMetaBackupFile: false,
   metaBackupFilePath: '',
+  isPreloadMode: false,
 };
 
 export function mergeGlobalConfig(config: ISDKGlobalConfig) {
@@ -46,6 +47,10 @@ export function mergeGlobalConfig(config: ISDKGlobalConfig) {
   Object.assign(sdkGlobalConfig.reporter, purifyFn(reporter));
   maySetFn(sdkGlobalConfig, 'shouldAcceptVersion', shouldAcceptVersion);
   maySetFn(sdkGlobalConfig, 'getEnvInfo', getEnvInfo);
+}
+
+export function markPreloadModeAsTrue() {
+  sdkGlobalConfig.isPreloadMode = true;
 }
 
 export function getGlobalConfig() {

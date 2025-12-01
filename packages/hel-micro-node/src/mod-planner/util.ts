@@ -1,17 +1,25 @@
+import { recordMemLog, type ILogOptions } from '../base/mem-logger';
 import type { IModInfo } from '../base/types';
 import { getMappedModFetchOptions } from '../context/facade';
 import { getGlobalConfig } from '../context/global-config';
 import { presetDataMgr } from './preset-data';
 
-export function getCanFetchNewVersionData(platform: string, modName: string) {
-  const fetchOptions = getMappedModFetchOptions(modName, platform);
+export function log(options: Omit<ILogOptions, 'type'>) {
+  recordMemLog({ ...options, type: 'HelModPlanner' });
+}
+
+/**
+ * 接受到变化通知时，能否抓取新版 meta
+ */
+export function getCanFetchNewMeta(platform: string, helModName: string) {
+  const fetchOptions = getMappedModFetchOptions(helModName, platform);
   const { ver: userSpecifiedVer } = fetchOptions || {};
   if (!userSpecifiedVer) {
     return true;
   }
 
   // 指定了版本号，还未拉取数据
-  const cachedModInfo = presetDataMgr.getCachedModInfo(modName);
+  const cachedModInfo = presetDataMgr.getCachedModInfo(helModName);
   if (!cachedModInfo) {
     return true;
   }

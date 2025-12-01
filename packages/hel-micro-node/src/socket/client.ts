@@ -29,10 +29,11 @@ export interface IClient {
 
 /**
  * 一个能保持自动重连的 ws 客户端
- * 网上有较多实现，但代码过于古老和复杂，不适合 sdk 需要精简、易维护的诉求，且 sdk 有一些定制化逻辑，故内部独立实现一个
+ * 网上有较多实现，但代码过于古老和复杂，
  * https://gist.github.com/trevordixon/7239401
  * https://github.com/pladaria/reconnecting-websocket/blob/master/reconnecting-websocket.ts
  *
+ * 不适合 sdk 需要精简、易维护的诉求，且 sdk 有一些定制化逻辑，故内部独立实现一个
  * @example
  * ```
  *  new WSAutoReconnectClient({
@@ -82,7 +83,7 @@ export class WSAutoReconnectClient {
     id: v7(),
     url: '',
     onConnected: () => '',
-    onMessage: () => {},
+    onMessage: () => { },
     getUrlWhenReconnect: () => Promise.resolve(''),
   };
 
@@ -99,85 +100,83 @@ export class WSAutoReconnectClient {
       this.hasGetUrl = true;
     }
     Object.assign(this.options, options);
-    this.newClientIns();
+    this.tryNewClientIns();
   }
 
   /**
    * 创建新的连接实例
    * @param isReconnect
    */
-  private newClientIns(isReconnect?: boolean) {
+  private tryNewClientIns(isReconnect?: boolean) {
     const { url = DEFAULT_URL } = this.options;
     try {
-      const initInsAndListenEvent = (url: string) => {
-        const client = new WebSocket(url);
-        this.client = client;
+      if (!isReconnect) {
+        return this.initInsAndListenEvent(url, isReconnect);
+      }
 
-        client.on(EWSEvent.open, () => {
-          if (isReconnect) {
-            this.reconnectSuccessCount += 1;
-            // 自增 reconnectLogicId，给下一次 mayInitReconnectByHttpPing 判断之用
-            this.reconnectLogicId = getSafeNext(this.reconnectLogicId);
-
-            // 可能来着 httpPing 的重连，这里把 reconnectTimer 撤销掉
-            if (this.reconnectTimer) {
-              clearTimeout(this.reconnectTimer);
-            }
-          }
-          this.isAlive = true;
-          this.startHeartBeat();
-          this.handleOpen();
-        });
-
-        client.on(EWSEvent.message, (data) => {
-          this.handleMessage(data.toString());
-        });
-
-        client.on(EWSEvent.close, () => {
-          this.handleConnectionFail(new Error('Server closed'));
-        });
-
-        // err may be:
-        // Unexpected server response: 502
-        client.on(EWSEvent.error, (err: any) => {
-          this.handleConnectionFail(err);
-        });
-      };
-
-      if (isReconnect) {
-        if (this.isReconnectInsInitCalled) {
-          return;
-        }
-
-        const connectByUrl = (url) => {
-          // 此处做2次判断
-          if (this.isReconnectInsInitCalled) {
-            return;
-          }
-          this.isReconnectInsInitCalled = true;
-          initInsAndListenEvent(url);
-        };
-
-        if (this.hasGetUrl) {
-          this.options
-            .getUrlWhenReconnect()
-            .then((newUrl) => connectByUrl(newUrl))
-            .catch((err: any) => {
-              this.handleConnectionFail(err);
-            });
-        } else {
-          // 未配置 getUrlWhenReconnect 时就复用旧 url 去重建连接
-          connectByUrl(url);
-        }
-
+      if (this.isReconnectInsInitCalled) {
         return;
       }
 
-      initInsAndListenEvent(url);
+      const connectByUrl = (url) => {
+        // 此处做2次判断
+        if (this.isReconnectInsInitCalled) {
+          return;
+        }
+        this.isReconnectInsInitCalled = true;
+        this.initInsAndListenEvent(url, isReconnect);
+      };
+
+      // 未配置 getUrlWhenReconnect 时就复用旧 url 去重建连接
+      if (!this.hasGetUrl) {
+        return connectByUrl(url);
+      }
+
+      this.options
+        .getUrlWhenReconnect()
+        .then((newUrl) => connectByUrl(newUrl))
+        .catch((err: any) => {
+          this.handleConnectionFail(err);
+        });
     } catch (err: any) {
       this.handleConnectionFail(err);
     }
   }
+
+  private initInsAndListenEvent(url: string, isReconnect?: boolean) {
+    const client = new WebSocket(url);
+    this.client = client;
+
+    client.on(EWSEvent.open, () => {
+      if (isReconnect) {
+        this.reconnectSuccessCount += 1;
+        // 自增 reconnectLogicId，给下一次 mayInitReconnectByHttpPing 判断之用
+        this.reconnectLogicId = getSafeNext(this.reconnectLogicId);
+
+        // 可能来着 httpPing 的重连，这里把 reconnectTimer 撤销掉
+        if (this.reconnectTimer) {
+          clearTimeout(this.reconnectTimer);
+        }
+      }
+      this.isAlive = true;
+      this.startHeartBeat();
+      this.handleOpen();
+    });
+
+    client.on(EWSEvent.message, (data) => {
+      this.handleMessage(data.toString());
+    });
+
+    client.on(EWSEvent.close, () => {
+      this.handleConnectionFail(new Error('Server closed'));
+    });
+
+    // err may be:
+    // Unexpected server response: 502
+    client.on(EWSEvent.error, (err: any) => {
+      this.handleConnectionFail(err);
+    });
+  };
 
   /**
    * 处理连接已打开事件
@@ -241,12 +240,15 @@ export class WSAutoReconnectClient {
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
       this.reconnectCount += 1;
-      this.newClientIns(true);
+      this.tryNewClientIns(true);
     }, this.reconnectDelayMs);
 
     this.mayInitReconnectByHttpPing();
   }
 
+  /**
+   * ping 成功时重建连接
+   */
   private mayInitReconnectByHttpPing() {
     const { httpPingWhenTryReconnect } = this.options;
     if (!httpPingWhenTryReconnect || this.httpPingTimer || this.httpPingReconnectLogicId === this.reconnectLogicId) {
@@ -271,7 +273,7 @@ export class WSAutoReconnectClient {
         .then((isPingSuccess) => {
           if (isPingSuccess) {
             clearup();
-            this.newClientIns(true);
+            this.tryNewClientIns(true);
           }
         })
         .catch(console.error);
