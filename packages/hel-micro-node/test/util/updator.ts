@@ -12,7 +12,7 @@ export function getResultBeforeMock() {
 }
 
 // 模块映射
-mapNodeMods({ 'hel-hello': { helModName: HEL_HELLO_HELPACK, resolveRawMod: false } });
+mapNodeMods({ 'hel-hello': { helModName: HEL_HELLO_HELPACK } });
 
 /**
  * 更新模块至指定版本后，
