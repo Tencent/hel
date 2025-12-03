@@ -71,7 +71,7 @@ npm start:h
 在deno环境下，请使用deno启动
 ```bash
 deno run --allow-net --allow-env --unstable-detect-cjs ./build/index.js
-deno run --allow-net --allow-env --unstable-detect-cjs CONNECT_LOCAL_HELPACK=1 ./build/index.js
+$env:CONNECT_LOCAL_HELPACK=1; deno run --allow-net --allow-env --unstable-detect-cjs ./build/index.js
 ```
 在bundle环境下，请使用bun启动
 ```bash
