@@ -154,15 +154,15 @@ export interface IHelMonoJsonBase {
    * default: []
    * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，
    */
-  excludeWorkspaceHelPackages?: '*' | string[];
+  exclude?: '*' | string[];
   /**
    * default: []，
-   * start:hel 或 build:hel 时，npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
+   * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
    * 即它们会以原始的npm模块形式运行或被打包到宿主中
    * - '*' 表示排除所有
    * - []表示不排除，如有具体的排除项可配置具体的包名到数组里
    */
-  exclude?: '*' | string[];
+  nmExclude?: '*' | string[];
   /**
    * default: '0.0.0.0'
    * 所有hel模块本地联调时的域名
@@ -202,6 +202,10 @@ export interface IMonoInjectedMod {
    * 线上运行时元数据请求前缀
    */
   metaApiPrefix?: string;
+  /**
+   * 线上运行时指定的模块版本号，如指定表示锁定版本号
+   */
+  ver?: string;
 }
 
 
@@ -251,17 +255,27 @@ export interface IHelMonoMod extends IHelMonoModBase {
 
 
 /**
- * 模块线上运行时的参数配置
+ * 全部模块线上运行时的参数配置
  */
-export interface IHelModRuntimeConf {
+export interface IHelModRuntimeBaseConf {
   /**
-   * 线上运行时元数据请求前缀，未指定时尝试读 hel-json 顶层 helModRuntimeBaseConf 预设值，再读 sdk 自身的预设值
+   * 元数据请求前缀，未指定时尝试读 hel-json 顶层 helModRuntimeBaseConf 预设值，再读 sdk 自身的预设值
    * 仅需定制时才需要配置此项，否则使用默认值就可以了
    * ```txt
-   * 注意：总是优先考虑使用 helModRuntimeConfs，只会对某个模块有效，此参数会对所有模块有效
+   * 注意：推荐优先考虑使用 runtimeConfs ，只会对某个模块有效，此参数会对所有模块有效
    * ```
    */
   metaApiPrefix?: string;
+}
+
+/**
+ * 针对某个模块线上运行时的参数配置
+ */
+export interface IHelModRuntimeConf extends IHelModRuntimeBaseConf {
+  /**
+   * 模块版本，如需锁定可配置此项
+   */
+  ver?: string;
 }
 
 /**
@@ -269,17 +283,17 @@ export interface IHelModRuntimeConf {
  */
 export interface IHelMonoJsonRuntimeConf {
   /**
-   * 对非本大仓的所有 hel 模块有效
+   * 对非本大仓的所有是 hel 的 node 模块有效（即来自 node_modules 的模块）
    */
-  helModRuntimeBaseConf: IHelModRuntimeConf;
+  nmBaseRuntimeConf: IHelModRuntimeBaseConf;
   /**
-   * 对本大仓的所有模块 hel 有效
+   * 对本大仓的所有是 hel 的 node 模块有效
    */
-  curRepoHelModRuntimeBaseConf: IHelModRuntimeConf;
+  baseRuntimeConf: IHelModRuntimeBaseConf;
   /**
-   * 对具体的 hel 模块有效（不区分是否是本大仓的 hel 模块）
+   * 对具体的 hel-node 模块有效（不区分是否是本大仓的 hel-node 模块）
    */
-  helModRuntimeConfs: Record<PkgName, IHelModRuntimeConf>;
+  runtimeConfs: Record<PkgName, IHelModRuntimeConf>;
 }
 
 /**

@@ -7,6 +7,4 @@ const server = http.createServer((req, res) => {
   res.end(`${hello()}\n`);
 });
 
-server.listen(3000, '127.0.0.1',
-  () => console.log(`Server is running`),
-);
+server.listen(3000, '127.0.0.1', () => console.log(`Server is running`));

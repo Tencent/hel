@@ -31,7 +31,12 @@
     }
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^1.1.2"
+    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-lib-proxy": "*"
+  },
+  "peerDependencies": {
+    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",

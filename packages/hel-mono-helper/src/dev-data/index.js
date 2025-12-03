@@ -189,9 +189,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
   const babelLoaderInclude = [appSrc];
-  const { excludeWorkspaceHelPackages = [], exclude = [] } = devInfo;
-  const isExcludeWorkspaceHelPackagesAll = excludeWorkspaceHelPackages === '*';
-  const isExcludeNpmHelPackagesAll = exclude === '*';
+  const { exclude = [], nmExclude = [] } = devInfo;
+  const isExcludeCurRepoHekPkgsAll = exclude === '*';
+  const isExcludeNmHelPkgsAll = nmExclude === '*';
 
   // 启动的是代理目录，需将 appSrc 指向真正的项目 src 目录
   if (isForRootHelDir) {
@@ -276,7 +276,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
       maySetAppTsConfigPaths(devInfo, pkgInfo, appTsConfigPaths);
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
-      if (isHelMicroMode() && !isExcludeWorkspaceHelPackagesAll && !excludeWorkspaceHelPackages.includes(pkgName)) {
+      if (isHelMicroMode() && !isExcludeCurRepoHekPkgsAll && !exclude.includes(pkgName)) {
         appAlias[pkgName] = `${pkgName}/hel`;
       }
 
@@ -294,7 +294,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
     // 来着 node_modules 的 hel 模块，如没有排除的话，也会自动加入微模块构建模式
     nmHelPkgNames.forEach((nmHelPkgName) => {
-      if (isHelMicroMode() && !isExcludeNpmHelPackagesAll && !exclude.includes(nmHelPkgName)) {
+      if (isHelMicroMode() && !isExcludeNmHelPkgsAll && !nmExclude.includes(nmHelPkgName)) {
         appAlias[nmHelPkgName] = `${nmHelPkgName}/hel`;
       }
     });

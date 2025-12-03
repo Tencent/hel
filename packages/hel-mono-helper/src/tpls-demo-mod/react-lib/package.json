@@ -36,7 +36,12 @@
     }
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^1.1.2"
+    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-lib-proxy": "*"
+  },
+  "peerDependencies": {
+    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "esbuild-plugin-module-css": "^0.1.1",

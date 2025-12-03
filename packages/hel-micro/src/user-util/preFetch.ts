@@ -41,11 +41,19 @@ const pLogic = 'preFetch';
 
 type LoadAssetsStarter = (() => Promise<void>) | null;
 
-function makePreFetchOptions(isLib: boolean, options?: IPreFetchLibOptions | VersionId) {
-  const optionsVar: IInnerPreFetchOptions = typeof options === 'string' ? { versionId: options } : { ...(options || {}) };
-  optionsVar.platform = getPlatform(optionsVar.platform);
-  optionsVar.isLib = isLib;
-  return optionsVar;
+function getEnsuredOptions(isLib: boolean, rawOptions?: IPreFetchLibOptions | VersionId) {
+  const options: IInnerPreFetchOptions = typeof rawOptions === 'string' ? { versionId: rawOptions } : { ...(rawOptions || {}) };
+  options.platform = getPlatform(options.platform);
+  options.isLib = isLib;
+  const platform = options.platform;
+
+  // 用户未传的话走平台默认值 true
+  options.strictMatchVer = alt.getVal(platform, 'strictMatchVer', [options.strictMatchVer]);
+  // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
+  options.storageType = options.storageType || 'indexedDB';
+  options.semverApi = alt.getVal(platform, 'semverApi', [options.semverApi]);
+
+  return options;
 }
 
 function markShadowDataBeforeLoad(appName: string, groupName: string, preFetchOptions: IInnerPreFetchOptions) {
@@ -97,52 +105,45 @@ async function waitAppEmit(appName: string, innerOptions: IInnerPreFetchOptions,
  * @param preFetchOptions
  * @returns
  */
-async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOptions) {
+async function innerPreFetch(appName: string, prefetchOptions: IInnerPreFetchOptions) {
   let emitApp: null | IEmitAppInfo = null;
-  const { versionId, platform, isLib, strictMatchVer, semverApi } = preFetchOptions;
-  const fixedInnerOptions = { ...preFetchOptions };
+  const { versionId, isLib } = prefetchOptions;
   const fnName = isLib ? pLib : pApp;
   try {
-    // 用户未传的话走平台默认值 true
-    fixedInnerOptions.strictMatchVer = alt.getVal(platform, 'strictMatchVer', [strictMatchVer]);
-    // 默认为 indexedDB，不支持 indexedDB 的环境会降级为 localStorage
-    fixedInnerOptions.storageType = preFetchOptions.storageType || 'indexedDB';
-    fixedInnerOptions.semverApi = alt.getVal(platform, 'semverApi', [semverApi]);
-
-    emitApp = logicSrv.getLibOrApp(appName, fixedInnerOptions);
+    emitApp = logicSrv.getLibOrApp(appName, prefetchOptions);
     if (emitApp) {
       // 支持用户拉取同一个模块的多个版本，但是实际工程里不鼓励这么做
       if (!versionId || (versionId && emitApp.versionId === versionId)) {
-        log(`[[ ${fnName} ]] return cached app:`, appName, fixedInnerOptions);
+        log(`[[ ${fnName} ]] return cached app:`, appName, prefetchOptions);
         return { emitApp, msg: '' };
       }
     }
 
     let loadAssetsStarter: any = null;
-    const currentLoadStatus = getVerLoadStatus(appName, fixedInnerOptions);
+    const currentLoadStatus = getVerLoadStatus(appName, prefetchOptions);
     // 已加载完毕，（子应用js已开始执行）, 未拿到数据说明应用有异步依赖，继续等一下，直到拿到数据
     if (currentLoadStatus === helLoadStatus.LOADED) {
-      emitApp = await waitAppEmit(appName, fixedInnerOptions);
-      log(`[[ ${fnName} ]] return emit app:`, appName, fixedInnerOptions, emitApp);
+      emitApp = await waitAppEmit(appName, prefetchOptions);
+      log(`[[ ${fnName} ]] return emit app:`, appName, prefetchOptions, emitApp);
       return { emitApp, msg: '' };
     }
 
     // 还未开始加载，标记加载中，防止连续的 preFetch 调用重复触发 loadApp
     if (currentLoadStatus !== helLoadStatus.LOADING) {
-      setVerLoadStatus(appName, helLoadStatus.LOADING, fixedInnerOptions);
-      loadAssetsStarter = await loadApp(appName, { ...fixedInnerOptions, controlLoadAssets: true });
+      setVerLoadStatus(appName, helLoadStatus.LOADING, prefetchOptions);
+      loadAssetsStarter = await loadApp(appName, { ...prefetchOptions, controlLoadAssets: true });
       perfPeek(pLogic, 'loadApp');
     }
 
     // 正在加载中，等待模块获取
-    emitApp = await waitAppEmit(appName, preFetchOptions, loadAssetsStarter);
+    emitApp = await waitAppEmit(appName, prefetchOptions, loadAssetsStarter);
     perfPeek(pLogic, 'waitAppEmit');
-    log(`[[ ${fnName} ]] return fetch&emit app:`, appName, fixedInnerOptions, emitApp);
+    log(`[[ ${fnName} ]] return fetch&emit app:`, appName, prefetchOptions, emitApp);
     return { emitApp, msg: '' };
   } catch (err: any) {
     console.error(err);
     // 标记未加载，下次再进入可以继续重试
-    setVerLoadStatus(appName, helLoadStatus.NOT_LOAD, fixedInnerOptions);
+    setVerLoadStatus(appName, helLoadStatus.NOT_LOAD, prefetchOptions);
     return { emitApp, msg: err.message };
   }
 }
@@ -156,16 +157,19 @@ async function innerPreFetch(appName: string, preFetchOptions: IInnerPreFetchOpt
  *  const lib = await preFetchLib<Lib | null>('remote-lib-tpl');
  * ```
  */
-export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: string, options?: IPreFetchLibOptions | VersionId): Promise<T> {
+export async function preFetchLib<T extends AnyRecord = AnyRecord>(
+  appName: string,
+  rawOptions?: IPreFetchLibOptions | VersionId,
+): Promise<T> {
   perfMark(pLogic);
   const perfLabel = `${pLib}(${appName})`;
   const seq = perfStart(perfLabel, true);
-  const targetOpts = makePreFetchOptions(true, options);
-  const { emitApp, msg } = await innerPreFetch(appName, targetOpts);
+  const options = getEnsuredOptions(true, rawOptions);
+  const { emitApp, msg } = await innerPreFetch(appName, options);
   let appProperties = emitApp?.appProperties;
 
-  if (!appProperties && targetOpts.onLibNull) {
-    const fallbackLib = targetOpts.onLibNull(appName, { versionId: targetOpts.versionId });
+  if (!appProperties && options.onLibNull) {
+    const fallbackLib = options.onLibNull(appName, { versionId: options.versionId });
     if (fallbackLib) {
       appProperties = fallbackLib;
     }
@@ -174,7 +178,7 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
   perfPeek(pLogic, 'end', true);
   if (!appProperties) {
     const details = msg ? ` details : ${msg}` : '';
-    throw new Error(`${pLib} ${appName} fail from ${targetOpts.platform}, it may be an invalid module!${details}`);
+    throw new Error(`${pLib} ${appName} fail from ${options.platform}, it may be an invalid module!${details}`);
   }
   return appProperties as unknown as T;
 }
@@ -183,10 +187,10 @@ export async function preFetchLib<T extends AnyRecord = AnyRecord>(appName: stri
  * 等待 helEvents.SUB_APP_LOADED 信号发射的应用根组件
  * 由中间层ui适配库自己实现，如 hel-micro-react 的 renderApp
  */
-export async function preFetchApp(appName: string, options?: IPreFetchAppOptions | VersionId) {
+export async function preFetchApp(appName: string, rawOptions?: IPreFetchAppOptions | VersionId) {
   perfMark(pLogic);
-  const targetOpts = makePreFetchOptions(false, options);
-  const appInfo = await innerPreFetch(appName, targetOpts);
+  const options = getEnsuredOptions(false, rawOptions);
+  const appInfo = await innerPreFetch(appName, options);
   perfPeek(pLogic, 'end', true);
   return appInfo?.emitApp || null;
 }

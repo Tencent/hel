@@ -8,9 +8,9 @@ function prepareHelEntryFiles(/** @type {Options} */ options) {
   const appData = options.appData || getCWDAppData(devInfo);
   const { belongTo, appDir, appPkgName, realAppPkgName, isForRootHelDir } = appData;
 
-  const { excludeWorkspaceHelPackages = [] } = devInfo;
-  if (excludeWorkspaceHelPackages.includes(appPkgName)) {
-    helMonoLog(`${appPkgName} is excluded in preparing hel entry process due to excludeWorkspaceHelPackages.`);
+  const { exclude = [] } = devInfo;
+  if (exclude.includes(appPkgName)) {
+    helMonoLog(`${appPkgName} is excluded in preparing hel entry process due to exclude.`);
     return devInfo;
   }
 

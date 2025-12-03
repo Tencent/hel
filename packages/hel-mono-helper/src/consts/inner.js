@@ -1,7 +1,6 @@
 module.exports = {
   /**
    * 这些包一定不需要去查询是否有 hel 导出
-   * TODO: add include exclude to hel-mono.json
    */
   PKG_NAME_WHITE_LIST: [
     '@tencent/hel-micro',

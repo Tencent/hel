@@ -85,7 +85,7 @@ function getMonoAppDepDataImpl(options) {
   const nameMap = getMonoNameMap(devInfo);
   const appDirPath = getAppDirPath(appSrc);
   const { pkg2Deps, pkg2BelongTo, pkg2Dir, pkg2AppDirPath, monoDep } = nameMap;
-  const excludeHelMods = devInfo.exclude || [];
+  const excludeHelMods = devInfo.nmExclude || [];
   const excludeAutoExternal = devInfo.excludeAutoExternal || [];
 
   const pkgNames = [];

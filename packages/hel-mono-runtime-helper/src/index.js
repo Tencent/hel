@@ -13,19 +13,18 @@ function getWindow() {
   return {};
 }
 
-function getSpecifiedVer(helModName, platform) {
-  const vers = getWindow().__HEL_MOD_VERS__ || {};
-  const key = platform ? `${platform}/${helModName}` : helModName;
-  return vers[key];
+function getConf(pkgName) {
+  const confs = getWindow().__HEL_MOD_CONFS__ || {};
+  return confs[pkgName] || {};
 }
 
-function setHelModVers(newVers) {
-  let vers = getWindow().__HEL_MOD_VERS__;
-  if (!vers) {
-    vers = {};
-    getWindow().__HEL_MOD_VERS__ = vers;
+function setHelModConfs(newConfs) {
+  let confs = getWindow().__HEL_MOD_CONFS__;
+  if (!confs) {
+    confs = {};
+    getWindow().__HEL_MOD_CONFS__ = confs;
   }
-  Object.assign(vers, newVers);
+  Object.assign(confs, newConfs);
 }
 
 function getHostNode(id = 'hel-app-root') {
@@ -105,20 +104,24 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
 
       return { helModNames, helDeps };
     },
-    getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod) {
-      const { port = 3000, devHostname = defaultDH, groupName, isNm, metaApiPrefix, platform } = mod;
+    getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod, pkgName) {
+      const { helModName, mod, pkgName } = options;
+      const { port = 3000, devHostname = defaultDH, groupName, isNm, metaApiPrefix, platform, ver } = mod;
       const confKeys = getHelConfKeys(groupName);
       const devUrl = getStorageValue(confKeys.devUrl);
-      const params = {
-        versionId: getStorageValue(confKeys.versionId) || getSpecifiedVer(helModName, platform),
+      const runtimeConf = getConf(pkgName || helModName);
+
+      const others = {
+        versionId: getStorageValue(confKeys.versionId) || runtimeConf.ver || ver,
         branchId: getStorageValue(confKeys.branchId),
         projectId: getStorageValue(confKeys.projectId),
         customMetaUrl: metaApiPrefix,
+        platform,
       };
 
       if (devUrl) {
         monoLog(`found devUrl ${devUrl} for ${groupName}`);
-        return { enable: true, host: devUrl, ...params };
+        return { enable: true, host: devUrl, others };
       }
 
       const isStartWithRemoteDeps = startMode === START_WITH_REMOTE;
@@ -127,24 +130,24 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
         if (isNm) {
           monoLog(`found node module ${groupName} compiled with hel mode to run`);
         }
-        // 显示指定了 customMetaUrl 值，才需要显式的把 semverApi 置为 false
-        if (params.customMetaUrl) {
-          params.semverApi = false;
+        // 显示指定了 customMetaUrl 值时，把 semverApi 置为 false
+        if (others.customMetaUrl) {
+          others.semverApi = false;
         }
-        return { enable: false, host: '', ...params };
+        return { enable: false, host: '', others };
       }
 
       let host = `${devHostname}:${port}`;
       if (!host.startsWith('http')) {
         host = `http://${host}`;
       }
-      return { enable: true, host, ...params };
+      return { enable: true, host, others };
     },
   };
 }
 
 module.exports = {
-  setHelModVers,
+  setHelModVers: setHelModConfs,
   getHostNode,
   HEL_DEV_KEY_PREFIX,
   getHelConfKeys,
