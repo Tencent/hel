@@ -3,7 +3,7 @@ const devUtils = require('hel-dev-utils');
 
 const srcPath = path.join(__dirname, '../');
 
-const VER = '1.6.1';
+const VER = '1.6.3';
 
 const HEL_EXTERNAL_HTML_PAH = path.join(srcPath, './tpls-hel/empty-index.html');
 

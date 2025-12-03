@@ -91,17 +91,17 @@ export class PresetData {
       return false;
     }
 
-    let isServerNodUpdated = false;
+    let isServerModUpdated = false;
     // 来着 planner 调用才允许更新 server 模块
     if (this.isForPlanner) {
-      isServerNodUpdated = await this.updateServerMod(platform, modInfo, options);
-      if (isServerNodUpdated) {
+      isServerModUpdated = await this.updateServerMod(platform, modInfo, options);
+      if (isServerModUpdated) {
         this.setModInfo(modInfo);
       }
     }
     this.updateClientMod(platform, modInfo);
 
-    return isServerNodUpdated;
+    return isServerModUpdated;
   }
 
   public updateForServerFirstSync(platform: string, modInfo: IModInfo, options?: IUpdateServerModSyncOptions) {

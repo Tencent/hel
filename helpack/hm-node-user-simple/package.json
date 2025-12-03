@@ -1,0 +1,16 @@
+{
+  "name": "hm-node-user-simple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hel-demo/mono-libs": "^1.1.1",
+    "hel-micro-node": "^0.2.9"
+  }
+}
