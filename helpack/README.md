@@ -68,8 +68,16 @@ cd hm-node-user
 npm i
 npm start:h
 ```
-
-
+在deno环境下，请使用deno启动
+```bash
+deno run --allow-net --allow-env --unstable-detect-cjs ./build/index.js
+$env:CONNECT_LOCAL_HELPACK=1; deno run --allow-net --allow-env --unstable-detect-cjs ./build/index.js
+```
+在bundle环境下，请使用bun启动
+```bash
+bun start  //本地环境
+bun start:h  //连接helpack
+```
 - 前端部署
 **部署到本地server**
 处于前端项目根目录`client`下时，执行

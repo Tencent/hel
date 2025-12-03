@@ -91,6 +91,31 @@ npm run start
 
 - 可见helpack可以远程进行版本控制
 
+- 本地虚拟模块演示
+
+![](/img/虚拟模块总览.png)
+
+- 查看虚拟模块 hel-hello-helpack 返回结果 [`http://localhost:7776/api/showVirtualNodeModule`](http://localhost:7776/api/showVirtualNodeModule)
+
+![](/img/查看hhh结果.png)
+![](/img/hhh结果.png)
+
+- 更新虚拟模块 hel-hello-helpack 版本号
+
+![](/img/更新虚拟版本.png)
+![](/img/虚拟结果1.png)
+![](/img/虚拟结果2.png)
+
+- 查看本地虚拟模块 my-mod 返回结果 [`http://localhost:7776/api/showMyMod`](http://localhost:7776/api/showMyMod)
+
+![](/img/查看虚拟结果.png)
+![](/img/查看结果.png)
+
+- 更新查看本地虚拟模块 my-mod 版本，变查看返回结果 [`http://localhost:7776/api/changeVirtualLocalModToV2`](http://localhost:7776/api/changeVirtualLocalModToV2)
+
+![](/img/更新并查看虚拟结果.png)
+![](/img/更新并查看结果.png)
+
 
 
 ## 功能特点
