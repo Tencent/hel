@@ -2,14 +2,13 @@ import * as Module from 'module';
 import { getGlobalConfig } from '../context/global-config';
 import { mapNodeModsManager } from './map-node-mods';
 
-// wrap Module to TSUPC
-// for avoid tsup build err: Cannot assign to import "_resolveFilename"
-const TSUPC = { Module };
+// wrap Module to MOD_REF, for compile post handle process
+const MOD_REF = { Module };
 // @ts-ignore
-const oriResolveFilename = TSUPC.Module._resolveFilename;
+const oriResolveFilename = MOD_REF.Module._resolveFilename;
 
 // @ts-ignore
-TSUPC.Module._resolveFilename = function (pkgName: string, parentModule: any, isMain: boolean, options: any) {
+MOD_REF.Module._resolveFilename = function (pkgName: string, parentModule: any, isMain: boolean, options: any) {
   const helModOrPath = mapNodeModsManager.getMappedPath(pkgName);
   const getOriFilename = () => {
     const result = oriResolveFilename.call(this, pkgName, parentModule, isMain, options);

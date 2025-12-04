@@ -20,7 +20,7 @@
     "test:once": "cross-env ONCE=1 node ../../dev/scripts/test --config ../../dev/config/jest/jest.config.js"
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^2.1.0"
+    "hel-mono-runtime-helper": "^2.2.0"
   },
   "babel": {
     "presets": [

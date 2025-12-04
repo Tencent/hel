@@ -1,9 +1,9 @@
 /**
  * 辅助工具函数
  */
-/** @typedef {import('hel-mono-types').IMonoInjectedMod} IMonoInjectedMod */
 /** @typedef {import('./types').IHelDep} IHelDep */
 /** @typedef {import('./types').IMakeRuntimeUtilOptions} IMakeRuntimeUtilOptions */
+/** @typedef {import('./types').IGetPrefetchParamsOpts} IGetPrefetchParamsOpts */
 const START_WITH_REMOTE = '3';
 
 function getWindow() {
@@ -104,7 +104,7 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
 
       return { helModNames, helDeps };
     },
-    getPrefetchParams(helModName, /** @type {IMonoInjectedMod} */ mod, pkgName) {
+    getPrefetchParams(/** @type {IGetPrefetchParamsOpts} */ options) {
       const { helModName, mod, pkgName } = options;
       const { port = 3000, devHostname = defaultDH, groupName, isNm, metaApiPrefix, platform, ver } = mod;
       const confKeys = getHelConfKeys(groupName);

@@ -1,6 +1,6 @@
 import { ConcurrencyGuard } from '@tmicro/f-guard';
+import { LRUCache } from '@tmicro/lru-cache';
 import { PLATFORM } from '../base/consts';
-import { newCache } from '../base/lru-cache';
 import type { IFetchModMetaOptions, IMeta } from '../base/types';
 import { fetchModMeta } from '../server-mod/mod-meta';
 import { getSdkCtx } from './index';
@@ -11,7 +11,7 @@ const guard = new ConcurrencyGuard();
  * 且最多写入 3000个（1个元数据最大5kb，存满 3000 时此处共计最多消耗内存 15M），
  * 超额写入则按 lru 策略淘汰旧数据
  */
-const modMetaCache = newCache<string, IMeta>({ max: 3000 });
+const modMetaCache = new LRUCache<string, IMeta>({ max: 3000 });
 
 export function setMetaCache(modMeta: IMeta) {
   modMetaCache.set(modMeta.app.name, modMeta);

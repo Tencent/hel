@@ -4,7 +4,7 @@
   "description": "hel-mono demo libs",
   "hel": {},
   "license": "MIT",
-  "main": "./src/index.ts",
+  "main": "./src/index",
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -16,8 +16,11 @@
     }
   },
   "publishConfig": {
+    "access": "public",
     "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
+    "unpkg": "./dist/index.js",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -25,17 +28,18 @@
         "require": "./dist/index.js"
       },
       "./hel": {
-        "types": "./src/.hel/entrance/libTypes.ts",
-        "import": "./src/.hel/entrance/libTypes.ts"
+        "types": "./dist/.hel/entrance/libTypes.d.ts",
+        "import": "./dist/.hel/entrance/libTypes.mjs",
+        "require": "./dist/.hel/entrance/libTypes.js"
       }
     }
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-mono-runtime-helper": "^2.2.0",
     "hel-lib-proxy": "*"
   },
   "peerDependencies": {
-    "hel-mono-runtime-helper": "^2.1.0",
+    "hel-mono-runtime-helper": "^2.2.0",
     "hel-lib-proxy": "*"
   },
   "devDependencies": {
@@ -81,8 +85,7 @@
   "files": [
     "dist",
     "hel_dist",
-    "src",
-    "README.md",
-    "tsconfig.json"
+    "!src",
+    "README.md"
   ]
 }
