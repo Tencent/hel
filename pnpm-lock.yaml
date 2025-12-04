@@ -459,7 +459,7 @@ importers:
         version: link:../tm-download-file
       '@tmicro/lru-cache':
         specifier: ^0.0.2
-        version: link:../tm-lru-cache
+        version: 0.0.2
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -8325,6 +8325,10 @@ packages:
     dependencies:
       '@testing-library/dom': 10.4.1
     dev: true
+
+  /@tmicro/lru-cache@0.0.2:
+    resolution: {integrity: sha512-pzy3mV3ZpdJXojYJqT4cVVxkMPkfvbuuBgDnJGnnVWd7AVeKRArWgOU3AJR0nR50F5hI++i8IEu8zZKQhqjqLA==}
+    dev: false
 
   /@tootallnate/once@1.1.2:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}

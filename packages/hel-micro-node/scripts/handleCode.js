@@ -55,7 +55,7 @@ function handleMjsCode() {
 
   let keyIndex = 0;
   const willReplace = {
-    1: "var modRef = Module.default || Module;",
+    1: 'var modRef = Module.default || Module;',
     2: 'var oriResolveFilename = modRef._resolveFilename;',
     3: 'modRef._resolveFilename = function (pkgName, parentModule, isMain, options) {',
   };
