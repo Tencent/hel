@@ -4,7 +4,7 @@
   "description": "react implementation of hel-micro",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnfe/hel.git",
+    "url": "https://github.com/Tencent/hel.git",
     "directory": "packages/hel-micro-react"
   },
   "license": "MIT",

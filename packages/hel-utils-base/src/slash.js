@@ -33,9 +33,10 @@ export function ensureSlash(inputPath, options) {
 }
 
 /** 语义化 slash 相关操作，方便上层理解和使用 */
-export const slash = {
-  start: (path) => ensureSlash(path, { loc: 'start', need: true }),
-  noStart: (path) => ensureSlash(path, { loc: 'start', need: false }),
-  end: (path) => ensureSlash(path, { loc: 'end', need: true }),
-  noEnd: (path) => ensureSlash(path, { loc: 'end', need: false }),
-};
+export const start = (path) => ensureSlash(path, { loc: 'start', need: true });
+
+export const noStart = (path) => ensureSlash(path, { loc: 'start', need: false });
+
+export const end = (path) => ensureSlash(path, { loc: 'end', need: true });
+
+export const noEnd = (path) => ensureSlash(path, { loc: 'end', need: false });

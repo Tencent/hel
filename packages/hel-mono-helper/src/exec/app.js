@@ -14,8 +14,8 @@ const { genPnpmCmdAndRun } = require('./cmd');
 exports.execAppAction = function (/** @type {IDevInfo} */ devInfo, rawKeywordName, startOrBuild) {
   const { keywordName, scriptCmdKey, forEX } = extractCmdData(devInfo, rawKeywordName, startOrBuild);
 
+  // 根目录执行 pnpm start <dir-name>:for exs 时，启动宿主对应的 ex 项目
   if (forEX) {
-    // 根目录执行 pnpm start <dir-name>:helex 时
     const { prefixedDir } = inferDirData(devInfo);
     const masterAppCwd = getCwdByPrefixedDir(prefixedDir);
     const masterAppData = getCWDAppData(devInfo, masterAppCwd);

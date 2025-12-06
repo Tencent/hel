@@ -1,7 +1,7 @@
 /** @typedef {import('hel-types').ISrcMap} SrcMap*/
 import * as fs from 'fs';
-import cst from '../configs/consts';
-import { slash } from '../inner-utils/slash';
+import { cst } from 'hel-dev-utils-base';
+import { slash } from 'hel-utils-base';
 
 export function getIndexHtmlFileName(dirPath) {
   const names = fs.readdirSync(dirPath);
@@ -20,30 +20,6 @@ export function getIndexHtmlFileName(dirPath) {
     throw new Error(`there are more than one indexHtml file under [${dirPath}]!`);
   }
   return indexHtmlName;
-}
-
-/**
- * 递归获得某个目录下的所有文件绝对路径
- * @param {string} dirPath 形如:/user/zzk/log/build
- * @return {string[]} filePathList
- * 形如 ['/user/zzk/log/build/js/xx.js', '/user/zzk/log/build/img/xx.png']
- */
-export function getAllFilePath(dirPath) {
-  const _getAllFilePath = (dirPath, filePathList) => {
-    const names = fs.readdirSync(dirPath);
-    names.forEach((name) => {
-      const stats = fs.statSync(`${dirPath}/${name}`);
-      if (stats.isDirectory()) {
-        _getAllFilePath(`${dirPath}/${name}`, filePathList);
-      } else {
-        filePathList.push(`${dirPath}/${name}`);
-      }
-    });
-  };
-
-  const filePathList = [];
-  _getAllFilePath(dirPath, filePathList);
-  return filePathList;
 }
 
 /**
@@ -121,7 +97,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
             versionIndex = lastStr;
           }
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }
   const repo = packageJson.repository || {};

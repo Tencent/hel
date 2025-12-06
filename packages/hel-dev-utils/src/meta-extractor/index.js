@@ -1,8 +1,10 @@
 import fs from 'fs';
-import { verbose } from '../inner-utils/index';
+import { baseUtils } from 'hel-dev-utils-base';
 import { fillAssetListByDist } from './fillAssetList';
 import { parseIndexHtml } from './parse';
 import { getIndexHtmlFileName, makeHelMetaJson } from './utils';
+
+const { verbose } = baseUtils;
 
 /**
  * 从 index.html 提取资源的描述数据，包含 htmlContent、srcMap

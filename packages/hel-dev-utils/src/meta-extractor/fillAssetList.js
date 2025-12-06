@@ -1,18 +1,19 @@
-/** @typedef {import('../types').SrcMap} SrcMap*/
+/** @typedef {import('hel-types').ISrcMap} SrcMap*/
 /** @typedef {import('../types').IAssetOptions} IAssetOptions*/
 /** @typedef {import('../types').IAssetInfo} IAssetInfo */
 /** @typedef {import('../types').IInnerFillAssetListOptions} IInnerFillAssetListOptions */
 import fs from 'fs';
 import util from 'util';
-import { makeFileDescList } from '../inner-utils';
-import { noDupPush } from '../inner-utils/arr';
-import { verbose } from '../inner-utils/index';
-import { isNull } from '../inner-utils/obj';
-import { slash } from '../inner-utils/slash';
-import { pfstr } from '../inner-utils/str';
-import { getAllFilePath } from './utils';
+import { baseUtils } from 'hel-dev-utils-base';
+import { arr, obj, slash, str, file } from 'hel-utils-base';
 
 const writeFile = util.promisify(fs.writeFile);
+
+const { makeFileDescList, verbose } = baseUtils;
+const { noDupPush } = arr;
+const { getAllFilePath } = file;
+const { isNull } = obj;
+const { pfstr } = str;
 
 /** jsdom 15 里去内联脚本 innerText 取不到，这里用此函数辅助 */
 function getInnerText(/** @type {HTMLElement}} */ dom) {

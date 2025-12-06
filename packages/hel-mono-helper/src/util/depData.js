@@ -6,39 +6,8 @@ const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
 const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
+const { getNmPkgJson } = require('./nmPkg');
 const { getMonoRootInfo } = require('./rootInfo');
-
-function getNmPkgJsonByErr(err, allowInvalidName = true) {
-  const mayThrowErr = () => {
-    if (!allowInvalidName) {
-      throw err;
-    }
-    return { pkgJson: {}, isValid: false };
-  };
-
-  const msg = err.message;
-  // Package subpath './package.json' is not defined by "exports" in {this_is_pkg_path}
-  if (msg.includes('./package.json') && msg.includes('exports')) {
-    try {
-      const [, pkgJsonPath] = msg.split(' in ');
-      const pkgJson = require(pkgJsonPath);
-      return { pkgJson, isValid: true };
-    } catch (err) {
-      return mayThrowErr(err);
-    }
-  }
-
-  return mayThrowErr(err);
-}
-
-function getNmPkgJson(nmPkgName, allowInvalidName = true) {
-  try {
-    const pkgJson = require(`${nmPkgName}/package.json`);
-    return { pkgJson, isValid: true };
-  } catch (err) {
-    return getNmPkgJsonByErr(err, allowInvalidName);
-  }
-}
 
 function getPkgData(nmPkgName, allowInvalidName = true) {
   const { pkgJson, isValid } = getNmPkgJson(nmPkgName, allowInvalidName);

@@ -5,7 +5,7 @@ const devUtils = require('hel-dev-utils');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
 const { APP_EXTERNALS, DEPLOY_PATH, HEL_MONO_DOC } = require('../consts/inner');
 const { getDevInfoDirs } = require('./base');
-const { purify, orValue } = require('./dict');
+const { purify, orValue, chooseBool } = require('./dict');
 const { setIsDisplayConsoleLog } = require('./globalSig');
 const { getRawMonoJson, getModMonoDataDict } = require('./monoJson');
 const { getPortByDevInfo } = require('./port');
@@ -134,6 +134,10 @@ function inferDevInfo(allowMonoJsonNull) {
     baseRuntimeConf = {},
     runtimeConfs = {},
     defaultAppDir,
+    enableEx,
+    localExLink,
+    onlineExLink,
+    exConfs,
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
@@ -159,6 +163,10 @@ function inferDevInfo(allowMonoJsonNull) {
     helLibProxyName,
     extra,
     defaultAppDir,
+    enableEx,
+    localExLink,
+    onlineExLink,
+    exConfs,
   };
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo) || devInfo;
@@ -215,6 +223,13 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
   return { ...getDevInfoRest(pureDevInfo), ...rest, mods: newMods };
 }
 
+function getIsEnableEx(appPkgName, /** @type {IDevInfo} */ devInfo) {
+  const { exConfs = {}, enableEx } = devInfo;
+  const exConf = exConfs[appPkgName] || {};
+  const modEnableEx = chooseBool([exConf.enableEx, enableEx], false);
+  return modEnableEx;
+}
+
 module.exports = {
   getAppConfsAndMonoDataDict,
   ensureAppConf,
@@ -223,4 +238,5 @@ module.exports = {
   setEnsurePkgHel,
   setHandleDevInfo,
   toMonoJson,
+  getIsEnableEx,
 };

@@ -1,11 +1,11 @@
 {
-  "name": "hel-dev-utils",
-  "version": "5.4.0",
-  "description": "hel dev utils",
+  "name": "hel-utils-base",
+  "version": "0.0.2",
+  "description": "hel utils base",
   "repository": {
     "type": "git",
     "url": "https://github.com/Tencent/hel.git",
-    "directory": "packages/hel-dev-utils"
+    "directory": "packages/hel-utils-base"
   },
   "license": "MIT",
   "author": {
@@ -26,22 +26,10 @@
     "build:umd": "cross-env BUILD_ENV=development rollup -c",
     "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
   },
-  "dependencies": {
-    "hel-dev-utils-base": "^0.0.2",
-    "hel-utils-base": "^0.0.2",
-    "hel-types": "^4.3.10",
-    "jsdom": "^19.0.0"
-  },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
     "babel-cli": "^6.26.0",
     "rollup": "^2.23.0"
-  },
-  "peerDependencies": {
-    "hel-dev-utils-base": "^0.0.2",
-    "hel-utils-base": "^0.0.2",
-    "hel-types": "^4.3.10",
-    "jsdom": "^19.0.0"
   },
   "bundleDependencies": false,
   "deprecated": false

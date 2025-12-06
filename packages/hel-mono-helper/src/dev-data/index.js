@@ -1,4 +1,5 @@
 /** @typedef {import('../types').IMonoDevInfo} DevInfo */
+/** @typedef {import('../types').ICWDAppData} ICWDAppData */
 /** @typedef {import('../types').IInnerPkgInfo} IInnerPkgInfo */
 const path = require('path');
 const fs = require('fs');
@@ -9,6 +10,7 @@ const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD, isFastRefreshMarked
 const { clone, chooseBool } = require('../util/dict');
 const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
+const { getIsEnableEx } = require('../util/devInfo');
 const { inferMonoDepDict } = require('../util/monoJson');
 const { getMonoAppPkgJson, isEXProject } = require('../util/monoPkg');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild, isHelExternalBuild } = require('../util/is');
@@ -22,7 +24,7 @@ function getExtIndexData(appSrcDirPath, indexName, ext) {
   return { fullPath, isExist: fs.existsSync(fullPath), extFileName };
 }
 
-function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData, allowEmptySrcIndex) {
+function getAppSrcIndex(/** @type {ICWDAppData} */ appData, allowEmptySrcIndex) {
   let indexName = '';
   const { isForRootHelDir, appDir, belongTo } = appData;
   let { appSrcDirPath } = appData;
@@ -113,12 +115,25 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
   appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
 }
 
-function getExternals(/** @type DevInfo */ devInfo, depInfos) {
-  const { appExternals = {} } = devInfo;
+function getExternals(/** @type {{ appData: ICWDAppData, devInfo: DevInfo, depInfos: any, isExMode: boolean }} */options) {
+  const { appData, devInfo, depInfos, isExMode, autoExternals } = options;
+  // devInfo.appExternals 对 ex 项目自身无效
+  if (isExMode) {
+    return {};
+  }
+  const myMergeAutoExternals = (target) => {
+    const isEnableEx = getIsEnableEx(appData.appPkgName, devInfo);
+    if (isEnableEx) {
+      // 开启了 ex 功能，需要将推导出来的 ex 对象合并后在给出
+      return Object.assign({}, target, autoExternals);
+    }
+    return target;
+  };
 
+  const { appExternals = {} } = devInfo;
   // react fast refresh 会在 react 使用外部资源时失效
   // 当用户明确开启了 -fr 标识且以 hel 模式运行，同时存在本仓的多个子依赖时，为保证 fr 体验，剔除掉相关外部资源配置
-  if (isFastRefreshMarked() && depInfos.length > 0) {
+  if (isFastRefreshMarked() && !appData.isSubMod && depInfos.length > 0) {
     const newExternals = {};
     const rLibs = ['react', 'react-dom', 'react-is', 'react-reconciler'];
     Object.keys(appExternals).forEach((key) => {
@@ -126,10 +141,10 @@ function getExternals(/** @type DevInfo */ devInfo, depInfos) {
         newExternals[key] = appExternals[key];
       }
     });
-    return newExternals;
+    return myMergeAutoExternals(newExternals);
   }
 
-  return appExternals;
+  return myMergeAutoExternals(appExternals);
 }
 
 function getAppInfo(/** @type DevInfo */ devInfo, appPkgJson) {
@@ -168,8 +183,10 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   }
   const appCwd = getAppCwd(targetAppSrc);
   const { forEX } = options;
+  // 当前项目是 ex 项目
   const isExMode = isEXProject(targetAppSrc) || forEX;
-  const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
+  const isBuildMode = isHelAllBuild() || isHelExternalBuild();
+  const needAllDep = isBuildMode || isExMode;
 
   const key = `${targetAppSrc}_${needAllDep}`;
   if (cachedResult[key]) {
@@ -181,7 +198,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
   let appSrc = targetAppSrc;
-  /** @type {import('../types').ICWDAppData} */
+  /** @type {ICWDAppData} */
   const appData = options.appData || getCWDAppData(devInfo, appCwd);
   const { isForRootHelDir } = appData;
   const appTsConfigPaths = clone(appData.appTsConfigPaths);
@@ -202,7 +219,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   let isMicroStartOrBuild;
   let shouldGetAllDep;
   // 设定了 process.env.HEL_BUILD = cst.HEL_ALL_BUILD ，表示走整体构建模式
-  if (isHelAllBuild() || isHelExternalBuild() || isExMode) {
+  if (isBuildMode || isExMode) {
     isMicroStartOrBuild = false;
     shouldGetAllDep = true;
   } else {
@@ -232,7 +249,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     nmL1ExternalPkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
   }
 
-  const { appHtml, rawAppHtml } = replaceExHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
+  const { appHtml, rawAppHtml } = replaceExHtmlContent({
+    nmL1ExternalPkgNames, nmL1ExternalDeps, appData, devInfo, forEX: isExMode, isBuildMode,
+  });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
@@ -322,7 +341,8 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
     appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
   }
-  const appExternals = getExternals(devInfo, depInfos);
+
+  const appExternals = getExternals({ appData, devInfo, depInfos, isExMode, autoExternals });
 
   helMonoLog('isHelMode ', isHelModeVar);
   helMonoLog('appSrcIndex ', appSrcIndex);
@@ -341,7 +361,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     appAlias,
     jestAlias,
     appExternals,
-    autoExternals: autoExternals,
+    autoExternals,
     autoExternalDeps: nmL1ExternalDeps,
     appInfo,
     appData,

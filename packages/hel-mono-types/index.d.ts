@@ -72,7 +72,23 @@ export interface IMonoAppConf extends IHelMonoModBase {
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
 
-export interface IHelMonoJsonBase {
+export interface IExConf {
+  /**
+   * default: false
+   * 是否开启 ex 功能
+   */
+  enableEx?: string;
+  /**
+   * 本地使用的 external 服务链接
+   */
+  localExLink?: string;
+  /**
+   * 线上使用的 external 服务链接，用户可在下发首页是自动替换掉
+   */
+  onlineExLink?: string;
+}
+
+export interface IHelMonoJsonBase extends IExConf{
   /**
    * default: 'start:hel'
    * 执行 pnpm run start xxx 或 pnpm start xxx 命令时，需要命中的具体 start 脚本
@@ -127,6 +143,7 @@ export interface IHelMonoJsonBase {
    * 此时 appSrcIndex 会为空字符串 ''
    */
   allowEmptySrcIndex?: boolean;
+  exConfs: Record<string, IExConf>;
   /**
    * default: true
    * true: 将 server 模块构建为一个文件，基于 tsup 构建
@@ -150,6 +167,10 @@ export interface IHelMonoJsonBase {
    * 全局 externals，用户可以按需重写此配置
    */
   appExternals?: Record<string, string>;
+  /**
+   * default:
+   */
+  genExternalsBy: 'overwrite' | 'merge',
   /**
    * default: []
    * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，

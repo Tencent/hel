@@ -148,7 +148,7 @@ export interface IMonoAppDepData extends IMonoNameMap {
  */
 export interface ICWDAppData {
   /**
-   * app是否属于大仓根hel目录
+   * app是否属于大仓根hel目录（此功能仅作研究，不再有实用性）
    * @example
    * /path/to/hel-mono/.hel
    */
