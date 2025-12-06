@@ -115,7 +115,7 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
   appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
 }
 
-function getExternals(/** @type {{ appData: ICWDAppData, devInfo: DevInfo, depInfos: any, isExMode: boolean }} */options) {
+function getExternals(/** @type {{ appData: ICWDAppData, devInfo: DevInfo, depInfos: any, isExMode: boolean }} */ options) {
   const { appData, devInfo, depInfos, isExMode, autoExternals } = options;
   // devInfo.appExternals 对 ex 项目自身无效
   if (isExMode) {
@@ -250,7 +250,12 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   }
 
   const { appHtml, rawAppHtml } = replaceExHtmlContent({
-    nmL1ExternalPkgNames, nmL1ExternalDeps, appData, devInfo, forEX: isExMode, isBuildMode,
+    nmL1ExternalPkgNames,
+    nmL1ExternalDeps,
+    appData,
+    devInfo,
+    forEX: isExMode,
+    isBuildMode,
   });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {

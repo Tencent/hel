@@ -57,10 +57,7 @@ function handleHtmlForExUser(/** @type {{ appData: ICWDAppData, devInfo: DevInfo
   rewriteFileLine(appHtml, (line) => {
     let targetLine = line;
     if (line.includes('</head>')) {
-      targetLine = [
-        `<script id="EX_SLOT" src="${exLink}"></script>`,
-        '</head>',
-      ];
+      targetLine = [`<script id="EX_SLOT" src="${exLink}"></script>`, '</head>'];
     }
     return { line: targetLine };
   });

@@ -97,7 +97,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
             versionIndex = lastStr;
           }
         }
-      } catch (err) { }
+      } catch (err) {}
     }
   }
   const repo = packageJson.repository || {};

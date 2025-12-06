@@ -7,11 +7,11 @@
 */
 /** @typedef {import('./types').ICheckOptions} ICheckOptions */
 import * as fs from 'fs';
+import { str } from 'hel-utils-base';
 import * as os from 'os';
 import * as path from 'path';
-import { str } from 'hel-utils-base';
-import cst from './configs/consts';
 import { verbose } from './base-utils';
+import cst from './configs/consts';
 
 const { pfstr } = str;
 

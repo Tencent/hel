@@ -5,16 +5,7 @@ import createLibSubApp from './sub-app/createLibSubApp';
 import createReactSubApp from './sub-app/createReactSubApp';
 import { createVue2SubApp, createVue3SubApp, createVueSubApp } from './sub-app/createVueSubApp';
 
-export {
-  check,
-  cst,
-  baseUtils,
-  createReactSubApp,
-  createVue2SubApp,
-  createVue3SubApp,
-  createVueSubApp,
-  createLibSubApp,
-};
+export { check, cst, baseUtils, createReactSubApp, createVue2SubApp, createVue3SubApp, createVueSubApp, createLibSubApp };
 
 export default {
   cst,

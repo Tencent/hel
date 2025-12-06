@@ -4,9 +4,7 @@ import { slash } from 'hel-utils-base';
 // 兼容历史逻辑
 export const ensureSlash = slash.ensureSlash;
 
-export {
-  slash,
-};
+export { slash };
 
 export function getHelProcessEnvParams() {
   const { env } = process;

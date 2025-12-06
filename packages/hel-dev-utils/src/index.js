@@ -1,12 +1,12 @@
 import {
-  check,
-  cst,
   baseUtils,
+  check,
+  createLibSubApp,
   createReactSubApp,
   createVue2SubApp,
   createVue3SubApp,
   createVueSubApp,
-  createLibSubApp,
+  cst,
 } from 'hel-dev-utils-base';
 import extractHelMetaJson from './meta-extractor/index';
 

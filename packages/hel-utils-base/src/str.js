@@ -1,4 +1,3 @@
-
 export function pfstr(/** @type string */ mayLineBreakStr, mode = 'MULTI') {
   // MULTI ONE
   const lines = mayLineBreakStr.split('\n');
