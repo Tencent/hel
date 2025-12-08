@@ -11,14 +11,14 @@ const { rewriteFileLine } = require('../../util/rewrite');
  */
 module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo, options) {
   const { appSrcDirPath, helDirPath, appPkgName } = appData;
-  let { autoExternals } = options;
+  let { liftableExternals } = options;
   const filePath = path.join(helDirPath, './indexEX.ts');
 
-  if (!autoExternals) {
+  if (!liftableExternals) {
     const data = getMonoDevData(devInfo, appSrcDirPath, options);
-    autoExternals = data.autoExternals;
+    liftableExternals = data.liftableExternals;
   }
-  const hasExternals = !isDictNull(autoExternals);
+  const hasExternals = !isDictNull(liftableExternals);
 
   helMonoLog(`replace content of ${filePath}`);
   rewriteFileLine(filePath, (line) => {
@@ -30,8 +30,8 @@ module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData,
           `// Content generated at ${new Date().toLocaleString()} by hel-mono-helper`,
           '// Found these modules to be bound to global',
         ];
-        Object.keys(autoExternals).forEach((pkgName) => {
-          const boundName = autoExternals[pkgName];
+        Object.keys(liftableExternals).forEach((pkgName) => {
+          const boundName = liftableExternals[pkgName];
           importLines.push(`import * as ${boundName} from '${pkgName}';`);
           boundLines.push(`window.${boundName} = ${boundName};`);
         });

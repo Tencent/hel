@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@hel-demo/mono-bslib": "^0.0.1",
-    "hel-mono-runtime-helper": "^2.2.0"
+    "hel-mono-runtime-helper": "^2.3.2"
   },
   "eslintConfig": {
     "extends": [

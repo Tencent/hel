@@ -1,11 +1,11 @@
 const path = require('path');
-const devUtils = require('hel-dev-utils');
+const devUtils = require('hel-dev-utils-base');
 
 const srcPath = path.join(__dirname, '../');
 
-const VER = '1.8.1';
+const VER = '1.9.4';
 
-const HEL_EXTERNAL_HTML_PATH = path.join(srcPath, './tpls-hel/empty-index.html');
+const HEL_REPO_EXTERNAL_HTML_PATH = path.join(srcPath, './tpls-hel/empty-base-ex.html');
 
 const HEL_README_PATH = path.join(srcPath, './tpls-hel/hel-read-me.md');
 
@@ -151,7 +151,7 @@ module.exports = {
   HEL_TPL_INNER_SUB_MOD_PATH,
   HEL_TPL_INNER_DEMO_DIR,
   HEL_TPL_INNER_DEMO_MOD_DIR,
-  HEL_EXTERNAL_HTML_PATH,
+  HEL_REPO_EXTERNAL_HTML_PATH,
   HEL_README_PATH,
   /**
    * 模板文件复制到项目里后，某一行将被删除的标记

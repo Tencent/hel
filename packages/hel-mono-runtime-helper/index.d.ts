@@ -1,6 +1,7 @@
 /**
  * 辅助工具函数
  */
+import { IHelModRuntimeConf } from 'hel-mono-types'
 import type { IMakeRuntimeUtilOptions, RuntimeUtil, IHelConfKeys } from './src/types';
 
 /**
@@ -35,10 +36,10 @@ export declare function monoLog(...args: any[]): void;
 export declare function getHostNode(id?: string): HTMLElement;
 
 /**
- * 锁定运行时拉取的 hel 模块的版本号，
- * key：hel 模块名称，value：hel 模块版本号
+ * 锁定运行时拉取的 hel 模块相关参数，如版本号等，此处的设置会覆盖掉编译时传入的值（如有），对已设置过的模块再次设置是无效的
+ * key：hel 模块名称，value：IHelModRuntimeConf
  */
-export declare function setHelModVers(vers: Record<string, string>): void;
+export declare function setHelModConfs(confs: Record<string, IHelModRuntimeConf>): void;
 
 /**
  * 生成 runtimeUtil 工具函数对象

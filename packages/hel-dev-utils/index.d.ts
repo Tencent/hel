@@ -1,7 +1,9 @@
 /**
- * hel-dev-utils@5.4.0
+ * hel-dev-utils@5.4.3
  */
 import { IMeta } from 'hel-types';
+import type { IUserExtractOptions } from 'hel-dev-utils-base';
+
 export type {
   ICheckOptions,
   ICreateSubAppOptions,

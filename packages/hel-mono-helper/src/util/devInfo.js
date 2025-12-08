@@ -1,9 +1,9 @@
 /** @typedef {import('hel-mono-types').IMonoAppConf} IMonoAppConf */
 /** @typedef {import('hel-mono-types').IHelMonoJson} IHelMonoJson */
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
-const devUtils = require('hel-dev-utils');
+const devUtils = require('hel-dev-utils-base');
 const { INNER_ACTION, CREATE_SHORT_PARAM_KEY } = require('../consts');
-const { APP_EXTERNALS, DEPLOY_PATH, HEL_MONO_DOC } = require('../consts/inner');
+const { DEPLOY_PATH, HEL_MONO_DOC, BASE_EXTERNALS } = require('../consts/inner');
 const { getDevInfoDirs } = require('./base');
 const { purify, orValue, chooseBool } = require('./dict');
 const { setIsDisplayConsoleLog } = require('./globalSig');
@@ -122,21 +122,23 @@ function inferDevInfo(allowMonoJsonNull) {
     doc = HEL_MONO_DOC,
     appsDirs,
     subModDirs,
-    appExternals = APP_EXTERNALS,
+    customExternals = {},
+    baseExternals = BASE_EXTERNALS,
     devHostname,
     helMicroName,
     helLibProxyName,
     exclude = [],
     nmExclude = [],
+    nmInclude = [],
     platform = devUtils.cst.DEFAULT_PLAT,
     extra = {},
     nmBaseRuntimeConf = {},
     baseRuntimeConf = {},
     runtimeConfs = {},
     defaultAppDir,
-    enableEx,
-    localExLink,
-    onlineExLink,
+    enableRepoEx,
+    devRepoExLink,
+    prodRepoExLink,
     exConfs,
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
@@ -152,20 +154,22 @@ function inferDevInfo(allowMonoJsonNull) {
     monoDict,
     prefixedDirDict,
     dirDict,
-    appExternals,
+    customExternals,
+    baseExternals,
     appsDirs,
     subModDirs,
     exclude,
     nmExclude,
+    nmInclude,
     appConfs,
     devHostname,
     helMicroName,
     helLibProxyName,
     extra,
     defaultAppDir,
-    enableEx,
-    localExLink,
-    onlineExLink,
+    enableRepoEx,
+    devRepoExLink,
+    prodRepoExLink,
     exConfs,
   };
   if (handleDevInfoFn) {
@@ -223,10 +227,10 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
   return { ...getDevInfoRest(pureDevInfo), ...rest, mods: newMods };
 }
 
-function getIsEnableEx(appPkgName, /** @type {IDevInfo} */ devInfo) {
-  const { exConfs = {}, enableEx } = devInfo;
+function getIsEnableRepoEx(appPkgName, /** @type {IDevInfo} */ devInfo) {
+  const { exConfs = {}, enableRepoEx } = devInfo;
   const exConf = exConfs[appPkgName] || {};
-  const modEnableEx = chooseBool([exConf.enableEx, enableEx], false);
+  const modEnableEx = chooseBool([exConf.enableRepoEx, enableRepoEx], false);
   return modEnableEx;
 }
 
@@ -238,5 +242,5 @@ module.exports = {
   setEnsurePkgHel,
   setHandleDevInfo,
   toMonoJson,
-  getIsEnableEx,
+  getIsEnableRepoEx,
 };

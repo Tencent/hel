@@ -49,6 +49,7 @@
     "@typescript-eslint/parser": "^5.27.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.24.0",
+    "esbuild-plugin-module-css": "^0.1.1",
     "fs-extra": "^10.1.0",
     "husky": "8.0.1",
     "jest": "28.1.3",

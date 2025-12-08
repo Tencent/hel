@@ -1,3 +1,4 @@
+/** @typedef {import('../types').IMonoDevInfo} DevInfo */
 const path = require('path');
 const fs = require('fs');
 const jsonc = require('jsonc-parser');
@@ -62,19 +63,19 @@ function getTsConfigPaths(tsConfigDirPath) {
 /**
  * 获取 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
  */
-function getTsConfigAliasByDirPath(devInfo, tsConfigDirPath) {
+function getTsConfigAliasByDirPath(/** @type {DevInfo} */devInfo, tsConfigDirPath) {
   const tsConfigPath = path.join(tsConfigDirPath, 'tsconfig.json');
   if (!fs.existsSync(tsConfigPath)) {
     return '';
   }
 
   let alias = '';
-  const { appExternals = {} } = devInfo;
+  const { customExternals = {}, baseExternals = {} } = devInfo;
   const paths = getTsConfigPaths(tsConfigDirPath);
   const keys = Object.keys(paths);
   for (const key of keys) {
     // 可能是在 tsConfigJson.paths 里配置 external 库的类型路径别名
-    if (appExternals[key] || PKG_NAME_WHITE_LIST.includes(key)) {
+    if (customExternals[key] || baseExternals[key] || PKG_NAME_WHITE_LIST.includes(key)) {
       continue;
     }
 

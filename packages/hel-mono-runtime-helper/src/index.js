@@ -1,6 +1,7 @@
 /**
  * 辅助工具函数
  */
+/** @typedef {import('hel-mono-types').IHelModRuntimeConf} IHelModRuntimeConf */
 /** @typedef {import('./types').IHelDep} IHelDep */
 /** @typedef {import('./types').IMakeRuntimeUtilOptions} IMakeRuntimeUtilOptions */
 /** @typedef {import('./types').IGetPrefetchParamsOpts} IGetPrefetchParamsOpts */
@@ -13,18 +14,25 @@ function getWindow() {
   return {};
 }
 
+/**
+ * @returns {IHelModRuntimeConf}
+ */
 function getConf(pkgName) {
   const confs = getWindow().__HEL_MOD_CONFS__ || {};
   return confs[pkgName] || {};
 }
 
-function setHelModConfs(newConfs) {
+function setHelModConfs(newConfs = {}) {
   let confs = getWindow().__HEL_MOD_CONFS__;
   if (!confs) {
     confs = {};
     getWindow().__HEL_MOD_CONFS__ = confs;
   }
-  Object.assign(confs, newConfs);
+  Object.keys(newConfs).forEach(key => {
+    if (!confs[key] && newConfs[key]) {
+      confs[key] = newConfs[key];
+    }
+  });
 }
 
 function getHostNode(id = 'hel-app-root') {
@@ -115,12 +123,12 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
         versionId: getStorageValue(confKeys.versionId) || runtimeConf.ver || ver,
         branchId: getStorageValue(confKeys.branchId),
         projectId: getStorageValue(confKeys.projectId),
-        customMetaUrl: metaApiPrefix,
+        customMetaUrl: runtimeConf.metaApiPrefix || metaApiPrefix,
         platform,
       };
 
       if (devUrl) {
-        monoLog(`found devUrl ${devUrl} for ${groupName}`);
+        monoLog(`Found pkg(${pkgName}) devUrl ${devUrl}`);
         return { enable: true, host: devUrl, others };
       }
 
@@ -128,7 +136,7 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
       // 生产环境、基于 hwr 命令启动、来自 node_module 的 hel模块，任意一个均采用拉取远端已编译模块的模式来执行
       if (!isDev || isStartWithRemoteDeps || isNm) {
         if (isNm) {
-          monoLog(`found node module ${groupName} compiled with hel mode to run`);
+          monoLog(`Found pkg(${pkgName}) compiled with hel mode to run`);
         }
         // 显示指定了 customMetaUrl 值时，把 semverApi 置为 false
         if (others.customMetaUrl) {
@@ -147,7 +155,7 @@ function makeRuntimeUtil(/** @type {IMakeRuntimeUtilOptions} */ options) {
 }
 
 module.exports = {
-  setHelModVers: setHelModConfs,
+  setHelModConfs,
   getHostNode,
   HEL_DEV_KEY_PREFIX,
   getHelConfKeys,

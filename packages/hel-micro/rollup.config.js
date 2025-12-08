@@ -38,6 +38,7 @@ const config = {
     exports: 'named',
     globals: {
       'hel-micro-core': 'HelMicroCore',
+      'hel-lib-proxy': 'HelLibProxy',
       'hel-html-parser': 'HelHtmlParser',
     },
   },

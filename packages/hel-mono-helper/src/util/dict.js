@@ -37,6 +37,26 @@ function chooseBool(valList, defaultBool = false) {
   return defaultBool;
 }
 
+/** 选择一个有效的字符串或字符串数组，强制返回数组 */
+function chooseStrOrStrList(valList) {
+  let targetVal = null;
+  for (let i = 0; i < valList.length; i++) {
+    const val = valList[i];
+    if (
+      (typeof val === 'string' && val)
+      || (Array.isArray(val) && val.length)
+    ) {
+      targetVal = val;
+      break;
+    }
+  }
+  if (targetVal !== null) {
+    return Array.isArray(targetVal) ? targetVal : [targetVal];
+  }
+
+  return [];
+}
+
 function safeGet(dict, key, val = {}) {
   let targetVal = dict[key];
   if (!targetVal) {
@@ -84,6 +104,16 @@ function clone(dict) {
   return JSON.parse(JSON.stringify(dict));
 }
 
+function mayInclude(mayArr, val) {
+  if (mayArr === '*') {
+    return true;
+  }
+  if (Array.isArray(mayArr)) {
+    return mayArr.includes(val);
+  }
+  return false;
+}
+
 module.exports = {
   isDictNull,
   clone,
@@ -93,5 +123,7 @@ module.exports = {
   purifyUndefined,
   getBool,
   chooseBool,
+  chooseStrOrStrList,
   orValue,
+  mayInclude,
 };

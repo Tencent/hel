@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import { cst } from 'hel-dev-utils-base';
 import { slash } from 'hel-utils-base';
 
+const PLUGIN_VER = '5.4.3';
+
 export function getIndexHtmlFileName(dirPath) {
   const names = fs.readdirSync(dirPath);
   let indexHtmlName = '';
@@ -55,7 +57,7 @@ export function makeAppVersionSrcMap(extractOptions) {
  * @param {import('../types').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const defaultDesc = `this version meta is created by hel-dev-utils@${cst.PLUGIN_VER}`;
+  const defaultDesc = `this version meta is created by hel-dev-utils@${PLUGIN_VER}`;
   const { packageJson, extractMode = 'build', subApp, desc = defaultDesc } = userExtractOptions;
   const { homePage, groupName, name: appName, semverApi, platform } = subApp;
 
@@ -119,7 +121,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       create_at: currentISOUTCString,
     },
     version: {
-      plugin_ver: cst.PLUGIN_VER,
+      plugin_ver: PLUGIN_VER,
       extract_mode: extractMode,
       sub_app_name: appName,
       sub_app_version: versionIndex,

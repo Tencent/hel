@@ -55,10 +55,10 @@ function replaceAppRelevantFiles(appData, devInfo, options = {}) {
 
   const { forEX, masterAppData, exAppData } = options || {};
   if (forEX) {
-    // 注意：此处是使用 masterAppData 的 autoExternals 写入到 exAppData 相关文件里
+    // 注意：此处是使用 masterAppData 的 liftableExternals 写入到 exAppData 相关文件里
     const masterDevData = getMonoDevData(devInfo, masterAppData.appSrcDirPath, options);
-    const { autoExternals } = masterDevData;
-    return r.replaceIndexEXFile(exAppData, devInfo, { ...options, autoExternals });
+    const { liftableExternals } = masterDevData;
+    return r.replaceIndexEXFile(exAppData, devInfo, { ...options, liftableExternals });
   }
 
   r.replaceIndexFile(appData, devInfo);
@@ -106,8 +106,8 @@ function ensureExAppProject(devInfo, options) {
 
   const newDevInfo = inferDevInfo(true);
   // 注意，此处是通过 masterAppData.appSrcDirPath 获得对应点的 external deps 对象
-  const { autoExternalDeps } = getMonoDevData(newDevInfo, masterAppData.appSrcDirPath, { appData: masterAppData, forEX: true });
-  r.replaceExProjectPkgJson(exAppData, autoExternalDeps);
+  const { liftableExternalDeps } = getMonoDevData(newDevInfo, masterAppData.appSrcDirPath, { appData: masterAppData, forEX: true });
+  r.replaceExProjectPkgJson(exAppData, liftableExternalDeps);
   prepareAppFiles(newDevInfo, exAppData, { forEX: true, masterAppData, exAppData });
 
   return { devInfo: newDevInfo, appData: exAppData };

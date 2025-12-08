@@ -41,9 +41,30 @@ function isEXProject(cwdOrAppSrc) {
   return !!hel.isEX;
 }
 
+function getExternalBoundName(/** @type string */ pkgName) {
+  const fmtBy = (str, sep) => {
+    const list = str.split(sep);
+    return list.map((v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`).join('');
+  };
+  const getResult = (str) => {
+    let result = fmtBy(str, '_');
+    return fmtBy(result, '-');
+  };
+
+  if (pkgName.startsWith('@') && pkgName.includes('/')) {
+    const [scope, name] = pkgName.split('/');
+    const pure = scope.substring(1);
+    // 中间加横线是为了避免 tencent-my-lib 和 @tencent/my-lib 得出一样的全局名字
+    return `${getResult(pure)}_${getResult(name)}`;
+  }
+
+  return getResult(pkgName);
+}
+
 module.exports = {
   getMonoAppPkgJson,
   getMonoAppPkgJsonByAppData,
   getMonoAppPkgJsonByCwd,
   isEXProject,
+  getExternalBoundName,
 };

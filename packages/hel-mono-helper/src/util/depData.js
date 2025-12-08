@@ -4,6 +4,7 @@ const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
 const { noDupPushWithCb, noDupPush } = require('./arr');
 const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
+const { mayInclude } = require('./dict');
 const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getNmPkgJson } = require('./nmPkg');
@@ -54,15 +55,15 @@ function getMonoAppDepDataImpl(options) {
   const nameMap = getMonoNameMap(devInfo);
   const appDirPath = getAppDirPath(appSrc);
   const { pkg2Deps, pkg2BelongTo, pkg2Dir, pkg2AppDirPath, monoDep } = nameMap;
-  const excludeHelMods = devInfo.nmExclude || [];
-  const excludeAutoExternal = devInfo.excludeAutoExternal || [];
+  const baseExternals = devInfo.baseExternals || {};
+  const customExternals = devInfo.customExternals || {};
 
   const pkgNames = [];
   const depInfos = [];
   const loopDeps = [];
 
-  const nmL1ExternalPkgNames = []; // 当前大仓所有项目可提取为 external 资源的 node_modules 包名
-  const nmL1ExternalDeps = {}; // 当前大仓所有项目可提取为 external 资源的 node_modules 包名和版本字典
+  const nmL1ExternalPkgNames = []; // 当前大仓所有项目可提升为 external 资源的 node_modules 包名
+  const nmL1ExternalDeps = {}; // 当前大仓所有项目可提升为 external 资源的 node_modules 包名和版本字典
   const nmPkgNames = [];
   const nmLoopDeps = [];
   const nmPkg2HelConf = {};
@@ -70,7 +71,7 @@ function getMonoAppDepDataImpl(options) {
   const nmHelPkgNames = [];
 
   const handleNmLoopAssocData = (pkgName) => {
-    if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !excludeHelMods.includes(pkgName)) {
+    if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !mayInclude(devInfo.nmExclude, pkgName)) {
       noDupPushWithCb(nmPkgNames, pkgName, () => {
         nmLoopDeps.push(pkgName);
       });
@@ -78,15 +79,16 @@ function getMonoAppDepDataImpl(options) {
   };
 
   const handleL1PkgName = (pkgName, verStr) => {
-    if (!PKG_NAME_WHITE_LIST.includes(pkgName) && !excludeAutoExternal.includes(pkgName)) {
-      noDupPush(nmL1ExternalPkgNames, pkgName);
-      nmL1ExternalDeps[pkgName] = verStr;
+    if (PKG_NAME_WHITE_LIST.includes(pkgName) || baseExternals[pkgName] || customExternals[pkgName]) {
+      return;
     }
+    noDupPush(nmL1ExternalPkgNames, pkgName);
+    nmL1ExternalDeps[pkgName] = verStr;
   };
 
-  const pushToDeps = (depObj, appDirPath) => {
-    Object.keys(depObj).forEach((pkgName) => {
-      const val = depObj[pkgName];
+  const pushToDeps = ({ deps, appDirPath }) => {
+    Object.keys(deps).forEach((pkgName) => {
+      const val = deps[pkgName];
       if (val.startsWith('workspace:')) {
         const belongTo = pkg2BelongTo[pkgName];
         if (!belongToDirs.includes(belongTo)) {
@@ -130,7 +132,7 @@ function getMonoAppDepDataImpl(options) {
   };
 
   // 添加直接依赖
-  pushToDeps(json.dependencies || {}, appDirPath);
+  pushToDeps({ deps: json.dependencies || {}, appDirPath });
   // 添加间接依赖
   if (isAllDep) {
     // 先处理大仓里的依赖
@@ -138,7 +140,7 @@ function getMonoAppDepDataImpl(options) {
       const tmpDeps = loopDeps.slice();
       loopDeps.length = 0; // 清空间接依赖
       tmpDeps.forEach((name) => {
-        pushToDeps(pkg2Deps[name] || {}, pkg2AppDirPath[name]);
+        pushToDeps({ deps: pkg2Deps[name] || {}, appDirPath: pkg2AppDirPath[name] });
       }); // 添加新的间接依赖
     }
 

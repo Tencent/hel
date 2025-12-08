@@ -95,8 +95,7 @@ const toExport = {
   createOriginInstance,
 };
 
-// 仅为了用户安装好 hel-micro 时，hel-lib-proxy 逻辑
-// 并触发 hel-lib-proxy 内部的 mayBindIns 逻辑
+// 仅为了用户安装好 hel-micro 时，会触发 hel-lib-proxy 内部的 mayBindIns 逻辑
 // 提供 hel-mono 架构的易用性
 mayBindIns(toExport);
 commonUtil.noop(helLibProxy);

@@ -1,5 +1,5 @@
 /**
- * @description: hel-mono-helper 对应的 dev-info 类型文件
+ * @description: hel-mono-helper 对应的 dev-info 类型文件, hel-mono.json 的类型文件
  */
 
 type PkgName = string;
@@ -75,20 +75,21 @@ export type MonoAppConfs = Record<string, IMonoAppConf>;
 export interface IExConf {
   /**
    * default: false
-   * 是否开启 ex 功能
+   * 是否使用将大仓所有模块的一级依赖提升为外部资源的功能（内部会自动排除 baseExternals、customExternals 里的声明），
+   * true：会注入大仓所有模块的一级依赖对应的外部资源的链接，需要同时配置 devRepoExLink 和 prodRepoExLink 参数
    */
-  enableEx?: string;
+  enableRepoEx?: boolean;
   /**
-   * 本地使用的 external 服务链接
+   * 本地开发时大仓使用的 external 资源链接
    */
-  localExLink?: string;
+  devRepoExLink?: string | string[];
   /**
-   * 线上使用的 external 服务链接，用户可在下发首页是自动替换掉
+   * 线上运行时大仓使用的 external 资源链接，用户可在下发首页是自动替换掉
    */
-  onlineExLink?: string;
+  prodRepoExLink?: string | string[];
 }
 
-export interface IHelMonoJsonBase extends IExConf{
+export interface IHelMonoJsonBase extends IExConf {
   /**
    * default: 'start:hel'
    * 执行 pnpm run start xxx 或 pnpm start xxx 命令时，需要命中的具体 start 脚本
@@ -143,6 +144,9 @@ export interface IHelMonoJsonBase extends IExConf{
    * 此时 appSrcIndex 会为空字符串 ''
    */
   allowEmptySrcIndex?: boolean;
+  /**
+   * 大仓各个模块的外部资源链接配置，通常存在多个宿主时，对各个宿主做不同的链接定制
+   */
   exConfs: Record<string, IExConf>;
   /**
    * default: true
@@ -160,17 +164,18 @@ export interface IHelMonoJsonBase extends IExConf{
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
   /**
+   * 大仓全局使用的基础外部资源，用户可以按需重写此配置，改写后 dev/public/index.html 里的 id="BASE_EX" 的资源链接也需要替换
    * default: {
    *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
    *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
    * }，
-   * 全局 externals，用户可以按需重写此配置
    */
-  appExternals?: Record<string, string>;
+  baseExternals?: Record<string, string>;
   /**
-   * default:
+   * 大仓全局使用的用户自定义外部资源，配置后，需要在 dev/public/index.html 添加相应链接，
+   * 同时需要标记 data-helex 记录此资源对应的全局模块名称
    */
-  genExternalsBy: 'overwrite' | 'merge',
+  customExternals?: Record<string, string>;
   /**
    * default: []
    * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，
@@ -179,11 +184,19 @@ export interface IHelMonoJsonBase extends IExConf{
   /**
    * default: []，
    * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
-   * 即它们会以原始的npm模块形式运行或被打包到宿主中
+   * 即它们会以原始的npm模块形式运行或被打包到宿主中。
    * - '*' 表示排除所有
-   * - []表示不排除，如有具体的排除项可配置具体的包名到数组里
+   * - []表示不排除，如有具体的排除项可配置其包名到数组里
    */
   nmExclude?: '*' | string[];
+  /**
+   * default: []，
+   * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包包含到微模块构建体系之中，
+   * nmExclude 和 nmInclude 同时生效时，nmExclude 的优先级高于 nmInclude。
+   * - '*' 表示包含所有
+   * - []表示不包含，如有具体的包含项可配置其包名到数组里
+   */
+  nmInclude?: '*' | string[];
   /**
    * default: '0.0.0.0'
    * 所有hel模块本地联调时的域名
@@ -201,7 +214,7 @@ export interface IHelMonoJsonBase extends IExConf{
    */
   helLibProxyName?: string;
   /**
-   * 其他扩展参数，基于 hel-mono-helper 封装新的 sdk 时需要用到的自定义参数
+   * 其他扩展参数，基于 hel-mono-helper 封装新的 sdk 时需用到的自定义参数
    */
   extra?: Record<string, any>;
 }

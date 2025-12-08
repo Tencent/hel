@@ -72,6 +72,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      esbuild-plugin-module-css:
+        specifier: ^0.1.1
+        version: link:packages/esbuild-plugin-module-css
       eslint:
         specifier: ^8.24.0
         version: 8.24.0
@@ -586,9 +589,9 @@ importers:
 
   packages/hel-mono-helper:
     dependencies:
-      hel-dev-utils:
-        specifier: ^5.3.8
-        version: link:../hel-dev-utils
+      hel-dev-utils-base:
+        specifier: ^0.0.2
+        version: link:../hel-dev-utils-base
       hel-iso:
         specifier: ^4.4.0
         version: link:../hel-iso
@@ -596,13 +599,13 @@ importers:
         specifier: ^4.12.1
         version: link:../hel-lib-proxy
       hel-micro:
-        specifier: ^4.15.0
+        specifier: ^4.15.2
         version: link:../hel-micro
       hel-mono-runtime-helper:
-        specifier: ^2.2.0
+        specifier: ^2.3.0
         version: link:../hel-mono-runtime-helper
       hel-mono-types:
-        specifier: ^2.4.0
+        specifier: ^2.5.0
         version: link:../hel-mono-types
       jsonc-parser:
         specifier: 3.3.1
@@ -612,9 +615,9 @@ importers:
         version: 0.9.2
 
   packages/hel-mono-runtime-helper:
-    dependencies:
+    devDependencies:
       hel-mono-types:
-        specifier: ^2.4.0
+        specifier: ^2.5.0
         version: link:../hel-mono-types
 
   packages/hel-mono-types: {}

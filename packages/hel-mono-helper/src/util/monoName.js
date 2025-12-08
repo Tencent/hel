@@ -1,12 +1,13 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
-const { cst } = require('hel-dev-utils');
+const { cst } = require('hel-dev-utils-base');
 const { safeGet } = require('./dict');
 const { getTsConfigAliasByAppSrc } = require('./appSrc');
 const { getAliasData } = require('./alias');
 const { intersection, getFileJson, getDevInfoDirs } = require('./base');
 const { INNER_SUB_MOD_ORG, INNER_APP_ORG } = require('../consts');
+const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getMonoDirOrFilePath, getUnderDirSubPath } = require('./monoPath');
 const { getLocaleTime } = require('./time');
@@ -60,6 +61,8 @@ function getMonoLevel1NameMap(level1DirName) {
 function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
   const { appsDirs, subModDirs } = getDevInfoDirs(devInfo);
   const dupDirs = intersection(appsDirs, subModDirs);
+  const baseExternals = devInfo.baseExternals || {};
+  const customExternals = devInfo.customExternals || {};
   if (dupDirs.length > 0) {
     throw new Error(`found duplicated dir names between (${appsDirs.join(',')}) and (${subModDirs.join(',')})`);
   }
@@ -73,6 +76,7 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
   const pkg2Dir = {}; // 包名与项目目录映射
   const pkg2Info = {}; // 包名与info映射
   const pkg2AppDirPath = {}; // 包名与应用的目录路径映射
+  const pkg2CanBeExternals = {}; // 包名与可提为外部资源的映射
   const prefixedDir2Pkg = {}; // 带belongTo前缀的目录名与包名映射
   const dir2Pkgs = {}; // 目录名与包名list映射
 
@@ -115,6 +119,20 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
       const info = { ...infoPure, proxyPkgName, proxySrcPath };
       const deps = pkg2Deps[pkgName];
 
+      const canBeEx = {};
+      Object.keys(deps).forEach((name) => {
+        const val = deps[name];
+        if (
+          !val.startsWith('workspace:')
+          && !PKG_NAME_WHITE_LIST.includes(name)
+          && !baseExternals[name]
+          && !customExternals[name]
+        ) {
+          canBeEx[name] = val;
+        }
+      });
+      pkg2CanBeExternals[pkgName] = canBeEx;
+
       pkg2Info[pkgName] = info;
       depData[pkgName] = { ...info, appDirPath, prefixedDir, deps };
       depDataPure[pkgName] = { ...infoPure, appDirPath, prefixedDir, deps };
@@ -136,6 +154,7 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
     pkg2Dir,
     prefixedDir2Pkg,
     pkg2Info,
+    pkg2CanBeExternals,
     dir2Pkgs,
     monoDep,
     monoDepPure,
