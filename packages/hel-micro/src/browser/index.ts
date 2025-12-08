@@ -51,7 +51,7 @@ function canAppendByHelMark(attrs: Record<string, any>, tag: string) {
   if (ex) {
     const exList = ex.split(',');
     // @ts-ignore avoid error: type {xxx} was found on type 'typeof globalThis'.
-    if (tag === 'script' && exList.every(ex => !!g[ex])) {
+    if (tag === 'script' && exList.every((ex) => !!g[ex])) {
       // script 型的 ex，优先查 globalThis 上是否已全部绑定标注的外部资源，已绑定则不再加载
       return false;
     }

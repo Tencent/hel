@@ -122,12 +122,7 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
       const canBeEx = {};
       Object.keys(deps).forEach((name) => {
         const val = deps[name];
-        if (
-          !val.startsWith('workspace:')
-          && !PKG_NAME_WHITE_LIST.includes(name)
-          && !baseExternals[name]
-          && !customExternals[name]
-        ) {
+        if (!val.startsWith('workspace:') && !PKG_NAME_WHITE_LIST.includes(name) && !baseExternals[name] && !customExternals[name]) {
           canBeEx[name] = val;
         }
       });

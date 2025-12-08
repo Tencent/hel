@@ -63,7 +63,7 @@ function getTsConfigPaths(tsConfigDirPath) {
 /**
  * 获取 alias 别名，注：目前 hel-mono 架构暂支持对模块配置一个别名，故只会读取其中一个
  */
-function getTsConfigAliasByDirPath(/** @type {DevInfo} */devInfo, tsConfigDirPath) {
+function getTsConfigAliasByDirPath(/** @type {DevInfo} */ devInfo, tsConfigDirPath) {
   const tsConfigPath = path.join(tsConfigDirPath, 'tsconfig.json');
   if (!fs.existsSync(tsConfigPath)) {
     return '';

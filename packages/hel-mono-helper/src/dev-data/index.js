@@ -152,11 +152,11 @@ function getExLabel(/** @type {{devInfo: DevInfo}} */ options) {
   const liftExLabel = hasLiftEx ? 'liftableExternals' : '';
   const baseExLabel = hasBaseEx ? 'baseExternals' : '';
   if (enableRepoEx) {
-    const validLabels = [custExLabel, liftExLabel, baseExLabel].filter(v => !!v);
+    const validLabels = [custExLabel, liftExLabel, baseExLabel].filter((v) => !!v);
     return validLabels.length ? `appExternals (merged by ${validLabels.join(',')})` : 'appExternals';
   }
 
-  const validLabels = [custExLabel, baseExLabel].filter(v => !!v);
+  const validLabels = [custExLabel, baseExLabel].filter((v) => !!v);
   return validLabels.length ? `appExternals (merged by ${validLabels.join(',')})` : 'appExternals';
 }
 
@@ -232,16 +232,13 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const isHelModeVar = isHelMode();
   const shouldComputeRepoExternals = isHelModeVar || isExProjOrSrvForEx;
 
-  const {
-    pkgNames, prefixedDir2Pkg, depInfos, pkg2Info,
-    nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps,
-    pkg2CanBeExternals,
-  } = getMonoAppDepDataImpl({
-    appSrc,
-    devInfo,
-    isAllDep: shouldGetAllDep,
-    isForRootHelDir,
-  });
+  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps, pkg2CanBeExternals } =
+    getMonoAppDepDataImpl({
+      appSrc,
+      devInfo,
+      isAllDep: shouldGetAllDep,
+      isForRootHelDir,
+    });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
 

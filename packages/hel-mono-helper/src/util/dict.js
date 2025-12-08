@@ -42,10 +42,7 @@ function chooseStrOrStrList(valList) {
   let targetVal = null;
   for (let i = 0; i < valList.length; i++) {
     const val = valList[i];
-    if (
-      (typeof val === 'string' && val)
-      || (Array.isArray(val) && val.length)
-    ) {
+    if ((typeof val === 'string' && val) || (Array.isArray(val) && val.length)) {
       targetVal = val;
       break;
     }

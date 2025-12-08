@@ -28,7 +28,7 @@ function setHelModConfs(newConfs = {}) {
     confs = {};
     getWindow().__HEL_MOD_CONFS__ = confs;
   }
-  Object.keys(newConfs).forEach(key => {
+  Object.keys(newConfs).forEach((key) => {
     if (!confs[key] && newConfs[key]) {
       confs[key] = newConfs[key];
     }

@@ -16,7 +16,7 @@ const EReuseStrategy = {
   UseGlobalHtml: 1,
   CopyGlobalHtml: 2,
   CopyEmptyHtml: 3,
-}
+};
 
 function getBaseExScriptList(globalHtml) {
   const content = fs.readFileSync(globalHtml, { encoding: 'utf-8' });
@@ -97,7 +97,9 @@ function handleHtmlForExUser(/** @type {Options} */ options, repoExLinks) {
 
   const pkgName = appData.appPkgName;
   const canBeExternals = pkg2CanBeExternals[pkgName] || {};
-  const helEx = Object.keys(canBeExternals).map(pkgName => getExternalBoundName(pkgName)).join(',');
+  const helEx = Object.keys(canBeExternals)
+    .map((pkgName) => getExternalBoundName(pkgName))
+    .join(',');
 
   rewriteFileLine(appHtml, (line) => {
     let targetLine = line;

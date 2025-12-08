@@ -9,10 +9,6 @@
     "moduleResolution": "node16",
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "files": [
-    "src/index.ts"
-  ]
+  "include": ["src/**/*"],
+  "files": ["src/index.ts"]
 }
