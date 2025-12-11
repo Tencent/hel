@@ -23,8 +23,8 @@ export interface IHelMonoModBase {
   handleDeployPath?: boolean;
   /**
    * default: IHelMonoJsonBase['isServerModOneBundle']
-   * true: 将 server 模块构建为一个文件，基于 tsup 构建
-   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   * true: 基于 tsup 构建，将 server 模块构建为一到两个文件
+   * false：基于 tsc 构建，会保持原目录结构，将 server 模块构建为多个文件
    */
   isServerModOneBundle?: boolean;
 }
@@ -285,6 +285,22 @@ export interface IHelMonoMod extends IHelMonoModBase {
    */
   devHostname?: string;
   port: number;
+  /**
+   * TODO: 通常需要对子模块配置即可，当别的仓库使用当前大仓某个子模块时，
+   * 如宿主未提供全局模块且当前子模块也未打包 peer 依赖到 hel 产物里时，
+   * 这些 peerExList 会提供给 hel-micro 使用，让当前模块能成功运行起来
+   * ```
+   * # 如配置了 lodash: { name: 'Lodash', link: 'xxxx/lodash.js' },
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash" src="xxxx/lodash.js"></script>
+   * # 则 hel-meta.json 会提取出来作为依赖的模块提供给 hel-micro 加载时使用
+   *
+   * # 可配置多个子模块到一个链接里，例如：{ name: 'Lodash,Limu', link: 'xxxx/multi-deps.js' }
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash,Limu" src="xxxx/multi-deps.js"></script>
+   * ```
+   */
+  peerExList?: { name: string, link: string }[]
 }
 
 

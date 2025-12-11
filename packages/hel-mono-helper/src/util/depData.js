@@ -10,6 +10,10 @@ const { getMonoAppPkgJson } = require('./monoPkg');
 const { getNmPkgJson } = require('./nmPkg');
 const { getMonoRootInfo } = require('./rootInfo');
 
+function isTypePkg(nmPkgName) {
+  return nmPkgName.startsWith('@types/');
+}
+
 function getPkgData(nmPkgName, allowInvalidName = true) {
   const { pkgJson, isValid } = getNmPkgJson(nmPkgName, allowInvalidName);
   const pkgExports = pkgJson.exports || {};
@@ -88,6 +92,9 @@ function getMonoAppDepDataImpl(options) {
 
   const pushToDeps = ({ deps, appDirPath }) => {
     Object.keys(deps).forEach((pkgName) => {
+      if (isTypePkg(pkgName)) {
+        return;
+      }
       const val = deps[pkgName];
       if (val.startsWith('workspace:')) {
         const belongTo = pkg2BelongTo[pkgName];
@@ -112,6 +119,9 @@ function getMonoAppDepDataImpl(options) {
   };
 
   const nmPushToDeps = (nmPkgName) => {
+    if (isTypePkg(nmPkgName)) {
+      return;
+    }
     const { isValid, hasHelExports, pkgJson, pkgHel } = getPkgData(nmPkgName, true);
     let depObj = null;
     if (isValid) {

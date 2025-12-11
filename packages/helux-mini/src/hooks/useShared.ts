@@ -20,6 +20,14 @@ function extractOptions(options?: { enableReactive?: boolean }) {
   return optionsVar;
 }
 
+/**
+ * 需透传 internal.setState 给 lifecycle 函数，而非 useObjectLogic 返回的
+ */
+function getLifecycleParams(sharedObject: any, internal: any) {
+  const { actions, setState } = internal;
+  return { actions, state: sharedObject, setState };
+}
+
 export function useShared<T extends Dict = Dict>(
   sharedObject: T,
   options?: { enableReactive?: boolean },
@@ -51,7 +59,7 @@ export function useShared<T extends Dict = Dict>(
   if (!updater) {
     internal.insCount += 1;
     if (internal.insCount === 1) {
-      internal.lifecycle.beforeMount({ actions: internal.actions, state: sharedObject, setState });
+      internal.lifecycle.beforeMount(getLifecycleParams(sharedObject, internal));
     }
     const ret = buildInsCtx(insCtx, { state: rawState, setState, internal, enableReactive });
     updater = ret.updater;
@@ -70,14 +78,14 @@ export function useShared<T extends Dict = Dict>(
     recoverDep(insKey, { readMap, internal, setState });
     // 注此处不能使用 internal.insCount === 1 来判定，多个组件同时挂载，进入此逻辑时 insCount 已大于1
     if (internal.insCount > 0 && !internal.lifecycleStats.isMountedCalled) {
-      internal.lifecycle.mounted({ actions: internal.actions, state: sharedObject, setState });
+      internal.lifecycle.mounted(getLifecycleParams(sharedObject, internal));
       internal.lifecycleStats.isMountedCalled = true;
     }
 
     return () => {
       internal.insCount -= 1;
       if (internal.insCount === 0) {
-        internal.lifecycle.willUnmount({ actions: internal.actions, state: sharedObject, setState });
+        internal.lifecycle.willUnmount(getLifecycleParams(sharedObject, internal));
         internal.lifecycleStats.isMountedCalled = false;
       }
       clearDep(insKey, readMap, internal);

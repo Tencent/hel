@@ -1,13 +1,12 @@
 {
   "name": "hm-node-user-simple",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "node ./index",
+    "start": "node ./case1/index",
+    "start2": "node ./case2/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "fantasticsoul",
   "license": "ISC",
   "dependencies": {
     "@hel-demo/mono-libs": "^1.1.1",

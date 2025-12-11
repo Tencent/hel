@@ -173,7 +173,7 @@ function inferDevInfo(allowMonoJsonNull) {
     exConfs,
   };
   if (handleDevInfoFn) {
-    devInfo = handleDevInfoFn(devInfo) || devInfo;
+    devInfo = handleDevInfoFn(devInfo, { monoJson }) || devInfo;
   }
 
   return devInfo;

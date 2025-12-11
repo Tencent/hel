@@ -23,13 +23,15 @@ function getBaseExScriptList(globalHtml) {
   const lines = getContentLines(content);
   let scriptStrList = [];
   for (const line of lines) {
-    // 包含id="BASE_EX 的节点都收集起来，例如 id="BASE_EX1", id="BASE_EX2" ...
+    // 包含i d="BASE_EX 的节点都收集起来，例如 id="BASE_EX1", id="BASE_EX2" ...
     if (line.includes('id="BASE_EX') && !line.includes('<!--')) {
       scriptStrList.push(line);
     }
   }
   if (!scriptStrList.length) {
-    throw new Error(`Cannot find baseExternals link, please check your html file to make sure including a id="BASE_EX" script node`);
+    throw new Error(
+      `Cannot find baseExternals link, please check your html file to make sure including a id="BASE_EX" or id="BASE_EX{number}" script node`,
+    );
   }
 
   return scriptStrList;

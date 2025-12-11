@@ -93,7 +93,6 @@ export function createKeyedShared<T extends Dict = Dict, R extends Dict = Dict>(
 
   const { actionsFactory = noop, moduleName, lifecycle = {} } = options || {};
   let moduleNameVar = moduleName;
-  console.log('moduleNameVar', moduleNameVar);
   if (!moduleNameVar) {
     moduleNameVar = getKeyedSharedStoreName();
   }
