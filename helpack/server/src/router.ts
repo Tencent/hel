@@ -8,7 +8,7 @@ import * as appPage from 'controllers/appPage';
 import * as appSimpleCtrl from 'controllers/appSimple';
 import * as classInfo from 'controllers/classInfo';
 import * as helperCtrl from 'controllers/helper';
-import * as hmn from 'controllers/hmn';
+import * as hmnCtrl from 'controllers/hmn';
 import * as plugin from 'controllers/plugin';
 import * as sdk from 'controllers/sdk';
 import * as userCtrl from 'controllers/user';
@@ -19,6 +19,7 @@ import * as appVersion from 'controllers/appVersion';
 import * as localCtrl from 'controllers/local';
 
 let appCtrl = app;
+let hmn = hmnCtrl;
 let appVersionCtrl = appVersion;
 
 // 标记 IS_LOCAL 时，连接自己定制的 local 接口调试前端ui
@@ -26,6 +27,7 @@ if (isLocal()) {
   // @ts-ignore
   appCtrl = localCtrl.app;
   appVersionCtrl = localCtrl.appVersion;
+  hmn = localCtrl.hmn;
 }
 
 // for localhost mock
@@ -108,10 +110,10 @@ if (isSimpleServer()) {
   // hel-micro-node sdk相关接口
   get('/openapi/v1/hmn/ping', hmn.ping);
   get('/openapi/v1/hmn/getHmnApiParams', hmn.getHmnApiParams);
-  post('/openapi/v1/hmn/reportHelModStat', isLocal() ? localCtrl.hmnService.reportHelModStat : hmn.reportHelModStat);
+  post('/openapi/v1/hmn/reportHelModStat', hmn.reportHelModStat);
   // 获取 hmn 相关统计的接口
-  post('/api/v1/hmn/statList', isLocal() ? localCtrl.hmnService.getStatList : hmn.getStatList);
-  post('/api/v1/hmn/statLogList', isLocal() ? localCtrl.hmnService.getStatLogList : hmn.getStatLogList);
+  post('/api/v1/hmn/statList', hmn.getStatList);
+  post('/api/v1/hmn/statLogList', hmn.getStatLogList);
 
   get('/api/v1/app/info/combine3api', appCtrl.combine3api);
   get('/api/v1/app/info/querySubApps', appCtrl.querySubApps);

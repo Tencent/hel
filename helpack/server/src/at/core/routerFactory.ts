@@ -5,7 +5,7 @@ import use from './logicGateway';
 const expressRouter = express.Router();
 
 const METHODS = ['get', 'post', 'del', 'put', 'patch'] as const;
-type TMethod = (typeof METHODS)[number];
+type TMethod = typeof METHODS[number];
 
 /**
  * 将最后一个逻辑处理函数包裹为cute-express的回调处理形式
