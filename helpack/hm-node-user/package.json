@@ -20,6 +20,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "debug": "4.4.3",
+    "deno": "^2.5.6",
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "hel-demo-mono-libs": "^0.0.3",
