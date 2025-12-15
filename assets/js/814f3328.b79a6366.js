@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkhel_doc=globalThis.webpackChunkhel_doc||[]).push([[7472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"fantasticsoul intro","permalink":"/hel/blog/change1"},{"title":"show hel remote call","permalink":"/hel/blog/hel-remote-call"}]}')}}]);

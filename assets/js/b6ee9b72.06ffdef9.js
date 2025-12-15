@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkhel_doc=globalThis.webpackChunkhel_doc||[]).push([[7587],{3540:l=>{l.exports=JSON.parse('{"label":"hel","permalink":"/hel/blog/tags/hel","allTagsPath":"/hel/blog/tags","count":1}')}}]);
