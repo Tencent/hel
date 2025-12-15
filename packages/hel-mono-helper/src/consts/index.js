@@ -3,7 +3,7 @@ const devUtils = require('hel-dev-utils-base');
 
 const srcPath = path.join(__dirname, '../');
 
-const VER = '1.10.0';
+const VER = '1.10.2';
 
 const HEL_REPO_EXTERNAL_HTML_PATH = path.join(srcPath, './tpls-hel/empty-base-ex.html');
 

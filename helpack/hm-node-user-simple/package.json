@@ -2,8 +2,8 @@
   "name": "hm-node-user-simple",
   "version": "1.0.0",
   "scripts": {
-    "start": "node ./case1/index",
-    "start2": "node ./case2/index",
+    "start": "node ./case-mod-ver/index",
+    "start2": "node ./case/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "fantasticsoul",

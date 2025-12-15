@@ -346,6 +346,9 @@ export interface IReplaceExHtmlContentOptions {
   pkg2CanBeExternals: Record<string, object>;
   isCurProjectEx: boolean;
   pkg2Deps: Record<string, object>;
+  // key: pkgName, value: version
+  nmL1ExternalDeps: Record<string, string>;
+  nmL1ExternalPkgNames: string[];
 }
 
 export interface IGetAppExternalsOptions {

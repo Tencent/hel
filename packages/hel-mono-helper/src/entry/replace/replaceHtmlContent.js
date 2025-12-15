@@ -258,10 +258,11 @@ function handleHtmlForExUser(/** @type {Options} */ options, /** @type IExLink[]
 }
 
 function handleHtmlForExProjSelf(/** @type {Options} */ options) {
-  const { nmL1ExternalDeps, appData } = options;
+  const { nmL1ExternalDeps, appData, nmL1ExternalPkgNames = [] } = options;
   const { rawAppHtml, appHtml, masterAppHtml } = getHtmlPath(options, EReuseStrategy.CopyEmptyExHtml);
   const { appDir, appDirPath } = appData;
-  const serveFor = appDir.substring(0, appDir.length - 3);
+  const suffix = VALID_EX_SUFFIXES.find((v) => appDir.endsWith(v)) || '';
+  const serveFor = appDir.substring(0, appDir.length - suffix.length);
 
   helMonoLog(`replace content of ${appHtml}`);
   const genPreContent = (list, dict) => {
@@ -284,6 +285,11 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
       targetLine.push('<div style="color:blue;font-weight:600">External dependencies:</div>');
       genPreContent(targetLine, nmL1ExternalDeps);
 
+      targetLine.push('<div style="color:blue;font-weight:600">External global names:</div>');
+      const globalNames = {};
+      nmL1ExternalPkgNames.forEach((v) => (globalNames[v] = getExternalBoundName(v)));
+      genPreContent(targetLine, globalNames);
+
       targetLine.push('<div style="color:blue;font-weight:600">Real versions:</div>');
       const nmPkgNames = Object.keys(nmL1ExternalDeps);
       const realVers = {};
@@ -297,6 +303,7 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
 
       targetLine.push('<div style="color:blue;font-weight:600">Package.json paths:</div>');
       genPreContent(targetLine, pkgPaths);
+
       targetLine.push('<div style="text-align:center"><a target="_blank" href="https://github.com/Tencent/hel">Powered by Hel</a></div>');
       handleNotOneLine('<body>', line, targetLine);
     } else if (line.includes('id="BASE_EX')) {
