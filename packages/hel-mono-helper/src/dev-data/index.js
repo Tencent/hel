@@ -7,7 +7,7 @@ const fs = require('fs');
 const { createLibSubApp, baseUtils } = require('hel-dev-utils-base');
 const { VER } = require('../consts');
 const { BASE_EXTERNALS } = require('../consts/inner');
-const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
+const replaceHtmlContent = require('../entry/replace/replaceHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD, isFastRefreshMarked } = require('../util');
 const { clone, chooseBool, mayInclude, isDictNull } = require('../util/dict');
 const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
@@ -99,7 +99,7 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
 
 function getAppExternals(/** @type {IGetAppExternalsOptions} */ options) {
   const { appData, devInfo, depInfos, isCurProjectEx } = options;
-  const { customExternals = {}, baseExternals = {} } = devInfo;
+  const { customExternals = {}, baseExternals = {}, externalsExclude = [] } = devInfo;
 
   // devInfo.customExternals 对 ex 项目自身无效，走内置的 BASE_EXTERNALS
   if (isCurProjectEx) {
@@ -109,7 +109,18 @@ function getAppExternals(/** @type {IGetAppExternalsOptions} */ options) {
     const isEnableRepoEx = getIsEnableRepoEx(appData.appPkgName, devInfo);
     // 开启了 enableRepoEx 功能，需要将推导出来的 liftableExternals 对象合并
     const liftableExternals = isEnableRepoEx ? options.liftableExternals : {};
-    return Object.assign({}, baseExternals, target, liftableExternals);
+    let externals = Object.assign({}, baseExternals, target, liftableExternals);
+    if (externalsExclude.length) {
+      const finalExternals = {};
+      Object.keys(externals).forEach((pkgName) => {
+        if (!externalsExclude.includes(pkgName)) {
+          finalExternals[pkgName] = externals[pkgName];
+        }
+      });
+      return finalExternals;
+    }
+
+    return externals;
   };
 
   // react fast refresh 会在 react 使用外部资源时失效
@@ -232,13 +243,22 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const isHelModeVar = isHelMode();
   const shouldComputeRepoExternals = isHelModeVar || isExProjOrSrvForEx;
 
-  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps, pkg2CanBeExternals } =
-    getMonoAppDepDataImpl({
-      appSrc,
-      devInfo,
-      isAllDep: shouldGetAllDep,
-      isForRootHelDir,
-    });
+  const {
+    pkgNames,
+    prefixedDir2Pkg,
+    depInfos,
+    pkg2Info,
+    nmHelPkgNames,
+    nmL1ExternalPkgNames,
+    nmL1ExternalDeps,
+    pkg2CanBeExternals,
+    pkg2Deps,
+  } = getMonoAppDepDataImpl({
+    appSrc,
+    devInfo,
+    isAllDep: shouldGetAllDep,
+    isForRootHelDir,
+  });
   helMonoLog('isMicroBuild ', isMicroStartOrBuild);
   helMonoLog('dep pack names', pkgNames);
 
@@ -251,13 +271,14 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     nmL1ExternalPkgNames.forEach((v) => (liftableExternals[v] = getExternalBoundName(v)));
   }
 
-  const { appHtml, rawAppHtml } = replaceExHtmlContent({
+  const { appHtml, rawAppHtml } = replaceHtmlContent({
     nmL1ExternalPkgNames,
     nmL1ExternalDeps,
     appData,
     devInfo,
     isCurProjectEx,
     pkg2CanBeExternals,
+    pkg2Deps,
   });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {

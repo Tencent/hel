@@ -39,21 +39,19 @@
       }
     },
     "dependencies": {
-      "@hel-demo/mono-libs": "*",
-      "hel-mono-runtime-helper": "^2.3.2"
+      "@hel-demo/mono-libs": "*"
     }
   },
-  "dependencies": {
-    "hel-mono-runtime-helper": "^2.3.2",
-    "hel-lib-proxy": "*"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "hel-mono-runtime-helper": "^2.3.2",
+    "hel-mono-runtime-helper": "^2.3.3",
     "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "esbuild-plugin-module-css": "^0.1.1",
     "hash-css-selector": "^1.1.0",
+    "hel-mono-runtime-helper": "^2.3.3",
+    "hel-lib-proxy": "*",
     "postcss": "^8.4.4",
     "postcss-modules": "^6.0.1"
   },

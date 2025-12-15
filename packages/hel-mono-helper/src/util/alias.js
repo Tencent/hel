@@ -112,11 +112,14 @@ function getAliasData(devInfo) {
       if (!stat || !stat.isDirectory()) {
         continue;
       }
-
       const alias = getTsConfigAliasByDirPath(devInfo, modPath);
-      if (alias) {
-        const pkgJsonPath = path.join(modPath, './package.json');
-        const pkgJson = getFileJson(pkgJsonPath);
+      if (!alias) {
+        continue;
+      }
+
+      const pkgJsonPath = path.join(modPath, './package.json');
+      const pkgJson = getFileJson(pkgJsonPath, true);
+      if (pkgJson) {
         const list = safeGet(alias2PkgList, alias, []);
         list.push(pkgJson.name);
         pkg2Alias[pkgJson.name] = alias;

@@ -1,3 +1,7 @@
+function isDict(mayDict) {
+  return mayDict && typeof mayDict === 'object' && !Array.isArray(mayDict);
+}
+
 function orValue(left, right) {
   if (['', null, undefined].includes(left)) {
     return right;
@@ -37,12 +41,12 @@ function chooseBool(valList, defaultBool = false) {
   return defaultBool;
 }
 
-/** 选择一个有效的字符串或字符串数组，强制返回数组 */
-function chooseStrOrStrList(valList) {
+/** 从数组里选一个有效的字符串、字段、数组，并强制返回数组 */
+function chooseValList(valList) {
   let targetVal = null;
   for (let i = 0; i < valList.length; i++) {
     const val = valList[i];
-    if ((typeof val === 'string' && val) || (Array.isArray(val) && val.length)) {
+    if ((typeof val === 'string' && val) || (isDict(val) && !isDictNull(val)) || (Array.isArray(val) && val.length)) {
       targetVal = val;
       break;
     }
@@ -112,6 +116,7 @@ function mayInclude(mayArr, val) {
 }
 
 module.exports = {
+  isDict,
   isDictNull,
   clone,
   safeGet,
@@ -120,7 +125,7 @@ module.exports = {
   purifyUndefined,
   getBool,
   chooseBool,
-  chooseStrOrStrList,
+  chooseValList,
   orValue,
   mayInclude,
 };

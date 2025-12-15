@@ -61,6 +61,7 @@ function analyzeColonKeywordName(/** @type {IDevInfo} */ devInfo, rawKeywordName
     helMonoLog(`keywordName ${keywordName}, rawScriptCmdKey ${rawScriptCmdKey}, mode ${mode}`);
 
     // 是 xxx:proxy 时，启动的是 .hel/apps或.hel/packages 下的应用，cmdKey 无需再保留后缀
+    // MARK: 此逻辑已无用，待后续删除
     if (mode === 'proxy') {
       scriptCmdKey = rawScriptCmdKey;
     } else if (rawScriptCmdKey === 'start') {

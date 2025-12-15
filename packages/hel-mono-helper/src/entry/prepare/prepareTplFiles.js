@@ -3,6 +3,7 @@ const path = require('path');
 const shell = require('shelljs');
 const { HEL_TPL_INNER_APP_PATH, HEL_TPL_INNER_SUB_MOD_PATH } = require('../../consts');
 const { helMonoLog, isHelExternalBuild } = require('../../util');
+const { cpSync } = require('../../util/file');
 const ensureBaseFiles = require('./ensureBaseFiles');
 
 module.exports = function prepareTplFiles(appData) {
@@ -19,14 +20,14 @@ module.exports = function prepareTplFiles(appData) {
       helMonoLog('delete error', err);
     }
     helMonoLog(`copy hel ${label} template files to ${appDirPath}`);
-    fs.cpSync(tplRootPath, appDirPath, { recursive: true });
+    cpSync(tplRootPath, appDirPath, { recursive: true });
     return;
   }
 
   if (isHelExternalBuild()) {
     const fromDir = path.join(tplRootPath, './src/indexEX.ts');
     const toDir = path.join(realAppSrcDirPath, './.hel/indexEX.ts');
-    fs.cpSync(fromDir, toDir, { recursive: true });
+    cpSync(fromDir, toDir, { recursive: true });
     return;
   }
 
@@ -40,7 +41,7 @@ module.exports = function prepareTplFiles(appData) {
   }
 
   helMonoLog(`copy hel ${label} template src files to ${toDir}`);
-  fs.cpSync(fromDir, toDir, { recursive: true });
+  cpSync(fromDir, toDir, { recursive: true });
 
   // 还原最近一次执行 build:helex 或 start:helex 的结果
   if (oldExFileContent) {

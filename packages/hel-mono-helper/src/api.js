@@ -2,12 +2,13 @@
 // 故 hel-mono-helper 内部使用 shelljs 替代 child_process.execSync
 const cst = require('./consts');
 const { MOD_TEMPLATE } = require('./consts');
+const { VALID_EX_SUFFIXES, VALID_EX_NUMS } = require('./consts/inner');
 const { prepareHelEntry } = require('./entry');
 const { getMonoDevData, getPkgMonoDepData, getPkgMonoDepDataDict } = require('./dev-data');
 const { executeStart, executeBuild, executeStartDeps, buildSrvModToHelDist } = require('./exec');
 const util = require('./util');
 const { helMonoLogAllTmp } = require('./util/log');
-const { lastItem } = require('./util/arr');
+const { lastNItem } = require('./util/arr');
 const { runAppAction, createApp } = require('./util/cmd');
 const { getDirData } = require('./util/cwd');
 const { getHost, getHelMonoHost } = require('./util/devHost');
@@ -59,10 +60,21 @@ const monoUtil = {
     const curCwd = process.cwd();
     let exCwd = '';
     let forEX = false;
-    const lastArg = lastItem(argv);
+    const lastArg = lastNItem(argv);
+    const last2Arg = lastNItem(argv, 2);
+    const isArgItemExs = (arg) => arg.endsWith('exs') || arg.endsWith('EXS.js') || arg.endsWith('EXS');
+
     // exs startEXS buildEXS 操作应用对应的静态服务
-    if (lastArg.endsWith('exs') || lastArg.endsWith('EXS.js') || lastArg.endsWith('EXS')) {
+    if (isArgItemExs(lastArg)) {
       exCwd = `${curCwd}-ex`;
+      forEX = true;
+    } else if (isArgItemExs(last2Arg)) {
+      // 是 pnpm start hub:for exs 2 类似的命令启动
+      const suffix = `-ex${lastArg}`;
+      if (!VALID_EX_SUFFIXES.includes(suffix)) {
+        throw new Error(`exs suffix can only be ${VALID_EX_NUMS.join(',')}`);
+      }
+      exCwd = `${curCwd}${suffix}`;
       forEX = true;
     }
 

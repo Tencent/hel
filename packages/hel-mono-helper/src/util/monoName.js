@@ -24,6 +24,7 @@ function getMonoLevel1NameMap(level1DirName) {
 
   const pkgName2DirName = {};
   const pkgName2Deps = {};
+  const pkgName2PeerDeps = {};
   const dirName2PkgName = {};
   const packNames = [];
   const dirNames = [];
@@ -39,19 +40,30 @@ function getMonoLevel1NameMap(level1DirName) {
       continue;
     }
 
-    const { name, dependencies } = getFileJson(filepath);
+    const { name, dependencies, peerDependencies } = getFileJson(filepath);
     if (pkgName2DirName[name]) {
       throw new Error(`package name ${name} duplicated under ${level1DirName} dir`);
     }
 
     pkgName2DirName[name] = dirName;
     pkgName2Deps[name] = dependencies || {};
+    pkgName2PeerDeps[name] = peerDependencies || {};
     dirName2PkgName[dirName] = name;
     packNames.push(name);
     dirNames.push(dirName);
   }
 
-  return { pkgName2DirName, pkgName2Deps, dirName2PkgName, packNames, dirNames };
+  return { pkgName2DirName, pkgName2Deps, pkgName2PeerDeps, dirName2PkgName, packNames, dirNames };
+}
+
+function addCanBeEx(options) {
+  const { canBeEx, deps, baseExternals, customExternals } = options;
+  Object.keys(deps).forEach((name) => {
+    const val = deps[name];
+    if (!val.startsWith('workspace:') && !PKG_NAME_WHITE_LIST.includes(name) && !baseExternals[name] && !customExternals[name]) {
+      canBeEx[name] = val;
+    }
+  });
 }
 
 /**
@@ -72,6 +84,7 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
   const packNames = [];
   const dupPackNames = [];
   const pkg2Deps = {}; // 包名与 dependencies 对象映射
+  const pkg2PeerDeps = {}; // 包名与 peerDependencies 对象映射
   const pkg2BelongTo = {}; // 包名与 belongTo 目录映射
   const pkg2Dir = {}; // 包名与项目目录映射
   const pkg2Info = {}; // 包名与info映射
@@ -97,6 +110,7 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
     });
     monoNameMap[belongTo] = { isSubMod, nameMap };
     Object.assign(pkg2Deps, nameMap.pkgName2Deps);
+    Object.assign(pkg2PeerDeps, nameMap.pkgName2PeerDeps);
 
     nameMap.packNames.forEach((pkgName) => {
       pkg2BelongTo[pkgName] = belongTo;
@@ -118,19 +132,16 @@ function getMonoNameMap(/** @type {IDevInfo} */ devInfo) {
       const infoPure = { pkgName, belongTo, dirName, isSubMod, appSrcPath, alias };
       const info = { ...infoPure, proxyPkgName, proxySrcPath };
       const deps = pkg2Deps[pkgName];
+      const peerDeps = pkg2PeerDeps[pkgName];
 
       const canBeEx = {};
-      Object.keys(deps).forEach((name) => {
-        const val = deps[name];
-        if (!val.startsWith('workspace:') && !PKG_NAME_WHITE_LIST.includes(name) && !baseExternals[name] && !customExternals[name]) {
-          canBeEx[name] = val;
-        }
-      });
+      addCanBeEx({ canBeEx, deps, baseExternals, customExternals });
+      addCanBeEx({ canBeEx, deps: peerDeps, baseExternals, customExternals });
       pkg2CanBeExternals[pkgName] = canBeEx;
 
       pkg2Info[pkgName] = info;
-      depData[pkgName] = { ...info, appDirPath, prefixedDir, deps };
-      depDataPure[pkgName] = { ...infoPure, appDirPath, prefixedDir, deps };
+      depData[pkgName] = { ...info, appDirPath, prefixedDir, deps, peerDeps };
+      depDataPure[pkgName] = { ...infoPure, appDirPath, prefixedDir, deps, peerDeps };
     });
   };
 

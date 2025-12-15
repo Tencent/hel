@@ -113,6 +113,10 @@ export interface IMonoNameMap {
    */
   pkg2Deps: Dict<DepsObj>;
   /**
+   * 包名与 peerDependencies 对象映射
+   */
+  pkg2PeerDeps: Dict<DepsObj>;
+  /**
    * 包名与 belongTo 目录映射
    */
   pkg2BelongTo: Dict<string>;
@@ -193,9 +197,11 @@ export interface ICWDAppData {
    * app所属项目的目录完整路径
    * @example
    * /path/to/hel-mono/apps/hub
-   */
+  */
   appDirPath: string;
   /**
+   * @example
+   * /path/to/hel-mono/apps/hub/src
    * app所属项目的src目录完整路径
    */
   appSrcDirPath: string;
@@ -338,6 +344,8 @@ export interface IReplaceExHtmlContentOptions {
   appData: ICWDAppData;
   devInfo: IMonoDevInfo;
   pkg2CanBeExternals: Record<string, object>;
+  isCurProjectEx: boolean;
+  pkg2Deps: Record<string, object>;
 }
 
 export interface IGetAppExternalsOptions {

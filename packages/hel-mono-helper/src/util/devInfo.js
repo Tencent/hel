@@ -44,7 +44,19 @@ function getAppConfsAndMonoDataDict(/** @type {IHelMonoJson} */ monoJson) {
   // }
 
   repoPkgNames.forEach((pkgName) => {
-    const { port, alias, devHostname, deployPath, handleDeployPath } = mods[pkgName] || {};
+    const {
+      port,
+      alias,
+      devHostname,
+      deployPath,
+      handleDeployPath,
+      htmlPath,
+      enableRepoEx,
+      devRepoExLink,
+      prodRepoExLink,
+      peerExList,
+      exProjDeps,
+    } = mods[pkgName] || {};
     const pkgMonoData = monoDict[pkgName] || {};
     let pkgHel = pkgMonoData.hel || {};
     const repoAlias = pkgMonoData.alias;
@@ -70,6 +82,12 @@ function getAppConfsAndMonoDataDict(/** @type {IHelMonoJson} */ monoJson) {
         appGroupName: pkgHel.groupName,
         appNames: pkgHel.names || {},
       },
+      enableRepoEx,
+      devRepoExLink,
+      prodRepoExLink,
+      peerExList,
+      exProjDeps,
+      htmlPath,
     };
   });
 
@@ -140,6 +158,7 @@ function inferDevInfo(allowMonoJsonNull) {
     devRepoExLink,
     prodRepoExLink,
     exConfs,
+    externalsExclude = [],
   } = monoJson;
   const { appConfs, monoDict, prefixedDirDict, dirDict } = getAppConfsAndMonoDataDict(monoJson);
 
@@ -171,6 +190,7 @@ function inferDevInfo(allowMonoJsonNull) {
     devRepoExLink,
     prodRepoExLink,
     exConfs,
+    externalsExclude,
   };
   if (handleDevInfoFn) {
     devInfo = handleDevInfoFn(devInfo, { monoJson }) || devInfo;
@@ -207,7 +227,8 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
   }
 
   pkgNames.forEach((name) => {
-    const { alias, port } = appConfs[name];
+    const { alias, port, deployPath, handleDeployPath, isServerModOneBundle, htmlPath, exProjDeps, devHostname, peerExList } =
+      appConfs[name];
     let targetPort = port;
     if (!targetPort) {
       const monoData = monoDict[name];
@@ -221,16 +242,27 @@ function toMonoJson(/** @type {IDevInfo} */ devInfo, options = {}) {
         targetPort = getPortByDevInfo(pureDevInfo, isSubMod);
       }
     }
-    newMods[name] = purify({ alias, port: targetPort });
+    newMods[name] = purify({
+      alias,
+      port: targetPort,
+      deployPath,
+      handleDeployPath,
+      isServerModOneBundle,
+      htmlPath,
+      exProjDeps,
+      devHostname,
+      peerExList,
+    });
   });
 
   return { ...getDevInfoRest(pureDevInfo), ...rest, mods: newMods };
 }
 
 function getIsEnableRepoEx(appPkgName, /** @type {IDevInfo} */ devInfo) {
-  const { exConfs = {}, enableRepoEx } = devInfo;
+  const { exConfs = {}, enableRepoEx, appConfs } = devInfo;
+  const appConf = appConfs[appPkgName] || {};
   const exConf = exConfs[appPkgName] || {};
-  const modEnableEx = chooseBool([exConf.enableRepoEx, enableRepoEx], false);
+  const modEnableEx = chooseBool([appConf.enableRepoEx, exConf.enableRepoEx, enableRepoEx], false);
   return modEnableEx;
 }
 

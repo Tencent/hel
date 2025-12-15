@@ -3,6 +3,7 @@
  */
 
 type PkgName = string;
+type GlobalName = string;
 type DeployEnv = string;
 type HelModName = string;
 
@@ -27,6 +28,33 @@ export interface IHelMonoModBase {
    * false：基于 tsc 构建，会保持原目录结构，将 server 模块构建为多个文件
    */
   isServerModOneBundle?: boolean;
+  /**
+   * default: 'dev/public/index.html'
+   * 模块使用的 html 模板
+   */
+  htmlPath?: string;
+  /**
+   * 此配置项仅对 ex 项目有效，表示使用自定义的依赖替代自动推导的依赖
+   */
+  exProjDeps?: Record<PkgName, string>;  /**
+   * 如宿主没提供全局模块且当前子模块也未打包某些 peer 依赖到 hel 产物里时，
+   * 这些 peerExList 会提供给 hel-micro 使用，让当前模块能成功运行起来
+   * ```
+   * # 如配置了 [{ name: 'Lodash', link: 'xxxx/lodash.js' }],
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash" src="xxxx/lodash.js"></script>
+   * # 则 hel-meta.json 会提取出来作为依赖的模块提供给 hel-micro 加载时使用
+   *
+   * # 可配置多个子模块到一个链接里，例如：[{ name: 'Lodash,Limu', link: 'xxxx/multi-deps.js' }]
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash,Limu" src="xxxx/multi-deps.js"></script>
+   * ```
+   *
+   * peerExList 可有2种作用
+   * 1 作为子模块正常运行的兜底
+   * 2 某些依赖仅当前子模块需要，可延迟到当前子模块加载时才加载这些依赖
+   */
+  peerExList?: IExLink[];
 }
 
 
@@ -50,7 +78,7 @@ export interface IHelModConf {
   platform?: string;
 }
 
-export interface IMonoAppConf extends IHelMonoModBase {
+export interface IMonoAppConf extends IHelMonoModBase, IExConf {
   /**
    * 应用启动端口，建议配置，未配置的话内部会自动推导
    */
@@ -71,22 +99,32 @@ export interface IMonoAppConf extends IHelMonoModBase {
  */
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
+export interface IExLink {
+  /**
+   * 映射到 script 的 data-helex 属性
+   */
+  ex: string;
+  /**
+   * 映射到 script 的 src 属性
+   */
+  link: string;
+}
 
 export interface IExConf {
   /**
    * default: false
-   * 是否使用将大仓所有模块的一级依赖提升为外部资源的功能（内部会自动排除 baseExternals、customExternals 里的声明），
+   * 是否使用将大仓所有模块的一级依赖提升为外部资源的功能（内部会自动排除 baseExternals、 customExternals 里的声明），
    * true：会注入大仓所有模块的一级依赖对应的外部资源的链接，需要同时配置 devRepoExLink 和 prodRepoExLink 参数
    */
   enableRepoEx?: boolean;
   /**
    * 本地开发时大仓使用的 external 资源链接
    */
-  devRepoExLink?: string | string[];
+  devRepoExLink?: string | IExLink | string[] | IExLink[];
   /**
-   * 线上运行时大仓使用的 external 资源链接，用户可在下发首页是自动替换掉
+   * 线上运行时大仓使用的 external 资源链接，用户可在下发首页时根据一定的特征查找并替换掉
    */
-  prodRepoExLink?: string | string[];
+  prodRepoExLink?: string | string[] | IExLink[];
 }
 
 export interface IHelMonoJsonBase extends IExConf {
@@ -164,23 +202,28 @@ export interface IHelMonoJsonBase extends IExConf {
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
   /**
-   * 大仓全局使用的基础外部资源，用户可以按需重写此配置，改写后 dev/public/index.html 里的 id="BASE_EX" 的资源链接也需要替换
+   * 大仓全局使用的基础外部资源，用户可以按需重写此配置，改写后 dev/public/index.html
+   * 里的类似 id="BASE_EX" 的资源链接也需要替换
    * default: {
-   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
-   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
+   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs',
+   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy', 'hel-mono-runtime-helper': 'HelMonoRuntimeHelper'
    * }，
    */
-  baseExternals?: Record<string, string>;
+  baseExternals?: Record<PkgName, GlobalName>;
+  /**
+   * 对最终生成的 appExternals 做排除
+   */
+  externalsExclude?: PkgName[];
   /**
    * 大仓全局使用的用户自定义外部资源，配置后，需要在 dev/public/index.html 添加相应链接，
    * 同时需要标记 data-helex 记录此资源对应的全局模块名称
    */
-  customExternals?: Record<string, string>;
+  customExternals?: Record<PkgName, GlobalName>;
   /**
    * default: []
    * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，
    */
-  exclude?: '*' | string[];
+  exclude?: '*' | PkgName[];
   /**
    * default: []，
    * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
@@ -188,15 +231,27 @@ export interface IHelMonoJsonBase extends IExConf {
    * - '*' 表示排除所有
    * - []表示不排除，如有具体的排除项可配置其包名到数组里
    */
-  nmExclude?: '*' | string[];
+  nmExclude?: '*' | PkgName[];
   /**
    * default: []，
    * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包包含到微模块构建体系之中，
    * nmExclude 和 nmInclude 同时生效时，nmExclude 的优先级高于 nmInclude。
    * - '*' 表示包含所有
    * - []表示不包含，如有具体的包含项可配置其包名到数组里
+   * @example
+   * ```ts
+   * // 包含所有包，但排除 some-lib 包
+   * {
+   *    "nmInclude": "*",
+   *    "nmExclude": ["some-lib"],
+   * }
+   * // 只包含 some-lib 包
+   * {
+   *    "nmInclude": ["some-lib"],
+   * }
+   * ```
    */
-  nmInclude?: '*' | string[];
+  nmInclude?: '*' | PkgName[];
   /**
    * default: '0.0.0.0'
    * 所有hel模块本地联调时的域名
@@ -278,29 +333,13 @@ export interface IPkgHelConf {
   names?: Record<DeployEnv, HelModName>;
 }
 
-export interface IHelMonoMod extends IHelMonoModBase {
+export interface IHelMonoMod extends IHelMonoModBase, IExConf {
   /**
    * default: IHelMonoJsonBase.devHostname
    * 当前hel模块本地联调时的域名
    */
   devHostname?: string;
   port: number;
-  /**
-   * TODO: 通常需要对子模块配置即可，当别的仓库使用当前大仓某个子模块时，
-   * 如宿主未提供全局模块且当前子模块也未打包 peer 依赖到 hel 产物里时，
-   * 这些 peerExList 会提供给 hel-micro 使用，让当前模块能成功运行起来
-   * ```
-   * # 如配置了 lodash: { name: 'Lodash', link: 'xxxx/lodash.js' },
-   * # 生成的 html 里会包含
-   * <script data-helex="Lodash" src="xxxx/lodash.js"></script>
-   * # 则 hel-meta.json 会提取出来作为依赖的模块提供给 hel-micro 加载时使用
-   *
-   * # 可配置多个子模块到一个链接里，例如：{ name: 'Lodash,Limu', link: 'xxxx/multi-deps.js' }
-   * # 生成的 html 里会包含
-   * <script data-helex="Lodash,Limu" src="xxxx/multi-deps.js"></script>
-   * ```
-   */
-  peerExList?: { name: string, link: string }[]
 }
 
 
