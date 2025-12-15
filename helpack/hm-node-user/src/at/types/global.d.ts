@@ -1,6 +1,6 @@
 
 declare global {
-  /** 星辰的全局公共类型 */
+  /** 全局公共类型 */
   namespace xc {
 
     type Dict<T extends any = any> = Record<string, T>;

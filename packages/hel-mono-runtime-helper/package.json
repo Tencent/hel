@@ -1,6 +1,6 @@
 {
   "name": "hel-mono-runtime-helper",
-  "version": "1.2.1",
+  "version": "2.3.3",
   "description": "micro module mono-repo architecture runtime helper",
   "keywords": [
     "hel",
@@ -27,8 +27,11 @@
   ],
   "scripts": {},
   "dependencies": {},
+  "devDependencies": {
+    "hel-mono-types": "^2.6.0"
+  },
   "peerDependencies": {
-    "hel-mono-types": "^2.3.1"
+    "hel-mono-types": "^2.6.0"
   },
   "bundleDependencies": [],
   "deprecated": false

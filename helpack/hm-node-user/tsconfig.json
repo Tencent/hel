@@ -2,22 +2,11 @@
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": "./src",
-    "paths": {
-      "@ml/*": ["../node_modules/hel-demo-mono-libs/src/*"]
-    },
     "lib": ["ESNext"],
     "target": "ESNext",
-    /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
     "module": "commonjs",
-    /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    /**
-     * allow write:
-     * import * as fs from 'fs';
-     * to
-     * import fs from 'fs';
-     */
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "esModuleInterop": true,
@@ -25,5 +14,5 @@
     "skipLibCheck": true,
     "outDir": "./build"
   },
-  "include": ["src/**/*", "src/at/types/global.d.ts"]
+  "include": ["src/**/*", "./ex-types.d.ts"]
 }

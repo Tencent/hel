@@ -22,6 +22,22 @@ function getNameReg(max = 32) {
   return new RegExp(`^[A-Za-z0-9|_|-]{1,${max}}$`);
 }
 
+function isDirEmpty(dirPath) {
+  const dirInfoList = getDirInfoList(dirPath);
+  if (!dirInfoList.length) {
+    return true;
+  }
+  if (dirInfoList.length === 1 && ['.hel', 'node_modules'].includes(dirInfoList[0].name)) {
+    return true;
+  }
+  const names = dirInfoList.map((v) => v.name).sort();
+  if (names.join(',') === '.hel,node_modules') {
+    return true;
+  }
+
+  return false;
+}
+
 exports.getArgvOptions = function (options, topOptions = {}) {
   /** @type {{keywords:string[], actionKey: string}} */
   const { devInfo, keywords, actionKey, belongTo, pkgName } = options;
@@ -53,7 +69,7 @@ exports.getArgvOptions = function (options, topOptions = {}) {
     if (idx === 0) {
       // TODO 优化为正则，只允许字母 a~z 开头的目录名
       if (word.startsWith('-') || word.startsWith('.')) {
-        throw new Error(`missing target dir name for ${actionKey}, you should put it after ${actionKey}`);
+        throw new Error(`Missing target dir name for ${actionKey}, you should put it after ${actionKey}`);
       }
       argvOptions.copyToDir = word;
       return;
@@ -61,7 +77,7 @@ exports.getArgvOptions = function (options, topOptions = {}) {
 
     if (!CREATE_SHORT_PARAM_KEY_NAMES.includes(word)) {
       const these = CREATE_SHORT_PARAM_KEY_NAMES.join(' ');
-      throw new Error(`unknown short param key ${word}, it must be one of (${these})`);
+      throw new Error(`Unknown short param key ${word}, it must be one of (${these})`);
     }
 
     // 指定了模板名
@@ -76,7 +92,7 @@ exports.getArgvOptions = function (options, topOptions = {}) {
       const info = list.find((v) => v.name === targetTpl);
       if (!info) {
         const names = list.map((v) => v.name);
-        throw new Error(`unknown -t(template) value ${templateValue}, it must be one of (${names.join(',')})`);
+        throw new Error(`Unknown -t(template) value ${templateValue}, it must be one of (${names.join(',')})`);
       }
       argvOptions.modTemplate = targetTpl;
     }
@@ -110,7 +126,7 @@ exports.getArgvOptions = function (options, topOptions = {}) {
     if (CREATE_SHORT_PARAM_KEY.pkgName === word) {
       const pkgName = keywords[idx + 1] || '';
       if (!pkgName) {
-        throw new Error('missing -n value');
+        throw new Error('Missing -n value');
       }
 
       const tip = `-n value (${pkgName}) invalid, valid package name example: @xx-scope/yy or yy`;
@@ -152,14 +168,15 @@ exports.getArgvOptions = function (options, topOptions = {}) {
   argvOptions.copyToPath = path.join(monoRoot, `./${argvOptions.copyToBelongTo}/${argvOptions.copyToDir}`);
 
   if (isCreateAction) {
-    if (!argvOptions.copyToDir) {
+    const { copyToDir, copyToPath, pkgName } = argvOptions;
+    if (!copyToDir) {
       throw new Error(`You can not create module with an empty dir name.`);
     }
-    if (fs.existsSync(argvOptions.copyToPath)) {
-      throw new Error(`You can not create ${argvOptions.pkgName} to an existed dir ${argvOptions.copyToPath}`);
+    if (fs.existsSync(copyToPath) && !isDirEmpty(copyToPath)) {
+      throw new Error(`You can not create ${pkgName} to an existed dir ${copyToPath}`);
     }
-    if (devInfo.appConfs[argvOptions.pkgName]) {
-      throw new Error(`Package name ${argvOptions.pkgName} already exists`);
+    if (devInfo.appConfs[pkgName]) {
+      throw new Error(`Package name ${pkgName} already exists`);
     }
   }
 

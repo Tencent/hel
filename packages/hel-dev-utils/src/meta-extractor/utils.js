@@ -1,7 +1,9 @@
 /** @typedef {import('hel-types').ISrcMap} SrcMap*/
 import * as fs from 'fs';
-import cst from '../configs/consts';
-import { slash } from '../inner-utils/slash';
+import { cst } from 'hel-dev-utils-base';
+import { slash } from 'hel-utils-base';
+
+const PLUGIN_VER = '5.4.3';
 
 export function getIndexHtmlFileName(dirPath) {
   const names = fs.readdirSync(dirPath);
@@ -20,30 +22,6 @@ export function getIndexHtmlFileName(dirPath) {
     throw new Error(`there are more than one indexHtml file under [${dirPath}]!`);
   }
   return indexHtmlName;
-}
-
-/**
- * 递归获得某个目录下的所有文件绝对路径
- * @param {string} dirPath 形如:/user/zzk/log/build
- * @return {string[]} filePathList
- * 形如 ['/user/zzk/log/build/js/xx.js', '/user/zzk/log/build/img/xx.png']
- */
-export function getAllFilePath(dirPath) {
-  const _getAllFilePath = (dirPath, filePathList) => {
-    const names = fs.readdirSync(dirPath);
-    names.forEach((name) => {
-      const stats = fs.statSync(`${dirPath}/${name}`);
-      if (stats.isDirectory()) {
-        _getAllFilePath(`${dirPath}/${name}`, filePathList);
-      } else {
-        filePathList.push(`${dirPath}/${name}`);
-      }
-    });
-  };
-
-  const filePathList = [];
-  _getAllFilePath(dirPath, filePathList);
-  return filePathList;
 }
 
 /**
@@ -79,7 +57,7 @@ export function makeAppVersionSrcMap(extractOptions) {
  * @param {import('../types').IUserExtractOptions} userExtractOptions
  */
 export function makeHelMetaJson(userExtractOptions, parsedRet) {
-  const defaultDesc = `this version meta is created by hel-dev-utils@${cst.PLUGIN_VER}`;
+  const defaultDesc = `this version meta is created by hel-dev-utils@${PLUGIN_VER}`;
   const { packageJson, extractMode = 'build', subApp, desc = defaultDesc } = userExtractOptions;
   const { homePage, groupName, name: appName, semverApi, platform } = subApp;
 
@@ -143,7 +121,7 @@ export function makeHelMetaJson(userExtractOptions, parsedRet) {
       create_at: currentISOUTCString,
     },
     version: {
-      plugin_ver: cst.PLUGIN_VER,
+      plugin_ver: PLUGIN_VER,
       extract_mode: extractMode,
       sub_app_name: appName,
       sub_app_version: versionIndex,

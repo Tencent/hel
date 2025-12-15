@@ -12,7 +12,10 @@ module.exports = {
   // 设置测试环境完毕之后执行的一些脚本，这里执行enzyme的初始化和适配
   setupFilesAfterEnv: ['<rootDir>/test/testSetup.ts'],
   // 运行测试文件的目录规则，在src的同级目录test下，或者src目录下的__tests__目录下，或者src目录下spec,test后缀的文件
-  testMatch: ['<rootDir>/test/api/*.ts'],
+  testMatch: [
+    '<rootDir>/test/api/*.ts',
+    // '<rootDir>/test/api/appParamSrv.ts',
+  ],
   // testMatch: ['<rootDir>/test/api/apiIndex.ts'],
   testEnvironment: 'node',
   // testEnvironment: 'jsdom',

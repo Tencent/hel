@@ -7,11 +7,13 @@
 */
 /** @typedef {import('./types').ICheckOptions} ICheckOptions */
 import * as fs from 'fs';
+import { str } from 'hel-utils-base';
 import * as os from 'os';
 import * as path from 'path';
+import { verbose } from './base-utils';
 import cst from './configs/consts';
-import { verbose } from './inner-utils/index';
-import { pfstr } from './inner-utils/str';
+
+const { pfstr } = str;
 
 /**
  * @param {Record<string, any>} pkg - 用户模块的 package.json 文件

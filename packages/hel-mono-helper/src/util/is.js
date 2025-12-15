@@ -9,7 +9,7 @@ const {
 } = require('../consts');
 
 const startModes = [HEL_START_AND_WAIT_LOCAL_DEPS, HEL_START_WITH_LOCAL_RUNNING_DEPS, HEL_START_WITH_REMOTE_DEPS];
-const buildModes = [HEL_MICRO_BUILD, HEL_MICRO_BUILD_BS];
+const microBuildModes = [HEL_MICRO_BUILD, HEL_MICRO_BUILD_BS];
 
 /**
  * hel应用（模块）处于 微模块 start 或 微模块 build 模式
@@ -17,7 +17,7 @@ const buildModes = [HEL_MICRO_BUILD, HEL_MICRO_BUILD_BS];
 function isHelMicroMode() {
   const helBuildMode = process.env.HEL_BUILD;
   const helStartMode = process.env.HEL_START;
-  return buildModes.includes(helBuildMode) || startModes.includes(helStartMode);
+  return microBuildModes.includes(helBuildMode) || startModes.includes(helStartMode);
 }
 
 /**
@@ -58,6 +58,11 @@ function isFastRefreshMarked() {
   return hasFRFlag && isHelStartWithLocalDeps();
 }
 
+function isHelAllOrMicroBuild() {
+  const helBuildMode = process.env.HEL_BUILD;
+  return isHelAllBuild() || microBuildModes.includes(helBuildMode);
+}
+
 module.exports = {
   isHelMode,
   isHelMicroMode,
@@ -66,4 +71,5 @@ module.exports = {
   isHelStart,
   isHelStartWithLocalDeps,
   isFastRefreshMarked,
+  isHelAllOrMicroBuild,
 };

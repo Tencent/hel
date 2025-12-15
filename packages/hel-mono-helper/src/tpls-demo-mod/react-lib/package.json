@@ -7,7 +7,7 @@
   "author": {
     "name": "fantasticsoul"
   },
-  "main": "./src/index.ts",
+  "main": "./src/index",
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -20,8 +20,11 @@
     }
   },
   "publishConfig": {
+    "access": "public",
     "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
+    "unpkg": "./dist/index.js",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -30,17 +33,25 @@
       },
       "./index.css": "./dist/index.css",
       "./hel": {
-        "types": "./src/.hel/entrance/libTypes.ts",
-        "import": "./src/.hel/entrance/libTypes.ts"
+        "types": "./dist/.hel/entrance/libTypes.d.ts",
+        "import": "./dist/.hel/entrance/libTypes.mjs",
+        "require": "./dist/.hel/entrance/libTypes.js"
       }
+    },
+    "dependencies": {
+      "@hel-demo/mono-libs": "*"
     }
   },
-  "dependencies": {
-    "hel-mono-runtime-helper": "^1.1.2"
+  "dependencies": {},
+  "peerDependencies": {
+    "hel-mono-runtime-helper": "^2.3.3",
+    "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "esbuild-plugin-module-css": "^0.1.1",
     "hash-css-selector": "^1.1.0",
+    "hel-mono-runtime-helper": "^2.3.3",
+    "hel-lib-proxy": "*",
     "postcss": "^8.4.4",
     "postcss-modules": "^6.0.1"
   },
@@ -90,8 +101,7 @@
   "files": [
     "dist",
     "hel_dist",
-    "src",
-    "README.md",
-    "tsconfig.json"
+    "!src",
+    "README.md"
   ]
 }

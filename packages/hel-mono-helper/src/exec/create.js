@@ -3,6 +3,7 @@ const fs = require('fs');
 const shell = require('shelljs');
 const { INNER_ACTION } = require('../consts');
 const { helMonoLog, getCmdKeywords } = require('../util');
+const { cpSync } = require('../util/file');
 const { getArgvOptions } = require('./common/getArgvOptions');
 const { rewriteModAlias } = require('./common/rewriteModAlias');
 const { rewritePkgJson } = require('./common/rewritePkgJson');
@@ -44,7 +45,7 @@ exports.execCreate = function (/** @type {IDevInfo} */ devInfo, options = {}) {
 
   // 复制模板项目文件
   helMonoLog(`start create ${label} to ${copyToPath}...`);
-  fs.cpSync(copyFromPath, copyToPath, { recursive: true });
+  cpSync(copyFromPath, copyToPath, { recursive: true });
   helMonoLog(`create ${label} ${pkgName} done`);
 
   // 重写根目录的 hel-mono.json

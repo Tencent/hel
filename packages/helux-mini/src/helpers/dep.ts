@@ -42,7 +42,7 @@ function checkUnmountInfo(internal: any) {
   }
 }
 
-interface IRocoverDepOptions {
+interface IRecoverDepOptions {
   readMap: Dict<number>;
   internal: any;
   setState: any;
@@ -51,7 +51,7 @@ interface IRocoverDepOptions {
 /**
  * recover dep
  */
-export function recoverDep(insKey: number, options: IRocoverDepOptions) {
+export function recoverDep(insKey: number, options: IRecoverDepOptions) {
   if (IS_SERVER) return;
 
   let info = UNMOUNT_INFO_MAP.get(insKey);

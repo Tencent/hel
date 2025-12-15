@@ -5,8 +5,7 @@
     "ciCmd": "build:hel",
     "isEX": true
   },
-  "main": "./src/index.ts",
-  "private": true,
+  "main": "./src/index",
   "scripts": {
     "start": "node ../../dev/root-scripts/executeStart",
     "start:raw": "node ../../dev/scripts/start",
@@ -43,5 +42,9 @@
   "volta": {
     "node": "20.19.5",
     "pnpm": "8.6.8"
-  }
+  },
+  "files": [
+    "!src",
+    "hel_dist"
+  ]
 }

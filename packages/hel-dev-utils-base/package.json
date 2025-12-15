@@ -1,0 +1,44 @@
+{
+  "name": "hel-dev-utils-base",
+  "version": "0.0.2",
+  "description": "hel dev utils base",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tencent/hel.git",
+    "directory": "packages/hel-dev-utils-base"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "src",
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "cross-env BUILD_ENV=commonjs rollup -c",
+    "build:es": "cross-env BUILD_ENV=es rollup -c",
+    "build:umd": "cross-env BUILD_ENV=development rollup -c",
+    "build:umd:min": "cross-env BUILD_ENV=production rollup -c"
+  },
+  "dependencies": {
+    "hel-types": "^4.3.10",
+    "hel-utils-base": "^0.0.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "babel-cli": "^6.26.0",
+    "rollup": "^2.23.0"
+  },
+  "peerDependencies": {
+    "hel-types": "^4.3.10",
+    "hel-utils-base": "^0.0.2"
+  },
+  "bundleDependencies": false,
+  "deprecated": false
+}

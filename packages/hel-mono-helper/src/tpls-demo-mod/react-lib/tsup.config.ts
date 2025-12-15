@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 import pkgJson from './package.json';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/.hel/entrance/libTypes.ts'],
   treeshake: false,
   sourcemap: true,
   minify: true,

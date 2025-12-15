@@ -54,19 +54,23 @@ type IInnerHelGetOptions = IHelBatchGetOptions & IHelGetOptions;
 /** 内部用的工具函数 */
 const inner = {
   /** 处理语义化版本平台返回的结果 */
-  handleSemverRet(ret: any, options: IHelGetOptionsBase) {
-    const { version } = ret || {};
-    let retVar = ret;
+  handleSemverRet(inputResp: any, options: IHelGetOptionsBase) {
+    const resp = inputResp || {};
+    let version: any;
+    let dataVar = resp.data || resp;
     if (options.onlyVersion) {
-      retVar = version;
+      version = resp.version || resp.data;
+      dataVar = version;
     }
+    version = version || dataVar.version;
+
     if (!options.isFullVersion && version) {
       Reflect.deleteProperty(version, 'html_content');
     }
     if (!version) {
       return { data: null, code: '404', msg: 'no version found' };
     }
-    return { data: retVar, code: '0', msg: '' };
+    return { data: dataVar, code: '0', msg: '' };
   },
   appendSearchKV(oriStr: string, key: string, value?: string) {
     let newStr = oriStr;
@@ -418,8 +422,8 @@ export async function getSubAppVersion(versionId: string, options: IGetVerOption
   const { apiMode, isFullVersion = false, semverApi, customMetaUrl } = options;
   const url = await prepareRequestVersionUrl(versionId, options);
   const semverApiVar = customMetaUrl ? false : semverApi;
-
   const { data, code, msg } = await executeGet(url, { apiMode, isFullVersion, semverApi: semverApiVar, onlyVersion: true });
+
   if (0 !== parseInt(code, 10) || !data) {
     throw new Error(msg || 'ver not found');
   }

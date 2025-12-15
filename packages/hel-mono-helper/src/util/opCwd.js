@@ -21,9 +21,6 @@ function getCWDAppData(/** @type {IDevInfo} */ devInfo, inputCwd) {
   }
 
   const cwd = inputCwd || getCWD();
-  helMonoLog(`\n${new Date().toLocaleString()}`);
-  helMonoLog('process.argv:', process.argv);
-  helMonoLog(`app data cwd: ${cwd}`);
   const { monoRootHelDir, monoRoot } = getMonoRootInfo();
   const { subModDirs } = getDevInfoDirs(devInfo);
 

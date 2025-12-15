@@ -52,6 +52,12 @@ function prepareHelEntryForMainAndDeps(/** @type {IPrepareHelEntrysOptions} */ o
     // 为宿主的子模块依赖准备 hel 入口文件
     depInfos.forEach((info) => {
       const { belongTo, dirName, pkgName } = info;
+      const { exclude = [] } = devInfo;
+      if (exclude.includes(pkgName)) {
+        helMonoLog(`${pkgName} is excluded in runDeps process due to exclude.`);
+        return;
+      }
+
       const targetCWD = path.join(rootDir, `./${belongTo}/${dirName}`);
       const appData = util.getCWDAppData(devInfo, targetCWD);
       const startHelDep = () => {

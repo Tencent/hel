@@ -7,6 +7,13 @@ function prepareHelEntryFiles(/** @type {Options} */ options) {
   const { devInfo } = options;
   const appData = options.appData || getCWDAppData(devInfo);
   const { belongTo, appDir, appPkgName, realAppPkgName, isForRootHelDir } = appData;
+
+  const { exclude = [] } = devInfo;
+  if (exclude.includes(appPkgName)) {
+    helMonoLog(`${appPkgName} is excluded in preparing hel entry process due to exclude.`);
+    return devInfo;
+  }
+
   helMonoLog(`prepare hel entry for ${belongTo}/${appDir} (${appPkgName}):`, appData);
   if (isForRootHelDir) {
     helMonoLog(`the entry file is under root hel dir, it will link the target package ${realAppPkgName}`);

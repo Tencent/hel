@@ -17,19 +17,19 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { realAppPkgName, isSubMod, appSrcDirPath: appSrc, isForRootHelDir, appPkgName } = appData;
   helMonoLog(`trigger getInjectedDevInfo for ${appPkgName}`);
   const start = Date.now();
-  const { appConfs, devHostname, curRepoHelModRuntimeBaseConf, helModRuntimeBaseConf, helModRuntimeConfs } = devInfo;
+  const { appConfs, devHostname, nmBaseRuntimeConf, baseRuntimeConf, runtimeConfs, exclude, nmExclude } = devInfo;
   const injectedDevInfo = {
     mods: {},
     devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
   };
-  const getMetaApiPrefix = (pkgName, isFromNpm) => {
-    const baseConf = isFromNpm ? helModRuntimeBaseConf : curRepoHelModRuntimeBaseConf;
-    const conf = helModRuntimeConfs[pkgName] || {};
+  const getMetaApiPrefix = (pkgName, isFromNm) => {
+    const baseConf = isFromNm ? nmBaseRuntimeConf : baseRuntimeConf;
+    const conf = runtimeConfs[pkgName] || {};
     return conf.metaApiPrefix || baseConf.metaApiPrefix;
   };
 
   const assignMod = (pkgName, isSubMod) => {
-    if (injectedDevInfo.mods[pkgName]) {
+    if (exclude.includes(pkgName) || injectedDevInfo.mods[pkgName]) {
       return;
     }
     const conf = appConfs[pkgName];
@@ -38,12 +38,14 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
     }
     const ensuredConf = ensureAppConf({ devInfo, conf, pkgName, isSubMod });
     const { port, hel } = ensuredConf;
+    const runtimeConf = runtimeConfs[pkgName] || {};
     injectedDevInfo.mods[pkgName] = purifyUndefined({
       port,
       groupName: hel.appGroupName,
       names: hel.appNames,
       platform: hel.platform,
       metaApiPrefix: getMetaApiPrefix(pkgName, false),
+      ver: runtimeConf.ver,
     });
   };
 
@@ -59,7 +61,11 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {
+    if (nmExclude.includes(nmPkgName) || injectedDevInfo.mods[nmPkgName]) {
+      return;
+    }
     const { groupName = nmPkgName, platform } = nmPkg2HelConf[nmPkgName] || {};
+    const runtimeConf = runtimeConfs[nmPkgName] || {};
     injectedDevInfo.mods[nmPkgName] = purifyUndefined({
       groupName: groupName,
       platform,
@@ -67,6 +73,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
       metaApiPrefix: getMetaApiPrefix(nmPkgName, true),
       names: {}, // 避免 devInfo.ts 文件里类型检查报错
       port: 0, // 避免 devInfo.ts 文件里类型检查报错
+      ver: runtimeConf.ver,
     });
   });
 

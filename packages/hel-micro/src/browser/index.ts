@@ -38,19 +38,21 @@ function isAssetExisted(selectors: string) {
  * 识别 data-helappend data-helex 原语来确定资源是否能加载
  */
 function canAppendByHelMark(attrs: Record<string, any>, tag: string) {
-  const ex = attrs['data-helex'];
+  const ex: string = attrs['data-helex'] || '';
   const helAppend = attrs['data-helappend'];
   const g = getGlobalThis();
 
+  // 强制设定不加载此资源
   if (helAppend === '0') {
     return false;
   }
 
   // check is ex loaded，此功能用于支持需延迟加载的 externals
   if (ex) {
+    const exList = ex.split(',');
     // @ts-ignore avoid error: type {xxx} was found on type 'typeof globalThis'.
-    if (tag === 'script' && g[ex]) {
-      // script 型的 ex，优先查 globalThis 上是否已绑定，已绑定则不能加载相同 ex 标记的资源了
+    if (tag === 'script' && exList.every((ex) => !!g[ex])) {
+      // script 型的 ex，优先查 globalThis 上是否已全部绑定标注的外部资源，已绑定则不再加载
       return false;
     }
     // 查 helex 特征值对应的资源是否存在

@@ -1,6 +1,6 @@
 
 
-declare module 'hel-hello-helpack' { 
+declare module 'hel-hello-helpack' {
     export function hello(): string;
 }
 

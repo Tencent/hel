@@ -19,9 +19,10 @@ export async function preFetchHelDeps() {
   const start = Date.now();
   monoLog(`start preFetchLib (${helModNames}) isDev=${isDev}`);
   await Promise.all(
-    helDeps.map(({ helModName, groupName, pkgName, platform }) => {
-      const { enable, host, ...rest } = runtimeUtil.getPrefetchParams(helModName, DEV_INFO.mods[pkgName]);
-      return preFetchLib(helModName, { custom: { enable, host, appGroupName: groupName }, platform, ...rest });
+    helDeps.map(({ helModName, groupName, pkgName }) => {
+      const mod = DEV_INFO.mods[pkgName];
+      const { enable, host, others } = runtimeUtil.getPrefetchParams({ helModName, mod, pkgName });
+      return preFetchLib(helModName, { custom: { enable, host, appGroupName: groupName }, ...others });
     }),
   );
   monoLog(`end preFetchLib, costs ${Date.now() - start} ms`);

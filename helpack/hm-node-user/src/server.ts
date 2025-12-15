@@ -23,6 +23,7 @@ export async function startServer() {
         // 指定其元数据请求路径前缀，如不指定具体路径，具体请求路径取决于由 mapAndPreload 原始库导出的还是封装库导出的
         helpackApiUrl: 'https://helmicro.com/openapi/meta',
         modShape: { fnKeys: ['hello'] },
+        // ver: '1.1.0',
       },
       // 这是一个未安装到项目里的虚拟模块，映射为本地磁盘模块，可以被程序 import
       'my-mod': {

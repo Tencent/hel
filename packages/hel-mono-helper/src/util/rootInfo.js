@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { HEL_README_PATH } = require('../consts');
 const { getCWD } = require('./base');
+const { cpSync } = require('./file');
 
 /** @type {import('../types').IMonoRootInfo} */
 let curMonoRootInfo = null;
@@ -41,7 +42,7 @@ function buildRootInfoAndEnsureFiles(monoRoot) {
     fs.mkdirSync(monoRootHelDir);
   }
   if (!fs.existsSync(readMe)) {
-    fs.cpSync(HEL_README_PATH, readMe);
+    cpSync(HEL_README_PATH, readMe);
   }
   return monoRootInfo;
 }

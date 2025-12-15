@@ -1,4 +1,4 @@
-import type { ISubAppBuildDesc } from 'hel-dev-utils';
+import type { ISubAppBuildDesc } from 'hel-dev-utils-base';
 import type { IHelMonoJsonBase, IHelMonoJsonRuntimeConf, IPkgHelConf, MonoAppConfs } from 'hel-mono-types';
 
 type Dict<T = any> = Record<string, T>;
@@ -113,6 +113,10 @@ export interface IMonoNameMap {
    */
   pkg2Deps: Dict<DepsObj>;
   /**
+   * 包名与 peerDependencies 对象映射
+   */
+  pkg2PeerDeps: Dict<DepsObj>;
+  /**
    * 包名与 belongTo 目录映射
    */
   pkg2BelongTo: Dict<string>;
@@ -128,6 +132,10 @@ export interface IMonoNameMap {
    * 包名与包名信息对象映射
    */
   pkg2Info: Dict<IInnerPkgInfo>;
+  /**
+   * 包名与可提为外部资源的映射，已把内置的 PKG_NAME_WHITE_LIST 名单的包排除
+   */
+  pkg2CanBeExternals: Dict<IInnerPkgInfo>;
 }
 
 /** 依赖信息 */
@@ -148,7 +156,7 @@ export interface IMonoAppDepData extends IMonoNameMap {
  */
 export interface ICWDAppData {
   /**
-   * app是否属于大仓根hel目录
+   * app是否属于大仓根hel目录（此功能仅作研究，不再有实用性）
    * @example
    * /path/to/hel-mono/.hel
    */
@@ -189,9 +197,11 @@ export interface ICWDAppData {
    * app所属项目的目录完整路径
    * @example
    * /path/to/hel-mono/apps/hub
-   */
+  */
   appDirPath: string;
   /**
+   * @example
+   * /path/to/hel-mono/apps/hub/src
    * app所属项目的src目录完整路径
    */
   appSrcDirPath: string;
@@ -245,15 +255,16 @@ export interface IMonoDevData {
   appAlias: Record<string, string>;
   jestAlias: Record<string, string>;
   /**
-   * hel-mono.json 里指定的全局 externals
+   * hel-mono.json 里指定的大仓全局使用的用户自定义外部资源，配置后，需要在 dev/public/index.html 添加相应链接
    */
-  appExternals: Record<string, string>;
+  customExternals: Record<string, string>;
   /**
-   * 构建应用时自动推导出的 externals
+   * 构建应用时依据大仓所有模块一级依赖推导出的 externals，这些模块可提升为外部资源
    */
-  autoExternals: Record<string, string>;
+  liftableExternals: Record<string, string>;
+  liftableExternalDeps: Record<string, object>;
   /**
-   * 基于 hel-dev-utils 生成的应用信息
+   * 基于 hel-dev-utils-base 生成的应用信息
    */
   appInfo: ISubAppBuildDesc;
   /**
@@ -327,4 +338,23 @@ export interface ICWDInfo {
   curCwd: string;
   exCwd: string;
   forEX: string;
+}
+
+export interface IReplaceExHtmlContentOptions {
+  appData: ICWDAppData;
+  devInfo: IMonoDevInfo;
+  pkg2CanBeExternals: Record<string, object>;
+  isCurProjectEx: boolean;
+  pkg2Deps: Record<string, object>;
+  // key: pkgName, value: version
+  nmL1ExternalDeps: Record<string, string>;
+  nmL1ExternalPkgNames: string[];
+}
+
+export interface IGetAppExternalsOptions {
+  appData: ICWDAppData;
+  devInfo: IMonoDevInfo;
+  depInfos: any;
+  isCurProjectEx: boolean;
+  liftableExternals: Record<string, string>;
 }

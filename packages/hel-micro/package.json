@@ -1,6 +1,6 @@
 {
   "name": "hel-micro",
-  "version": "4.14.7",
+  "version": "4.15.2",
   "description": "A module federation SDK which is unrelated to tool chain for module consumer.",
   "keywords": [
     "hel",
@@ -8,10 +8,10 @@
     "module federation",
     "module federation sdk"
   ],
-  "bugs": "https://github.com/tnfe/hel/issues",
+  "bugs": "https://github.com/Tencent/hel/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnfe/hel.git",
+    "url": "https://github.com/Tencent/hel.git",
     "directory": "packages/hel-micro"
   },
   "license": "MIT",

@@ -1,3 +1,7 @@
+function isDict(mayDict) {
+  return mayDict && typeof mayDict === 'object' && !Array.isArray(mayDict);
+}
+
 function orValue(left, right) {
   if (['', null, undefined].includes(left)) {
     return right;
@@ -35,6 +39,23 @@ function chooseBool(valList, defaultBool = false) {
     return boolVal;
   }
   return defaultBool;
+}
+
+/** 从数组里选一个有效的字符串、字段、数组，并强制返回数组 */
+function chooseValList(valList) {
+  let targetVal = null;
+  for (let i = 0; i < valList.length; i++) {
+    const val = valList[i];
+    if ((typeof val === 'string' && val) || (isDict(val) && !isDictNull(val)) || (Array.isArray(val) && val.length)) {
+      targetVal = val;
+      break;
+    }
+  }
+  if (targetVal !== null) {
+    return Array.isArray(targetVal) ? targetVal : [targetVal];
+  }
+
+  return [];
 }
 
 function safeGet(dict, key, val = {}) {
@@ -84,7 +105,18 @@ function clone(dict) {
   return JSON.parse(JSON.stringify(dict));
 }
 
+function mayInclude(mayArr, val) {
+  if (mayArr === '*') {
+    return true;
+  }
+  if (Array.isArray(mayArr)) {
+    return mayArr.includes(val);
+  }
+  return false;
+}
+
 module.exports = {
+  isDict,
   isDictNull,
   clone,
   safeGet,
@@ -93,5 +125,7 @@ module.exports = {
   purifyUndefined,
   getBool,
   chooseBool,
+  chooseValList,
   orValue,
+  mayInclude,
 };

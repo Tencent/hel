@@ -1,0 +1,43 @@
+{
+  "name": "@tmicro/lru-cache",
+  "version": "0.0.3",
+  "description": "fork from lru-cache",
+  "bugs": {
+    "url": "https://github.com/Tencent/hel/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tencent/hel",
+    "directory": "packages/f-guard"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul",
+    "email": "624313307@qq.com",
+    "url": "https://github.com/fantasticsoul"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "index.d.ts",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "bundleDependencies": false,
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "deprecated": false
+}

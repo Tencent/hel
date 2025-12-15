@@ -1,8 +1,9 @@
 /**
- * @description: hel-mono-helper 对应的 dev-info 类型文件
+ * @description: hel-mono-helper 对应的 dev-info 类型文件, hel-mono.json 的类型文件
  */
 
 type PkgName = string;
+type GlobalName = string;
 type DeployEnv = string;
 type HelModName = string;
 
@@ -23,10 +24,37 @@ export interface IHelMonoModBase {
   handleDeployPath?: boolean;
   /**
    * default: IHelMonoJsonBase['isServerModOneBundle']
-   * true: 将 server 模块构建为一个文件，基于 tsup 构建
-   * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
+   * true: 基于 tsup 构建，将 server 模块构建为一到两个文件
+   * false：基于 tsc 构建，会保持原目录结构，将 server 模块构建为多个文件
    */
   isServerModOneBundle?: boolean;
+  /**
+   * default: 'dev/public/index.html'
+   * 模块使用的 html 模板
+   */
+  htmlPath?: string;
+  /**
+   * 此配置项仅对 ex 项目有效，表示使用自定义的依赖替代自动推导的依赖
+   */
+  exProjDeps?: Record<PkgName, string>;  /**
+   * 如宿主没提供全局模块且当前子模块也未打包某些 peer 依赖到 hel 产物里时，
+   * 这些 peerExList 会提供给 hel-micro 使用，让当前模块能成功运行起来
+   * ```
+   * # 如配置了 [{ name: 'Lodash', link: 'xxxx/lodash.js' }],
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash" src="xxxx/lodash.js"></script>
+   * # 则 hel-meta.json 会提取出来作为依赖的模块提供给 hel-micro 加载时使用
+   *
+   * # 可配置多个子模块到一个链接里，例如：[{ name: 'Lodash,Limu', link: 'xxxx/multi-deps.js' }]
+   * # 生成的 html 里会包含
+   * <script data-helex="Lodash,Limu" src="xxxx/multi-deps.js"></script>
+   * ```
+   *
+   * peerExList 可有2种作用
+   * 1 作为子模块正常运行的兜底
+   * 2 某些依赖仅当前子模块需要，可延迟到当前子模块加载时才加载这些依赖
+   */
+  peerExList?: IExLink[];
 }
 
 
@@ -50,7 +78,7 @@ export interface IHelModConf {
   platform?: string;
 }
 
-export interface IMonoAppConf extends IHelMonoModBase {
+export interface IMonoAppConf extends IHelMonoModBase, IExConf {
   /**
    * 应用启动端口，建议配置，未配置的话内部会自动推导
    */
@@ -71,8 +99,35 @@ export interface IMonoAppConf extends IHelMonoModBase {
  */
 export type MonoAppConfs = Record<string, IMonoAppConf>;
 
+export interface IExLink {
+  /**
+   * 映射到 script 的 data-helex 属性
+   */
+  ex: string;
+  /**
+   * 映射到 script 的 src 属性
+   */
+  link: string;
+}
 
-export interface IHelMonoJsonBase {
+export interface IExConf {
+  /**
+   * default: false
+   * 是否使用将大仓所有模块的一级依赖提升为外部资源的功能（内部会自动排除 baseExternals、 customExternals 里的声明），
+   * true：会注入大仓所有模块的一级依赖对应的外部资源的链接，需要同时配置 devRepoExLink 和 prodRepoExLink 参数
+   */
+  enableRepoEx?: boolean;
+  /**
+   * 本地开发时大仓使用的 external 资源链接
+   */
+  devRepoExLink?: string | IExLink | string[] | IExLink[];
+  /**
+   * 线上运行时大仓使用的 external 资源链接，用户可在下发首页时根据一定的特征查找并替换掉
+   */
+  prodRepoExLink?: string | string[] | IExLink[];
+}
+
+export interface IHelMonoJsonBase extends IExConf {
   /**
    * default: 'start:hel'
    * 执行 pnpm run start xxx 或 pnpm start xxx 命令时，需要命中的具体 start 脚本
@@ -128,6 +183,10 @@ export interface IHelMonoJsonBase {
    */
   allowEmptySrcIndex?: boolean;
   /**
+   * 大仓各个模块的外部资源链接配置，通常存在多个宿主时，对各个宿主做不同的链接定制
+   */
+  exConfs: Record<string, IExConf>;
+  /**
    * default: true
    * true: 将 server 模块构建为一个文件，基于 tsup 构建
    * false：将 server 模块构建为多个文件，基于 tsc 构建，保持原目录结构
@@ -143,26 +202,56 @@ export interface IHelMonoJsonBase {
   /** default: ['packages'], 放置子模块的目录名列表 */
   subModDirs?: string[];
   /**
+   * 大仓全局使用的基础外部资源，用户可以按需重写此配置，改写后 dev/public/index.html
+   * 里的类似 id="BASE_EX" 的资源链接也需要替换
    * default: {
-   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs', 'react-reconciler':'ReactReconciler',
-   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy'
+   *  react: 'React', 'react-dom': 'ReactDOM', 'react-is': 'ReactIs',
+   *  'hel-micro': 'HelMicro', 'hel-lib-proxy': 'HelLibProxy', 'hel-mono-runtime-helper': 'HelMonoRuntimeHelper'
    * }，
-   * 全局 externals，用户可以按需重写此配置
    */
-  appExternals?: Record<string, string>;
+  baseExternals?: Record<PkgName, GlobalName>;
+  /**
+   * 对最终生成的 appExternals 做排除
+   */
+  externalsExclude?: PkgName[];
+  /**
+   * 大仓全局使用的用户自定义外部资源，配置后，需要在 dev/public/index.html 添加相应链接，
+   * 同时需要标记 data-helex 记录此资源对应的全局模块名称
+   */
+  customExternals?: Record<PkgName, GlobalName>;
   /**
    * default: []
    * start:hel 或 build:hel 时，大仓里的这些包排除到微模块构建体系之外，
    */
-  excludeWorkspaceHelPackages?: '*' | string[];
+  exclude?: '*' | PkgName[];
   /**
    * default: []，
-   * start:hel 或 build:hel 时，npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
-   * 即它们会以原始的npm模块形式运行或被打包到宿主中
+   * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包排除到微模块构建体系之外（此模块是hel模块时设置此参数才有作用），
+   * 即它们会以原始的npm模块形式运行或被打包到宿主中。
    * - '*' 表示排除所有
-   * - []表示不排除，如有具体的排除项可配置具体的包名到数组里
+   * - []表示不排除，如有具体的排除项可配置其包名到数组里
    */
-  exclude?: '*' | string[];
+  nmExclude?: '*' | PkgName[];
+  /**
+   * default: []，
+   * start:hel 或 build:hel 时，通过 npm 安装到 node_modules 里的这些包包含到微模块构建体系之中，
+   * nmExclude 和 nmInclude 同时生效时，nmExclude 的优先级高于 nmInclude。
+   * - '*' 表示包含所有
+   * - []表示不包含，如有具体的包含项可配置其包名到数组里
+   * @example
+   * ```ts
+   * // 包含所有包，但排除 some-lib 包
+   * {
+   *    "nmInclude": "*",
+   *    "nmExclude": ["some-lib"],
+   * }
+   * // 只包含 some-lib 包
+   * {
+   *    "nmInclude": ["some-lib"],
+   * }
+   * ```
+   */
+  nmInclude?: '*' | PkgName[];
   /**
    * default: '0.0.0.0'
    * 所有hel模块本地联调时的域名
@@ -180,7 +269,7 @@ export interface IHelMonoJsonBase {
    */
   helLibProxyName?: string;
   /**
-   * 其他扩展参数，基于 hel-mono-helper 封装新的 sdk 时需要用到的自定义参数
+   * 其他扩展参数，基于 hel-mono-helper 封装新的 sdk 时需用到的自定义参数
    */
   extra?: Record<string, any>;
 }
@@ -202,6 +291,10 @@ export interface IMonoInjectedMod {
    * 线上运行时元数据请求前缀
    */
   metaApiPrefix?: string;
+  /**
+   * 线上运行时指定的模块版本号，如指定表示锁定版本号
+   */
+  ver?: string;
 }
 
 
@@ -240,7 +333,7 @@ export interface IPkgHelConf {
   names?: Record<DeployEnv, HelModName>;
 }
 
-export interface IHelMonoMod extends IHelMonoModBase {
+export interface IHelMonoMod extends IHelMonoModBase, IExConf {
   /**
    * default: IHelMonoJsonBase.devHostname
    * 当前hel模块本地联调时的域名
@@ -251,17 +344,27 @@ export interface IHelMonoMod extends IHelMonoModBase {
 
 
 /**
- * 模块线上运行时的参数配置
+ * 全部模块线上运行时的参数配置
  */
-export interface IHelModRuntimeConf {
+export interface IHelModRuntimeBaseConf {
   /**
-   * 线上运行时元数据请求前缀，未指定时尝试读 hel-json 顶层 helModRuntimeBaseConf 预设值，再读 sdk 自身的预设值
+   * 元数据请求前缀，未指定时尝试读 hel-json 顶层 helModRuntimeBaseConf 预设值，再读 sdk 自身的预设值
    * 仅需定制时才需要配置此项，否则使用默认值就可以了
    * ```txt
-   * 注意：总是优先考虑使用 helModRuntimeConfs，只会对某个模块有效，此参数会对所有模块有效
+   * 注意：推荐优先考虑使用 runtimeConfs ，只会对某个模块有效，此参数会对所有模块有效
    * ```
    */
   metaApiPrefix?: string;
+}
+
+/**
+ * 针对某个模块线上运行时的参数配置
+ */
+export interface IHelModRuntimeConf extends IHelModRuntimeBaseConf {
+  /**
+   * 模块版本，如需锁定可配置此项
+   */
+  ver?: string;
 }
 
 /**
@@ -269,17 +372,17 @@ export interface IHelModRuntimeConf {
  */
 export interface IHelMonoJsonRuntimeConf {
   /**
-   * 对非本大仓的所有 hel 模块有效
+   * 对非本大仓的所有是 hel 的 node 模块有效（即来自 node_modules 的模块）
    */
-  helModRuntimeBaseConf: IHelModRuntimeConf;
+  nmBaseRuntimeConf: IHelModRuntimeBaseConf;
   /**
-   * 对本大仓的所有模块 hel 有效
+   * 对本大仓的所有是 hel 的 node 模块有效
    */
-  curRepoHelModRuntimeBaseConf: IHelModRuntimeConf;
+  baseRuntimeConf: IHelModRuntimeBaseConf;
   /**
-   * 对具体的 hel 模块有效（不区分是否是本大仓的 hel 模块）
+   * 对具体的 hel-node 模块有效（不区分是否是本大仓的 hel-node 模块）
    */
-  helModRuntimeConfs: Record<PkgName, IHelModRuntimeConf>;
+  runtimeConfs: Record<PkgName, IHelModRuntimeConf>;
 }
 
 /**

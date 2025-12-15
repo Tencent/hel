@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { getCWD, helMonoLog } = require('../util');
 const { chooseBool } = require('../util/dict');
-const { getFileInfoList } = require('../util/file');
+const { getFileInfoList, cpSync } = require('../util/file');
 const { getRawMonoJson } = require('../util/monoJson');
 
 /**
@@ -51,7 +51,7 @@ exports.buildSrvModToHelDist = function (isServerModOneBundle) {
     const srvModCopyFrom = path.join(projectDir, './hel_srv');
     // or use fs-extra copySync
     // fs.copySync(srvModCopyFrom, srvModCopyTo);
-    fs.cpSync(srvModCopyFrom, srvModCopyTo, { recursive: true });
+    cpSync(srvModCopyFrom, srvModCopyTo, { recursive: true });
     // 复制完毕，删除 tsc 中间产物
     fs.rmSync(srvModCopyFrom, { recursive: true, force: true });
   }

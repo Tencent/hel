@@ -4,7 +4,7 @@
   "description": "hel-mono demo libs",
   "hel": {},
   "license": "MIT",
-  "main": "./src/index.ts",
+  "main": "./src/index",
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -16,8 +16,11 @@
     }
   },
   "publishConfig": {
+    "access": "public",
     "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
+    "unpkg": "./dist/index.js",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -25,17 +28,22 @@
         "require": "./dist/index.js"
       },
       "./hel": {
-        "types": "./src/.hel/entrance/libTypes.ts",
-        "import": "./src/.hel/entrance/libTypes.ts"
+        "types": "./dist/.hel/entrance/libTypes.d.ts",
+        "import": "./dist/.hel/entrance/libTypes.mjs",
+        "require": "./dist/.hel/entrance/libTypes.js"
       }
     }
   },
-  "dependencies": {
-    "hel-mono-runtime-helper": "^1.1.2"
+  "dependencies": {},
+  "peerDependencies": {
+    "hel-mono-runtime-helper": "^2.3.3",
+    "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "hel-lib-proxy": "*",
+    "hel-mono-runtime-helper": "^2.3.3"
   },
   "scripts": {
     "start": "node ../../dev/root-scripts/executeStart",
@@ -49,7 +57,7 @@
     "build:helm": "cross-env-shell \"pnpm run build:hel && pnpm run build:meta\"",
     "build:hels": "node ../../dev/scripts/hel/buildS",
     "build:helbs": "node ../../dev/scripts/hel/buildBS",
-    "build:nbs": "pnpm run build:npm && pnpm run build:helbs",
+    "build:nbs": "pnpm run build:helbs && pnpm run build:npm",
     "build:nbsm": "cross-env-shell \"pnpm run build:nbs && pnpm run build:meta\"",
     "build:npm": "tsup",
     "tsc": "tsc --project ./tsconfig.build.json && tsc-alias -p ./tsconfig.json ",
@@ -76,8 +84,7 @@
   "files": [
     "dist",
     "hel_dist",
-    "src",
-    "README.md",
-    "tsconfig.json"
+    "!src",
+    "README.md"
   ]
 }

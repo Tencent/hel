@@ -1,16 +1,20 @@
 /** @typedef {import('../types').IMonoDevInfo} DevInfo */
+/** @typedef {import('../types').ICWDAppData} ICWDAppData */
 /** @typedef {import('../types').IInnerPkgInfo} IInnerPkgInfo */
+/** @typedef {import('../types').IGetAppExternalsOptions} IGetAppExternalsOptions */
 const path = require('path');
 const fs = require('fs');
-const { createLibSubApp, baseUtils } = require('hel-dev-utils');
+const { createLibSubApp, baseUtils } = require('hel-dev-utils-base');
 const { VER } = require('../consts');
-const replaceExHtmlContent = require('../entry/replace/replaceExHtmlContent');
+const { BASE_EXTERNALS } = require('../consts/inner');
+const replaceHtmlContent = require('../entry/replace/replaceHtmlContent');
 const { getCWDAppData, getMonoSubModSrc, helMonoLog, getCWD, isFastRefreshMarked } = require('../util');
-const { clone, chooseBool } = require('../util/dict');
+const { clone, chooseBool, mayInclude, isDictNull } = require('../util/dict');
 const { buildAppAlias, inferConfAlias, getAppCwd } = require('../util/appSrc');
 const { getMonoAppDepDataImpl } = require('../util/depData');
+const { getIsEnableRepoEx } = require('../util/devInfo');
 const { inferMonoDepDict } = require('../util/monoJson');
-const { getMonoAppPkgJson, isEXProject } = require('../util/monoPkg');
+const { getMonoAppPkgJson, isEXProject, getExternalBoundName } = require('../util/monoPkg');
 const { isHelMicroMode, isHelMode, isHelStart, isHelAllBuild, isHelExternalBuild } = require('../util/is');
 const { getLogTimeLine } = require('../util/time');
 
@@ -22,7 +26,7 @@ function getExtIndexData(appSrcDirPath, indexName, ext) {
   return { fullPath, isExist: fs.existsSync(fullPath), extFileName };
 }
 
-function getAppSrcIndex(/** @type {import('../types').ICWDAppData} */ appData, allowEmptySrcIndex) {
+function getAppSrcIndex(/** @type {ICWDAppData} */ appData, allowEmptySrcIndex) {
   let indexName = '';
   const { isForRootHelDir, appDir, belongTo } = appData;
   let { appSrcDirPath } = appData;
@@ -72,26 +76,6 @@ function getPkgLogInfo(info, isForRootHelDir) {
   return rest;
 }
 
-function fmtPkgNameForBound(/** @type string */ pkgName) {
-  const fmtBy = (str, sep) => {
-    const list = str.split(sep);
-    return list.map((v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`).join('');
-  };
-  const getResult = (str) => {
-    let result = fmtBy(str, '_');
-    return fmtBy(result, '-');
-  };
-
-  if (pkgName.startsWith('@') && pkgName.includes('/')) {
-    const [scope, name] = pkgName.split('/');
-    const pure = scope.substring(1);
-    // 中间加横线是为了避免 tencent-my-lib 和 @tencent/my-lib 得出一样的全局名字
-    return `${getResult(pure)}_${getResult(name)}`;
-  }
-
-  return getResult(pkgName);
-}
-
 /**
  * 将大仓里的其他子模块依赖的 paths 合并起来，交给外部注入到 ForkTsCheckerWebpackPlugin 参数里
  * 避免启动主应用时报错：Cannot find module '@xx/yy/...' or its corresponding type declaration.} pkgInfo
@@ -102,7 +86,7 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
     return;
   }
   // 可能是在 tsconfigJson.paths 里为 external 库设置类型路径
-  if (devInfo.appExternals[alias]) {
+  if (devInfo.customExternals[alias]) {
     return;
   }
 
@@ -113,23 +97,46 @@ function maySetAppTsConfigPaths(/** @type DevInfo */ devInfo, /** @type IInnerPk
   appTsConfigPaths[aliasKey] = [`${appSrcPath}/*`];
 }
 
-function getExternals(/** @type DevInfo */ devInfo, depInfos) {
-  const { appExternals = {} } = devInfo;
+function getAppExternals(/** @type {IGetAppExternalsOptions} */ options) {
+  const { appData, devInfo, depInfos, isCurProjectEx } = options;
+  const { customExternals = {}, baseExternals = {}, externalsExclude = [] } = devInfo;
+
+  // devInfo.customExternals 对 ex 项目自身无效，走内置的 BASE_EXTERNALS
+  if (isCurProjectEx) {
+    return BASE_EXTERNALS;
+  }
+  const mayMergeLiftableExternals = (target) => {
+    const isEnableRepoEx = getIsEnableRepoEx(appData.appPkgName, devInfo);
+    // 开启了 enableRepoEx 功能，需要将推导出来的 liftableExternals 对象合并
+    const liftableExternals = isEnableRepoEx ? options.liftableExternals : {};
+    let externals = Object.assign({}, baseExternals, target, liftableExternals);
+    if (externalsExclude.length) {
+      const finalExternals = {};
+      Object.keys(externals).forEach((pkgName) => {
+        if (!externalsExclude.includes(pkgName)) {
+          finalExternals[pkgName] = externals[pkgName];
+        }
+      });
+      return finalExternals;
+    }
+
+    return externals;
+  };
 
   // react fast refresh 会在 react 使用外部资源时失效
   // 当用户明确开启了 -fr 标识且以 hel 模式运行，同时存在本仓的多个子依赖时，为保证 fr 体验，剔除掉相关外部资源配置
-  if (isFastRefreshMarked() && depInfos.length > 0) {
+  if (isFastRefreshMarked() && !appData.isSubMod && depInfos.length > 0) {
     const newExternals = {};
     const rLibs = ['react', 'react-dom', 'react-is', 'react-reconciler'];
-    Object.keys(appExternals).forEach((key) => {
+    Object.keys(customExternals).forEach((key) => {
       if (!rLibs.includes(key)) {
-        newExternals[key] = appExternals[key];
+        newExternals[key] = customExternals[key];
       }
     });
-    return newExternals;
+    return mayMergeLiftableExternals(newExternals);
   }
 
-  return appExternals;
+  return mayMergeLiftableExternals(customExternals);
 }
 
 function getAppInfo(/** @type DevInfo */ devInfo, appPkgJson) {
@@ -140,6 +147,28 @@ function getAppInfo(/** @type DevInfo */ devInfo, appPkgJson) {
   const appInfo = createLibSubApp(appPkgJson, { platform, homePage, handleHomePage });
 
   return appInfo;
+}
+
+function getExLabel(/** @type {{devInfo: DevInfo}} */ options) {
+  const { devInfo, isCurProjectEx, liftableExternals } = options;
+  const { baseExternals, customExternals, enableRepoEx } = devInfo;
+  const hasCustEx = !isDictNull(customExternals);
+  const hasLiftEx = !isDictNull(liftableExternals);
+  const hasBaseEx = !isDictNull(baseExternals);
+  if (isCurProjectEx) {
+    return hasCustEx ? 'appExternals (merged by baseExternals, customExternals)' : 'appExternals';
+  }
+
+  const custExLabel = hasCustEx ? 'customExternals' : '';
+  const liftExLabel = hasLiftEx ? 'liftableExternals' : '';
+  const baseExLabel = hasBaseEx ? 'baseExternals' : '';
+  if (enableRepoEx) {
+    const validLabels = [custExLabel, liftExLabel, baseExLabel].filter((v) => !!v);
+    return validLabels.length ? `appExternals (merged by ${validLabels.join(',')})` : 'appExternals';
+  }
+
+  const validLabels = [custExLabel, baseExLabel].filter((v) => !!v);
+  return validLabels.length ? `appExternals (merged by ${validLabels.join(',')})` : 'appExternals';
 }
 
 /**
@@ -168,8 +197,11 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   }
   const appCwd = getAppCwd(targetAppSrc);
   const { forEX } = options;
-  const isExMode = isEXProject(targetAppSrc) || forEX;
-  const needAllDep = isHelAllBuild() || isHelExternalBuild() || isExMode;
+  const isCurProjectEx = isEXProject(targetAppSrc);
+  // 当前项目是 ex 项目或需要为 ex 项目服务
+  const isExProjOrSrvForEx = isCurProjectEx || forEX;
+  const isAllOrExBuildMode = isHelAllBuild() || isHelExternalBuild();
+  const needAllDep = isAllOrExBuildMode || isExProjOrSrvForEx;
 
   const key = `${targetAppSrc}_${needAllDep}`;
   if (cachedResult[key]) {
@@ -181,17 +213,14 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const start = Date.now();
   helMonoLog(`(ver:${VER}) prepare hel dev data for ${targetAppSrc}`);
   let appSrc = targetAppSrc;
-  /** @type {import('../types').ICWDAppData} */
+  /** @type {ICWDAppData} */
   const appData = options.appData || getCWDAppData(devInfo, appCwd);
   const { isForRootHelDir } = appData;
   const appTsConfigPaths = clone(appData.appTsConfigPaths);
-  helMonoLog('isForRootHelDir ', isForRootHelDir);
 
   // 支持宿主和子模块的 jsx tsx 语法都能够正常识别
   const babelLoaderInclude = [appSrc];
-  const { excludeWorkspaceHelPackages = [], exclude = [] } = devInfo;
-  const isExcludeWorkspaceHelPackagesAll = excludeWorkspaceHelPackages === '*';
-  const isExcludeNpmHelPackagesAll = exclude === '*';
+  const { exclude = [], nmExclude = [], nmInclude = [], baseExternals, customExternals } = devInfo;
 
   // 启动的是代理目录，需将 appSrc 指向真正的项目 src 目录
   if (isForRootHelDir) {
@@ -202,7 +231,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   let isMicroStartOrBuild;
   let shouldGetAllDep;
   // 设定了 process.env.HEL_BUILD = cst.HEL_ALL_BUILD ，表示走整体构建模式
-  if (isHelAllBuild() || isHelExternalBuild() || isExMode) {
+  if (isAllOrExBuildMode || isExProjOrSrvForEx) {
     isMicroStartOrBuild = false;
     shouldGetAllDep = true;
   } else {
@@ -212,9 +241,19 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     shouldGetAllDep = !isMicroStartOrBuild;
   }
   const isHelModeVar = isHelMode();
-  const shouldComputeAutoExternals = isHelModeVar || isExMode;
+  const shouldComputeRepoExternals = isHelModeVar || isExProjOrSrvForEx;
 
-  const { pkgNames, prefixedDir2Pkg, depInfos, pkg2Info, nmHelPkgNames, nmL1ExternalPkgNames, nmL1ExternalDeps } = getMonoAppDepDataImpl({
+  const {
+    pkgNames,
+    prefixedDir2Pkg,
+    depInfos,
+    pkg2Info,
+    nmHelPkgNames,
+    nmL1ExternalPkgNames,
+    nmL1ExternalDeps,
+    pkg2CanBeExternals,
+    pkg2Deps,
+  } = getMonoAppDepDataImpl({
     appSrc,
     devInfo,
     isAllDep: shouldGetAllDep,
@@ -226,13 +265,21 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = buildAppAlias(appSrc, devInfo, prefixedDir2Pkg);
   const pureAlias = Object.assign({}, appAlias);
-  const autoExternals = {};
+  const liftableExternals = {};
 
-  if (shouldComputeAutoExternals && nmL1ExternalPkgNames.length) {
-    nmL1ExternalPkgNames.forEach((v) => (autoExternals[v] = fmtPkgNameForBound(v)));
+  if (shouldComputeRepoExternals && nmL1ExternalPkgNames.length) {
+    nmL1ExternalPkgNames.forEach((v) => (liftableExternals[v] = getExternalBoundName(v)));
   }
 
-  const { appHtml, rawAppHtml } = replaceExHtmlContent({ nmL1ExternalPkgNames, nmL1ExternalDeps, appData, forEX: isExMode });
+  const { appHtml, rawAppHtml } = replaceHtmlContent({
+    nmL1ExternalPkgNames,
+    nmL1ExternalDeps,
+    appData,
+    devInfo,
+    isCurProjectEx,
+    pkg2CanBeExternals,
+    pkg2Deps,
+  });
   if (!isMicroStartOrBuild) {
     depInfos.forEach((info) => {
       const { pkgName, belongTo, dirName } = info;
@@ -276,7 +323,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
 
       maySetAppTsConfigPaths(devInfo, pkgInfo, appTsConfigPaths);
       // start:hel 或 build:hel，应用中引用的大仓 packages 依赖指向和项目在一起的 hel 代理入口
-      if (isHelMicroMode() && !isExcludeWorkspaceHelPackagesAll && !excludeWorkspaceHelPackages.includes(pkgName)) {
+      if (isHelMicroMode() && !mayInclude(exclude, pkgName)) {
         appAlias[pkgName] = `${pkgName}/hel`;
       }
 
@@ -292,9 +339,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
       }
     });
 
-    // 来着 node_modules 的 hel 模块，如没有排除的话，也会自动加入微模块构建模式
+    // 来自 node_modules 的 hel 模块，如显式包含且没有排除的话，会自动加入微模块构建模式
     nmHelPkgNames.forEach((nmHelPkgName) => {
-      if (isHelMicroMode() && !isExcludeNpmHelPackagesAll && !exclude.includes(nmHelPkgName)) {
+      if (isHelMicroMode() && mayInclude(nmInclude, nmHelPkgName) && !mayInclude(nmExclude, nmHelPkgName)) {
         appAlias[nmHelPkgName] = `${nmHelPkgName}/hel`;
       }
     });
@@ -322,7 +369,9 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
     appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
   }
-  const appExternals = getExternals(devInfo, depInfos);
+
+  const appExternals = getAppExternals({ appData, devInfo, depInfos, isCurProjectEx, liftableExternals });
+  const exLabel = getExLabel({ devInfo, isCurProjectEx, liftableExternals });
 
   helMonoLog('isHelMode ', isHelModeVar);
   helMonoLog('appSrcIndex ', appSrcIndex);
@@ -330,8 +379,7 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   helMonoLog('appHtml ', appHtml);
   helMonoLog('appTsConfigPaths', appTsConfigPaths);
   helMonoLog('babelLoaderInclude', babelLoaderInclude);
-  helMonoLog('appExternals', appExternals);
-  helMonoLog('autoExternals', autoExternals);
+  helMonoLog(exLabel, appExternals);
   helMonoLog('appAlias', appAlias);
   helMonoLog('jestAlias', jestAlias);
   helMonoLog(`getMonoDevData costs ${Date.now() - start} ms`);
@@ -341,8 +389,10 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     appAlias,
     jestAlias,
     appExternals,
-    autoExternals: autoExternals,
-    autoExternalDeps: nmL1ExternalDeps,
+    baseExternals,
+    customExternals,
+    liftableExternals,
+    liftableExternalDeps: nmL1ExternalDeps,
     appInfo,
     appData,
     appPublicUrl,

@@ -4,7 +4,8 @@ import * as util from './util';
 const semverApi = false;
 const platform = 'hel';
 export const ins = apis.createOriginInstance(platform, {
-  apiPrefix: 'https://www.custom-hel.com',
+  apiPrefix: 'https://helmicro.com',
+  // customMetaUrl: 'https://helmicro.com/openapi/meta',
   semverApi,
 });
 

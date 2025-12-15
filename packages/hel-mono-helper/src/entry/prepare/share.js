@@ -1,51 +1,14 @@
 /** @typedef {import('../../types').ICWDAppData} ICWDAppData */
+/** @typedef {import('../../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
 const path = require('path');
-const { execCreate } = require('../../exec/create');
-const { initMono } = require('../../exec/initMono');
-const { inferDevInfo } = require('../../util/devInfo');
-const { getMonoDevData } = require('../../dev-data');
 const { HEL_TPL_INNER_APP_PATH, MOD_TEMPLATE } = require('../../consts');
+const { execCreate } = require('../../exec/create');
+const { inferDevInfo } = require('../../util/devInfo');
+const { getExProjDeps } = require('../../util/ex');
+const { cpSync } = require('../../util/file');
 const { helMonoLog, isHelExternalBuild } = require('../../util');
 const r = require('../replace');
-
-/**
- * TODO may del?
- * @param {*} masterAppData
- * @returns
- */
-function buildExAppData(/** @type {ICWDAppData} */ masterAppData) {
-  const p = path.sep;
-  const {
-    appDir,
-    appDirPath,
-    appSrcDirPath,
-    appPkgName,
-    helDirPath,
-    realAppDirPath,
-    realAppSrcDirPath,
-    realAppPkgJsonPath,
-    realAppPkgName,
-    ...rest
-  } = masterAppData;
-  const exAppDir = `${appDir}-ex`;
-  const replaceDir = (str) => str.replace(`${p}${appDir}${p}`, `${p}${exAppDir}${p}`);
-  const replaceEndDir = (str) => str.replace(`${p}${appDir}`, `${p}${exAppDir}`);
-  const replaceName = (str) => `${str}-ex`;
-
-  return {
-    ...rest,
-    appDir: exAppDir,
-    appDirPath: replaceEndDir(appDirPath),
-    appSrcDirPath: replaceDir(appSrcDirPath),
-    appPkgName: replaceName(appPkgName),
-    helDirPath: replaceDir(helDirPath),
-    realAppDirPath: replaceEndDir(realAppDirPath),
-    realAppSrcDirPath: replaceDir(realAppSrcDirPath),
-    realAppPkgJsonPath: replaceDir(realAppPkgJsonPath),
-    realAppPkgName: replaceName(realAppPkgName),
-  };
-}
 
 function replaceAppRelevantFiles(appData, devInfo, options = {}) {
   // 在项目自身内部生成 external 相关文件
@@ -55,10 +18,8 @@ function replaceAppRelevantFiles(appData, devInfo, options = {}) {
 
   const { forEX, masterAppData, exAppData } = options || {};
   if (forEX) {
-    // 注意：此处是使用 masterAppData 的 autoExternals 写入到 exAppData 相关文件里
-    const masterDevData = getMonoDevData(devInfo, masterAppData.appSrcDirPath, options);
-    const { autoExternals } = masterDevData;
-    return r.replaceIndexEXFile(exAppData, devInfo, { ...options, autoExternals });
+    const exProjDeps = getExProjDeps(exAppData.appPkgName, devInfo, masterAppData);
+    return r.replaceIndexEXFile(exAppData, devInfo, { ...options, exProjDeps });
   }
 
   r.replaceIndexFile(appData, devInfo);
@@ -83,9 +44,9 @@ function prepareAppFiles(devInfo, appData, options = {}) {
   if (options.forEX) {
     const indexEXFrom = path.join(fromPath, './indexEX.ts');
     const indexEXTo = path.join(helDirPath, './indexEX.ts');
-    fs.cpSync(indexEXFrom, indexEXTo);
+    cpSync(indexEXFrom, indexEXTo);
   } else {
-    fs.cpSync(fromPath, helDirPath, { recursive: true });
+    cpSync(fromPath, helDirPath, { recursive: true });
   }
 
   const injectedDevInfo = replaceAppRelevantFiles(appData, devInfo, options);
@@ -95,7 +56,6 @@ function prepareAppFiles(devInfo, appData, options = {}) {
 function ensureExAppProject(devInfo, options) {
   /** @type {{masterAppData: ICWDAppData, exAppData:ICWDAppData}} */
   const { masterAppData, exAppData } = options;
-
   if (!fs.existsSync(exAppData.appDirPath)) {
     const options = {
       isSubMod: exAppData.isSubMod,
@@ -103,18 +63,17 @@ function ensureExAppProject(devInfo, options) {
     };
     execCreate(devInfo, options);
   }
+  const exProjDeps = getExProjDeps(exAppData.appPkgName, devInfo, masterAppData);
 
+  // TODO: 加注释, 这里为何要使用 newDevInfo?
   const newDevInfo = inferDevInfo(true);
-  // 注意，此处是通过 masterAppData.appSrcDirPath 获得对应点的 external deps 对象
-  const { autoExternalDeps } = getMonoDevData(newDevInfo, masterAppData.appSrcDirPath, { appData: masterAppData, forEX: true });
-  r.replaceExProjectPkgJson(exAppData, autoExternalDeps);
+  r.replaceExProjectPkgJson(exAppData, exProjDeps);
   prepareAppFiles(newDevInfo, exAppData, { forEX: true, masterAppData, exAppData });
 
   return { devInfo: newDevInfo, appData: exAppData };
 }
 
 module.exports = {
-  buildExAppData,
   ensureExAppProject,
   prepareAppFiles,
 };

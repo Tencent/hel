@@ -2,6 +2,7 @@
   "name": "hm-node-user",
   "version": "1.0.1",
   "main": "./build/index.js",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "postinstall": "npm run build",
