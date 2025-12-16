@@ -1,6 +1,7 @@
+// prettier-ignore
+import 'configs/before-init';
 import { message } from 'antd';
 import AppRoot from 'components/AppRoot';
-import 'configs/before-init';
 import { HEL_CHARGER } from 'configs/constant';
 import ReactDOM from 'react-dom';
 import 'styles/appStyles.css';

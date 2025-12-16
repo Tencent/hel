@@ -3,7 +3,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 const util = require('./util');
-const { TEMPLATE_REACT_MONO } = require('./consts');
+const { TPL_REACT_MONO } = require('./consts');
 const { getConfig } = require('./config');
 
 const fixFilesDirPath = path.join(__dirname, './fix-files');
@@ -14,7 +14,7 @@ const npmRCTnpmFileTpl = path.join(fixFilesDirPath, './npmrc-tnpm.txt');
 
 function ensureFiles(dirPath, template) {
   const { pkgManager } = getConfig();
-  if (template === TEMPLATE_REACT_MONO) {
+  if (template === TPL_REACT_MONO) {
     const gitIgnoreFile = path.join(dirPath, './.gitignore');
     const npmIgnoreFile = path.join(dirPath, './.npmignore');
     const npmRcFile = path.join(dirPath, './.npmrc');

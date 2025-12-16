@@ -57,6 +57,7 @@ export function assignNameAndVerToQuery(ctx: ICuteExpressCtx) {
   let name = '';
   let noScopeName = '';
   let versionTag = '';
+  let fullVersionIndex = versionIndex;
 
   // 命中了 meta/:versionIndex 路由
   if (!scope) {
@@ -76,10 +77,14 @@ export function assignNameAndVerToQuery(ctx: ICuteExpressCtx) {
     [name, versionTag = ''] = versionIndex.split('@');
     query.name = `${scope}/${name}`;
     noScopeName = name;
+    // 注意此处要带 scope 前缀，才是需要的版本索引值
+    fullVersionIndex = `${scope}/${versionIndex}`;
   }
 
-  // @ 后面的版本号优先级高于 search 参数上的
-  query.version = versionTag ? versionIndex : queryVer;
+  // 按原来的语义，这里的 version 指的是数据里的 sub_app_version ，即可做索引的值，
+  // 故 @ 有版本号时，query.version 指向 versionIndex(即sub_app_version)
+  // 保持原来所有的调用逻辑不用调整
+  query.version = versionTag ? fullVersionIndex : queryVer;
   // 适配 appPage.loadSubApp
   params.appName = noScopeName;
 }

@@ -24,6 +24,11 @@ module.exports = {
     'no-prototype-builtins': 0,
     'no-constant-condition': 0,
     'react/no-unknown-property': 0,
+    // suppress errors for missing 'import React' in files
+    'react/react-in-jsx-scope': 'off',
+    'max-len': 'off',
+    'operator-linebreak': 'off',
+    'nonblock-statement-body-position': 'off',
   },
   parserOptions: {
     ecmaFeatures: {

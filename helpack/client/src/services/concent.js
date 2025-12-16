@@ -4,6 +4,7 @@
 // eslint-disable-next-line
 import c2, { cst, getComputed, getState, reducer, useConcent } from 'concent';
 import { noop } from 'utils/fn';
+// eslint-disable-next-line
 import * as demos from './c2HookDemos';
 
 function priBuildCallParams(
