@@ -24,6 +24,7 @@
     "cookie-parser": "^1.4.5",
     "crypto-js": "^4.2.0",
     "dayjs": "1.11.13",
+    "debug": "4.4.3",
     "express": "^4.18.2",
     "express-handlebars": "^5.3.5",
     "follow-redirects": "^1.14.9",

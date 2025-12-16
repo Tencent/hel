@@ -1,5 +1,5 @@
 const packageJsonInfo = require('../package.json');
-const { HEL_MONO_TEMPLATES, CLI_KEYWORD, CLI_FULL_KEYWORD, REPO_URL_PREFIX, TEMPLATE_REACT_MONO: TEMPLATE } = require('./consts');
+const { HEL_MONO_TEMPLATES, CLI_KEYWORD, CLI_FULL_KEYWORD, REPO_URL_PREFIX, TPL_REACT_MONO: TEMPLATE } = require('./consts');
 
 const { name: cliPkgName, version: cliPkgVersion } = packageJsonInfo || {};
 

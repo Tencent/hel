@@ -42,8 +42,9 @@ const CMD_TYPE_LIST = Object.values(CMD_TYPE);
 const ALL_CMD_TYPE_LIST = Object.keys(CMD_SHORT_TYPE).concat(Object.values(CMD_SHORT_TYPE));
 
 module.exports = {
-  TEMPLATE_REACT_MONO: 'react-mono',
-  NODE_DEMO: 'node-demo',
+  TPL_REACT_MONO: 'react-mono',
+  TPL_NODE_DEMO: 'node-demo',
+  TPL_HELPACK: 'helpack',
   CLI_KEYWORD: 'hel',
   CLI_FULL_KEYWORD: 'create-hel',
   HEL_MONO_TEMPLATES: 'hel-mono-templates',

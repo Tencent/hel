@@ -618,8 +618,6 @@ module.exports = function (webpackEnv) {
         languages: ['json', 'javascript', 'typescript'],
       }),
     ].filter(Boolean),
-    // Some libraries import Node modules but don't use them in the browser.
-    // Tell Webpack to provide empty mocks for them so importing them works.
     node: {
       module: 'empty',
       dgram: 'empty',

@@ -1,5 +1,5 @@
 const { getConfig } = require('../config');
-const { TEMPLATE_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST, ALL_CMD_TYPE_LIST, CMD_SHORT_TYPE } = require('../consts');
+const { TPL_REACT_MONO, CMD_TYPE, CMD_TYPE_LIST, ALL_CMD_TYPE_LIST, CMD_SHORT_TYPE } = require('../consts');
 const { setIsDebug } = require('./debug');
 const { logPurple } = require('./log');
 
@@ -10,7 +10,7 @@ function getArgObject(args) {
     cmdType: CMD_TYPE.init,
     cmdValue: '',
     projectName: '',
-    template: TEMPLATE_REACT_MONO,
+    template: TPL_REACT_MONO,
     helMonoStartCmd: '',
     isBumpTplStore: false,
     isViewTplStoreVerByPkgManager: false,

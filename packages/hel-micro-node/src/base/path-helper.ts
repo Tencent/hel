@@ -16,6 +16,12 @@ const lockedDirPath = {
  * 获取 sdk 所属的 node_modules 下的 .hel_modules 目录名
  */
 function getDotHelModulesPath() {
+  // 处于 pnpm 大仓中
+  if (SDK_PKG_ROOT.includes('node_modules/.pnpm')) {
+    const [left] = SDK_PKG_ROOT.split('node_modules/.pnpm');
+    return path.join(left, `./node_modules/${DOT_HEL_MODULES}`);
+  }
+
   const list = SDK_PKG_ROOT.split(path.sep);
   const lastIdx = list.length - 1;
   let nodeModulesIdx = -1;

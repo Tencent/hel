@@ -1,10 +1,19 @@
 {
-  "name": "hel-pack",
-  "version": "1.0.0",
-  "description": "海拉Hel Pack，动态化模块发布、托管服务",
+  "name": "yh6",
+  "version": "1.0.2",
+  "description": "",
+  "main": "index.js",
   "scripts": {
+    "build": "npm run build:server && npm run build:user",
+    "build:server": "pnpm --filter helpack-server run build",
+    "build:user": "pnpm --filter hm-node-user run build",
+    "server": "pnpm --filter helpack-server run start",
+    "usern": "pnpm --filter hm-node-user run start:h",
+    "userb": "pnpm --filter hm-browser-user run start:h",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "fantasticoul",
-  "license": "ISC"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.2"
 }

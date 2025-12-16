@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const { getConfig } = require('../config');
-const { TEMPLATE_REACT_MONO, NODE_DEMO } = require('../consts');
+const { TPL_REACT_MONO, TPL_NODE_DEMO, TPL_HELPACK } = require('../consts');
 const { getIsDebug } = require('./debug');
 const { getDepPath } = require('./dep');
 const { logPurple, logError, logTipLine, logTip, logDebug } = require('./log');
@@ -20,15 +20,24 @@ function logDepPath() {
 }
 
 function logCreateSuccess({ projectName, dirPath, template }) {
-  if (TEMPLATE_REACT_MONO === template) {
+  if (TPL_REACT_MONO === template) {
     console.log(chalk.green(`\n✅ Project of hel-mono [${projectName}] created on ${chalk.bold(dirPath)}`));
     let devTip = `\nNext:\n  cd ${projectName}\n  pnpm install\n  pnpm start`;
     console.log(chalk.cyan(devTip));
   }
 
-  if (NODE_DEMO === template) {
+  if (TPL_NODE_DEMO === template) {
     console.log(chalk.green(`\n✅ Project of hel-micro-node [${projectName}] created on ${chalk.bold(dirPath)}`));
     let devTip = `\nNext:\n  cd ${projectName}\n  npm install\n  npm start\n  visit http://localhost:3000 and http://localhost:3000/update`;
+    console.log(chalk.cyan(devTip));
+  }
+
+  if (TPL_HELPACK === template) {
+    console.log(chalk.green(`\n✅ Project of helpack [${projectName}] created on ${chalk.bold(dirPath)}`));
+    let devTip = `\nNext:\n  cd ${projectName}\n  pnpm install\n  pnpm run build`;
+    devTip += `\n  pnpm run server (start helpack server, visit http://localhost:7777)`;
+    devTip += `\n  pnpm run usern (start hel-micro browser user, visit http://localhost:7776)`;
+    devTip += `\n  pnpm run userb (start hel-micro node user, visit http://localhost:3600)`;
     console.log(chalk.cyan(devTip));
   }
 }

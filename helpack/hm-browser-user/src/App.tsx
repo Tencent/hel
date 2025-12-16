@@ -6,6 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <p>@hel-demo/mono-libs</p>
         <p>{hello()}</p>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
