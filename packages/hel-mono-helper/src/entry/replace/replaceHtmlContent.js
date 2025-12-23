@@ -195,6 +195,17 @@ function getRepoExLinks(/** @type {Options} */ options) {
   return exLinks;
 }
 
+function resolveAppRelPath(/** @type {Options['appData']} */ appData, relPath, isDir) {
+  const { monoRoot, belongTo, appDir } = appData;
+  const relPathVar = baseUtils.slash.start(relPath);
+  const filePath = path.join(monoRoot, `./${belongTo}/${appDir}${relPathVar}`);
+  if (isDir && !fs.existsSync(filePath)) {
+    fs.mkdirSync(filePath);
+  }
+
+  return filePath;
+}
+
 /**
  * 当 options.appData 非ex项目自身时，返回的 masterAppHtml 和 rawAppHtml 是同一个值
  */
@@ -207,10 +218,7 @@ function getHtmlPath(/** @type {Options} */ options, strategy = EReuseStrategy.U
     return { rawAppHtml: masterAppHtml, appHtml: masterAppHtml, masterAppHtml };
   }
 
-  const appDotHelDir = path.join(monoRoot, `./${belongTo}/${appDir}/.hel`);
-  if (!fs.existsSync(appDotHelDir)) {
-    fs.mkdirSync(appDotHelDir);
-  }
+  const appDotHelDir = resolveAppRelPath(appData, '.hel', true);
   const appHtml = path.join(appDotHelDir, 'index.html');
 
   if (EReuseStrategy.CopyAppHtml === strategy) {
@@ -300,6 +308,10 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
         pkgPaths[name] = pkgJsonPath;
       });
       genPreContent(targetLine, realVers);
+
+      // 将 realVers 写入 ex.json
+      const exJsonPath = resolveAppRelPath(appData, '.hel/ex.json');
+      fs.writeFileSync(exJsonPath, JSON.stringify({ vers: realVers }, null, 2));
 
       targetLine.push('<div style="color:blue;font-weight:600">Package.json paths:</div>');
       genPreContent(targetLine, pkgPaths);

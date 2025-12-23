@@ -5,6 +5,7 @@
 /** @typedef {import('../types').IPkgMonoDepData} IPkgMonoDepData */
 const fs = require('fs');
 const path = require('path');
+const { MONO_JSON } = require('../consts/inner');
 const { safeGet } = require('./dict');
 const { getTsConfigAliasByDirPath } = require('./alias');
 const { getDevInfoDirs } = require('./base');
@@ -13,7 +14,7 @@ const { getMonoRootInfo } = require('./rootInfo');
 
 function getMonoJsonFilePath() {
   const { monoRoot } = getMonoRootInfo();
-  const filePath = path.join(monoRoot, 'hel-mono.json');
+  const filePath = path.join(monoRoot, MONO_JSON);
   return filePath;
 }
 
@@ -31,7 +32,7 @@ function getRawMonoJson() {
   if (fs.existsSync(monoJsonPath)) {
     try {
       monoJson = require(monoJsonPath);
-    } catch (err) {}
+    } catch (err) { }
   }
 
   return monoJson;
