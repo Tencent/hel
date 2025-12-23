@@ -61,10 +61,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {
-    if (
-      injectedDevInfo.mods[nmPkgName]
-      || !(mayInclude(nmInclude, nmPkgName) && !mayInclude(nmExclude, nmPkgName))
-    ) {
+    if (injectedDevInfo.mods[nmPkgName] || !(mayInclude(nmInclude, nmPkgName) && !mayInclude(nmExclude, nmPkgName))) {
       return;
     }
 
