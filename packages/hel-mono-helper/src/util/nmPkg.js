@@ -45,12 +45,19 @@ function getNmPkgJsonByPath(mayPkgIndexPath) {
     return getNmPkgJsonByJsonPath(mayPkgIndexPath);
   }
   const getPkgJson = (relPkgPath) => {
-    const p0Path = path.join(mayPkgIndexPath, relPkgPath);
-    if (fs.existsSync(p0Path)) {
-      return getNmPkgJsonByJsonPath(p0Path);
+    const filePath = path.join(mayPkgIndexPath, relPkgPath);
+    if (!fs.existsSync(filePath)) {
+      return null;
     }
-    return null;
+    const data = getNmPkgJsonByJsonPath(filePath);
+    // 必须判断一下 version 值，避免部分包体某些目录包含了不合规范的 package.json
+    if (!data.pkgJson.version) {
+      return null;
+    }
+
+    return data;
   };
+
   const relPaths = ['./package.json', '../package.json', '../../package.json', '../../../package.json'];
   let pkgJsonData = null;
   for (const relPath of relPaths) {

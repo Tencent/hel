@@ -8,16 +8,17 @@ const { rewriteFileLine } = require('../../util/rewrite');
 const { getExProjDeps } = require('../../util/ex');
 
 /**
- * 替换 indexEX.ts 文件内容为 externals 构建做准备
+ * 替换 indexEX.ts 文件内容，为 externals 构建做准备
  */
 module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData, /** @type {IDevInfo} */ devInfo, options) {
   const { helDirPath, appPkgName } = appData;
-  let { exProjDeps } = options;
+  let { exProjDeps } = options || {};
   const filePath = path.join(helDirPath, './indexEX.ts');
 
   if (!exProjDeps) {
+    // 在项目 src/.hel 下生成 ex 项目，故 appData 即是 exAppData 也是 masterAppData
     const appData = getCWDAppData(devInfo, appData.appDirPath);
-    exProjDeps = getExProjDeps(appData, devInfo, appData);
+    exProjDeps = getExProjDeps({ exAppData: appData, devInfo, masterAppData: appData, writeExJson: true });
   }
   const hasExternals = !isDictNull(exProjDeps);
 

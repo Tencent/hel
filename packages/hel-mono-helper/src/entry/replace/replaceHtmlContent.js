@@ -9,9 +9,9 @@ const { helMonoLog, getCWDAppData } = require('../../util');
 const { lastItem } = require('../../util/arr');
 const { getIsEnableRepoEx } = require('../../util/devInfo');
 const { chooseValList, isDict } = require('../../util/dict');
+const { getExJson } = require('../../util/ex');
 const { cpSync, resolveAppRelPath, getFileJson } = require('../../util/file');
 const { isHelAllOrMicroBuild, isHelAllBuild } = require('../../util/is');
-const { getNmPkgJson } = require('../../util/nmPkg');
 const { getExternalBoundName } = require('../../util/monoPkg');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { getContentLines } = require('../../util/xplat');
@@ -255,12 +255,12 @@ function handleHtmlForExUser(/** @type {Options} */ options, /** @type IExLink[]
 }
 
 function handleHtmlForExProjSelf(/** @type {Options} */ options) {
-  const { appData, nmL1ExternalPkgNames = [] } = options;
+  const { appData, nmL1ExternalPkgNames = [], devInfo } = options;
   const { rawAppHtml, appHtml, masterAppHtml } = getHtmlPath(options, EReuseStrategy.CopyEmptyExHtml);
   const { appDirPath } = appData;
   const masterAppData = getMasterAppData(options);
   const serveFor = masterAppData.appPkgName;
-  const masterAppExJson = getFileJson(path.join(masterAppData.appDirPath, './.hel/ex.json'));
+  const exJson = getExJson({ exAppData: appData, devInfo, masterAppData });
 
   helMonoLog(`replace content of ${appHtml}`);
   const genPreContent = (list, dict) => {
@@ -281,7 +281,7 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
         '<h4 style="color:gray;margin:8px;">supply these externals below (extracted by hel-mono-helper):</h4>',
       ];
       targetLine.push('<div style="color:blue;font-weight:600">External dependencies:</div>');
-      genPreContent(targetLine, masterAppExJson.semVers);
+      genPreContent(targetLine, exJson.semVers);
 
       targetLine.push('<div style="color:blue;font-weight:600">External global names:</div>');
       const globalNames = {};
@@ -289,14 +289,14 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
       genPreContent(targetLine, globalNames);
 
       targetLine.push('<div style="color:blue;font-weight:600">Real versions:</div>');
-      genPreContent(targetLine, masterAppExJson.vers);
+      genPreContent(targetLine, exJson.vers);
 
-      // 将 realVers 写入 ex.json
+      // 将 exJson 写入 ex 项目的 .hel/ex.json
       const exJsonPath = resolveAppRelPath(appData, '.hel/ex.json');
-      fs.writeFileSync(exJsonPath, JSON.stringify({ vers: masterAppExJson.vers }, null, 2));
+      fs.writeFileSync(exJsonPath, JSON.stringify(exJson, null, 2));
 
       targetLine.push('<div style="color:blue;font-weight:600">Package.json paths:</div>');
-      genPreContent(targetLine, masterAppExJson.pkgJsonPaths);
+      genPreContent(targetLine, exJson.pkgJsonPaths);
 
       targetLine.push('<div style="text-align:center"><a target="_blank" href="https://github.com/Tencent/hel">Powered by Hel</a></div>');
       handleNotOneLine('<body>', line, targetLine);
