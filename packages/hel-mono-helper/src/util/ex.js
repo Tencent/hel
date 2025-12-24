@@ -28,7 +28,7 @@ function getExProjDeps(/** @type ICWDAppData */ exAppData, /** @type IDevInfo */
       let targetLine = line;
       if (line.includes('const pkgNames = [];')) {
         targetLine = ['const pkgNames = ['];
-        nmPkgNames.forEach(v => targetLine.push(`  '${v}',`));
+        nmPkgNames.forEach((v) => targetLine.push(`  '${v}',`));
         targetLine.push('];');
       }
 

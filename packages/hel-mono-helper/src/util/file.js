@@ -89,7 +89,7 @@ function getFileJson(standardJsonFilePath, allowNull) {
     }
     return null;
   }
-};
+}
 
 function getJsoncFileJsonByDR(dirPath, relPath) {
   const filePath = path.join(dirPath, relPath);
@@ -99,7 +99,6 @@ function getJsoncFileJsonByDR(dirPath, relPath) {
     write: (input) => fs.writeFileSync(filePath, JSON.stringify(input || json, null, 2)),
   };
 }
-
 
 function getJsoncFileJson(filePath) {
   const content = fs.readFileSync(filePath, { encoding: 'utf8' });
