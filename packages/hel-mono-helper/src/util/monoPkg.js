@@ -1,7 +1,7 @@
 /** @typedef {import('../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { VALID_EX_SUFFIXES } = require('../consts/inner');
-const { getFileJson } = require('./base');
+const { getFileJson } = require('./file');
 const { getMonoDirOrFilePath } = require('./monoPath');
 
 /**

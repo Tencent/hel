@@ -9,7 +9,7 @@ const { helMonoLog, getCWDAppData } = require('../../util');
 const { lastItem } = require('../../util/arr');
 const { getIsEnableRepoEx } = require('../../util/devInfo');
 const { chooseValList, isDict } = require('../../util/dict');
-const { cpSync } = require('../../util/file');
+const { cpSync, resolveAppRelPath, getFileJson } = require('../../util/file');
 const { isHelAllOrMicroBuild, isHelAllBuild } = require('../../util/is');
 const { getNmPkgJson } = require('../../util/nmPkg');
 const { getExternalBoundName } = require('../../util/monoPkg');
@@ -195,17 +195,6 @@ function getRepoExLinks(/** @type {Options} */ options) {
   return exLinks;
 }
 
-function resolveAppRelPath(/** @type {Options['appData']} */ appData, relPath, isDir) {
-  const { monoRoot, belongTo, appDir } = appData;
-  const relPathVar = baseUtils.slash.start(relPath);
-  const filePath = path.join(monoRoot, `./${belongTo}/${appDir}${relPathVar}`);
-  if (isDir && !fs.existsSync(filePath)) {
-    fs.mkdirSync(filePath);
-  }
-
-  return filePath;
-}
-
 /**
  * 当 options.appData 非ex项目自身时，返回的 masterAppHtml 和 rawAppHtml 是同一个值
  */
@@ -266,11 +255,12 @@ function handleHtmlForExUser(/** @type {Options} */ options, /** @type IExLink[]
 }
 
 function handleHtmlForExProjSelf(/** @type {Options} */ options) {
-  const { nmL1ExternalDeps, appData, nmL1ExternalPkgNames = [] } = options;
+  const { appData, nmL1ExternalPkgNames = [] } = options;
   const { rawAppHtml, appHtml, masterAppHtml } = getHtmlPath(options, EReuseStrategy.CopyEmptyExHtml);
-  const { appDir, appDirPath } = appData;
-  const suffix = VALID_EX_SUFFIXES.find((v) => appDir.endsWith(v)) || '';
-  const serveFor = appDir.substring(0, appDir.length - suffix.length);
+  const { appDirPath } = appData;
+  const masterAppData = getMasterAppData(options);
+  const serveFor = masterAppData.appPkgName;
+  const masterAppExJson = getFileJson(path.join(masterAppData.appDirPath, './.hel/ex.json'));
 
   helMonoLog(`replace content of ${appHtml}`);
   const genPreContent = (list, dict) => {
@@ -291,7 +281,7 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
         '<h4 style="color:gray;margin:8px;">supply these externals below (extracted by hel-mono-helper):</h4>',
       ];
       targetLine.push('<div style="color:blue;font-weight:600">External dependencies:</div>');
-      genPreContent(targetLine, nmL1ExternalDeps);
+      genPreContent(targetLine, masterAppExJson.semVers);
 
       targetLine.push('<div style="color:blue;font-weight:600">External global names:</div>');
       const globalNames = {};
@@ -299,22 +289,14 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
       genPreContent(targetLine, globalNames);
 
       targetLine.push('<div style="color:blue;font-weight:600">Real versions:</div>');
-      const nmPkgNames = Object.keys(nmL1ExternalDeps);
-      const realVers = {};
-      const pkgPaths = {};
-      nmPkgNames.forEach((name) => {
-        const { pkgJson, pkgJsonPath } = getNmPkgJson(name);
-        realVers[name] = pkgJson.version;
-        pkgPaths[name] = pkgJsonPath;
-      });
-      genPreContent(targetLine, realVers);
+      genPreContent(targetLine, masterAppExJson.vers);
 
       // 将 realVers 写入 ex.json
       const exJsonPath = resolveAppRelPath(appData, '.hel/ex.json');
-      fs.writeFileSync(exJsonPath, JSON.stringify({ vers: realVers }, null, 2));
+      fs.writeFileSync(exJsonPath, JSON.stringify({ vers: masterAppExJson.vers }, null, 2));
 
       targetLine.push('<div style="color:blue;font-weight:600">Package.json paths:</div>');
-      genPreContent(targetLine, pkgPaths);
+      genPreContent(targetLine, masterAppExJson.pkgJsonPaths);
 
       targetLine.push('<div style="text-align:center"><a target="_blank" href="https://github.com/Tencent/hel">Powered by Hel</a></div>');
       handleNotOneLine('<body>', line, targetLine);

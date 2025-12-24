@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { helMonoLog } = require('../../util');
-const { getFileJson, getDevInfoDirs } = require('../../util/base');
-const { getFileInfoList } = require('../../util/file');
+const { getDevInfoDirs } = require('../../util/base');
+const { getFileInfoList, getFileJson } = require('../../util/file');
 const { rewriteByDirPath } = require('../../util/rewrite');
 const { getMonoRootInfo } = require('../../util/rootInfo');
 

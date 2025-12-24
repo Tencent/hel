@@ -1,20 +1,49 @@
 /** @typedef {import('../types').ICWDAppData} ICWDAppData */
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 const { getMonoAppDepDataImpl } = require('./depData');
+const { resolveAppRelPath, getFileJson } = require('./file');
 const { getMonoAppPkgJsonByAppData } = require('./monoPkg');
+const { rewriteFileLine } = require('./rewrite');
+const { HEL_TPL_GEN_EXJSON_PATH } = require('../consts');
 const { VALID_EX_SUFFIXES } = require('../consts/inner');
 
 /**
  * 获取 ex 项目的依赖，未配置时使用自动推导的数据
  */
-function getExProjDeps(/** @type ICWDAppData */exAppData, /** @type IDevInfo */ devInfo, /** @type ICWDAppData */ masterAppData) {
+function getExProjDeps(/** @type ICWDAppData */ exAppData, /** @type IDevInfo */ devInfo, /** @type ICWDAppData */ masterAppData) {
   const { appPkgName } = exAppData;
   const appConf = devInfo.appConfs[appPkgName] || {};
   const getL1Deps = () => {
     // 注意，此处是通过 masterAppData.appSrcDirPath 获得对应的 external deps 对象
     const { nmL1ExternalDeps } = getMonoAppDepDataImpl({ appSrc: masterAppData.appSrcDirPath, devInfo, isAllDep: true });
-    return nmL1ExternalDeps;
+    const nmPkgNames = Object.keys(nmL1ExternalDeps);
+    resolveAppRelPath(masterAppData, './.hel', true);
+    const genExJsonPath = resolveAppRelPath(masterAppData, './.hel/gen-exjson.js');
+    fs.writeFileSync(genExJsonPath, fs.readFileSync(HEL_TPL_GEN_EXJSON_PATH).toString());
+
+    rewriteFileLine(genExJsonPath, (/** @type string */ line) => {
+      let targetLine = line;
+      if (line.includes('const pkgNames = [];')) {
+        targetLine = ['const pkgNames = ['];
+        nmPkgNames.forEach(v => targetLine.push(`  '${v}',`));
+        targetLine.push('];');
+      }
+
+      return { line: targetLine };
+    });
+
+    // 在宿主项目执行完 get-vers 脚本后，才能获得他在 pnpm 里锁定的各个子包依赖
+    require(genExJsonPath);
+    const exJsonPath = resolveAppRelPath(masterAppData, './.hel/ex.json');
+    const exJson = getFileJson(exJsonPath);
+    exJson.semVers = nmL1ExternalDeps;
+    // 把语义化的版本号写回去，方便后续流程使用
+    fs.writeFileSync(exJsonPath, JSON.stringify(exJson, null, 2));
+
+    return exJson.vers;
   };
 
   let exProjDeps = appConf.exProjDeps;

@@ -2,10 +2,11 @@
 const path = require('path');
 const { getTsConfigDirPathByAppSrc } = require('./appSrc');
 const { getTsConfigPaths } = require('./alias');
-const { getCWD, getFileJson, getDevInfoDirs } = require('./base');
+const { getCWD, getDevInfoDirs } = require('./base');
 const { HEL_DIR_NAME, HOST_NAME } = require('../consts');
 const { inferDirData } = require('./cwd');
-const { helMonoLog, getCurAppData, setCurAppData } = require('./log');
+const { getFileJson } = require('./file');
+const { getCurAppData, setCurAppData } = require('./log');
 const { getMonoRootInfo } = require('./rootInfo');
 const { getPortByDevInfo, mayAddPort } = require('./port');
 const { ensureHttpPrefix } = require('./url');

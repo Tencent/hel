@@ -22,6 +22,11 @@ export type {
   ICWDInfo,
 };
 
+export interface IGetNmPkgJsonByPathResult {
+  pkgJson: Record<string, any>;
+  pkgJsonPath: string;
+}
+
 /**
  * 基于 npm start xxx 来启动或构建应用（模块）
  * @example
@@ -229,4 +234,8 @@ export declare const monoUtil: {
    * 打印 hel-mono-helper 常用命令提示
    */
   hint: () => void;
+  /**
+   * 传入模块文件入口路径或模块 pkgJson 路径，推导出 pkgJson 对象
+   */
+  getNmPkgJsonByPath: (mayPkgIndexPath: string) => IGetNmPkgJsonByPathResult;
 };

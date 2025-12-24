@@ -1,7 +1,8 @@
 const { buildAppAlias, inferConfAlias } = require('./appSrc');
-const { getCWD, getCWDPkgDir, getCWDPkgPrefixedDir, getCWDIsForRootHelDir, getFileJson, getDevInfoDirs, ensureSlash } = require('./base');
+const { getCWD, getCWDPkgDir, getCWDPkgPrefixedDir, getCWDIsForRootHelDir, getDevInfoDirs, ensureSlash } = require('./base');
 const { getMonoAppDepData } = require('./depData');
 const { inferDevInfo } = require('./devInfo');
+const { getFileJson } = require('./file');
 const { hint } = require('./hint');
 const { getCmdKeywordName, getCmdKeywords } = require('./keyword');
 const { getMonoNameMap, getBuildDirPath } = require('./monoName');
