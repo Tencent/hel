@@ -17,7 +17,7 @@ module.exports = function replaceIndexEXFile(/** @type {ICWDAppData} */ appData,
 
   if (!exProjDeps) {
     const appData = getCWDAppData(devInfo, appData.appDirPath);
-    exProjDeps = getExProjDeps(appData.appPkgName, devInfo, appData);
+    exProjDeps = getExProjDeps(appData, devInfo, appData);
   }
   const hasExternals = !isDictNull(exProjDeps);
 

@@ -5,14 +5,17 @@ const shell = require('shelljs');
 const { helMonoLog } = require('../../util');
 const { safeGet } = require('../../util/dict');
 
+function installDeps(/** @type {ICWDAppData} */ appData) {
+  shell.exec(`cd ${appData.appDirPath}`);
+  helMonoLog(`install node modules for ${appData.appDirPath}`);
+  shell.exec('pnpm i');
+}
+
 function writeAndInstall(pkgJson, deps, pkgFilePath, /** @type {ICWDAppData} */ appData) {
   pkgJson.dependencies = deps;
   const str = JSON.stringify(pkgJson, null, 2);
   fs.writeFileSync(pkgFilePath, str);
-
-  shell.exec(`cd ${appData.appDirPath}`);
-  helMonoLog(`install node modules for ${appData.appDirPath}`);
-  shell.exec('pnpm i');
+  installDeps(appData);
 }
 
 module.exports = function replaceExProjectPkgJson(/** @type {ICWDAppData} */ appData, newDeps) {
@@ -30,6 +33,7 @@ module.exports = function replaceExProjectPkgJson(/** @type {ICWDAppData} */ app
     writeAndInstall(pkgJson, newDeps, pkgFilePath, appData);
     return true;
   }
+
   if (oldPkgNames.length !== newPkgNames) {
     writeAndInstall(pkgJson, newDeps, pkgFilePath, appData);
     return true;

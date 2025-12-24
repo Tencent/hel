@@ -82,8 +82,8 @@ function getTsConfigAliasByDirPath(/** @type {DevInfo} */ devInfo, tsConfigDirPa
     const pathArr = paths[key] || [];
     const pathValue = pathArr[0] || '';
     const [mayAlias, mayStar] = key.split('/');
-    // 确保找到的是 "@xx/*": ["./*"] 配置项
-    if (mayAlias && mayStar === '*' && pathValue === './*') {
+    // 确保找到的是 "@xx/*": ["./*"] 或 "src/*"]  配置项
+    if (mayAlias && mayStar === '*' && ['./*', 'src/*'].includes(pathValue)) {
       alias = mayAlias;
       break;
     }

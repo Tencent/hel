@@ -34,7 +34,8 @@ export interface IHelMonoModBase {
    */
   htmlPath?: string;
   /**
-   * 此配置项仅对 ex 项目有效，表示使用自定义的依赖替代自动推导的依赖
+   * 此配置项仅对 ex 项目有效，表示使用自定义的依赖替代自动推导的依赖，
+   * 注意：exProjDeps 的优先级比ex项目的 package.json 的 hel.isFixed 高，但没有其灵活
    */
   exProjDeps?: Record<PkgName, string>;  /**
    * 如宿主没提供全局模块且当前子模块也未打包某些 peer 依赖到 hel 产物里时，
