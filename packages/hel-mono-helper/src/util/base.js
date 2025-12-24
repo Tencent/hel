@@ -34,22 +34,6 @@ exports.getCWDIsForRootHelDir = function () {
   return strList.includes(rootHelAppSeg) || strList.includes(rootHelSubModSeg);
 };
 
-/**
- * 读取文件 json 对象
- */
-exports.getFileJson = function (standardJsonFilePath, allowNull) {
-  try {
-    const str = fs.readFileSync(standardJsonFilePath, { encoding: 'utf-8' });
-    const json = JSON.parse(str);
-    return json;
-  } catch (err) {
-    if (!allowNull) {
-      throw err;
-    }
-    return null;
-  }
-};
-
 exports.getDirName = function (appSrc) {
   const strList = appSrc.split(path.sep);
   return strList[strList.length - 2];

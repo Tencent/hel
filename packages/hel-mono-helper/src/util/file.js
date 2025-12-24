@@ -1,5 +1,8 @@
+/** @typedef {import('../types').ICWDAppData} ICWDAppData */
 const fs = require('fs');
 const path = require('path');
+const { baseUtils } = require('hel-dev-utils-base');
+const jsonc = require('jsonc-parser');
 const { getContentLines } = require('./xplat');
 
 function cpSync(fromDir, toDir) {
@@ -64,9 +67,52 @@ function getFileInfoList(parentDirPath) {
   return dirInfoList;
 }
 
+function resolveAppRelPath(/** @type {ICWDAppData} */ appData, relPath, isDir) {
+  const { monoRoot, belongTo, appDir } = appData;
+  const relPathVar = baseUtils.slash.start(relPath);
+  const filePath = path.join(monoRoot, `./${belongTo}/${appDir}${relPathVar}`);
+  if (isDir && !fs.existsSync(filePath)) {
+    fs.mkdirSync(filePath);
+  }
+
+  return filePath;
+}
+
+function getFileJson(standardJsonFilePath, allowNull) {
+  try {
+    const str = fs.readFileSync(standardJsonFilePath, { encoding: 'utf-8' });
+    const json = JSON.parse(str);
+    return json;
+  } catch (err) {
+    if (!allowNull) {
+      throw err;
+    }
+    return null;
+  }
+}
+
+function getJsoncFileJsonByDR(dirPath, relPath) {
+  const filePath = path.join(dirPath, relPath);
+  const json = getJsoncFileJson(filePath);
+  return {
+    json,
+    write: (input) => fs.writeFileSync(filePath, JSON.stringify(input || json, null, 2)),
+  };
+}
+
+function getJsoncFileJson(filePath) {
+  const content = fs.readFileSync(filePath, { encoding: 'utf8' });
+  const json = jsonc.parse(content);
+  return json;
+}
+
 module.exports = {
   getFileContentLines,
   getDirInfoList,
   getFileInfoList,
+  getFileJson,
+  getJsoncFileJson,
+  getJsoncFileJsonByDR,
+  resolveAppRelPath,
   cpSync,
 };

@@ -1,10 +1,10 @@
 /** @typedef {import('../types').IMonoDevInfo} DevInfo */
 const path = require('path');
 const fs = require('fs');
-const jsonc = require('jsonc-parser');
 const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
-const { getFileJson, getDevInfoDirs } = require('./base');
+const { getDevInfoDirs } = require('./base');
 const { safeGet } = require('./dict');
+const { getFileJson, getJsoncFileJson } = require('./file');
 const { getMonoRootInfo } = require('./rootInfo');
 
 /**
@@ -26,7 +26,7 @@ function getParentTsConfigJson(tsConfigDirPath, tsConfigJson) {
     }
 
     if (fs.existsSync(parentTsConfigPath)) {
-      parentTsConfigJson = jsonc.parse(fs.readFileSync(parentTsConfigPath, { encoding: 'utf8' }));
+      parentTsConfigJson = getJsoncFileJson(parentTsConfigPath);
     }
   }
 
@@ -41,7 +41,7 @@ function getTsConfigPaths(tsConfigDirPath) {
   if (!fs.existsSync(tsConfigPath)) {
     return null;
   }
-  const tsConfigJson = jsonc.parse(fs.readFileSync(tsConfigPath, { encoding: 'utf8' }));
+  const tsConfigJson = getJsoncFileJson(tsConfigPath);
   const compilerOptions = tsConfigJson.compilerOptions || {};
   const childPaths = compilerOptions.paths || {};
 
@@ -82,8 +82,8 @@ function getTsConfigAliasByDirPath(/** @type {DevInfo} */ devInfo, tsConfigDirPa
     const pathArr = paths[key] || [];
     const pathValue = pathArr[0] || '';
     const [mayAlias, mayStar] = key.split('/');
-    // 确保找到的是 "@xx/*": ["./*"] 配置项
-    if (mayAlias && mayStar === '*' && pathValue === './*') {
+    // 确保找到的是 "@xx/*": ["./*"] 或 "src/*"]  配置项
+    if (mayAlias && mayStar === '*' && ['./*', 'src/*'].includes(pathValue)) {
       alias = mayAlias;
       break;
     }

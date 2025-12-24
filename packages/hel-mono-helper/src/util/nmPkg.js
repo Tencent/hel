@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 function getNmPkgJsonByErr(err, allowInvalidName = true) {
   const mayThrowErr = () => {
     if (!allowInvalidName) {
@@ -21,6 +24,11 @@ function getNmPkgJsonByErr(err, allowInvalidName = true) {
   return mayThrowErr(err);
 }
 
+function getNmPkgJsonByJsonPath(pkgJsonPath) {
+  const pkgJson = require(pkgJsonPath);
+  return { pkgJson, pkgJsonPath };
+}
+
 function getNmPkgJson(nmPkgName, allowInvalidName = true) {
   try {
     const requestPkgMod = `${nmPkgName}/package.json`;
@@ -32,6 +40,40 @@ function getNmPkgJson(nmPkgName, allowInvalidName = true) {
   }
 }
 
+function getNmPkgJsonByPath(mayPkgIndexPath) {
+  if (mayPkgIndexPath.endsWith('/package.json')) {
+    return getNmPkgJsonByJsonPath(mayPkgIndexPath);
+  }
+  const getPkgJson = (relPkgPath) => {
+    const filePath = path.join(mayPkgIndexPath, relPkgPath);
+    if (!fs.existsSync(filePath)) {
+      return null;
+    }
+    const data = getNmPkgJsonByJsonPath(filePath);
+    // 必须判断一下 version 值，避免部分包体某些目录包含了不合规范的 package.json
+    if (!data.pkgJson.version) {
+      return null;
+    }
+
+    return data;
+  };
+
+  const relPaths = ['./package.json', '../package.json', '../../package.json', '../../../package.json'];
+  let pkgJsonData = null;
+  for (const relPath of relPaths) {
+    pkgJsonData = getPkgJson(relPath);
+    if (pkgJsonData) {
+      break;
+    }
+  }
+  if (!pkgJsonData) {
+    throw new Error(`Cannot find package.json by path ${mayPkgIndexPath}`);
+  }
+
+  return pkgJsonData;
+}
+
 module.exports = {
   getNmPkgJson,
+  getNmPkgJsonByPath,
 };

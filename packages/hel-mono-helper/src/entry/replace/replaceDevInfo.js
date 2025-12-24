@@ -5,7 +5,7 @@ const path = require('path');
 const { helMonoLog, getFileJson } = require('../../util');
 const { ensureAppConf } = require('../../util/devInfo');
 const { getMonoAppDepDataImpl } = require('../../util/depData');
-const { purifyUndefined } = require('../../util/dict');
+const { purifyUndefined, mayInclude } = require('../../util/dict');
 const { isHelAllBuild } = require('../../util/is');
 const { getModMonoDataDict } = require('../../util/monoJson');
 const { rewriteFileLine } = require('../../util/rewrite');
@@ -17,7 +17,7 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
   const { realAppPkgName, isSubMod, appSrcDirPath: appSrc, isForRootHelDir, appPkgName } = appData;
   helMonoLog(`trigger getInjectedDevInfo for ${appPkgName}`);
   const start = Date.now();
-  const { appConfs, devHostname, nmBaseRuntimeConf, baseRuntimeConf, runtimeConfs, exclude, nmExclude } = devInfo;
+  const { appConfs, devHostname, nmBaseRuntimeConf, baseRuntimeConf, runtimeConfs, exclude, nmInclude, nmExclude } = devInfo;
   const injectedDevInfo = {
     mods: {},
     devHostname: ensureHttpPrefix(devHostname || HOST_NAME),
@@ -61,9 +61,10 @@ function getInjectedDevInfo(deps, /** @type {ICWDAppData} */ appData, /** @type 
 
   const { nmHelPkgNames, nmPkg2HelConf } = getMonoAppDepDataImpl({ appSrc, devInfo, isAllDep: true, isForRootHelDir });
   nmHelPkgNames.forEach((nmPkgName) => {
-    if (nmExclude.includes(nmPkgName) || injectedDevInfo.mods[nmPkgName]) {
+    if (injectedDevInfo.mods[nmPkgName] || !(mayInclude(nmInclude, nmPkgName) && !mayInclude(nmExclude, nmPkgName))) {
       return;
     }
+
     const { groupName = nmPkgName, platform } = nmPkg2HelConf[nmPkgName] || {};
     const runtimeConf = runtimeConfs[nmPkgName] || {};
     injectedDevInfo.mods[nmPkgName] = purifyUndefined({

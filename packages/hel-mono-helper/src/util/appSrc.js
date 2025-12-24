@@ -63,8 +63,8 @@ function buildAppAlias(appSrc, /** @type {IDevInfo} */ devInfo, prefixedDir2Pkg)
   // 支持宿主和其他子模块 @/**/*, @xx/**/* 等能够正常工作
   const appAlias = {};
   const prefixedDirName = getPrefixedDirName(appSrc);
-  const packName = prefixedDir2Pkg[prefixedDirName];
-  const targetAlias = inferConfAlias(devInfo, { appSrc, appConf: devInfo.appConfs[packName], packName });
+  const pkgName = prefixedDir2Pkg[prefixedDirName];
+  const targetAlias = inferConfAlias(devInfo, { appSrc, appConf: devInfo.appConfs[pkgName], pkgName });
   if (targetAlias) {
     appAlias[targetAlias] = appSrc;
   }

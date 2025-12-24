@@ -9,9 +9,9 @@ const { helMonoLog, getCWDAppData } = require('../../util');
 const { lastItem } = require('../../util/arr');
 const { getIsEnableRepoEx } = require('../../util/devInfo');
 const { chooseValList, isDict } = require('../../util/dict');
-const { cpSync } = require('../../util/file');
+const { getExJson } = require('../../util/ex');
+const { cpSync, resolveAppRelPath, getFileJson } = require('../../util/file');
 const { isHelAllOrMicroBuild, isHelAllBuild } = require('../../util/is');
-const { getNmPkgJson } = require('../../util/nmPkg');
 const { getExternalBoundName } = require('../../util/monoPkg');
 const { rewriteFileLine } = require('../../util/rewrite');
 const { getContentLines } = require('../../util/xplat');
@@ -207,10 +207,7 @@ function getHtmlPath(/** @type {Options} */ options, strategy = EReuseStrategy.U
     return { rawAppHtml: masterAppHtml, appHtml: masterAppHtml, masterAppHtml };
   }
 
-  const appDotHelDir = path.join(monoRoot, `./${belongTo}/${appDir}/.hel`);
-  if (!fs.existsSync(appDotHelDir)) {
-    fs.mkdirSync(appDotHelDir);
-  }
+  const appDotHelDir = resolveAppRelPath(appData, '.hel', true);
   const appHtml = path.join(appDotHelDir, 'index.html');
 
   if (EReuseStrategy.CopyAppHtml === strategy) {
@@ -258,11 +255,12 @@ function handleHtmlForExUser(/** @type {Options} */ options, /** @type IExLink[]
 }
 
 function handleHtmlForExProjSelf(/** @type {Options} */ options) {
-  const { nmL1ExternalDeps, appData, nmL1ExternalPkgNames = [] } = options;
+  const { appData, nmL1ExternalPkgNames = [], devInfo } = options;
   const { rawAppHtml, appHtml, masterAppHtml } = getHtmlPath(options, EReuseStrategy.CopyEmptyExHtml);
-  const { appDir, appDirPath } = appData;
-  const suffix = VALID_EX_SUFFIXES.find((v) => appDir.endsWith(v)) || '';
-  const serveFor = appDir.substring(0, appDir.length - suffix.length);
+  const { appDirPath } = appData;
+  const masterAppData = getMasterAppData(options);
+  const serveFor = masterAppData.appPkgName;
+  const exJson = getExJson({ exAppData: appData, devInfo, masterAppData });
 
   helMonoLog(`replace content of ${appHtml}`);
   const genPreContent = (list, dict) => {
@@ -283,7 +281,7 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
         '<h4 style="color:gray;margin:8px;">supply these externals below (extracted by hel-mono-helper):</h4>',
       ];
       targetLine.push('<div style="color:blue;font-weight:600">External dependencies:</div>');
-      genPreContent(targetLine, nmL1ExternalDeps);
+      genPreContent(targetLine, exJson.semVers);
 
       targetLine.push('<div style="color:blue;font-weight:600">External global names:</div>');
       const globalNames = {};
@@ -291,18 +289,14 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
       genPreContent(targetLine, globalNames);
 
       targetLine.push('<div style="color:blue;font-weight:600">Real versions:</div>');
-      const nmPkgNames = Object.keys(nmL1ExternalDeps);
-      const realVers = {};
-      const pkgPaths = {};
-      nmPkgNames.forEach((name) => {
-        const { pkgJson, pkgJsonPath } = getNmPkgJson(name);
-        realVers[name] = pkgJson.version;
-        pkgPaths[name] = pkgJsonPath;
-      });
-      genPreContent(targetLine, realVers);
+      genPreContent(targetLine, exJson.vers);
+
+      // 将 exJson 写入 ex 项目的 .hel/ex.json
+      const exJsonPath = resolveAppRelPath(appData, '.hel/ex.json');
+      fs.writeFileSync(exJsonPath, JSON.stringify(exJson, null, 2));
 
       targetLine.push('<div style="color:blue;font-weight:600">Package.json paths:</div>');
-      genPreContent(targetLine, pkgPaths);
+      genPreContent(targetLine, exJson.pkgJsonPaths);
 
       targetLine.push('<div style="text-align:center"><a target="_blank" href="https://github.com/Tencent/hel">Powered by Hel</a></div>');
       handleNotOneLine('<body>', line, targetLine);

@@ -1,7 +1,7 @@
 /** @typedef {import('../types').ICWDAppData} ICWDAppData */
 const path = require('path');
 const { VALID_EX_SUFFIXES } = require('../consts/inner');
-const { getFileJson } = require('./base');
+const { getFileJson } = require('./file');
 const { getMonoDirOrFilePath } = require('./monoPath');
 
 /**
@@ -53,14 +53,17 @@ function getExternalBoundName(/** @type string */ pkgName) {
     return fmtBy(result, '-');
   };
 
-  if (pkgName.startsWith('@') && pkgName.includes('/')) {
-    const [scope, name] = pkgName.split('/');
+  // lodash.isempty ---> lodash$isempty
+  const pureName = pkgName.replaceAll('.', '$');
+
+  if (pureName.startsWith('@') && pureName.includes('/')) {
+    const [scope, name] = pureName.split('/');
     const pure = scope.substring(1);
     // 中间加横线是为了避免 tencent-my-lib 和 @tencent/my-lib 得出一样的全局名字
     return `${getResult(pure)}_${getResult(name)}`;
   }
 
-  return getResult(pkgName);
+  return getResult(pureName);
 }
 
 module.exports = {

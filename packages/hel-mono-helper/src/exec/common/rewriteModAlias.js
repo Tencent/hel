@@ -1,21 +1,9 @@
 /** @typedef {import('../../types').IArgvOptions} IArgvOptions*/
 const path = require('path');
-const fs = require('fs');
-const jsonc = require('jsonc-parser');
 const { helMonoLog } = require('../../util');
-const { getFileContentLines } = require('../../util/file');
+const { getFileContentLines, getJsoncFileJsonByDR } = require('../../util/file');
 const { rewriteByLines, rewriteByDirPath } = require('../../util/rewrite');
 const { MOD_TEMPLATE } = require('../../consts');
-
-function getFileJson(dirPath, relPath) {
-  const filePath = path.join(dirPath, relPath);
-  const content = fs.readFileSync(filePath, { encoding: 'utf8' });
-  const json = jsonc.parse(content);
-  return {
-    json,
-    write: (input) => fs.writeFileSync(filePath, JSON.stringify(input || json, null, 2)),
-  };
-}
 
 function getLinesAndHandler(dirPath, relPath) {
   const filePath = path.join(dirPath, relPath);
@@ -105,7 +93,7 @@ exports.rewriteModAlias = function (/** @type {IArgvOptions} */ argvOptions, old
     return;
   }
 
-  const ret = getFileJson(copyToPath, './tsconfig.json');
+  const ret = getJsoncFileJsonByDR(copyToPath, './tsconfig.json');
   if (!ret.json.compilerOptions) {
     ret.json.compilerOptions = {};
   }

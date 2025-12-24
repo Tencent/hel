@@ -36,4 +36,6 @@ module.exports = {
   HTML_PATH: 'dev/public/index.html',
   VALID_EX_NUMS: exNums,
   VALID_EX_SUFFIXES: exSuffixes,
+  MONO_JSON: 'hel-mono.json',
+  MONO_JSON2: 'mono-conf.json',
 };

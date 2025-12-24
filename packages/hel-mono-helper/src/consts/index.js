@@ -3,7 +3,7 @@ const devUtils = require('hel-dev-utils-base');
 
 const srcPath = path.join(__dirname, '../');
 
-const VER = '1.10.2';
+const VER = '1.10.9';
 
 const HEL_REPO_EXTERNAL_HTML_PATH = path.join(srcPath, './tpls-hel/empty-base-ex.html');
 
@@ -14,6 +14,8 @@ const HEL_TPL_INNER_APP_PATH = path.join(srcPath, './tpls-hel/app');
 
 /** 子模块 hel 胶水代码模板 */
 const HEL_TPL_INNER_SUB_MOD_PATH = path.join(srcPath, './tpls-hel/sub-mod');
+
+const HEL_TPL_GEN_EXJSON_PATH = path.join(srcPath, './tpls-hel/gen-exjson.js');
 
 /**
  * 模板项目所在目录
@@ -149,6 +151,7 @@ module.exports = {
   LOG_PREFIX_TMP: '[mono-tmp]',
   HEL_TPL_INNER_APP_PATH,
   HEL_TPL_INNER_SUB_MOD_PATH,
+  HEL_TPL_GEN_EXJSON_PATH,
   HEL_TPL_INNER_DEMO_DIR,
   HEL_TPL_INNER_DEMO_MOD_DIR,
   HEL_REPO_EXTERNAL_HTML_PATH,
