@@ -31,7 +31,7 @@
     ]
   },
   "dependencies": {
-    "hel-mono-runtime-helper": "^2.3.3"
+    "hel-mono-runtime-helper": "^2.3.4"
   },
   "volta": {
     "node": "20.19.5",
