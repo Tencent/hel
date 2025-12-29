@@ -36,14 +36,14 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "hel-mono-runtime-helper": "^2.3.3",
+    "hel-mono-runtime-helper": "^2.3.4",
     "hel-lib-proxy": "*"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
     "babel-cli": "^6.26.0",
     "hel-lib-proxy": "*",
-    "hel-mono-runtime-helper": "^2.3.3"
+    "hel-mono-runtime-helper": "^2.3.4"
   },
   "scripts": {
     "start": "node ../../dev/root-scripts/executeStart",
