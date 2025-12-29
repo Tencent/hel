@@ -1,115 +1,120 @@
 简体中文 | [English](./README.en.md)
 
 <p align="center">
-<img width="620px" alt="hel-logo"  src="https://user-images.githubusercontent.com/7334950/186912479-463a6788-41fd-474d-83ed-08314909d70d.png" />
+<img width="620px" alt="hel-logo"  src="https://raw.githubusercontent.com/Tencent/hel/refs/heads/write-doc/doc/static/img/hel-plus.png" />
 </p>
 
+**hel-micro**, 原生跨端、工具链无关的模块联邦SDK ❤️
+
+> doc： https://helmicro.com or https://tencent.github.io/hel
 ## [Doc](https://helmicro.com)
 
-**hel-micro**, 模块联邦 sdk 化，免构建、热更新、工具链无关的微模块方案 ❤️
 
-see doc： https://helmicro.com or https://tencent.github.io/hel
+## 特点
 
-## 文章
+- 原生跨端  
+支撑在**浏览器**和**服务器**双端同时使用
 
-1. [hel-micro 模块联邦新革命](https://juejin.cn/post/7138792768234586148)
+- 双模驱动  
+支持以**传统包**和**微模块**包两种模式运行，通过编译参数做切换
 
-2. [使用 hel-micro 制作远程 antd、tdesign-react](https://juejin.cn/post/7150639599499509797)
+- 平台化  
+可部署[helpack](./helpack/README.md)做模块版本管理
 
-## 视频
+- 工程化  
+提供[hel](./packages/create-hel/README.md)命令行工具，完美适配`pnpm`大仓开发模式
 
-1. 【视频教程第一期】[基于 hel-micro 开发、发布、使用远程 js 库](https://www.bilibili.com/video/BV15t4y1u7i5/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
-1. 【视频教程第二期】[本地联调基于 hel-micro 开发的远程 js 库](https://www.bilibili.com/video/BV1Dd4y1y7Wj/?vd_source=51bc50bf5f860e0d778c49b00d192cee)
+- 工具链无关  
+前端微模块可对接`webpack`、`vite`、`parcel`等构建工具，后端微模块可运行于`node`、`bun`、`deno`等运行时
 
-## 模板
+## 快速开始
 
-用户可参考[模块开发教程](https://helmicro.com/hel/docs/tutorial/helmod-dev)，并基于[hel-eco](https://github.com/hel-eco)提供的各种模板项目做轻微调整，即可发布各种类型的 hel 远程模块
-
-| 示例名称/功能 | 在线示例 | 模板地址 | 模板描述 | 托管位置 |
-| --- | --- | --- | --- | --- |
-| 远程 ts 库 | [预加载+静态导入](https://codesandbox.io/s/hel-lodash-zf8jh8) | [remote-lib-ts](https://github.com/hel-eco/hel-tpl-remote-lib) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-lib/) |
-| 远程 react js 组件 | <div>[预加载+静态导入](https://codesandbox.io/s/demo-load-remote-react-comp-prefetch-7f87q4?file=/src/index.js)</div> [懒加载 shadow](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp](https://github.com/hel-eco/hel-tpl-remote-react-comp) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-react-comps/) |
-| 远程 react ts 组件 | [懒加载 shadow](https://codesandbox.io/s/demo-load-remote-react-comp-2bnpl0) | [remote-react-comp-ts](https://github.com/hel-eco/hel-tpl-remote-react-comp-ts) | webpack 开发与打包 | [unpkg](https://unpkg.com/hel-tpl-remote-react-comps-ts/) |
-| 远程 vue2 js 组件 | [预加载+静态导入](https://codesandbox.io/s/demo-load-remote-vue-comp-st0295?file=/src/components/HelloWorld.vue) <div>[懒加载](https://codesandbox.io/s/demo-load-remote-vue-comp-async-cqllv0?file=/src/components/HelloWorld.vue)</div> | [remote-vue-comp](https://github.com/hel-eco/hel-tpl-remote-vue-comp) | webpack 开发与打包 | <div>[unpkg](https://unpkg.com/hel-tpl-remote-vue-comps/)、</div> <div>[github.io index.html](https://hel-eco.github.io/hel-tpl-remote-vue-comp/index.html)、</div> [unpkg index.html](https://unpkg.com/hel-tpl-remote-vue-comps@1.1.3/hel_dist/index.html) |
-| 远程 vue3 ts 组件 | [预加载](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [remote-vue3-comps-ts](https://github.com/hel-eco/hel-tpl-remote-vue3-comps-ts) | vite 或 webpack 开发，webpack 打包 | [unpkg](https://unpkg.com/hel-tpl-remote-vue3-comps-ts/) |
-| 远程 vue3 ts 组件 | [预加载](https://codesandbox.io/s/demo-load-remote-vue3-comp-2fd34s?file=/src/main.js) | [hel-tpl-remote-vue3-comps-vite](https://github.com/decadef20/hel-lib-vue-comps-vite) | vite 开发与打包 | [unpkg index.html](https://unpkg.com/browse/hel-tpl-remote-vue3-comps-ts@1.4.0/hel_dist/index.html) |
-
-## 实战
-
-基于模板项目改造后发布的 hel 远程模块
-
-| 模块名称/功能 | 在线演示 | 仓库地址 | 描述 | 托管位置 |
-| --- | --- | --- | --- | --- |
-| hel-lodash | [codesandbox](https://codesandbox.io/s/hel-lodash-zf8jh8) | [gihub](https://github.com/hel-eco/hel-lodash) | lodash 远程包 | [unpkg](https://unpkg.com/hel-lodash/) |
-| hel-antd | [codesandbox](https://codesandbox.io/s/hel-demo-use-antd-tjy3ep) | [gihub](https://github.com/hel-eco/hel-antd) | antd 远程包 | [unpkg](https://unpkg.com/hel-antd/) |
-| hel-tdesign-react | [codesandbox](https://codesandbox.io/s/hel-demo-use-tedesign-nw8bfb) | [gihub](https://github.com/hel-eco/hel-tdesign-react) | tdesign-react 远程包 | [unpkg](https://unpkg.com/hel-tdesign-react/) |
-
-## [Why hel-micro](https://helmicro.com/hel)
-
-接入快、0 入侵、简单易用： ![image](https://tnfe.gtimg.com/image/v3qm5w72nl_1659770977424.png)
-
-让模块联邦技术从构建工具插件层面提升到 sdk 层面，使用更灵活，模块流通性更好（工具链无关）： <img width="1226" alt="image" src="https://user-images.githubusercontent.com/7334950/195237524-867a213d-d1f8-4ae1-9306-3d9d997c779c.png" />
-
-### 如何使用远程模块
-
-仅需要一句 npm 命令即可载入远程模块，查看下面例子[线上示例](https://codesandbox.io/s/hel-lodash-zf8jh8?file=/src/App.js)
-
-- 1 安装`hel-micro`
+全局安装hel命令行工具
 
 ```bash
-npm i hel-micro
+npm i create-hel -g
 ```
 
-- 2 惰性加载远程模块
+### 后端微模块
 
-示例：调用`hel-lodash` 模块的方法
+先映射欲提升为微模块的node模块，再启动你的服务
 
 ```ts
-import { preFetchLib } from 'hel-micro';
-async function ran(seed) {
-  const mod = await preFetchLib('hel-lodash'); // 首次加载触发模块下载，之后会从hel-micro缓存获取
-  const num = mod.myUtils.num.random(500);
-  return num;
-}
-```
-
-- 3 预加载远程模块
-
-示例：静态导入`hel-lodash`后调用其模块方法
-
-安装`hel-lodash`
-
-```bash
-npm i hel-lodash
-```
-
-先执行模块拉取动作
-
-```ts
-import { preFetchLib } from 'hel-micro';
+import { mapAndPreload } from 'hel-micro-node';
 
 async function main() {
-  await preFetchLib('hel-lodash');
-  await import('./loadApp'); // 入口文件后移
+  // 如需使用 node_modules 模块，注释这里的调用即可
+  await mapAndPreload({ '@hel-demo/mono-libs': true });
+  await import('./server');
 }
-
-main().catch(console.error);
 ```
 
-在入口文件里关联的任意文件处静态导入`hel-micro`并调用模块方法
+可通过以下命令行运行后端微模块示例项目
+
+```bash
+hel init demo1 -t node-demo
+cd demo1
+npm i
+npm run start
+```
+
+### 前端微模块
+
+先映射欲提升为微模块的前端模块，再载入你的前端应用
 
 ```ts
-import m from 'hel-lodash';
-console.log(m.myUtils.num.random(500);) // 获得随机数
+import { preFetchLib } from 'hel-micro';
+
+async function start() {
+  // 如需使用 node_modules 模块，注释这里的调用即可
+  await preFetchLib('@hel-demo/mono-libs');
+  await import('./loadApp');
+}
 ```
 
-## [hel-micro](packages/hel-micro)
+webpack alias 配置模块映射关系
 
-前端微件化 sdk，基于 hel-micro 可实现跨项目共享代码、模块热更新、微前端架构等功能
+```ts
+  alias: {
+    // 如需使用 node_modules 模块，注释这里的映射即可
+    '@hel-demo/mono-libs': '@hel-demo/mono-libs/hel' ,
+  },
+```
 
-## [hel-micro-react](packages/hel-micro-react)
+### 模块版本管理
 
-依赖 hel-micro 基础 api 实现的 react 组件加载库
+可部署[helpack](./helpack/README.md)做模块版本管理
+
+```bash
+hel init myhel -t helpack
+```
+
+![helpack](https://tnfe.gtimg.com/image/f13q7cuzxt_1652895450360.png)
+
+
+### 开发与部署微模块
+
+使用命令行工具初始化专用于开发与部署微模块的工程
+
+```bash
+hel init mymod
+cd mymod
+pnpm i
+# 新建子模块
+pnpm start .create-mod mylib
+# 开发子模块
+pnpm start mylib
+# 构建子模块
+pnpm start mylib build:nbsm
+# 发布子模块
+pnpm --filter mylib publish
+```
+
+更多说明见`hel-mono`[文档](https://github.com/hel-eco/hel-mono)
+
+### 其他
+
+访问旧版[文档](./md/README_OLD.md)
 
 ## 🐚 谁在使用
 
