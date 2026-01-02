@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Hel-Mono 使用说明
+# 使用说明
 
 ## 概述
 本文档介绍使用 hel 命令行工具管理 monorepo 项目的完整流程，包括项目初始化、包创建、构建和发布。
