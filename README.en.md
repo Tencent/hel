@@ -7,8 +7,6 @@
 **hel-micro**, 原生跨端、工具链无关的模块联邦SDK ❤️
 
 > doc： https://helmicro.com or https://tencent.github.io/hel
-## [Doc](https://helmicro.com)
-
 
 ## 特点
 

@@ -48,7 +48,7 @@ export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions
  * import { xxxLib } from 'hel-xxx-lib'
  * const sum = xxxLib.sum;
  * ```
- * @param libName - https://hel.woa.com HelPack平台注册的应用名
+ * @param libName - HelPack平台注册的应用名
  * @param options
  * @returns
  */

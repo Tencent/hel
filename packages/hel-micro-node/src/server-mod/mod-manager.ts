@@ -31,7 +31,7 @@ import type {
   IInnerImportModByPathOptions,
   IInnerImportModOptions,
 } from '../base/types-srv-mod';
-import { isValidModule, uniqueStrPush } from '../base/util';
+import { isDict, isFn, isValidModule, uniqueStrPush } from '../base/util';
 import { isHookValid, triggerHook } from '../context/hooks';
 import { maySetToJestMock } from '../test-util';
 import { makeMeta } from './fake-meta';
@@ -207,6 +207,31 @@ class ModManager {
       throw new Error(`Module ${helModNameOrPath} not preloaded!`);
     }
 
+    const mayWrapVal = (prop: any, wrapType: 'fn' | 'dict') => {
+      if ('fn' === wrapType) {
+        const fn = (...args: any[]) => {
+          const modRef = this.getModRef(platform, nameData, rawMod);
+          return modRef[prop](...args);
+        };
+        return fn;
+      }
+
+      if ('dict' === wrapType) {
+        return new Proxy(
+          {},
+          {
+            get: (t, dictKey) => {
+              const modRef = this.getModRef(platform, nameData, rawMod);
+              return modRef[prop][dictKey];
+            },
+          },
+        );
+      }
+
+      const modRef = this.getModRef(platform, nameData, rawMod);
+      return modRef[prop];
+    };
+
     const modProxy: any = new Proxy(rawMod, {
       get: (target, prop) => {
         // console.log(`return proxy fn for ${helModNameOrPath}`, prop);
@@ -223,31 +248,22 @@ class ModManager {
           return target[prop];
         }
 
+        const propStr = prop as string;
         // 命中 fnProps[prop] 和 dictProps[prop] 表示设置了兜底模块或者人工传入了假模块创建规则
         // 这里再包裹一层，可让函数引用、字典引用在文件头部提前解构时，也能做到热更新
-        // @ts-ignore
-        if (fnProps[prop]) {
-          const fn = (...args: any[]) => {
-            const modRef = this.getModRef(platform, nameData, rawMod);
-            return modRef[prop](...args);
-          };
-          return fn;
+        if (fnProps[propStr] || dictProps[propStr]) {
+          const wrapType = fnProps[propStr] ? 'fn' : 'dict';
+          return mayWrapVal(prop, wrapType);
         }
-        // @ts-ignore
-        if (dictProps[prop]) {
-          return new Proxy(
-            {},
-            {
-              get: (t, dictKey) => {
-                const modRef = this.getModRef(platform, nameData, rawMod);
-                return modRef[prop][dictKey];
-              },
-            },
-          );
-        }
-        const modRef = this.getModRef(platform, nameData, rawMod);
 
-        return modRef[prop];
+        const modRef = this.getModRef(platform, nameData, rawMod);
+        const val = modRef[prop];
+        if (isFn(val) || isDict(val)) {
+          const wrapType = isFn(val) ? 'fn' : 'dict';
+          return mayWrapVal(prop, wrapType);
+        }
+
+        return val;
       },
     });
     // 此处加 default 是为了 es 的多种导入模块语法编译为 js 后也能正常生效

@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "@hel-demo/mono-libs": "^1.1.1",
-    "hel-micro-node": "^0.2.9"
+    "hel-micro-node": "^1.0.2"
   }
 }

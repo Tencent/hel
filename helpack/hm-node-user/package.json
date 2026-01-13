@@ -24,7 +24,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "hel-demo-mono-libs": "^0.0.3",
-    "hel-micro-node": "^1.0.0",
+    "hel-micro-node": "^1.0.2",
     "morgan": "^1.10.0",
     "xss-filters": "^1.2.7"
   },
