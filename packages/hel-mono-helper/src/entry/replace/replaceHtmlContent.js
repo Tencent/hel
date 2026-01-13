@@ -61,13 +61,13 @@ function getMasterAppHtml(/** @type {Options} */ options) {
   return masterAppHtml;
 }
 
-function getBaseExScriptList(masterAppHtml) {
+function getBaseExScriptList(masterAppHtml, allowEmptyExList) {
   const content = fs.readFileSync(masterAppHtml, { encoding: 'utf-8' });
   const lines = getContentLines(content);
   let scriptStrList = [];
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    // 包含i d="BASE_EX 的节点都收集起来，例如 id="BASE_EX1", id="BASE_EX2" ...
+    // 包含id="BASE_EX 的节点都收集起来，例如 id="BASE_EX1", id="BASE_EX2" ...
     if (line.includes('id="BASE_EX') && !line.includes('<!--')) {
       scriptStrList.push(line);
 
@@ -82,7 +82,7 @@ function getBaseExScriptList(masterAppHtml) {
     }
   }
 
-  if (!scriptStrList.length) {
+  if (!scriptStrList.length && !allowEmptyExList) {
     throw new Error(
       `Cannot find baseExternals link, please check your html file to make sure including a id="BASE_EX" or id="BASE_EX{number}" script node`,
     );
@@ -200,7 +200,6 @@ function getRepoExLinks(/** @type {Options} */ options) {
  */
 function getHtmlPath(/** @type {Options} */ options, strategy = EReuseStrategy.UseAppHtml) {
   const { appData } = options;
-  const { monoRoot, belongTo, appDir } = appData;
   const masterAppHtml = getMasterAppHtml(options);
 
   if (EReuseStrategy.UseAppHtml === strategy) {
@@ -262,6 +261,9 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
   const serveFor = masterAppData.appPkgName;
   const exJson = getExJson({ exAppData: appData, devInfo, masterAppData });
 
+  const appPkgJson = getFileJson(appData.realAppPkgJsonPath, true) || {};
+  const helConf = appPkgJson.hel || {};
+
   helMonoLog(`replace content of ${appHtml}`);
   const genPreContent = (list, dict) => {
     list.push('<pre style="margin:0">');
@@ -301,8 +303,9 @@ function handleHtmlForExProjSelf(/** @type {Options} */ options) {
       targetLine.push('<div style="text-align:center"><a target="_blank" href="https://github.com/Tencent/hel">Powered by Hel</a></div>');
       handleNotOneLine('<body>', line, targetLine);
     } else if (line.includes('id="BASE_EX')) {
+      const allowEmptyExList = helConf.isFixed;
       // 此处可能将 masterAppHtml 里的多个 baseEx 都提取出来给 ex-project 的 html 使用
-      targetLine = getBaseExScriptList(masterAppHtml);
+      targetLine = getBaseExScriptList(masterAppHtml, allowEmptyExList);
     }
 
     return { line: targetLine };

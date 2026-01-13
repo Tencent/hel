@@ -49,21 +49,45 @@ function getDirInfoList(parentDirPath) {
 }
 
 /**
- * 此方法仅获取第一层子文件列表
+ * 不透传 options 时，此方法仅获取第一层子文件、文件夹列表
  * @returns {{name: string, path: string, isDirectory: boolean}[]}
  */
-function getFileInfoList(parentDirPath) {
+function getFileInfoList(parentDirPath, options) {
+  const { allLevel, getType = 'all' } = options || {};
   const dirInfoList = [];
-  if (!fs.existsSync(parentDirPath)) {
-    return dirInfoList;
-  }
+  const pushList = (list, item) => {
+    const { isDirectory } = item;
+    if (getType === 'all') {
+      return list.push(item);
+    }
+    // regular: non-directory file
+    if (getType === 'regular' && !isDirectory) {
+      return list.push(item);
+    }
+    // dir: directory file
+    if (getType === 'dir' && isDirectory) {
+      return list.push(item);
+    }
+  };
 
-  const names = fs.readdirSync(parentDirPath);
-  names.forEach((name) => {
-    const mayDirPath = path.join(parentDirPath, name);
-    const stats = fs.statSync(mayDirPath);
-    dirInfoList.push({ name, path: mayDirPath, isDirectory: stats.isDirectory() });
-  });
+  const innerGet = (list, dirPath) => {
+    if (!fs.existsSync(dirPath)) {
+      return;
+    }
+
+    const names = fs.readdirSync(dirPath);
+    names.forEach((name) => {
+      const mayDirPath = path.join(dirPath, name);
+      const stats = fs.statSync(mayDirPath);
+      const isDirectory = stats.isDirectory();
+      pushList(list, { name, path: mayDirPath, isDirectory });
+      if (allLevel && isDirectory) {
+        innerGet(list, mayDirPath);
+      }
+    });
+  };
+  innerGet(dirInfoList, parentDirPath);
+
   return dirInfoList;
 }
 

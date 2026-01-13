@@ -1,0 +1,57 @@
+{
+  "name": "helpack-js-sdk",
+  "version": "0.1.0",
+  "description": "helpack-js-sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tencent/hel.git",
+    "directory": "packages/helpack-js-sdk"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "fantasticsoul"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "src",
+    "jsconfig.json",
+    ".babelrc.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "rollup -c --environment BUILD_ENV:commonjs",
+    "build:es": "rollup -c --environment BUILD_ENV:es",
+    "build:umd": "rollup -c --environment BUILD_ENV:development",
+    "build:umd:min": "rollup -c --environment BUILD_ENV:production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "*",
+    "crypto-js": "*",
+    "hel-types": "^4.3.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-cli": "^6.26.0",
+    "cross-env": "^7.0.2",
+    "rollup": "^2.23.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.4"
+  },
+  "peerDependencies": {
+    "axios": "*",
+    "crypto-js": "*",
+    "hel-types": "^4.2.0"
+  },
+  "bundleDependencies": false,
+  "deprecated": false
+}

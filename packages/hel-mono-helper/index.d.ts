@@ -135,6 +135,32 @@ export interface IGetHostOptions {
   prefixedDir?: string;
 }
 
+export interface IGetFileInfoListOptions {
+  /**
+   * default: false,
+   * true: 获取指定目录下的所有层级的文件
+   */
+  allLevel?: boolean;
+  /**
+   * default: 'all'
+   * ```
+   * 'all': 所有类型文件
+   * 'regular': 普通类型文件（ non-directory file ）
+   * 'dir': 目录类型文件（ directory file ）
+   * ```
+   */
+  getType?: 'all' | 'regular' | 'dir'
+}
+
+export interface IFileInfo {
+  /** 文件名称，含扩展 */
+  name: string;
+  /** 文件路径 */
+  path: string;
+  /** 是否是目录 */
+  isDirectory: boolean;
+}
+
 export interface IGetPortOptions {
   /**
    * default: 'PORT'，从 process.env 里取值的 key 名称
@@ -238,4 +264,19 @@ export declare const monoUtil: {
    * 传入模块文件入口路径或模块 pkgJson 路径，推导出 pkgJson 对象
    */
   getNmPkgJsonByPath: (mayPkgIndexPath: string) => IGetNmPkgJsonByPathResult;
+  /**
+   * 获取文件列表，不透传 options 时此方法仅获取第一层子文件、文件夹列表
+   */
+  getFileInfoList: (parentDirPath: string, options?: IGetFileInfoListOptions) => IFileInfo[];
+  /**
+   * 获取解析后的 json 文件
+   */
+  getFileJson: (jsonFilePath: string, allowNull?: boolean) => Record<string, any>;
+  /**
+   * 传入文件路径，通过指定行重写函数来重写某个文件
+   */
+  rewriteFileLine: (
+    filePath: string,
+    replaceLineCb: (rawLine: string, params: { idx: number, rawLines: string[] }) => { ignore: boolean; line: string | string[] },
+  ) => void;
 };

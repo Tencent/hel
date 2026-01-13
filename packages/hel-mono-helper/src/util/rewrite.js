@@ -19,12 +19,12 @@ function rewriteFileLine(filepath, replaceLineCb) {
   const defaultCb = (line) => ({ line });
   const lineCb = replaceLineCb || defaultCb;
 
-  rawLines.forEach((rawLine) => {
+  rawLines.forEach((rawLine, idx) => {
     // 自动忽略此行
     if (rawLine.includes(HEL_DEL_MARK)) {
       return;
     }
-    const { line, ignore } = lineCb(rawLine);
+    const { line, ignore } = lineCb(rawLine, { idx, rawLines });
     // 人为要忽略此行
     if (ignore) {
       return;

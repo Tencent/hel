@@ -4,7 +4,6 @@ import { executeLogicFn } from '../core/logicEntrance';
 
 /**
  * 判断是不是扫描接口，避免安全扫描接口转发到后台
- * @see https://iwiki.woa.com/pages/viewpage.action?pageId=276007728
  */
 function isScanReq(req: Request) {
   const ua = req.header('user-agent') || '';
