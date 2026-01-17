@@ -146,6 +146,10 @@ export function noop(...args: any[]) {
   return args;
 }
 
+export function noopTrue() {
+  return true;
+}
+
 /**
  * 克隆
  */

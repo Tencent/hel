@@ -9,7 +9,11 @@
   <legend>
     <fieldset>测试 hello 函数：<a href="http://localhost:7776/api/hello" target="_blank">http://localhost:7776/api/hello</a></fieldset>
     <fieldset>
-      更新 hello 函数版本：http://localhost:7776/api/changeVer/:ver
+      👉🏼 访问本地<a href="http://localhost:7777/__hub/store?app=@hel-demo/mono-libs&openver=1" target="_blank">helpack</a
+      >（确保已启动）对应模块的版本列表，并点击【切为线上】按钮
+    </fieldset>
+    <fieldset>
+      自己控制更新 hello 函数版本：http://localhost:7776/api/changeVer/:ver
       <hr />
       👉🏼 例如更新到 1.0.1 版本：<a href="http://localhost:7776/api/changeVer/1.0.1" target="_blank"
         >http://localhost:7776/api/changeVer/1.0.1</a
@@ -34,9 +38,11 @@
     <fieldset>
       更新虚拟模块 hel-hello-helpack 版本号
       <hr />
-      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251121090826" target="_blank">20251121090826</a> 版本
+      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251121090826" target="_blank">20251121090826</a> 版本，
+      测试结果将返回【v1.0.0】
       <hr />
-      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251124053957" target="_blank">20251124053957</a> 版本
+      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251124053957" target="_blank">20251124053957</a> 版本，
+      测试结果将返回【v1.1.0】
     </fieldset>
     <fieldset>
       查看本地虚拟模块 my-mod 返回结果：

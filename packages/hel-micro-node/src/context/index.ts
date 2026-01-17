@@ -1,6 +1,6 @@
 import { HEL_API_URL, HEL_SDK_SRC, PLATFORM, SDK_NAME } from '../base/consts';
 import type { IAssetNameInfo, IHMNHooks, IPlatformConfig, IPreloadMiddlewareOptions, ISDKPlatContext } from '../base/types';
-import { noop, purify, purifyFn, uniqueStrPush } from '../base/util';
+import { noop, noopTrue, purify, purifyFn, uniqueStrPush } from '../base/util';
 
 function getDefaultHooks() {
   return {
@@ -42,7 +42,7 @@ export function makeSdkCtx(platform: string, options: { registrationSource?: str
     bizHooks: getDefaultHooks(),
     confHooks: getDefaultHooks(),
     getEnvInfo: () => null,
-    shouldAcceptVersion: () => true,
+    shouldAcceptVersion: noopTrue,
   };
   return sdkCtx;
 }

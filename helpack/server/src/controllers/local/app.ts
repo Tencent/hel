@@ -150,7 +150,7 @@ export const updateSubApp = async (ctx: ICuteExpressCtx) => {
   });
 
   // 合并更新后的应用信息
-  const updatedApp = { ...app, ...toUpdate };
+  const updatedApp = Object.assign(app, toUpdate);
 
   // 更新到内存缓存中（这样客户端重新请求时能拿到新数据）
   localAppCache.set(toUpdate.name, updatedApp as SubAppInfo);

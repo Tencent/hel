@@ -44,8 +44,8 @@ const generateRandomEnvInfo = () => {
   const randomHash1 = Math.random().toString(36).substring(2, 10);
   const randomHash2 = Math.random().toString(36).substring(2, 10);
 
-  const containerName = `${randomHash1}.xc.schvsule.xc.schsfdule.ti${Math.floor(Math.random() * 100000000)}`;
-  const podName = `${randomHash2}.xc.schsdfdse.xc.schedsfle.ti${Math.floor(Math.random() * 100000000)}`;
+  const containerName = `${randomHash1}.someContainer.ti${Math.floor(Math.random() * 100000000)}`;
+  const podName = `${randomHash2}.someContainer.ti${Math.floor(Math.random() * 100000000)}`;
 
   // 随机选择镜像版本
   const imgVersion = imgVersions[Math.floor(Math.random() * imgVersions.length)];
@@ -116,7 +116,12 @@ const wrappedApi = hmn.registerPlatform({
   },
   socketHttpPingWhenTryReconnect: async () => {
     // ping your helpack server, return true if successfully pinged
-    return true;
+    try {
+      const result = await axios.get(`${HELPACK_PROTOCOLED_HOST}/openapi/v1/hmn/ping`);
+      return result.data.data === 'pong';
+    } catch (err) {
+      return false;
+    }
   },
   getEnvInfo,
   hooks: {

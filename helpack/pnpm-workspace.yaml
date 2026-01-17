@@ -1,4 +1,4 @@
-# hint: If you want peer dependencies to be automatically installed, 
+# hint: If you want peer dependencies to be automatically installed,
 # add "auto-install-peers=true" to an .npmrc file at the root of your project.
 # hint: If you don't want pnpm to fail on peer dependency issues,
 # add "strict-peer-dependencies=false" to an .npmrc file at the root of your project.
@@ -6,5 +6,7 @@ prefer-workspace-packages: true
 packages:
   - 'client'
   - 'server'
-  - 'hm-node-user'
   - 'hm-browser-user'
+  - 'hm-browser-user-js'
+  - 'hm-node-user'
+  - 'hm-node-user-simple'

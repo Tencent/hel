@@ -6,6 +6,8 @@ export async function startServer() {
     // 允许虚拟的 node 模块存在
     strict: false,
     shouldAcceptVersion(params) {
+      // 可参考 params 提供参数确定是否接受新版本
+      console.log('params', params);
       return true;
     },
   });
@@ -38,6 +40,6 @@ export async function startServer() {
     const { start } = await import('./at/core/runApp');
     start();
   } catch (err) {
-    console.error('start failed: ', err);
+    console.error('start failed: ', err.message);
   }
 }

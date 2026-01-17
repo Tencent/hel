@@ -79,7 +79,7 @@ function onListening() {
       console.log(`server is running on pipe ${addr}`);
     } else {
       debug(`Listening on port ${addr.port}`);
-      console.log(`server is running on port ${addr.port}`);
+      console.log(`visit helpack http://localhost:${addr.port}`);
     }
     changeIsStartedTrue();
   } else {
