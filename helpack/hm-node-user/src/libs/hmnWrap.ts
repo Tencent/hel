@@ -6,13 +6,13 @@ const isConnectLocalHelpack = process.env.CONNECT_LOCAL_HELPACK === '1';
 function getHost() {
   return isConnectLocalHelpack
     ? {
-      apiHost: 'http://localhost:7777',
-      wsHost: 'ws://localhost:7777',
-    }
+        apiHost: 'http://localhost:7777',
+        wsHost: 'ws://localhost:7777',
+      }
     : {
-      apiHost: 'https://helmicro.com',
-      wsHost: '',
-    };
+        apiHost: 'https://helmicro.com',
+        wsHost: '',
+      };
 }
 
 /**

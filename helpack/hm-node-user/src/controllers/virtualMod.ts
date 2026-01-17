@@ -1,4 +1,3 @@
-import { requireNodeMod } from 'hel-micro-node';
 import { ICuteExpressCtxBase } from 'at/types';
 // @ts-ignore this is a non-exist node module, just map it to hel module
 import { hello as h2 } from 'hel-hello-helpack';
