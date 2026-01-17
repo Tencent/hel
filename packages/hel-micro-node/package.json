@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-node",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "hel-micro sdk for node, a better implement of module federation",
   "keywords": [
     "hel",
@@ -23,7 +23,7 @@
   "main": "dist/index.js",
   "unpkg": "dist/index.min.js",
   "module": "dist/index.mjs",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "tsconfig.json",

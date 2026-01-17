@@ -8,9 +8,13 @@
     "build:server": "pnpm --filter helpack-server run build",
     "build:user": "pnpm --filter hm-node-user run build",
     "server": "pnpm --filter helpack-server run start",
+    "user": "pnpm run usern",
     "usern": "pnpm --filter hm-node-user run start:h",
     "userb": "pnpm --filter hm-browser-user run start:h",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "hel-micro-node": "^1.1.0"
   },
   "keywords": [],
   "author": "",

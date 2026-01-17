@@ -1,4 +1,5 @@
 import type { IFetchModMetaOptions, IModViewConf, IShouldAcceptVersionParams } from '../base/types';
+import { noopTrue } from '../base/util';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { extractNameData } from '../server-mod/mod-name';
 import { getGlobalConfig } from './global-config';
@@ -59,12 +60,13 @@ export function isModMapped(platform: string, helModOrPath: string) {
  */
 export function shouldAcceptVersion(params: IShouldAcceptVersionParams) {
   const sdkCtx = getSdkCtx(params.platform);
-  if (sdkCtx.shouldAcceptVersion) {
-    return sdkCtx.shouldAcceptVersion(params);
+  const { shouldAcceptVersion: sdkSAV } = sdkCtx;
+  if (sdkSAV && sdkSAV !== noopTrue) {
+    return sdkSAV(params);
   }
-  const globalConf = getGlobalConfig();
-  if (globalConf.shouldAcceptVersion) {
-    return globalConf.shouldAcceptVersion(params);
+  const { shouldAcceptVersion: globalSAV } = getGlobalConfig();
+  if (globalSAV && globalSAV !== noopTrue) {
+    return globalSAV(params);
   }
   return true;
 }

@@ -1,6 +1,6 @@
 import { SERVER_INFO, UPDATE_INTERVAL } from '../base/consts';
 import type { ISDKGlobalConfig, ISDKInnerGlobalConfig } from '../base/types';
-import { maySet, maySetFn, noop, purifyFn } from '../base/util';
+import { maySet, maySetFn, noop, noopTrue, purifyFn } from '../base/util';
 
 const sdkGlobalConfig: ISDKInnerGlobalConfig = {
   helModulesDir: '',
@@ -16,7 +16,7 @@ const sdkGlobalConfig: ISDKInnerGlobalConfig = {
     reportError: noop,
     reportInfo: noop,
   },
-  shouldAcceptVersion: () => true,
+  shouldAcceptVersion: noopTrue,
   enableIntervalUpdate: false,
   intervalUpdateMs: UPDATE_INTERVAL,
   getEnvInfo: () => SERVER_INFO,

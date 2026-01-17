@@ -1,10 +1,15 @@
+import { requireNodeMod } from 'hel-micro-node';
 import { ICuteExpressCtxBase } from 'at/types';
 // @ts-ignore this is a non-exist node module, just map it to hel module
 import { hello as h2 } from 'hel-hello-helpack';
+// or replace 'import statement' with code below
+// const { hello: h2 } = requireNodeMod('hel-hello-helpack');
+
 // @ts-ignore this is a non-exist node module, just map it  to local file
 import { hello as h3 } from 'my-mod';
 import path from 'path';
 import { importNodeMod, importNodeModByPath, resolveNodeMod } from '../libs/hmn';
+
 export async function changeVirtualVer(ctx: ICuteExpressCtxBase) {
   const { ver } = ctx.req.params;
   const { mod } = await importNodeMod('hel-hello-helpack', { ver });
@@ -21,6 +26,6 @@ export async function showMyMod(ctx: ICuteExpressCtxBase) {
 }
 
 export async function changeVirtualLocalModToV2(ctx: ICuteExpressCtxBase) {
-  importNodeModByPath('my-mod', path.join(__dirname, '../my-mod/lib-v2/srv/index.js'));
+  importNodeModByPath('my-mod', path.join(__dirname, '../../my-mod/lib-v2/srv/index.js'));
   return { desc: 'my-mod', staticFnResult: h3(), pathInfo: resolveNodeMod('my-mod') };
 }

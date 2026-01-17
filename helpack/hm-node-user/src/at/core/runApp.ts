@@ -70,6 +70,7 @@ function onListening() {
       debug(`Listening on pipe ${addr}`);
     } else {
       debug(`Listening on port ${addr.port}`);
+      console.log(`visit demo http://localhost:${addr.port}`);
     }
   } else {
     throw new Error('no server address founded');

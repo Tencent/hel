@@ -1,50 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <style>
-    fieldset {
-      margin-top: 10px;
-    }
-  </style>
-  {{{data.desc}}}
-  <legend>
-    <fieldset>测试 hello 函数：<a href="http://localhost:7776/api/hello" target="_blank">http://localhost:7776/api/hello</a></fieldset>
-    <fieldset>
-      更新 hello 函数版本：http://localhost:7776/api/changeVer/:ver
-      <hr />
-      👉🏼 例如更新到 1.0.1 版本：<a href="http://localhost:7776/api/changeVer/1.0.1" target="_blank"
-        >http://localhost:7776/api/changeVer/1.0.1</a
-      >
-    </fieldset>
-    <fieldset>
-      查看当前hel最新的版本号：
-      <a href="http://localhost:7776/api/getModVer" target="_blank">http://localhost:7776/api/getModVer</a>
-    </fieldset>
-    <fieldset>
-      查看当前hel模块描述：
-      <a href="http://localhost:7776/api/getModDesc" target="_blank">http://localhost:7776/api/getModDesc</a>
-    </fieldset>
-    <fieldset>
-      查看当前hel激活模块路径信息：
-      <a href="http://localhost:7776/api/resolveMod" target="_blank">http://localhost:7776/api/resolveMod</a>
-    </fieldset>
-    <fieldset>
-      查看虚拟模块 hel-hello-helpack 返回结果：
-      <a href="http://localhost:7776/api/showVirtualNodeModule" target="_blank">http://localhost:7776/api/showVirtualNodeModule</a>
-    </fieldset>
-    <fieldset>
-      更新虚拟模块 hel-hello-helpack 版本号
-      <hr />
-      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251121090826" target="_blank">20251121090826</a> 版本
-      <hr />
-      👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251124053957" target="_blank">20251124053957</a> 版本
-    </fieldset>
-    <fieldset>
-      查看本地虚拟模块 my-mod 返回结果：
-      <a href="http://localhost:7776/api/showMyMod" target="_blank">http://localhost:7776/api/showMyMod</a>
-    </fieldset>
-    <fieldset>
-      更新查看本地虚拟模块 my-mod 版本，变查看返回结果：
-      <a href="http://localhost:7776/api/changeVirtualLocalModToV2" target="_blank">http://localhost:7776/api/changeVirtualLocalModToV2</a>
-    </fieldset>
-  </legend>
+<style>
+  fieldset {
+    margin-top: 10px;
+  }
+</style>
+{{{data.desc}}}
+<legend>
+  <fieldset>测试 hello 函数：<a href="http://localhost:7776/api/hello" target="_blank">http://localhost:7776/api/hello</a>
+  </fieldset>
+  <fieldset>
+    👉🏼 访问本地<a href="http://localhost:7777/__hub/store?app=@hel-demo/mono-libs&openver=1"
+      target="_blank">helpack</a>（确保已启动）对应模块的版本列表，并点击【切为线上】按钮
+  </fieldset>
+  <fieldset>
+    自己控制更新 hello 函数版本：http://localhost:7776/api/changeVer/:ver
+    <hr />
+    👉🏼 例如更新到 1.0.1 版本：<a href="http://localhost:7776/api/changeVer/1.0.1"
+      target="_blank">http://localhost:7776/api/changeVer/1.0.1</a>
+  </fieldset>
+  <fieldset>
+    查看当前hel最新的版本号：
+    <a href="http://localhost:7776/api/getModVer" target="_blank">http://localhost:7776/api/getModVer</a>
+  </fieldset>
+  <fieldset>
+    查看当前hel模块描述：
+    <a href="http://localhost:7776/api/getModDesc" target="_blank">http://localhost:7776/api/getModDesc</a>
+  </fieldset>
+  <fieldset>
+    查看当前hel激活模块路径信息：
+    <a href="http://localhost:7776/api/resolveMod" target="_blank">http://localhost:7776/api/resolveMod</a>
+  </fieldset>
+  <fieldset>
+    查看虚拟模块 hel-hello-helpack 返回结果：
+    <a href="http://localhost:7776/api/showVirtualNodeModule"
+      target="_blank">http://localhost:7776/api/showVirtualNodeModule</a>
+  </fieldset>
+  <fieldset>
+    更新虚拟模块 hel-hello-helpack 版本号
+    <hr />
+    👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251121090826" target="_blank">20251121090826</a> 版本，
+    测试结果将返回【v1.0.0】
+    <hr />
+    👉🏼 更新到 <a href="http://localhost:7776/api/changeVirtualVer/20251124053957" target="_blank">20251124053957</a> 版本，
+    测试结果将返回【v1.1.0】
+  </fieldset>
+  <fieldset>
+    查看本地虚拟模块 my-mod 返回结果：
+    <a href="http://localhost:7776/api/showMyMod" target="_blank">http://localhost:7776/api/showMyMod</a>
+  </fieldset>
+  <fieldset>
+    更新查看本地虚拟模块 my-mod 版本，变查看返回结果：
+    <a href="http://localhost:7776/api/changeVirtualLocalModToV2"
+      target="_blank">http://localhost:7776/api/changeVirtualLocalModToV2</a>
+  </fieldset>
+</legend>
+
 </html>
