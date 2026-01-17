@@ -1,8 +1,6 @@
 {
-  "name": "yh6",
-  "version": "1.0.2",
-  "description": "",
-  "main": "index.js",
+  "name": "helpack",
+  "version": "1.1.0",
   "scripts": {
     "build": "npm run build:server && npm run build:user",
     "build:server": "pnpm --filter helpack-server run build",

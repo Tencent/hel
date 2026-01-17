@@ -2,6 +2,7 @@ import { ICuteExpressCtxBase } from 'at/types';
 // @ts-ignore this is a non-exist node module, just map it to hel module
 import { hello as h2 } from 'hel-hello-helpack';
 // or replace 'import statement' with code below
+// import { requireNodeMod } from 'hel-micro-node';
 // const { hello: h2 } = requireNodeMod('hel-hello-helpack');
 
 // @ts-ignore this is a non-exist node module, just map it  to local file
