@@ -3,12 +3,8 @@ const url = require('url');
 const { hello } = require('@hel-demo/mono-libs');
 const { importNodeMod } = require('hel-micro-node');
 
-function send(res, code, text) {
-  res.writeHead(code, { 'Content-Type': 'text/plain' });
-  res.end(text);
-}
-
 function sendHello(res) {
+  const result = hello();
   send(res, 200, `Hello, hel-micro-node, micro module fn result: ${hello()}\n`);
 }
 
@@ -23,6 +19,12 @@ const server = http.createServer(async (req, res) => {
     send(res, 404, `Not Found\n`);
   }
 });
+
+function send(res, code, text) {
+  res.writeHead(code, { 'Content-Type': 'text/plain' });
+  res.end(text);
+}
+
 
 server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');

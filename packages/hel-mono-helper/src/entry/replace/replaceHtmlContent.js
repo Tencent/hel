@@ -343,10 +343,16 @@ function handleHtmlForNormalProj(/** @type {Options} */ options) {
  * 替换 html 里的内容，提示用户正在提供哪些 external 模块
  */
 module.exports = function replaceHtmlContent(/** @type {Options} */ options) {
-  const { isCurProjectEx, devInfo } = options;
+  const { isCurProjectEx, devInfo, appData } = options;
   // 自身是 ex 项目
   if (isCurProjectEx) {
     return handleHtmlForExProjSelf(options);
+  }
+
+  // 存在高优先级的 html 则优先使用它（同时是外部构建工具预处理了 html 文件，例如流水线插件动态注入 ex 外链的场景）
+  const p0IndexHtml = path.join(appData.appDirPath, './.hel/p0-index.html');
+  if (p0IndexHtml) {
+    return { appHtml, rawAppHtml: getMasterAppHtml(options) };
   }
 
   const repoExLinks = getRepoExLinks(options);
