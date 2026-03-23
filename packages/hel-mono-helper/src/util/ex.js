@@ -42,7 +42,7 @@ function getMasterAppExJson(options) {
 
     const installedVers = [];
     const installedVerDatas = [];
-    pkgPaths.forEach(pkgPath => {
+    pkgPaths.forEach((pkgPath) => {
       const { pkgJson, pkgJsonPath } = getNmPkgJsonByPath(pkgPath);
       noDupPushWithCb(installedVers, pkgJson.version, () => {
         installedVerDatas.push({ pkgVer: pkgJson.version, pkgPath });
@@ -59,11 +59,13 @@ function getMasterAppExJson(options) {
   }
 
   if (dupVerPkgDatas.length) {
-    const tip = dupVerPkgDatas.map(v => {
-      const verStr = v.vers.map(item => `${guessPrefixedDir(item.pkgPath)}:${item.pkgVer}`).join(', ');
-      const dupDesc = `${v.name}(${verStr})`;
-      return dupDesc;
-    }).join(', ');
+    const tip = dupVerPkgDatas
+      .map((v) => {
+        const verStr = v.vers.map((item) => `${guessPrefixedDir(item.pkgPath)}:${item.pkgVer}`).join(', ');
+        const dupDesc = `${v.name}(${verStr})`;
+        return dupDesc;
+      })
+      .join(', ');
     throw new Error(`found those packages with duplicate ver: ${tip}`);
   }
 

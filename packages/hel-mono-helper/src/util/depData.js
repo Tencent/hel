@@ -91,11 +91,7 @@ function getMonoAppDepDataImpl(options) {
   };
 
   const handleL1PkgName = (appDirPath, pkgName, semVer) => {
-    if (PKG_NAME_WHITE_LIST.includes(pkgName)
-      || baseExternals[pkgName]
-      || customExternals[pkgName]
-      || externalsExclude.includes(pkgName)
-    ) {
+    if (PKG_NAME_WHITE_LIST.includes(pkgName) || baseExternals[pkgName] || customExternals[pkgName] || externalsExclude.includes(pkgName)) {
       return;
     }
     noDupPush(nmL1ExternalPkgNames, pkgName);

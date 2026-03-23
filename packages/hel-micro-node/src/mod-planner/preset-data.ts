@@ -1,4 +1,4 @@
-import type { IMeta, IModInfo, AssetMap } from '../base/types';
+import type { AssetMap, IMeta, IModInfo } from '../base/types';
 import type { IInnerImportModByMetaOptions, IInnerImportModByMetaSyncOptions } from '../base/types-srv-mod';
 import { uniqueStrPush, xssFilter } from '../base/util';
 import { getSdkCtx } from '../context';
