@@ -349,7 +349,7 @@ module.exports = function replaceHtmlContent(/** @type {Options} */ options) {
     return handleHtmlForExProjSelf(options);
   }
 
-  // 存在高优先级的 html 则优先使用它（同时是外部构建工具预处理了 html 文件，例如流水线插件动态注入 ex 外链的场景）
+  // 存在高优先级的 html 则优先使用它（通常是外部做了额外加工并生成了新的 html 文件，例如流水线插件动态注入 ex 外链的场景）
   const p0IndexHtml = path.join(appData.appDirPath, './.hel/p0-index.html');
   if (p0IndexHtml) {
     return { appHtml, rawAppHtml: getMasterAppHtml(options) };

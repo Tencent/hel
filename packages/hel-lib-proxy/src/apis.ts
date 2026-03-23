@@ -35,7 +35,7 @@ export const eventBus = getUserEventBus();
  */
 export function getLib<T extends any>(libName: LibName, getOptions?: IGetOptions): T | null {
   const filledOptions = { ...(getOptions || {}) };
-  filledOptions.platform = helConsts.DEFAULT_PLAT;
+  filledOptions.platform = filledOptions.platform || helConsts.DEFAULT_PLAT;
   return core.getVerLib(libName, filledOptions) as T;
 }
 

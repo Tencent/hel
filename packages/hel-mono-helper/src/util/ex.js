@@ -3,49 +3,74 @@
 /** @typedef {{ exAppData:ICWDAppData, devInfo:IDevInfo, masterAppData: ICWDAppData }} Options */
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
+const { noDupPushWithCb, lastNItem } = require('./arr');
 const { getMonoAppDepDataImpl } = require('./depData');
-const { resolveAppRelPath, getFileJson } = require('./file');
+const { resolveAppRelPath } = require('./file');
 const { getMonoAppPkgJsonByAppData } = require('./monoPkg');
 const { getNmPkgJsonByPath } = require('./nmPkg');
-const { rewriteFileLine } = require('./rewrite');
-const { HEL_TPL_GEN_EXJSON_PATH } = require('../consts');
 const { VALID_EX_SUFFIXES } = require('../consts/inner');
 
-function getDepKeyStr(key) {
-  if (key.includes('/') || key.includes('.') || key.includes('-') | key.includes(':')) {
-    return `'${key}'`;
-  }
-  return key;
+function guessPrefixedDir(pkgPath) {
+  const [projPath] = pkgPath.split('/node_modules');
+  const strList = projPath.split(path.sep);
+  const belongTo = lastNItem(strList, 2);
+  const dirName = lastNItem(strList, 1);
+  const prefixedDirName = `${belongTo}/${dirName}`;
+  return prefixedDirName;
 }
 
 function getMasterAppExJson(options) {
   const { devInfo, masterAppData, writeExJson } = options;
   // 注意，此处是通过 masterAppData.appSrcDirPath 获得对应的 external deps 对象
-  const { nmL1ExternalDeps } = getMonoAppDepDataImpl({ appSrc: masterAppData.appSrcDirPath, devInfo, isAllDep: true });
+  const { nmL1ExternalDeps, nmL1ExternalDepData } = getMonoAppDepDataImpl({ appSrc: masterAppData.appSrcDirPath, devInfo, isAllDep: true });
   const nmPkgNames = Object.keys(nmL1ExternalDeps);
   resolveAppRelPath(masterAppData, './.hel', true);
-  const genExJsonPath = resolveAppRelPath(masterAppData, './.hel/gen-exjson.js');
-  fs.writeFileSync(genExJsonPath, fs.readFileSync(HEL_TPL_GEN_EXJSON_PATH).toString());
 
-  rewriteFileLine(genExJsonPath, (/** @type string */ line) => {
-    let targetLine = line;
-    if (line.includes('const pkgNames = [];')) {
-      targetLine = ['  const pkgNames = ['];
-      nmPkgNames.forEach((v) => targetLine.push(`    '${v}',`));
-      targetLine.push('  ];');
-    } else if (line.includes('const semVers = {};')) {
-      targetLine = ['  const semVers = {'];
-      nmPkgNames.forEach((v) => targetLine.push(`    ${getDepKeyStr(v)}:'${nmL1ExternalDeps[v]}',`));
-      targetLine.push('  };');
+  const exJson = { vers: {}, pkgJsonPaths: {}, semVers: {} };
+  const dupVerPkgDatas = [];
+  for (let i = 0; i < nmPkgNames.length; i++) {
+    const pkgName = nmPkgNames[i];
+    const { semVers, pkgPaths } = nmL1ExternalDepData[pkgName];
+    // 在 pnpm 大仓里，不可能出现两个子项目里 semVer 一样但安装的包版本不一样的情况，故这里判断 semVers.length 是没问题的
+    if (semVers.length <= 1) {
+      const { pkgJson, pkgJsonPath } = getNmPkgJsonByPath(pkgPaths[0]);
+      exJson.vers[pkgName] = pkgJson.version;
+      exJson.pkgJsonPaths[pkgName] = pkgJsonPath;
+      exJson.semVers[pkgName] = semVers[0];
+      continue;
     }
 
-    return { line: targetLine };
-  });
+    const installedVers = [];
+    const installedVerDatas = [];
+    pkgPaths.forEach(pkgPath => {
+      const { pkgJson, pkgJsonPath } = getNmPkgJsonByPath(pkgPath);
+      noDupPushWithCb(installedVers, pkgJson.version, () => {
+        installedVerDatas.push({ pkgVer: pkgJson.version, pkgPath });
+      });
+      exJson.vers[pkgName] = pkgJson.version;
+      exJson.pkgJsonPaths[pkgName] = pkgJsonPath;
+      // 出现多个 semVer 但安装版本只有一个的情况是合法的，故这里可取 semVers 第一个值记录到 exJson 里
+      exJson.semVers[pkgName] = semVers[0];
+    });
 
-  // 在宿主项目执行完 get-vers 脚本后，才能获得他在 pnpm 里锁定的各个子包依赖
-  const { genExJson } = require(genExJsonPath);
-  const exJson = genExJson(writeExJson);
+    if (installedVers.length > 1) {
+      dupVerPkgDatas.push({ name: pkgName, vers: installedVerDatas });
+    }
+  }
+
+  if (dupVerPkgDatas.length) {
+    const tip = dupVerPkgDatas.map(v => {
+      const verStr = v.vers.map(item => `${guessPrefixedDir(item.pkgPath)}:${item.pkgVer}`).join(', ');
+      const dupDesc = `${v.name}(${verStr})`;
+      return dupDesc;
+    }).join(', ');
+    throw new Error(`found those packages with duplicate ver: ${tip}`);
+  }
+
+  if (writeExJson) {
+    const exJsonPath = resolveAppRelPath(masterAppData, './.hel/ex.json');
+    fs.writeFileSync(exJsonPath, JSON.stringify(exJson, null, 2));
+  }
 
   return exJson;
 }

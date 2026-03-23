@@ -18,6 +18,18 @@ function saveToLocalStorage(cacheKey: string, toSave: IHelMeta) {
   }
 }
 
+function mayHandleLegacyMeta(cachedMeta: any) {
+  if (!cachedMeta) {
+    return cachedMeta;
+  }
+  const { appInfo, appVersion } = cachedMeta;
+  if (appInfo && appVersion) {
+    // 获取到了旧格式数据，转为新格式给上层使用
+    return { app: appInfo, version: appVersion };
+  }
+  return cachedMeta;
+}
+
 /**
  * 获取缓存应用元数据的key
  */
@@ -39,12 +51,13 @@ export async function getCachedAppMeta(
     if (storageType === 'indexedDB') {
       const indexedDBStorage = getIndexedDB();
       if (indexedDBStorage) {
-        const appCache = await indexedDBStorage.getItem<IHelMeta>(appCacheKey);
-        return appCache;
+        const cachedMeta = await indexedDBStorage.getItem<IHelMeta>(appCacheKey);
+        return mayHandleLegacyMeta(cachedMeta);
       }
     }
     const appCacheStr = getLocalStorage().getItem(appCacheKey);
-    return commonUtil.safeParse(appCacheStr || '', null);
+    const cachedMeta = commonUtil.safeParse(appCacheStr || '', null);
+    return mayHandleLegacyMeta(cachedMeta);
   } catch (err: any) {
     console.error(err);
     return null;

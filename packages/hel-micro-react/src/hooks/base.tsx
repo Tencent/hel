@@ -96,10 +96,6 @@ export function useRemoteCompStatusLogic(name: string, compName: string, options
 
 /**
  * 区别于 useRemoteCompLogic，该钩子函数跳过所有步骤，直接基于 preFetchLib 获取远程组件
- * @param name
- * @param compName
- * @param options
- * @returns
  */
 export function useRemoteLibCompLogic(name: string, compName: string, options: IUseRemoteLibCompOptions) {
   const { Skeleton, Error, ...restOptions } = options;

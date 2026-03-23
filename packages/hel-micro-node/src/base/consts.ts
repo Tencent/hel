@@ -8,8 +8,8 @@ const { SUMERU_ENV, SUMERU_CONTAINER_NAME, WORKER_ID, NODE_APP_INSTANCE } = proc
  */
 export const SDK_PKG_ROOT = path.join(__dirname, '../../');
 
-/** 包的版本号，此处无需修改，构建脚本会自动调整 */
-export const VER = '1.0.2';
+/** 包的版本号，此处忘记修改也没关系，构建脚本会自动调整，实际产物里的版本号和package.json会是对齐的 */
+export const VER = '1.1.1';
 
 export const PLATFORM = 'unpkg';
 

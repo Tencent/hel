@@ -1,6 +1,7 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const path = require('path');
 const { getTsConfigAliasByDirPath } = require('./alias');
+const { lastNItem } = require('./arr');
 const { getMonoRootInfo } = require('./rootInfo');
 
 function getTsConfigDirPathByAppSrc(appSrc) {
@@ -37,10 +38,17 @@ function inferConfAlias(devInfo, options) {
   return alias || tsConfigAlias;
 }
 
-function getPrefixedDirName(appSrc) {
+function getAppSrcData(appSrc) {
   const strList = appSrc.split(path.sep);
-  const len = strList.length;
-  return `${strList[len - 3]}/${strList[len - 2]}`;
+  const belongTo = lastNItem(strList, 3);
+  const dirName = lastNItem(strList, 2);
+  const prefixedDirName = `${belongTo}/${dirName}`;
+  return { belongTo, dirName, prefixedDirName };
+}
+
+function getPrefixedDirName(appSrc) {
+  const data = getAppSrcData(appSrc);
+  return data.prefixedDirName;
 }
 
 /**
@@ -52,8 +60,8 @@ function getPrefixedDirName(appSrc) {
  * ```
  */
 function getAppBelongTo(appSrc) {
-  const strList = appSrc.split(path.sep);
-  return strList[strList.length - 3];
+  const data = getAppSrcData(appSrc);
+  return data.belongTo;
 }
 
 /**

@@ -1,10 +1,11 @@
 /** @typedef {import('../types').IMonoDevInfo} IDevInfo */
 const fs = require('fs');
+const path = require('path');
 const { PKG_NAME_WHITE_LIST } = require('../consts/inner');
 const { noDupPushWithCb, noDupPush } = require('./arr');
 const { getAppBelongTo, getAppDirPath } = require('./appSrc');
 const { getDirName, getDevInfoDirs } = require('./base');
-const { mayInclude } = require('./dict');
+const { mayInclude, safeGet } = require('./dict');
 const { getMonoNameMap } = require('./monoName');
 const { getMonoAppPkgJson } = require('./monoPkg');
 const { getNmPkgJson } = require('./nmPkg');
@@ -61,17 +62,24 @@ function getMonoAppDepDataImpl(options) {
   const { pkg2Deps, pkg2BelongTo, pkg2Dir, pkg2AppDirPath, monoDep } = nameMap;
   const baseExternals = devInfo.baseExternals || {};
   const customExternals = devInfo.customExternals || {};
+  const externalsExclude = devInfo.externalsExclude || [];
 
   const pkgNames = [];
   const depInfos = [];
+  // isAllDep=false时，当前项目对应的直接大仓依赖（即 workspace: 开头的依赖）
+  // isAllDep=true时，当前项目对应的直接大仓依赖+间接大仓依赖
   const loopDeps = [];
 
-  const nmL1ExternalPkgNames = []; // 当前大仓所有项目可提升为 external 资源的 node_modules 包名
-  const nmL1ExternalDeps = {}; // 当前大仓所有项目可提升为 external 资源的 node_modules 包名和版本字典
-  const nmPkgNames = [];
+  // 当前项目自身对应的所有可提升为外部资源的第一层 node_modules 包
+  // isAllDep=true时，还包含当前项目的直接、间接大仓依赖里的第一层 node_modules 包
+  const nmL1ExternalPkgNames = [];
+  const nmL1ExternalDeps = {}; // nmL1ExternalPkgNames 包名和语义版本字典
+  /** @type {Record<string, { semVers: string[], pkgPaths: string[] }>} */
+  const nmL1ExternalDepData = {};
+  const nmPkgNames = []; // 来自 node_modules 的包名
   const nmLoopDeps = [];
   const nmPkg2HelConf = {};
-  // 这些包是非大仓的 hel 包
+  // 这些包是非大仓（即node_modules）的 hel 包
   const nmHelPkgNames = [];
 
   const handleNmLoopAssocData = (pkgName) => {
@@ -82,12 +90,20 @@ function getMonoAppDepDataImpl(options) {
     }
   };
 
-  const handleL1PkgName = (pkgName, verStr) => {
-    if (PKG_NAME_WHITE_LIST.includes(pkgName) || baseExternals[pkgName] || customExternals[pkgName]) {
+  const handleL1PkgName = (appDirPath, pkgName, semVer) => {
+    if (PKG_NAME_WHITE_LIST.includes(pkgName)
+      || baseExternals[pkgName]
+      || customExternals[pkgName]
+      || externalsExclude.includes(pkgName)
+    ) {
       return;
     }
     noDupPush(nmL1ExternalPkgNames, pkgName);
-    nmL1ExternalDeps[pkgName] = verStr;
+    nmL1ExternalDeps[pkgName] = semVer;
+    const pkgPath = path.join(appDirPath, `./node_modules/${pkgName}`);
+    const data = safeGet(nmL1ExternalDepData, pkgName, { semVers: [], pkgPaths: [] });
+    noDupPush(data.semVers, semVer);
+    noDupPush(data.pkgPaths, pkgPath);
   };
 
   const pushToDeps = ({ deps, appDirPath }) => {
@@ -95,8 +111,8 @@ function getMonoAppDepDataImpl(options) {
       if (isTypePkg(pkgName)) {
         return;
       }
-      const val = deps[pkgName];
-      if (val.startsWith('workspace:')) {
+      const semVer = deps[pkgName];
+      if (semVer.startsWith('workspace:')) {
         const belongTo = pkg2BelongTo[pkgName];
         if (!belongToDirs.includes(belongTo)) {
           return;
@@ -113,7 +129,7 @@ function getMonoAppDepDataImpl(options) {
         noDupPush(nmHelPkgNames, pkgName);
         handleNmLoopAssocData(pkgName, appDirPath);
       } else {
-        handleL1PkgName(pkgName, val);
+        handleL1PkgName(appDirPath, pkgName, semVer);
       }
     });
   };
@@ -145,7 +161,7 @@ function getMonoAppDepDataImpl(options) {
   pushToDeps({ deps: json.dependencies || {}, appDirPath });
   // 添加间接依赖
   if (isAllDep) {
-    // 先处理大仓里的依赖
+    // 先处理大仓依赖
     while (loopDeps.length) {
       const tmpDeps = loopDeps.slice();
       loopDeps.length = 0; // 清空间接依赖
@@ -154,7 +170,7 @@ function getMonoAppDepDataImpl(options) {
       }); // 添加新的间接依赖
     }
 
-    // 再处理 node_modules 里的依赖，收集有 hel 导出的包名
+    // 再处理 node_modules 依赖，收集有 hel 导出的包名
     while (nmLoopDeps.length) {
       const tmpDeps = nmLoopDeps.slice();
       nmLoopDeps.length = 0; // 清空间接依赖
@@ -170,6 +186,7 @@ function getMonoAppDepDataImpl(options) {
     nmPkg2HelConf,
     nmL1ExternalPkgNames,
     nmL1ExternalDeps,
+    nmL1ExternalDepData,
     ...nameMap,
   };
 }

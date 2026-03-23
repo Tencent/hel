@@ -49,6 +49,8 @@ import type {
 
 export type DictData = Record<string, any>;
 
+export type AssetMap = Record<string, { css: string; js: string } | null>;
+
 export type {
   IFetchModMetaOptions,
   IFetchModMetaBaseOptions,

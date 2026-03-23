@@ -110,17 +110,17 @@ function getAppExternals(/** @type {IGetAppExternalsOptions} */ options) {
     // 开启了 enableRepoEx 功能，需要将推导出来的 liftableExternals 对象合并
     const liftableExternals = isEnableRepoEx ? options.liftableExternals : {};
     let externals = Object.assign({}, baseExternals, target, liftableExternals);
-    if (externalsExclude.length) {
-      const finalExternals = {};
-      Object.keys(externals).forEach((pkgName) => {
-        if (!externalsExclude.includes(pkgName)) {
-          finalExternals[pkgName] = externals[pkgName];
-        }
-      });
-      return finalExternals;
+    if (!externalsExclude.length) {
+      return externals;
     }
 
-    return externals;
+    const finalExternals = {};
+    Object.keys(externals).forEach((pkgName) => {
+      if (!externalsExclude.includes(pkgName)) {
+        finalExternals[pkgName] = externals[pkgName];
+      }
+    });
+    return finalExternals;
   };
 
   // react fast refresh 会在 react 使用外部资源时失效
@@ -366,8 +366,8 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
     }
   } else {
     const isDev = process.env.NODE_ENV === 'development';
-    // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 appInfo.homePage 为准
-    appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : appInfo.homePage);
+    // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 envPubUrl || homePage 为准
+    appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : process.env.PUBLIC_URL || appInfo.homePage);
   }
 
   const appExternals = getAppExternals({ appData, devInfo, depInfos, isCurProjectEx, liftableExternals });

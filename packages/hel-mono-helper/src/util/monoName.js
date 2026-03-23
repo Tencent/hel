@@ -17,10 +17,10 @@ const { getLocaleTime } = require('./time');
  * 获取大仓某个一级目录下的目录与应用、应用与目录映射关系
  */
 function getMonoLevel1NameMap(level1DirName) {
-  const levelDirPath = getMonoDirOrFilePath(level1DirName);
+  const level1DirPath = getMonoDirOrFilePath(level1DirName);
   let fsDirNames = [];
-  if (fs.existsSync(levelDirPath)) {
-    fsDirNames = fs.readdirSync(levelDirPath);
+  if (fs.existsSync(level1DirPath)) {
+    fsDirNames = fs.readdirSync(level1DirPath);
   }
 
   const pkgName2DirName = {};
@@ -31,7 +31,7 @@ function getMonoLevel1NameMap(level1DirName) {
   const dirNames = [];
 
   for (const dirName of fsDirNames) {
-    const path = getUnderDirSubPath(levelDirPath, dirName);
+    const path = getUnderDirSubPath(level1DirPath, dirName);
     const stat = fs.statSync(path);
     if (!stat.isDirectory()) {
       continue;

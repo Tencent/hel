@@ -63,7 +63,7 @@ function getPassedProps(
   return passedProps;
 }
 
-function useWatchSytleChange(props: IMayShadowProps, options: any) {
+function useWatchStyleChange(props: IMayShadowProps, options: any) {
   const { appGroupName, data, tryForceUpdate } = options;
   const { compInfo, renderConfig } = props;
   const { styleStr, styleUrlList } = compInfo;
@@ -147,7 +147,7 @@ function MayShadowComp(props: IMayShadowProps) {
     tryForceUpdate();
   };
   const passedProps = getPassedProps(renderConfig, insShadowRootRef, insBodyShadowRootRef);
-  useWatchSytleChange(props, { appGroupName, data, tryForceUpdate });
+  useWatchStyleChange(props, { appGroupName, data, tryForceUpdate });
 
   if (shadow) {
     // shawRoot 容器引用还未准备好时，继续骨架屏等待，

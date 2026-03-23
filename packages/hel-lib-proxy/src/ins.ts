@@ -9,11 +9,11 @@ const ignoreKeys = ['isMasterApp', 'isSubApp', 'eventBus'];
 const arg3PlatKeys = ['appReady', 'libReady'];
 
 function makePlatObj(platform, arg: any) {
-  if (arg && typeof arg === 'object') {
+  if (arg && typeof arg === 'object' && !Array.isArray(arg)) {
     const newOptions: any = { platform, ...purify(arg) };
     return newOptions;
   }
-  return arg;
+  return { platform };
 }
 
 function injectArg2Plat(fn: any, platform: string, considerStr?: boolean) {
@@ -34,7 +34,7 @@ function injectArg3Plat(fn: any, platform: string) {
   };
 }
 
-function tryInectPlat(obj: any, platform: string) {
+function tryInjectPlat(obj: any, platform: string) {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
     // @ts-ignore
@@ -59,7 +59,7 @@ type CreateInstance = (platform: string) => LibProxyApis;
 type LibProxyApis = Apis & { createInstance: CreateInstance };
 
 export function createInstance(platform: string): LibProxyApis {
-  const newApis = tryInectPlat(apis, platform);
+  const newApis = tryInjectPlat(apis, platform);
   newApis.createInstance = createInstance;
   return newApis;
 }

@@ -1,6 +1,6 @@
 {
   "name": "hel-micro-node",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "hel-micro sdk for node, a better implement of module federation",
   "keywords": [
     "hel",

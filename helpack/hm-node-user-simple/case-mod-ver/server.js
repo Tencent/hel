@@ -25,7 +25,6 @@ function send(res, code, text) {
   res.end(text);
 }
 
-
 server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });

@@ -42,7 +42,7 @@ function injectPlat(platform: string, injectOptions: IInjectOptions) {
 
     if (isCore) {
       if (fnName === 'getPlatform') {
-        // 来自 createInstace 实例调用，则返回的是对应的自定义平台
+        // 来自 createInstance 实例调用，则返回对应的自定义平台
         return platform;
       }
 
