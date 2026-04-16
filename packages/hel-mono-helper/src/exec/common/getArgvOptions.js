@@ -13,7 +13,7 @@ const {
 const { getDirInfoList } = require('../../util/file');
 const { helMonoLog, getMonoRootInfo } = require('../../util');
 
-const modTplAlas = {
+const modTplAlias = {
   [MOD_TEMPLATE.lib]: MOD_TEMPLATE.libTs,
   [MOD_TEMPLATE.tsLib]: MOD_TEMPLATE.libTs,
 };
@@ -87,7 +87,7 @@ exports.getArgvOptions = function (options, topOptions = {}) {
       ignoredIdx[idx + 1] = true;
 
       const list = getDirInfoList(tplsDirPath);
-      const targetTpl = modTplAlas[templateValue] || templateValue;
+      const targetTpl = modTplAlias[templateValue] || templateValue;
 
       const info = list.find((v) => v.name === targetTpl);
       if (!info) {
@@ -160,6 +160,9 @@ exports.getArgvOptions = function (options, topOptions = {}) {
   if (isCreateAction && !fs.existsSync(belongToDirPath)) {
     fs.mkdirSync(belongToDirPath);
   }
+
+  // 遍历 keywords 后，modTemplate 可能依然是别名，这里再纠正一次
+  argvOptions.modTemplate = modTplAlias[argvOptions.modTemplate] || argvOptions.modTemplate;
 
   argvOptions.pkgName = argvOptions.pkgName || argvOptions.copyToDir;
   // 从此模板复制

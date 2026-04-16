@@ -359,15 +359,19 @@ exports.getMonoDevData = function (/** @type DevInfo */ devInfo, inputAppSrc, op
   const devPublicUrl = baseUtils.slash.noEnd(appData.appPublicUrl);
 
   let appPublicUrl = `${devPublicUrl}/`;
+  const envPublicUrl = process.env.PUBLIC_URL;
   if (isHelModeVar) {
-    appPublicUrl = isHelStart() ? `${devPublicUrl}/` : appInfo.getPublicPathOrUrl(devPublicUrl);
+    // hel 脚本触发时，非 start 命令（例如 build）以 envPublicUrl || appInfo.getPublicPathOrUrl 为准
+    if (!isHelStart()) {
+      appPublicUrl = envPublicUrl || appInfo.getPublicPathOrUrl(devPublicUrl);
+    }
     if (appInfo.homePage !== appPublicUrl) {
       appInfo.homePage = appPublicUrl;
     }
   } else {
     const isDev = process.env.NODE_ENV === 'development';
-    // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 envPubUrl || homePage 为准
-    appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : process.env.PUBLIC_URL || appInfo.homePage);
+    // 非 hel 脚本触发，本地开发以 appPublicUrl 为准，打包则以 envPublicUrl || homePage 为准
+    appPublicUrl = baseUtils.slash.end(isDev ? appPublicUrl : envPublicUrl || appInfo.homePage);
   }
 
   const appExternals = getAppExternals({ appData, devInfo, depInfos, isCurProjectEx, liftableExternals });
