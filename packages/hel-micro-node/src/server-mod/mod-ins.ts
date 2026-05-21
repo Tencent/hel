@@ -1,18 +1,25 @@
 import * as fs from 'fs';
-import { INDEX_JS, MOD_INIT_VER } from '../base/mod-consts';
+import { FALLBACK_MOD_VER, INDEX_JS, MOD_INIT_VER } from '../base/mod-consts';
 import { getDirFileList, getModPathData, resolveNodeModPath } from '../base/path-helper';
 import type { IModIns, IWebFileInfo, OnFilesReady, OnFilesReadySync, PrepareFiles, PrepareFilesSync } from '../base/types';
+import { isModuleLike } from '../base/util';
 import { downloadModFiles, getIsFilesReusable, getPrepareFilesParams } from './file-helper';
 import { createLockFile, getLockFilePath, isLockFileValid, waitLockFileDeleted } from './lock-file';
 import { safeUnlinkFile } from './util';
+
+interface IGetModByPathOptions {
+  allowNull?: boolean;
+  shouldResolve?: boolean;
+  override?: any;
+}
 
 /**
  * 通过路径获取模块，
  * 如调用时 modPath 确信为完整路径，则无需设置 shouldResolve=true，
  * 如需要遵循 require 规则，则无需设置 allowNull=true，
  */
-export function getModByPath(modPath: string, options?: { allowNull?: boolean; shouldResolve?: boolean }) {
-  const { allowNull = false, shouldResolve = false } = options || {};
+export function getModByPath(modPath: string, options?: IGetModByPathOptions) {
+  const { allowNull = false, shouldResolve = false, override } = options || {};
   try {
     if (!modPath && allowNull) {
       return null;
@@ -21,6 +28,15 @@ export function getModByPath(modPath: string, options?: { allowNull?: boolean; s
     // TODO 将来的 node 版本里可使用 import.sync 替代
     // eslint-disable-next-line
     const mod = require(path);
+
+    if (override) {
+      if (!isModuleLike(override)) {
+        throw new Error('Override should be a module like object!');
+      }
+      // 这里直接覆盖模块的导出内容，其他任何地方再次调用 require 这个模块时都能拿到覆盖后的内容
+      Object.assign(mod, override);
+    }
+
     return mod;
   } catch (err: any) {
     if (!allowNull) {
@@ -30,10 +46,24 @@ export function getModByPath(modPath: string, options?: { allowNull?: boolean; s
   }
 }
 
+export function getModInsByMod(mod: any, modVer?: string): IModIns {
+  return {
+    mod,
+    modPath: '',
+    isMainMod: true,
+    mainModPath: '',
+    modRelPath: INDEX_JS,
+    modDirPath: '',
+    modRootDirPath: '',
+    modVer: modVer || FALLBACK_MOD_VER,
+    isInit: true,
+  };
+}
+
 /**
  * 通过指定路径从本地获取模块实例
  */
-export function getDiskModInsByInitPath(initPath: string, modVer = MOD_INIT_VER): IModIns {
+export function getDiskModInsByInitPath(initPath: string, modVer?: string): IModIns {
   const mod = getModByPath(initPath);
   let modDirPath = initPath;
   let modRootDirPath = '';
@@ -56,7 +86,7 @@ export function getDiskModInsByInitPath(initPath: string, modVer = MOD_INIT_VER)
     modRelPath: INDEX_JS,
     modDirPath,
     modRootDirPath,
-    modVer,
+    modVer: modVer || MOD_INIT_VER,
     isInit: true,
   };
 }

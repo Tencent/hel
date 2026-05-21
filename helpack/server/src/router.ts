@@ -37,8 +37,6 @@ get('/api/helper/allowApps', helperCtrl.allowApps);
 get('/api/helper/allowAppsV2', helperCtrl.allowAppsV2);
 get('/api/helper/runningLogs', helperCtrl.runningLogs);
 get('/api/helper/getStat', helperCtrl.getStat);
-get('/api/helper/seeLocalCache', helperCtrl.seeLocalCache);
-get('/api/helper/seeRemoteCache', helperCtrl.seeRemoteCache);
 
 if (isSimpleServer()) {
   // ****** 定义服务于外网的接口 ******
@@ -140,7 +138,7 @@ if (isSimpleServer()) {
   post('/api/v1/app/version/getSubAppVersionListByVers', appVersionCtrl.getSubAppVersionListByVers);
   post('/api/v1/app/version/resetVerCache', appVersionCtrl.resetVerCache);
 
-  // devop平台插件使用的api
+  // devops 平台插件使用的api
   get('/api/openApi/plugin/getAppByName', plugin.getAppByName);
   post('/api/openApi/plugin/getAppByNameAndClass', plugin.getAppByNameAndClass);
   get('/api/openApi/plugin/getCos', plugin.getCos);
@@ -174,8 +172,8 @@ if (isSimpleServer()) {
 
   /**
    * 此处不能通过 * 去让剩下未匹配上的路由加载hel首页
-   * 因为这样的话，假设用户 访问 /api，在 at/core/handleAllRequest 里当成api路由了
-   * 然后会重写 Content-Type 值为 applicatin/json
+   * 因为这样的话，假设用户访问 /api，在 at/core/handleAllRequest 里当成api路由了
+   * 然后会重写 Content-Type 值为 application/json
    * 接着执行完 homeCtrl 返回的页面就是原始的字符串了
    *
    * homeCtrl 的执行时机已直接提前到 at/core/handleAllRequest 里面

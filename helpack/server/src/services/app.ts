@@ -541,9 +541,8 @@ export function signCheckAppForPlugin(classKey: string, timestamp: number | stri
 /**
  * 通用的函一个字符串变量的请求计算签名
  */
-export function signStrCommon(str: string, timestamp: number | string, isStaticSec?: boolean) {
-  // 默认读动态的 sec，对于旧场景需要透传 isStaticSec=true 才读 PLUGIN_SEC_STR 固定值
-  const secStr = !isStaticSec ? getSignSecStr() : PLUGIN_SEC_STR;
+export function signStrCommon(str: string, timestamp: number | string) {
+  const secStr = getSignSecStr();
   const content = `${str}_${timestamp}_${secStr}`;
   return sign.signByMd5(content);
 }

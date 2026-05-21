@@ -167,6 +167,8 @@ export function executeLogicFn(fn, options: { req: Request; res: Response; httpE
   }
   const start = Date.now();
   const { query, params, body } = req;
+  // 先断言为 string 类型的 params，后续如果有需要再改造支持 string[] 类型的 params
+  const strDictParams = params as unknown as Record<string, string>;
 
   // 将view, file, code, output等响应助手函数穿透给ctx，方便用户直接使用
   // httpErrorStatus：当业务逻辑层出现错误时响应的状态码，默认200，支持在controller里重新赋值
@@ -175,7 +177,7 @@ export function executeLogicFn(fn, options: { req: Request; res: Response; httpE
     jsonp,
     jsonpOutput,
     query,
-    params,
+    params: strDictParams,
     body,
     view,
     file,

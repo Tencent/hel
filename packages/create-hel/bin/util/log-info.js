@@ -36,8 +36,10 @@ function logCreateSuccess({ projectName, dirPath, template }) {
     console.log(chalk.green(`\n✅ Project of helpack [${projectName}] created on ${chalk.bold(dirPath)}`));
     let devTip = `\nNext:\n  cd ${projectName}\n  pnpm install\n  pnpm run build`;
     devTip += `\n  pnpm run server (start helpack server, visit http://localhost:7777)`;
-    devTip += `\n  pnpm run usern (start hel-micro browser user, visit http://localhost:7776)`;
-    devTip += `\n  pnpm run userb (start hel-micro node user, visit http://localhost:3600)`;
+    devTip += `\n  pnpm run userb (start hel-micro browser user, visit http://localhost:7776)`;
+    devTip += `\n  pnpm run usern (start hel-micro node user, visit http://localhost:3600, it depends on local helpack server, make sure server is running)`;
+    devTip += `\n  pnpm run usern:local (start hel-micro node user, visit http://localhost:3000, this case shows how to control mod ver yourself)`;
+    devTip += `\n  pnpm run usern:lodash (start hel-micro node user, visit http://localhost:3000, this case shows how to replace lodash mod partial interface)`;
     console.log(chalk.cyan(devTip));
   }
 }

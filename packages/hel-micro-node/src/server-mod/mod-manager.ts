@@ -37,7 +37,15 @@ import { maySetToJestMock } from '../test-util';
 import { makeMeta } from './fake-meta';
 import { delFileOrDir } from './file-helper';
 import { mapNodeModsManager } from './map-node-mods';
-import { getCustomModIns, getDiskModIns, getDiskModInsByInitPath, getModByPath, getWebModIns, prepareWebModFiles } from './mod-ins';
+import {
+  getCustomModIns,
+  getDiskModIns,
+  getDiskModInsByInitPath,
+  getModByPath,
+  getModInsByMod,
+  getWebModIns,
+  prepareWebModFiles,
+} from './mod-ins';
 import { getEnsuredIMBMOptions, getHelModFilePath, getModProxyHelpData, mayInjectApiUrl } from './mod-manager-helper';
 import { fetchModMeta } from './mod-meta';
 import { extractNameData } from './mod-name';
@@ -370,6 +378,29 @@ class ModManager {
     if (!modItem.storedVers.includes(modVer)) {
       isUpdated = true;
       log({ subType: 'importModByPath', data: { modPath: modIns.modPath, modVer: modIns.modVer } });
+      this.updateModManagerItem(modItem, modIns, { helModNameOrPath: helModName, platform });
+      maySetToJestMock(platform, helModName, mod);
+    }
+
+    return { mod, isUpdated };
+  }
+
+  /**
+   * 根据用户透传的模块对象来同步准备 server 模块，对接 fallback.mod 场景
+   */
+  public importModByMod(helModName: string, inputMod: any, options?: IInnerImportModByPathOptions) {
+    const { platform = PLATFORM, ver, standalone } = options;
+    const modIns = getModInsByMod(inputMod, ver);
+    const { mod } = modIns;
+    if (standalone) {
+      return { mod, isUpdated: false };
+    }
+
+    const modItem = this.ensureModItem(platform, helModName);
+    let isUpdated = false;
+    if (!modItem.storedVers.includes(ver)) {
+      isUpdated = true;
+      log({ subType: 'importModByMod', data: { modPath: modIns.modPath, modVer: modIns.modVer } });
       this.updateModManagerItem(modItem, modIns, { helModNameOrPath: helModName, platform });
       maySetToJestMock(platform, helModName, mod);
     }

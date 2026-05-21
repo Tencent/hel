@@ -39,7 +39,13 @@ export function isModuleLike(mayModule: any) {
     return false;
   }
   try {
-    return [OBJ_DESC, MODULE_DESC].includes(mayModule.toString());
+    const isMod = [OBJ_DESC, MODULE_DESC].includes(mayModule.toString());
+    // 类似 lodash 这种模块导出的是一个函数，但函数上有属性，这时候 toString 是函数的，但它也是一个模块
+    if (!isMod) {
+      return Object.keys(mayModule).length;
+    }
+
+    return isMod;
   } catch (err) {
     return false;
   }

@@ -96,7 +96,7 @@ export interface IModShape {
 export interface INodeModFallbackConf {
   /**
    * default: false,
-   * 为 true 表示强制使用备用模块，此时 hel 模块不在生效
+   * 为 true 表示强制使用备用模块，此时 hel 模块不再生效
    * 为 false 表示加载 hel 模块失败时才尝试使用备用模块
    */
   force?: boolean;
@@ -105,6 +105,10 @@ export interface INodeModFallbackConf {
    * 即: path > mod > nodeName
    */
   path?: string;
+  /**
+   * 如需对 path 对应的模块覆写部分属性，可配置此项
+   */
+  pathModOverride?: Record<string, any>;
   /**
    * 备用模块对应的模块对象
    */

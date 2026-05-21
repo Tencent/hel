@@ -1,6 +1,6 @@
 {
   "name": "helpack-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "./build/index.js",
   "scripts": {
     "build": "cross-env node ./scripts/replaceToRelativePath.js && tsc -p ./tsconfigForBuild.json",

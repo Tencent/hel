@@ -16,6 +16,7 @@ export interface INodeModData {
   platform: string;
   helModName: HelModName;
   helPath: HelModPath;
+  /** node 模块全路径 source full path，在调用 getProxyFile 时会写入 */
   rawPath: string;
   proxyFilePath: string;
   fallback: INodeModFallbackConf;
@@ -65,7 +66,7 @@ export function getModShape(nodeModName: string, options: IMapModOptions) {
     const mod = getModByPath(modPath, { allowNull: true });
     inferModShape(mod);
   } else if (fallback.mod || fallback.path) {
-    const fallbackMod = fallback.mod || getModByPath(fallback.path, { allowNull: true });
+    const fallbackMod = fallback.mod || getModByPath(fallback.path, { allowNull: true, override: fallback.pathModOverride });
     inferModShape(fallbackMod);
   }
   // 用户设定了没有模块形状，也要正常预加载映射的模块

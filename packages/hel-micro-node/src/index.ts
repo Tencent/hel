@@ -1,3 +1,4 @@
+import './init/ensure-singleton';
 import * as toExport from './export';
 export type {
   GetMeta,

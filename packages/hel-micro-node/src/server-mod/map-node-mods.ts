@@ -139,7 +139,11 @@ class MapNodeModsManager {
 
   public isFallbackModExist(nodeModName: PkgName) {
     const { fallback } = this.getNodeModData(nodeModName);
-    if (fallback.mod || getModByPath(fallback.path, { allowNull: true }) || resolveNodeModPath(nodeModName, true)) {
+    if (
+      fallback.mod
+      || getModByPath(fallback.path, { allowNull: true, override: fallback.pathModOverride })
+      || resolveNodeModPath(nodeModName, true)
+    ) {
       return true;
     }
 
@@ -153,8 +157,8 @@ class MapNodeModsManager {
 
   public getFallbackMod(helModNameOrPath: HelModOrPath, platform: string) {
     const { nodeModName, fallback } = this.getFallbackData(helModNameOrPath, platform);
-    const { mod, path } = fallback;
-    return mod || getModByPath(path, { allowNull: true }) || getModByPath(nodeModName, { allowNull: true });
+    const { mod, path, pathModOverride } = fallback;
+    return mod || getModByPath(path, { allowNull: true, override: pathModOverride }) || getModByPath(nodeModName, { allowNull: true });
   }
 
   public getFallbackData(helModNameOrPath: HelModOrPath, platform: string) {

@@ -12,7 +12,8 @@ import { importNodeMod, importNodeModByPath, resolveNodeMod } from '../libs/hmn'
 
 export async function changeVirtualVer(ctx: ICuteExpressCtxBase) {
   const { ver } = ctx.req.params;
-  const { mod } = await importNodeMod('hel-hello-helpack', { ver });
+  const verStr = ver as unknown as string;
+  const { mod } = await importNodeMod('hel-hello-helpack', { ver: verStr });
   return { desc: 'update successfully', fnResult: mod.hello(), staticFnResult: h2() };
 }
 

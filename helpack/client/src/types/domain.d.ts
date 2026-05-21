@@ -1,4 +1,4 @@
-import { ISubApp, ISubAppVersion } from 'hel-types'
+import { ISubApp, ISubAppVersion } from 'hel-types';
 
 export interface User {
   user: string;

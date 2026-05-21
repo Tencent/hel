@@ -18,14 +18,14 @@ export function getModProxyHelpData(helModNameOrPath: string, platform: string) 
   const nodeModName = mapNodeModsManager.getNodeModName(helModNameOrPath, platform);
   const data = mapNodeModsManager.getNodeModData(nodeModName);
   const { rawPath, isShapeReady } = data;
-  let { fnProps, dictProps } = data;
+  let { fnProps, dictProps, fallback } = data;
   let rawMod = {};
   // 内部 preload 触发 importModByMeta 逻辑时，会在还未映射就调用 requireMod 函数，此时 rawPath 为空
   if (!isShapeReady) {
-    rawMod = getModByPath(rawPath, { allowNull: true }) || {};
+    rawMod = getModByPath(rawPath, { allowNull: true, override: fallback.pathModOverride }) || fallback.mod || {};
     const result = extractFnAndDictProps(rawMod);
     fnProps = result.fnProps;
-    dictProps = result.fnProps;
+    dictProps = result.dictProps;
   }
 
   return { fnProps, dictProps, rawMod, rawPath };

@@ -149,6 +149,16 @@ export function importNodeModByPath<T extends any = any>(
   return modManager.importModByPath(helPath, nodeModPath, newOptions);
 }
 
+export function importNodeModByMod<T extends any = any>(
+  nodeModName: string,
+  nodeMod: any,
+  options?: IImportNodeModByPathOptions,
+): IImportNodeModResult<T> {
+  const { helPath, platform } = getMappedData(nodeModName);
+  const newOptions = { ...(options || {}), standalone: false, platform };
+  return modManager.importModByMod(helPath, nodeMod, newOptions);
+}
+
 /**
  * 获取映射了 hel 模块的 node 模块的简要描述信息，
  * 如果模块未加载，会报错 Mapped hel module xxx not preloaded

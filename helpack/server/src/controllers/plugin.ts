@@ -2,7 +2,6 @@ import * as rainbowConf from 'at/configs/rainbowConf';
 import { models } from 'at/models';
 import type { ICuteExpressCtx, TController } from 'at/types';
 import { ISubAppUpdate } from 'at/types/domain';
-import { checkTimestamp } from 'at/utils/time-check';
 import { checkAppName } from 'controllers/share/app';
 import { lockLogic } from 'controllers/share/lock';
 import { checkQueryNonce } from 'controllers/share/reqGuard';
@@ -14,15 +13,8 @@ import { getTcosParams } from 'services/share/tcosParams';
 const { getSignSecStr } = rainbowConf;
 
 function checkAddAppVersionNonce(ctx: ICuteExpressCtx) {
-  // 老版本检测逻辑，为了旧版本 sdk 能够正常工作，此处不能删除
   if (!ctx.query.name) {
-    const { timestamp, nonce } = ctx.query;
-    checkTimestamp(timestamp);
-    const signStr = ctx.services.app.signAppVersionForPlugin(ctx.body, timestamp);
-    if (nonce !== signStr) {
-      throw new Error('nonce invalid');
-    }
-    return;
+    throw new Error('name is required in query for addAppVersion, please check your sdk version and upgrade to the latest one if needed');
   }
 
   // 命中新版检查逻辑
@@ -30,16 +22,8 @@ function checkAddAppVersionNonce(ctx: ICuteExpressCtx) {
 }
 
 function checkUpdateAppNonce(ctx: ICuteExpressCtx) {
-  // 老版本检测逻辑，为了旧版本 sdk 能够正常工作，此处不能删除
   if (!ctx.query.name) {
-    const { timestamp, nonce } = ctx.query;
-    checkTimestamp(timestamp);
-
-    const signStr = ctx.services.app.signUpdateAppForPlugin(ctx.body, timestamp);
-    if (nonce !== signStr) {
-      throw new Error('nonce invalid');
-    }
-    return;
+    throw new Error('name is required in query for updateApp, please check your sdk version and upgrade to the latest one if needed');
   }
 
   // 命中新版检查逻辑
@@ -47,7 +31,7 @@ function checkUpdateAppNonce(ctx: ICuteExpressCtx) {
 }
 
 export const getCommonSignSec: TController = async (ctx) => {
-  checkQueryNonce(ctx.query, true);
+  checkQueryNonce(ctx.query);
   return { sec: getSignSecStr() };
 };
 
@@ -58,7 +42,7 @@ export const getIsVersionExist: TController = async (ctx) => {
 };
 
 export const getAppByName: TController = async (ctx) => {
-  checkQueryNonce(ctx.query, true);
+  checkQueryNonce(ctx.query);
   const { name: appName } = ctx.query;
   const subApp = await ctx.services.app.getAppByName(appName, { shouldHideToken: false });
   return subApp;

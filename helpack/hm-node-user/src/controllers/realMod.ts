@@ -3,7 +3,8 @@ import { ICuteExpressCtxBase } from 'at/types';
 import { getNodeModDesc, getNodeModVer, importNodeMod, resolveNodeMod } from '../libs/hmn';
 export async function changeVer(ctx: ICuteExpressCtxBase) {
   const { ver } = ctx.req.params;
-  const { mod } = await importNodeMod('@hel-demo/mono-libs', { ver });
+  const verStr = ver as unknown as string;
+  const { mod } = await importNodeMod('@hel-demo/mono-libs', { ver: verStr });
   return { desc: 'update successfully', fnResult: mod.hello(), staticFnResult: hello() };
 }
 

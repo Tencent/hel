@@ -23,7 +23,7 @@ export const ping: TController = () => {
 };
 
 export const getHmnApiParams: TController = async (ctx) => {
-  checkQueryNonce(ctx.query, true);
+  checkQueryNonce(ctx.query);
   return hmnParams.getHmnApiParams();
 };
 

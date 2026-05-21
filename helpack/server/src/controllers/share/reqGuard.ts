@@ -6,10 +6,10 @@ import { signStrCommon } from 'services/app';
 
 const { HEL_ERR_NONCE_INVALID } = errCode;
 
-export function checkQueryNonce(query: xc.Dict, isStaticSec?: boolean) {
+export function checkQueryNonce(query: xc.Dict) {
   const { timestamp, nonce, name } = query;
   checkTimestamp(timestamp);
-  const serverNonce = signStrCommon(name, timestamp, isStaticSec);
+  const serverNonce = signStrCommon(name, timestamp);
   compareNonce(nonce, serverNonce);
 }
 

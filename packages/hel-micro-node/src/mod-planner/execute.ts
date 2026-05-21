@@ -4,7 +4,7 @@ import { getMappedModFetchOptions, isModMapped } from '../context/facade';
 import { getGlobalConfig } from '../context/global-config';
 import { triggerHook } from '../context/hooks';
 import { getSdkCtx } from '../context/index';
-import { importNodeModByPath } from '../mod-node';
+import { importNodeModByMod, importNodeModByPath } from '../mod-node';
 import { mapNodeModsManager } from '../server-mod/map-node-mods';
 import { fetchModInfo } from '../server-mod/mod-meta';
 import { PresetData, presetDataMgr } from './preset-data';
@@ -65,12 +65,22 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
   const tasks = sdkCtx.modNames.map(async (name) => {
     const fetchOptions = options || getMappedModFetchOptions(name, platform);
     const { fallback, nodeModName } = mapNodeModsManager.getFallbackData(name, platform);
-    const { force, path } = fallback;
-    if (force) {
-      if (!path) {
-        throw new Error('Set fallback.force as true but forget to supply path');
+    const { force, path, mod } = fallback;
+    const mayImportNodeMod = () => {
+      if (path) {
+        importNodeModByPath(nodeModName, path);
+        return;
       }
-      importNodeModByPath(nodeModName, path);
+      if (mod) {
+        importNodeModByMod(nodeModName, mod);
+      }
+    };
+
+    if (force) {
+      if (!path && !mod) {
+        throw new Error('Set fallback.force as true but forget to supply fallback.path or fallback.mod');
+      }
+      mayImportNodeMod();
       return null;
     }
 
@@ -78,10 +88,10 @@ export async function fetchRegisteredModInfoList(platform: string, options?: IFe
       const modInfo = await fetchModInfo(name, fetchOptions);
       return modInfo;
     } catch (err: any) {
-      if (!path) {
+      if (!path && !mod) {
         throw err;
       }
-      importNodeModByPath(nodeModName, path);
+      mayImportNodeMod();
     }
   });
   const list = await Promise.all(tasks);

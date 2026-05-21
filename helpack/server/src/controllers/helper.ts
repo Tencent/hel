@@ -33,42 +33,6 @@ export const inner = {
   },
 };
 
-export const seeLocalCache: TController = async (ctx) => {
-  const { key, type = 'app' } = ctx.query;
-  if (type === 'app') {
-    return inner.wrapDeployInfo(ctx.services.dataCache.getAppInfo(key));
-  }
-  if (type === 'version') {
-    return inner.wrapDeployInfo(ctx.services.dataCache.getVersion(key));
-  }
-  if (type === 'other') {
-    return inner.wrapDeployInfo(ctx.services.dataCache.getOtherCache(key));
-  }
-  return ctx.code('-1', {}, `type [${type}] invalid`);
-};
-
-export const seeRemoteCache: TController = async (ctx) => {
-  const { key, type = 'app', token } = ctx.query;
-  if (token !== 'hel-remote-cache-xyvzi091240') {
-    return ctx.code('-1', {}, 'invalid call');
-  }
-
-  if (type === 'app') {
-    const app = await ctx.services.shareApp.getRemoteApp(key);
-    return inner.wrapDeployInfo(app);
-  }
-  if (type === 'version') {
-    const version = await ctx.services.shareVersion.getRemoteVersion(key);
-    return inner.wrapDeployInfo(version);
-  }
-  if (type === 'redis') {
-    const ret = await redisSrv.getCache(key);
-    return inner.wrapDeployInfo(ret);
-  }
-
-  return ctx.code('-1', {}, `type [${type}] invalid`);
-};
-
 export const allowApps: TController = async (ctx: ICuteExpressCtx) => {
   const allowApps = getAllowApps();
   return allowApps;

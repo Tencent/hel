@@ -68,6 +68,16 @@ export const HEL_DIST = 'hel_dist';
 export const MOD_INIT_VER = 'MOD_INIT_VER';
 
 /**
+ * 代表这是一个回退版本的标识前缀，两种情况会有此标识：
+ * 1 下载模块失败时，使用这个标识来记录这个模块
+ * 2 强制使用 fallback.mod 导致此标识产生
+ * 这个标识的存在主要是为了在模块下载失败时，能够有一个明确的标识来区分哪些模块是正常下载的，哪些模块是下载失败的，从而方便用户进行排查和处理
+ * 例如，在日志中看到某个模块的版本是以 FALLBACK_MOD_VER 开头，就可以知道这个模块是下载失败的，需要进一步检查网络或者模块源等问题
+ * 这个标识的具体值可以根据实际情况进行调整，但建议保持一定的独特性和可识别性，以避免与正常的版本号混淆
+ */
+export const FALLBACK_MOD_VER = 'FALLBACK_MOD_VER';
+
+/**
  * 默认的入口文件名（含格式后缀）
  */
 export const INDEX_JS = 'index.js';

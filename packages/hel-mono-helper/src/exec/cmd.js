@@ -105,7 +105,7 @@ function inferCmdRunContent(packName, options) {
   }
 
   // 丢弃 restArgs，目前暂无用处
-  return `start${action ? `:${action}` : ACTION_NAME.startHel}`;
+  return action ? `start:${action}` : ACTION_NAME.startHel;
 }
 
 /**

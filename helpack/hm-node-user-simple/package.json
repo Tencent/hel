@@ -1,15 +1,18 @@
 {
   "name": "hm-node-user-simple",
   "version": "1.0.0",
+  "description": "showcase for hel-micro-node, simple user case with node http module",
   "scripts": {
     "start": "node ./case-mod-ver/index",
     "start2": "node ./case/index",
+    "start:lodash": "node ./case-lodash/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "fantasticsoul",
   "license": "ISC",
   "dependencies": {
     "@hel-demo/mono-libs": "^1.1.1",
-    "hel-micro-node": "^1.1.0"
+    "hel-micro-node": "^1.1.2",
+    "lodash": "^4.18.1"
   }
 }
